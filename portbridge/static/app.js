@@ -196,6 +196,9 @@ async function initializeData() {
     }
     issue.href = url.href;
     issue.hidden = false;
+    const guide = byId('contributor-guide');
+    guide.href = `${repository}#for-project-contributors`;
+    guide.hidden = false;
   }
   return readSnapshot('health').catch(() => ({}));
 }

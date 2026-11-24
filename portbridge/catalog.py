@@ -19,7 +19,7 @@ SYNC_STATUS = {"ok", "partial", "stale", "error", "seed-only"}
 PROBLEM_ID = re.compile(r"PB-[0-9]{4,}")
 REPO_NAME = re.compile(r"[\w.-]+/[\w.-]+", re.ASCII)
 WORDS = re.compile(r"[^\W_]+")
-STOP_WORDS = set("a an the on in to of for by and or from that it is at with into after before as this then "
+STOP_WORDS = set("a an the on in to of for by and or from that it its is at with into after before as this then "
                  "test tests tested fix fixes add adds support update merge pull request windows linux xbox "
                  "game would about when build issue code commit main using use like fails error crash "
                  "this github before after make target runtime".split())

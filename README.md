@@ -2,9 +2,16 @@
 
 Каталог проблем совместимости Xbox Series с ПК. Он помогает найти уже предложенное решение, увидеть границы его проверки и передать результат нужному репозиторию. Начальные источники — Leonida Continued, LeonidaReforge, XCL и VIctory.
 
+[Открыть каталог / Open the catalog](https://akimfomin.github.io/PortBridge/)
+
 ## For project contributors
 
-PortBridge helps Xbox Series compatibility teams find related issues and fixes across repositories. Each catalog entry links to its original sources and shows which project, revision, and platform a result applies to. Participation is optional. Submit a public source, exact revision, platform, and observed outcome for review by PortBridge maintainers. [Share compatibility evidence](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml) · [Read the API guide](API.md)
+PortBridge helps Xbox Series compatibility teams reuse each other's findings. One contribution can reach several projects. Each catalog entry credits its original sources and records the revisions and platforms that were tested. Maintainers make decisions for their own repositories.
+
+- Before investigating, search by an issue number, a technical term, or a PortBridge ID. Check the linked implementation and test scope.
+- To share a fix or test, submit the original link, exact revision, platform, outcome, and any related discussions. The PortBridge team reviews the report and identifies where it may help. [Share compatibility evidence](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml)
+- To improve the catalog or how teams use it, tell us which work could be shared and where the current process gets in the way. Code and catalog contributions are welcome through pull requests. [Suggest an improvement](https://github.com/akimfomin/PortBridge/issues/new?template=idea.yml)
+- Coding assistants can check for prior work and report findings with sources. [Agent instructions](AGENTS.md) · [Copy an agent prompt](docs/AGENT-PROMPT.md) · [API guide](API.md)
 
 ## Запуск на Windows
 
