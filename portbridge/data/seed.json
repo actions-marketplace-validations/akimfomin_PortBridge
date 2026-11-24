@@ -1,0 +1,200 @@
+{
+  "projects": [
+    {
+      "slug": "continued",
+      "name": "Leonida Continued",
+      "repo": "ubiquitarianism/leonida",
+      "url": "https://github.com/ubiquitarianism/leonida",
+      "stack": "C++ / Python, Vulkan и SPIR-V",
+      "license": "GPL-3.0"
+    },
+    {
+      "slug": "reforge",
+      "name": "LeonidaReforge",
+      "repo": "LeonidaReforge/Leonida",
+      "url": "https://github.com/LeonidaReforge/Leonida",
+      "stack": "C++ / Python, Vulkan и SPIR-V",
+      "license": "GPL-3.0"
+    },
+    {
+      "slug": "xcl",
+      "name": "XCL",
+      "repo": "ivall/xcl",
+      "url": "https://github.com/ivall/xcl",
+      "stack": "Rust, Windows D3D12 и DXIL",
+      "license": "GPL-2.0-only"
+    },
+    {
+      "slug": "victory",
+      "name": "VIctory",
+      "repo": "Marvisak/VIctory",
+      "url": "https://github.com/Marvisak/VIctory",
+      "stack": "Rust, Windows D3D12 и DXIL",
+      "license": "GPL-3.0-or-later"
+    }
+  ],
+  "coordination": {
+    "reference": {
+      "project": "continued",
+      "title": "Ориентир для общего запуска Leonida",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/321",
+      "revision": "e0d4fd2b81e6636b1c6bb2f76be79e910e84d84b",
+      "status": "proposed",
+      "scope": "Продолжения Leonida на Vulkan. Для XCL и VIctory — обмен результатами, с отдельными реализациями.",
+      "observed": "Автор черновой сборки дошёл до цикла кадров. Окно оставалось чёрным. Предложение PortBridge требует решения сопровождающих."
+    },
+    "steps": [
+      "Выбрать версию, на которой несколько участников могут повторить одну и ту же остановку.",
+      "Связать проблему с существующим обсуждением и предложенной правкой, указав автора и результаты проверки.",
+      "Отмечать перенос отдельно для каждой ветки после решения её сопровождающих."
+    ]
+  },
+  "problems": [
+    {
+      "id": "PB-0001",
+      "recorded_at": "2026-11-24T05:24:00Z",
+      "title": "Списки прямоугольников нужно представить треугольниками",
+      "summary": "Графический API Xbox принимает прямоугольники как отдельный тип примитива. На ПК их разворачивают в треугольники. Continued проверяет геометрическую стадию Vulkan, а VIctory обрабатывает непрямые неиндексированные вызовы на стороне GPU в D3D12. Диапазоны применимости и статусы исправлений различаются.",
+      "status": "partial",
+      "tags": ["графика", "d3d12", "vulkan", "прямоугольники", "rectlist", "executeindirect"],
+      "platforms": ["Linux", "Windows 11"],
+      "dependency_ids": [],
+      "solutions": [
+        {
+          "project": "continued",
+          "status": "partial",
+          "summary": "В черновике #207 восстановлено преобразование списков прямоугольников. Необходимость корректно выбирать угол и исходную вершину для цвета проверили отдельно на интеграционной ветке #321.",
+          "source_refs": [
+            {"title": "PR #207 от tedin7", "url": "https://github.com/ubiquitarianism/leonida/pull/207"},
+            {"title": "Интеграционная ветка #321", "url": "https://github.com/ubiquitarianism/leonida/pull/321"}
+          ],
+          "evidence": [
+            {"kind": "independent", "url": "https://github.com/ubiquitarianism/leonida/pull/321#issuecomment-7122193634", "title": "Sigtryggur-Mani-Gudmundsson проверил покрытие", "revision": "e0d4fd2b81e6636b1c6bb2f76be79e910e84d84b", "platforms": ["Linux", "NVIDIA RTX 4070 Ti"], "observed": "Локальный перенос выбора угла из #207 покрыл 24 проверенных порядка вершин. Для верного однотонного цвета тестировщик также сохранил правило выбора первой вершины интеграционной ветки. Тест касался искусственных прямоугольников."},
+            {"kind": "independent", "url": "https://github.com/ubiquitarianism/leonida/pull/207#issuecomment-7122054510", "title": "Отдельная проверка индексированных четырёхугольников", "revision": "21dc3889280dba49916f63342dab72750d3ee4b9", "platforms": ["NVIDIA RTX 4070 Ti"], "observed": "Индексированный четырёхугольник в проверенной версии показал пустой кадр. Это отдельный путь от списка прямоугольников, а вариант исправления проверялся локально."}
+          ]
+        },
+        {
+          "project": "victory",
+          "status": "verified",
+          "outreach_summary": "VIctory's D3D12 rectangle-list path passed eight cases per GPU in an independent synthetic test of indirect non-indexed drawing. All 64 expected pixels matched in a separate synthetic case. PR: https://github.com/Marvisak/VIctory/pull/346. Test report: https://github.com/Marvisak/VIctory/pull/346#issuecomment-7120734503",
+          "summary": "В PR #346 непрямые неиндексированные прямоугольники разворачиваются в треугольники на GPU перед отправкой в Windows D3D12. Проверка относится к этому пути и к указанной версии PR.",
+          "source_refs": [
+            {"title": "PR #346 от BastienRodz", "url": "https://github.com/Marvisak/VIctory/pull/346"},
+            {"title": "Отчёт #255 о пропусках отрисовки", "url": "https://github.com/Marvisak/VIctory/issues/255"}
+          ],
+          "evidence": [
+            {"kind": "independent", "url": "https://github.com/Marvisak/VIctory/pull/346#issuecomment-7120734503", "title": "fuzeofficlal, проверка на двух GPU", "revision": "cee702eb4797a2288a2519b4cbda61720cfb7db4", "platforms": ["Windows 11", "NVIDIA RTX 5090", "AMD Radeon"], "observed": "В каждом окружении прошли все восемь тестов прямоугольников. В отдельном испытании все 64 пикселя искусственного изображения совпали с ожидаемыми. Результат ограничен тестовой сценой и выбранным путём отрисовки."},
+            {"kind": "maintainer_claim", "url": "https://github.com/Marvisak/VIctory/pull/346", "title": "Область реализации по описанию автора PR", "revision": "0aebe86b0c0d0a73f92a274d35b5e6061afbf7af", "platforms": ["Windows D3D12"], "observed": "Автор описал обработку непрямого неиндексированного вызова GPU-стадией. Статус GitHub на момент проверки — открыто."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PB-0002",
+      "recorded_at": "2026-11-24T05:24:00Z",
+      "title": "Проверка атомарных операций ошибочно отвергает допустимую маску EXEC",
+      "summary": "Проверка SPIR-V ждала только загрузку маски EXEC из переменной. В корректном коде компилятор также может использовать константу для всегда активных потоков или уже вычисленную маску. Continued принял изменение для константы, в Reforge предложили расширение для вычисленной маски.",
+      "status": "partial",
+      "tags": ["шейдеры", "spir-v", "exec", "атомарные операции", "проверка"],
+      "platforms": ["macOS", "Linux", "Windows 11"],
+      "dependency_ids": [],
+      "solutions": [
+        {
+          "project": "continued",
+          "status": "merged",
+          "outreach_summary": "Leonida Continued merged the constant-true EXEC case in https://github.com/ubiquitarianism/leonida/pull/20. The PR author reported three targeted tests passing; the full automated semantic job failed (https://github.com/ubiquitarianism/leonida/actions/runs/45308058438/job/138157169598). The Reforge proposal also covers computed masks, so the merged PR is a reference for the constant case.",
+          "summary": "Сохранили авторство kett1m. Проверка принимает постоянное истинное значение только при отсутствии изменения маски активности.",
+          "source_refs": [
+            {"title": "Принятый PR #20", "url": "https://github.com/ubiquitarianism/leonida/pull/20"},
+            {"title": "Коммит слияния", "url": "https://github.com/ubiquitarianism/leonida/commit/d4dc0ff875f25283a621888654c03d716b93a48d"}
+          ],
+          "evidence": [
+            {"kind": "maintainer_claim", "url": "https://github.com/ubiquitarianism/leonida/pull/20", "title": "Локальное сравнение из описания PR", "revision": "c1bcf15f8fe94ce5e6997d0eb844dbd51a84f6a5", "platforms": ["macOS 15 arm64", "Apple M3 Pro"], "observed": "На исходной ветке было 47 падений подслучаев. После правки целевой набор из трёх тестов прошёл. В полном наборе оставался отдельный падающий файл."},
+            {"kind": "automated_test", "url": "https://github.com/ubiquitarianism/leonida/actions/runs/45308058438/job/138157169598", "title": "Статус автоматизированной проверки semantic-tests", "revision": "c1bcf15f8fe94ce5e6997d0eb844dbd51a84f6a5", "platforms": ["Linux"], "observed": "Полный автоматический semantic job завершился с результатом failure. Статус задания сам по себе не определяет результат каждого отдельного теста."},
+            {"kind": "source_observation", "url": "https://github.com/ubiquitarianism/leonida/commit/d4dc0ff875f25283a621888654c03d716b93a48d", "title": "Записанный GitHub коммит слияния", "revision": "d4dc0ff875f25283a621888654c03d716b93a48d", "platforms": [], "observed": "GitHub отмечает слияние PR #20. Факт слияния фиксируется отдельно от результата CI."}
+          ]
+        },
+        {
+          "project": "reforge",
+          "status": "open",
+          "summary": "Предложили перенос исходной правки и поддержку текущего вычисленного значения EXEC для динамической маски.",
+          "source_refs": [
+            {"title": "Предложение и исходные изменения в #21", "url": "https://github.com/LeonidaReforge/Leonida/issues/21"}
+          ],
+          "evidence": [
+            {"kind": "maintainer_claim", "url": "https://github.com/LeonidaReforge/Leonida/issues/21", "title": "Отчёт автора переноса tahffo68hk-hash", "revision": "2ebde81ec07e530a3558bc3f7c4b79da6c37ab65", "platforms": ["NVIDIA RTX 5060 Ti", "Vulkan"], "observed": "На указанной базе с предложенной правкой автор сообщил о четырёх прошедших проверках. Искусственный GPU-сценарий учитывал отключение потоков. Отрицательный контроль отверг подмену динамической маски константой."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PB-0003",
+      "recorded_at": "2026-11-24T05:24:00Z",
+      "title": "Выделение геометрии из второй группы потоков оставляет кадр пустым",
+      "summary": "В искусственном mesh-шейдере запрос на выделение геометрии подаёт вторая группа потоков. Когда запись счётчика разрешена только потоку с локальным индексом 0, вторая группа не записывает результат и кадр остаётся пустым. В исходной правке и переносе используется атомарная запись общего счётчика.",
+      "status": "partial",
+      "tags": ["шейдеры", "mesh", "wave64", "vulkan", "пустой кадр"],
+      "platforms": ["Windows 11", "NVIDIA RTX 5060 Ti"],
+      "dependency_ids": [],
+      "solutions": [
+        {
+          "project": "continued",
+          "status": "reported",
+          "summary": "Сохранился коммит liamhob с атомарной записью счётчика. Карточка ссылается на исходный коммит и на проверку отрисовки при переносе в Reforge.",
+          "source_refs": [
+            {"title": "Исходная правка liamhob", "url": "https://github.com/ubiquitarianism/leonida/commit/0b589ea999bde037c6c9a6f8aaa272a906216334"}
+          ],
+          "evidence": [
+            {"kind": "source_observation", "url": "https://github.com/ubiquitarianism/leonida/commit/0b589ea999bde037c6c9a6f8aaa272a906216334", "title": "Точный коммит автора", "revision": "0b589ea999bde037c6c9a6f8aaa272a906216334", "platforms": [], "observed": "Зафиксирована исходная замена записи счётчика на атомарную операцию. В коммите сохранена информация о происхождении перенесённого кода."}
+          ]
+        },
+        {
+          "project": "reforge",
+          "status": "open",
+          "summary": "Автор #8 перенёс изменение с сохранением происхождения и проверил тот же специально подготовленный mesh-шейдер до и после изменения.",
+          "source_refs": [
+            {"title": "Исходный пустой кадр и перенос в #8", "url": "https://github.com/LeonidaReforge/Leonida/issues/8"}
+          ],
+          "evidence": [
+            {"kind": "maintainer_claim", "url": "https://github.com/LeonidaReforge/Leonida/issues/8", "title": "Отчёт автора переноса tahffo68hk-hash", "revision": "2ebde81ec07e530a3558bc3f7c4b79da6c37ab65", "platforms": ["Windows 11", "NVIDIA RTX 5060 Ti"], "observed": "На точной базе выход был пустым. С предлагаемой правкой совпали 4096 из 4096 пикселей при эмуляции Wave64. Автор также сообщил об успехе без эмуляции и трёх дополнительных контрольных тестах."}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "PB-0004",
+      "relationship": "shared_symptom",
+      "recorded_at": "2026-11-24T05:24:00Z",
+      "title": "Общая остановка после меню при проверке ёмкости очереди",
+      "summary": "Один автор воспроизвёл одинаковый симптом после меню на XCL и VIctory. Это сравнительное наблюдение для двух независимых реализаций. Единый корень проблемы и исправление остаются открытыми.",
+      "status": "investigating",
+      "tags": ["запуск", "меню", "очередь", "сравнение"],
+      "platforms": ["Windows 11", "NVIDIA RTX 3080 Ti"],
+      "dependency_ids": [],
+      "solutions": [
+        {
+          "project": "xcl",
+          "status": "reported",
+          "summary": "В #723 описан выход после меню, а тот же автор приводит контроль на VIctory. Карточка сохраняет наблюдаемый общий симптом.",
+          "source_refs": [
+            {"title": "Сравнительный отчёт XCL #723", "url": "https://github.com/ivall/xcl/issues/723"}
+          ],
+          "evidence": [
+            {"kind": "independent", "url": "https://github.com/ivall/xcl/issues/723", "title": "Сравнение двух реализаций от vladbondarenko97", "revision": null, "platforms": ["Windows 11", "NVIDIA RTX 3080 Ti"], "observed": "Автор сообщил об одинаковой остановке после меню в двух проектах. Это один сравнительный отчёт, обе записи ссылаются на того же проверяющего."}
+          ]
+        },
+        {
+          "project": "victory",
+          "status": "reported",
+          "summary": "Автор повторил остановку на основной версии и ветке графического PR #346. Ветка служит контрольной точкой для сравнения, проблема с очередью остаётся открытой.",
+          "source_refs": [
+            {"title": "Результат контроля на VIctory", "url": "https://github.com/Marvisak/VIctory/pull/346#issuecomment-7121170075"}
+          ],
+          "evidence": [
+            {"kind": "independent", "url": "https://github.com/Marvisak/VIctory/pull/346#issuecomment-7121170075", "title": "Тот же проверяющий повторил симптом на основной ветке", "revision": "97c78d1087808bd6ce5eabb5d566083a38406a90", "platforms": ["Windows 11", "NVIDIA RTX 3080 Ti"], "observed": "Тот же симптом произошёл на основной версии и на проверенной ветке PR #346 на одной машине. Это наблюдение в запуске игры отдельно от лабораторной проверки прямоугольников."}
+          ]
+        }
+      ]
+    }
+  ]
+}

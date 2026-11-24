@@ -1,0 +1,230 @@
+"""Offline checks for the curated catalog, localhost API and static snapshot."""
+
+from http.client import HTTPConnection
+import json
+import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from threading import Thread
+import unittest
+from unittest.mock import patch
+from urllib.parse import urlencode
+from xml.etree import ElementTree
+
+from portbridge.__main__ import DEFAULT_SEED, make_server
+from portbridge.catalog import Catalog
+from portbridge.export import EXPORT_FILES, export
+
+
+class CatalogFixture(unittest.TestCase):
+    def setUp(self):
+        directory = TemporaryDirectory(prefix=".portbridge-test-", dir=DEFAULT_SEED.parents[2])
+        self.addCleanup(directory.cleanup)
+        self.workspace = Path(directory.name)
+        self.db_path = self.workspace / "private" / "catalog.sqlite3"
+        self.catalog = Catalog(self.db_path, DEFAULT_SEED)
+
+    @staticmethod
+    def observation(project, kind, source_id, title, url, metadata=None):
+        return {
+            "project": project,
+            "kind": kind,
+            "source_id": str(source_id),
+            "title": title,
+            "url": url,
+            "status": "open",
+            "updated_at": "2026-11-24T05:00:00+00:00",
+            "metadata": metadata or {},
+        }
+
+
+class CatalogTest(CatalogFixture):
+    def test_outreach_preserves_scope_and_skips_closed_discussions(self):
+        drafts = {draft["problem_id"]: draft for draft in self.catalog.outreach()}
+        self.assertEqual(set(drafts), {"PB-0001", "PB-0002"})
+        self.assertEqual(drafts["PB-0001"]["mode"], "comparison")
+        self.assertEqual(drafts["PB-0001"]["target_project"], "continued")
+        self.assertIn("independent synthetic test", drafts["PB-0001"]["message"])
+        self.assertEqual(drafts["PB-0002"]["mode"], "reference")
+        self.assertIn("full automated semantic job failed", drafts["PB-0002"]["message"])
+        self.assertEqual(drafts["PB-0002"]["target_status"], "unobserved")
+        target = self.observation("reforge", "issue", 21, "EXEC", drafts["PB-0002"]["target_url"])
+        self.catalog.record_sync({"items": [{**target, "status": "closed"}]})
+        self.assertEqual([draft["problem_id"] for draft in self.catalog.outreach()], ["PB-0001"])
+        self.assertIn("reviewed_symptom", {match["state"] for match in self.catalog.matches()})
+
+    def test_real_demo_cards_have_persistent_ids_sources_and_evidence(self):
+        projects = {project["slug"] for project in self.catalog.projects()}
+        self.assertEqual(projects, {"continued", "reforge", "xcl", "victory"})
+        cards = self.catalog.problems()
+        ids = [card["id"] for card in cards]
+        self.assertGreaterEqual(len(ids), 3)
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertEqual(Catalog(self.db_path, DEFAULT_SEED).problems(), cards)
+        for card in cards:
+            with self.subTest(problem=card["id"]):
+                self.assertRegex(card["id"], r"^PB-\d{4,}$")
+                self.assertGreaterEqual(card["project_count"], 2)
+                self.assertEqual(self.catalog.problem(card["id"]), card)
+                for solution in card["solutions"]:
+                    self.assertIn(solution["project"], projects)
+                    self.assertTrue(solution["source_refs"])
+                    self.assertTrue(solution["evidence"])
+
+        evidence = self.catalog.problem("PB-0002")["solutions"][0]["evidence"]
+        by_kind = {entry["kind"]: entry for entry in evidence}
+        self.assertIn("failure", by_kind["automated_test"]["observed"])
+        self.assertIn("/actions/runs/", by_kind["automated_test"]["url"])
+        self.assertRegex(by_kind["maintainer_claim"]["revision"], r"^[0-9a-f]{40}$")
+        self.assertTrue(by_kind["source_observation"]["url"].startswith("https://github.com/"))
+
+    def test_search_and_partial_filters_return_relevant_cards(self):
+        self.assertEqual([p["id"] for p in self.catalog.problems(q="PR #20")], ["PB-0002"])
+        self.assertEqual([p["id"] for p in self.catalog.problems(q="ПРЯМОУГОЛЬНИКОВ", project="continued")],
+                         ["PB-0001"])
+        self.assertEqual([p["id"] for p in self.catalog.problems(project="xcl")], ["PB-0004"])
+        self.assertEqual([p["id"] for p in self.catalog.problems(status="investigating")], ["PB-0004"])
+        opportunities = {p["id"] for p in self.catalog.problems(partial=True)}
+        self.assertTrue({"PB-0001", "PB-0002"} <= opportunities)
+        self.assertNotIn("PB-0004", opportunities)
+        self.assertEqual(self.catalog.problems(q="unrelated widget"), [])
+
+    def test_similarity_never_creates_or_links_a_reviewed_problem(self):
+        original = self.catalog.problems()
+        left = self.observation("continued", "issue", 1234, "Mesh allocation wave64 shared counter leaves frame clear",
+                                "https://github.com/ubiquitarianism/leonida/issues/1234")
+        right = self.observation("xcl", "pr", 1234, "Mesh allocation wave64 shared counter leaves frame clear",
+                                 "https://github.com/ivall/xcl/pull/1234")
+        self.catalog.record_sync({"items": [left, right]})
+        proposals = [entry for entry in self.catalog.matches(q="shared counter") if entry["state"] == "suggested"]
+        self.assertEqual(len(proposals), 1)
+        suggestion = proposals[0]
+        self.assertIsNone(suggestion["problem_id"])
+        self.assertGreaterEqual(suggestion["score"], 0.25)
+        self.assertIn("Разные стеки", suggestion["reason"])
+        self.assertEqual({suggestion["left"]["url"], suggestion["right"]["url"]}, {left["url"], right["url"]})
+        self.assertEqual(self.catalog.problems(), original)
+        self.assertTrue(any(item["state"] == "reviewed_same" and item["problem_id"] == "PB-0001"
+                            for item in self.catalog.matches()))
+
+    def test_metadata_upsert_and_stale_refresh_keep_last_success(self):
+        entry = self.observation("continued", "test", 8787, "Semantic tests",
+                                 "https://github.com/ubiquitarianism/leonida/actions/runs/8787", {"head_sha": "a" * 40})
+        foreign = {**entry, "project": "unconfigured"}
+        unsafe = {**entry, "source_id": "8788", "url": "https://example.invalid/test"}
+        when = "2026-11-24T05:00:00+00:00"
+        self.catalog.record_sync({"items": [entry, foreign, unsafe], "projects": [
+            {"slug": "continued", "sync_status": "ok", "last_success": when},
+        ]})
+        self.catalog.record_sync({"items": [{**entry, "status": "failure"}], "projects": [
+            {"slug": "continued", "sync_status": "stale", "last_success": None},
+        ]})
+        records = self.catalog.observations(kind="test", project="continued", limit=10)
+        self.assertEqual(len(records), 1)
+        self.assertEqual(records[0]["status"], "failure")
+        self.assertEqual(records[0]["metadata"], {"head_sha": "a" * 40})
+        project = next(item for item in self.catalog.projects() if item["slug"] == "continued")
+        self.assertEqual((project["sync_status"], project["last_success"]), ("stale", when))
+
+
+class LocalAPITest(CatalogFixture):
+    def setUp(self):
+        super().setUp()
+        self.server = make_server(self.catalog, 0)
+        self.addCleanup(self.server.server_close)
+        self.worker = Thread(target=self.server.serve_forever, kwargs={"poll_interval": 0.03}, daemon=True)
+        self.worker.start()
+        self.addCleanup(self.stop_server)
+
+    def stop_server(self):
+        self.server.shutdown()
+        self.worker.join(timeout=3)
+
+    def request(self, method, target, *, headers=None, body=None):
+        connection = HTTPConnection("127.0.0.1", self.server.server_port, timeout=5)
+        try:
+            connection.request(method, target, body=body, headers=headers or {})
+            response = connection.getresponse()
+            return response.status, dict(response.getheaders()), response.read()
+        finally:
+            connection.close()
+
+    def test_public_reads_and_agent_preflight(self):
+        status, headers, body = self.request("GET", "/api/v1")
+        self.assertEqual(status, 200)
+        self.assertIn("application/json", headers["Content-Type"])
+        self.assertEqual(headers["X-Content-Type-Options"], "nosniff")
+        self.assertTrue(json.loads(body)["read_only"])
+
+        query = urlencode({"q": "ПРЯМОУГОЛЬНИКОВ", "project": "continued", "limit": "2"})
+        status, _, body = self.request("GET", f"/api/v1/preflight?{query}")
+        self.assertEqual(status, 200)
+        result = json.loads(body)
+        self.assertEqual([p["id"] for p in result["problems"]], ["PB-0001"])
+        self.assertIn("need review", result["guidance"])
+        status, headers, body = self.request("HEAD", "/api/v1/problems/PB-0001")
+        self.assertEqual((status, body), (200, b""))
+        self.assertGreater(int(headers["Content-Length"]), 0)
+
+        self.assertEqual(self.request("GET", "/api/v1/problems?limit=-1")[0], 400)
+        self.assertEqual(self.request("GET", "/api/v1/problems/PB-9999")[0], 404)
+        self.assertEqual(self.request("GET", "/api/docs")[0], 200)
+
+    def test_modifications_and_nonlocal_host_are_rejected(self):
+        original = self.catalog.problems()
+        for method in ("POST", "PUT", "PATCH", "DELETE", "OPTIONS"):
+            with self.subTest(method=method):
+                status, headers, body = self.request(method, "/api/v1/problems/PB-0001", body=b"{}")
+                self.assertEqual(status, 405)
+                self.assertEqual(headers["Allow"], "GET, HEAD")
+                self.assertEqual(json.loads(body)["error"], "read-only API")
+        self.assertEqual(self.request("GET", "/api/v1/projects", headers={"Host": "other.invalid"})[0], 403)
+        self.assertEqual(self.catalog.problems(), original)
+
+    def test_atom_feed_and_outreach_are_read_only_public_data(self):
+        status, headers, body = self.request("GET", "/feed.xml")
+        self.assertEqual(status, 200)
+        self.assertIn("application/atom+xml", headers["Content-Type"])
+        feed = ElementTree.fromstring(body)
+        entries = feed.findall("{http://www.w3.org/2005/Atom}entry")
+        ids = {entry.findtext("{http://www.w3.org/2005/Atom}id") for entry in entries}
+        self.assertEqual(ids, {"urn:portbridge:PB-0001", "urn:portbridge:PB-0002"})
+        _, _, body = self.request("GET", "/api/v1/outreach")
+        self.assertEqual(json.loads(body), {"drafts": self.catalog.outreach()})
+        self.assertEqual(self.request("POST", "/api/v1/outreach")[0], 405)
+
+
+class SnapshotTest(CatalogFixture):
+    def test_export_contains_only_public_static_files(self):
+        sentinel = "PORTBRIDGE-EXPORT-SECRET-FIXTURE"
+        (self.db_path.parent / ".env").write_text(f"GITHUB_TOKEN={sentinel}", encoding="utf-8")
+        with patch.dict(os.environ, {"PORTBRIDGE_GITHUB_TOKEN": sentinel}):
+            destination = export(self.catalog, self.workspace / "dist", "example/PortBridge")
+        files = {path.relative_to(destination).as_posix() for path in destination.rglob("*") if path.is_file()}
+        self.assertEqual(files, EXPORT_FILES)
+        for name in files:
+            with self.subTest(file=name):
+                self.assertNotIn(sentinel.encode(), (destination / name).read_bytes())
+        site = json.loads((destination / "data/site.json").read_text(encoding="utf-8"))
+        self.assertEqual(site["repository"], "example/PortBridge")
+        self.assertEqual(site["mode"], "snapshot")
+        cards = json.loads((destination / "data/problems.json").read_text(encoding="utf-8"))
+        self.assertEqual(cards["problems"], self.catalog.problems())
+        self.assertEqual(export(self.catalog, destination), destination)
+
+    def test_export_refuses_unrelated_directory_contents(self):
+        destination = self.workspace / "occupied"
+        nested = destination / "data"
+        nested.mkdir(parents=True)
+        unrelated = nested / "keep.txt"
+        unrelated.write_text("retain me", encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "outside PortBridge"):
+            export(self.catalog, destination)
+        self.assertEqual(unrelated.read_text(encoding="utf-8"), "retain me")
+        self.assertFalse((destination / "index.html").exists())
+        with self.assertRaisesRegex(ValueError, "outside PortBridge"):
+            export(self.catalog, self.db_path.parent)
+
+
+if __name__ == "__main__":
+    unittest.main()

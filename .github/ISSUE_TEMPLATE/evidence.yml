@@ -1,0 +1,67 @@
+name: Share compatibility evidence
+description: Link a public observation, confirmed test, or existing fix for the PortBridge catalog.
+title: '[Evidence] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        PortBridge tracks public engineering results. Link to the original work so reviewers can verify it and keep the author's credit.
+        You can report a finding once for several projects. Add any related discussions you know about so we can check where it applies.
+
+        Use synthetic or public source-only evidence. Keep game files, game data, credentials, and private logs out of this issue.
+  - type: input
+    id: problem
+    attributes:
+      label: PortBridge problem ID
+      description: Include the PB identifier if the catalog already has a related problem.
+      placeholder: PB-0001
+  - type: input
+    id: source
+    attributes:
+      label: Public primary source
+      description: Link the original issue, pull request, commit, or automated result. Use a permalink where possible.
+      placeholder: https://github.com/owner/repository/issues/123
+    validations:
+      required: true
+  - type: dropdown
+    id: evidence_type
+    attributes:
+      label: Evidence type
+      options:
+        - Developer or author report
+        - Automated check or workflow
+        - Independent reproduction
+    validations:
+      required: true
+  - type: textarea
+    id: related
+    attributes:
+      label: Related projects and public discussions
+      description: Add relevant issues or pull requests in any project. Leave this blank if you only know the original source.
+      placeholder: One GitHub issue or pull request URL per line
+  - type: input
+    id: revision
+    attributes:
+      label: Project and exact revision
+      description: Give the repository and tested commit, branch, or release. State when the revision is unknown.
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and configuration
+      description: Include the operating system, graphics backend, hardware, or driver needed to interpret the result.
+  - type: textarea
+    id: finding
+    attributes:
+      label: Observed behavior
+      description: State the tested condition and outcome. Include the linked fix and any dependencies or limits.
+    validations:
+      required: true
+  - type: checkboxes
+    id: metadata_only
+    attributes:
+      label: Public source-only submission
+      options:
+        - label: This submission contains public technical metadata and links. It contains no game files, keys, or private data.
+          required: true

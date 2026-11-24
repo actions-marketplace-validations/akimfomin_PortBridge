@@ -2,6 +2,10 @@
 
 Каталог проблем совместимости Xbox Series с ПК. Он помогает найти уже предложенное решение, увидеть границы его проверки и передать результат нужному репозиторию. Начальные источники — Leonida Continued, LeonidaReforge, XCL и VIctory.
 
+## For project contributors
+
+PortBridge helps Xbox Series compatibility teams find related issues and fixes across repositories. Each catalog entry links to its original sources and shows which project, revision, and platform a result applies to. Participation is optional. Submit a public source, exact revision, platform, and observed outcome for review by PortBridge maintainers. [Share compatibility evidence](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml) · [Read the API guide](API.md)
+
 ## Запуск на Windows
 
 Нужен Python 3.10 или новее. Пакеты ставить не требуется. Из папки PortBridge:
@@ -30,9 +34,13 @@ python -m portbridge serve
 python -m portbridge export --out dist --repository akimfomin/PortBridge
 ```
 
-В `dist` лежат автономный сайт, JSON и лента Atom. Статическую папку можно вручную загрузить в проект Cloudflare Pages, созданный в режиме Direct Upload. Публичная страница будет открываться без учётной записи. Флаг `--repository` добавляет ссылку на [форму подтверждений PortBridge](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml). Участник открывает и отправляет форму сам. Проверенные изменения вносятся в `portbridge/data/seed.json` через ревью. [Cloudflare Direct Upload](https://developers.cloudflare.com/pages/get-started/direct-upload/)
+В `dist` лежат автономный сайт, JSON и лента Atom. Публичная страница будет открываться без учётной записи. Флаг `--repository` добавляет ссылку на форму подтверждений PortBridge. Участник открывает и отправляет форму сам. Проверенные изменения вносятся в `portbridge/data/seed.json` через ревью.
 
-Для автоматической публикации в Cloudflare подготовлен `.github/workflows/pages.yml`. В GitHub откройте **Settings → Secrets and variables → Actions** и настройте:
+Workflow `.github/workflows/pages.yml` выполняет тесты и экспорт при изменениях в `main`, каждый час и при ручном запуске через **Actions → PortBridge static snapshots → Run workflow** на `main`.
+
+Для публикации на GitHub Pages выберите **Settings → Pages → GitHub Actions**. Установите переменную репозитория `PORTBRIDGE_ENABLE_GITHUB_PAGES` в `true` и запустите workflow. [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+
+Для Cloudflare Pages можно вручную загрузить `dist` в проект Direct Upload. Для автоматической публикации через тот же workflow откройте **Settings → Secrets and variables → Actions** в GitHub и добавьте следующие параметры. [Cloudflare Direct Upload](https://developers.cloudflare.com/pages/get-started/direct-upload/)
 
 | Тип | Имя | Значение |
 | --- | --- | --- |
@@ -41,9 +49,7 @@ python -m portbridge export --out dist --repository akimfomin/PortBridge
 | Секрет | `CLOUDFLARE_ACCOUNT_ID` | ID аккаунта Cloudflare, где создан проект |
 | Секрет | `CLOUDFLARE_API_TOKEN` | Токен с разрешением Account / Cloudflare Pages / Edit для этого аккаунта |
 
-После настройки запустите **Actions → PortBridge static snapshots → Run workflow** на `main`. Workflow выполняет тесты и экспорт также при изменениях в `main` и каждый час. Шаг Cloudflare публикует папку `dist` только при включённой переменной и заданных реквизитах. [Публикация Cloudflare из CI](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/)
-
-Для отдельного варианта на GitHub Pages включите **Settings → Pages → GitHub Actions** и установите `PORTBRIDGE_ENABLE_GITHUB_PAGES` в `true`. Оба варианта публикации выключены при отсутствии своих переменных. [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+Шаг Cloudflare публикует папку `dist` при включённой переменной и заданных реквизитах. Каждый вариант автоматической публикации включается своей переменной. [Публикация Cloudflare из CI](https://developers.cloudflare.com/pages/how-to/use-direct-upload-with-continuous-integration/)
 
 ## Работа куратора
 
