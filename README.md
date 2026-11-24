@@ -1,17 +1,27 @@
 # PortBridge
 
-Каталог проблем совместимости Xbox Series с ПК. Он помогает найти уже предложенное решение, увидеть границы его проверки и передать результат нужному репозиторию. Начальные источники — Leonida Continued, LeonidaReforge, XCL и VIctory.
+PortBridge помогает командам, которые продолжают работу Leonida и развивают совместимость Xbox Series с ПК. После разделения проекта работа разошлась по разным репозиториям. Одна команда может уже разбираться с той же ошибкой, другая держит у себя подходящий тест, а третья повторяет исследование с нуля. PortBridge связывает такие работы и помогает довести находку до проверки или правки в нужном проекте.
 
-[Открыть каталог / Open the catalog](https://akimfomin.github.io/PortBridge/)
+[Проверить свою задачу / Search existing work](https://akimfomin.github.io/PortBridge/) · [Поделиться результатом / Share a result](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml)
 
-## For project contributors
+## Как пользоваться
 
-PortBridge helps Xbox Series compatibility teams reuse each other's findings. One contribution can reach several projects. Each catalog entry credits its original sources and records the revisions and platforms that were tested. Maintainers make decisions for their own repositories.
+1. **Перед работой** введите точную ошибку, название операции или номер PR. Откройте связанный первоисточник и проверьте, совпадают ли условия.
+2. **Возьмите один проверяемый шаг.** Попробуйте готовый тест, сравните две реализации или подтвердите, где перенос не подходит. Запишите версию, стенд, ожидаемое и фактическое поведение.
+3. **Передайте результат по назначению.** Оставьте одну запись со ссылкой на исходную работу и тем, что проверили. Если она помогает другому проекту, сослитесь на неё в его существующем PR или issue и предложите конкретный следующий шаг.
+4. **Замкните обратную связь.** Добавьте ссылку на ответ, перенос или причину отказа. Следующая команда увидит, что уже проверено, на какой версии и кому принадлежит работа.
 
-- Before investigating, search by an issue number, a technical term, or a PortBridge ID. Check the linked implementation and test scope.
-- To share a fix or test, submit the original link, exact revision, platform, outcome, and any related discussions. The PortBridge team reviews the report and identifies where it may help. [Share compatibility evidence](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml)
-- To improve the catalog or how teams use it, tell us which work could be shared and where the current process gets in the way. Code and catalog contributions are welcome through pull requests. [Suggest an improvement](https://github.com/akimfomin/PortBridge/issues/new?template=idea.yml)
-- Coding assistants can check for prior work and report findings with sources. [Agent instructions](AGENTS.md) · [Copy an agent prompt](docs/AGENT-PROMPT.md) · [MCP setup](docs/MCP.md) · [API guide](API.md) · [Optional PR check](docs/GITHUB-ACTION.md)
+Работать можно из своего проекта. Сопровождающие решают, что применять в своей сборке. Для первых шагов достаточно публичного каталога и GitHub. Время поиска, повторные прогоны и фактическое применение результата учитываются в пилоте.
+
+## For contributors
+
+Work that started in Leonida now continues across several repositories. A fix can be under review in one project while another already has the test it needs. PortBridge connects the sources so each team can reuse work and keep credit attached to the original contribution.
+
+1. **Search before starting** by exact error, instruction, or PR number. Open the original source to confirm the scope.
+2. **Run one focused check** in your project's configuration. Record the revision, platform, expected behavior, actual result, and any limitations.
+3. **Share the result once.** Link your report in the relevant issue or PR with a concrete suggestion. Add the reply, follow-up patch, or reason the result could not be reused. [Evidence form](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml)
+
+For agents and maintainers. [Agent prompt](docs/AGENT-PROMPT.md) · [MCP](docs/MCP.md) · [API](API.md) · [Optional PR check](docs/GITHUB-ACTION.md) · [Suggest an improvement](https://github.com/akimfomin/PortBridge/issues/new?template=idea.yml)
 
 ## Запуск на Windows
 
