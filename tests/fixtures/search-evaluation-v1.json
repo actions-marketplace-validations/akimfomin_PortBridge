@@ -1,0 +1,2854 @@
+{
+  "version": 1,
+  "data_as_of": "2026-11-24",
+  "repositories": {
+    "continued": "ubiquitarianism/leonida",
+    "reforge": "LeonidaReforge/Leonida",
+    "victory": "Marvisak/VIctory",
+    "xcl": "ivall/xcl"
+  },
+  "queries": [
+    {
+      "id": "Q01",
+      "query": "console rectangle list expands to triangles",
+      "relationship": "related_implementation",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/pull/207",
+      "positives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/207"
+        },
+        {
+          "url": "https://github.com/Marvisak/VIctory/pull/346",
+          "evidence_url": "https://github.com/Marvisak/VIctory/pull/346#issuecomment-7120734503"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/306",
+          "reason": "This measures ExecuteIndirect argument buffer bounds on Windows rather than how rectangle primitives are assembled."
+        }
+      ],
+      "rationale": "Both sources translate a three-vertex console rectangle into triangles. Continued covers a topology path with explicit restrictions. VIctory covers a non-indexed indirect path. The overlap is the console primitive contract, with different validated draw paths."
+    },
+    {
+      "id": "Q02",
+      "query": "image atomic guard folded true EXEC",
+      "relationship": "source_port",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/pull/20",
+      "positives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/20"
+        },
+        {
+          "url": "https://github.com/LeonidaReforge/Leonida/issues/21"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/issues/15",
+          "reason": "The computed EXEC report covers runtime lane selection rather than the checker for image atomic guards."
+        }
+      ],
+      "rationale": "Reforge #21 links Continued #20 and describes importing the always-active case. The cached dynamic case in Reforge has wider scope.",
+      "unjudged_notes": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/117",
+          "reason": "This alternate approach exercises the dynamic guard instead of accepting the folded value, but helps investigate the same failed checker."
+        }
+      ]
+    },
+    {
+      "id": "Q03",
+      "query": "computed EXEC writes activate wrong lanes",
+      "relationship": "same_problem",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/issues/15",
+      "positives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/issues/15"
+        },
+        {
+          "url": "https://github.com/LeonidaReforge/Leonida/issues/6"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/20",
+          "reason": "The change accepts an already-valid image-atomic guard in a static checker, not the wrong computed runtime lane mask."
+        }
+      ],
+      "rationale": "Reforge links Continued #15 and names the same failing computed wave32 and wave64 EXEC fixtures. These are reports about program behavior; they are separate from changes to the image-atomic guard checker."
+    },
+    {
+      "id": "Q04",
+      "query": "account prompt auth token null read",
+      "relationship": "shared_symptom",
+      "origin_url": "https://github.com/ivall/xcl/issues/598",
+      "positives": [
+        {
+          "url": "https://github.com/ivall/xcl/issues/598"
+        },
+        {
+          "url": "https://github.com/Marvisak/VIctory/issues/348"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "url": "https://github.com/Marvisak/VIctory/issues/598",
+          "reason": "This fault is reported on world load and concerns root-signature flags, whereas the target symptom occurs at the first account prompt."
+        }
+      ],
+      "rationale": "The same reporter linked both reports and described matching failure signatures after sign-in. This is one reporter comparing two layers, with no proven shared cause or fix."
+    },
+    {
+      "id": "Q05",
+      "query": "Wave64 split halves partial destination read modify write",
+      "relationship": "same_problem",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/pull/265",
+      "positives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/265"
+        },
+        {
+          "url": "https://github.com/LeonidaReforge/Leonida/pull/15"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "url": "https://github.com/LeonidaReforge/Leonida/pull/14",
+          "reason": "This change wires emulated barriers and synchronization rather than preserving prior register contents during partial writes."
+        },
+        {
+          "url": "https://github.com/Marvisak/VIctory/pull/578",
+          "reason": "This proposed guard refuses compute or mesh programs on narrow hosts. It does not implement register read-modify-write handling."
+        }
+      ],
+      "rationale": "Both changes address lost destination dependencies for partial writes in the same `wave64_halves` analysis. Both authors report the same 13-case fixture suite."
+    },
+    {
+      "id": "Q06",
+      "query": "Windows D3D12 acphal descriptor heap build",
+      "relationship": "same_problem",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/pull/2",
+      "positives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/2"
+        },
+        {
+          "url": "https://github.com/LeonidaReforge/Leonida/pull/37"
+        }
+      ],
+      "hard_negatives": [],
+      "rationale": "Both PRs document the same console descriptor heap symbol visibility and GDK acphal structure size failures. The Continued change avoids the full heavy include and the Reforge change adds it. Scope includes these two build failures only."
+    },
+    {
+      "id": "Q07",
+      "query": "v_cvt_pknorm_i16_f16 exact rounding",
+      "relationship": "related_implementation",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/pull/135",
+      "positives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/135"
+        },
+        {
+          "url": "https://github.com/Marvisak/VIctory/pull/596"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "url": "https://github.com/Marvisak/VIctory/pull/376",
+          "reason": "The unpacked v_cvt_norm operations share rounding rules but are different opcodes and do not validate the packed two-source result."
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/226",
+          "reason": "Tests floor and round-to-nearest integer conversion rather than packed normalized i16 conversion."
+        }
+      ],
+      "rationale": "The Continued GPU fixture covers the same signed/unsigned packed F16 instructions and checks even ties, saturation and NaN. VIctory's implementation covers those F16 instructions and also F32 forms. Compiler backends and covered inputs differ."
+    },
+    {
+      "id": "Q08",
+      "query": "v_cvt_rpi_i32_f32 exact sum rounding",
+      "relationship": "related_implementation",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/pull/226",
+      "positives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/226"
+        },
+        {
+          "url": "https://github.com/Marvisak/VIctory/pull/605",
+          "evidence_url": "https://github.com/Marvisak/VIctory/pull/605#issuecomment-7123302580"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "url": "https://github.com/Marvisak/VIctory/pull/596",
+          "reason": "Packed normalization rounds a scaled product. The target RPI opcode floors a sum with a half-unit increment."
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/135",
+          "reason": "The fixture focuses on other float opcodes including packed normalization and does not cover RPI."
+        }
+      ],
+      "rationale": "One Continued fixture checks the exact `x + 0.5` edge and signed NaN for the same opcode changed by the VIctory PR. VIctory includes a hardware report from a second participant."
+    },
+    {
+      "id": "Q09",
+      "query": "ds_bpermute_b32 wave64 stays within each half",
+      "relationship": "related_implementation",
+      "origin_url": "https://github.com/ivall/xcl/issues/772",
+      "positives": [
+        {
+          "url": "https://github.com/ivall/xcl/issues/772"
+        },
+        {
+          "url": "https://github.com/Marvisak/VIctory/pull/439"
+        }
+      ],
+      "hard_negatives": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/97",
+          "reason": "This changes forward ds_permute, a different instruction with different dataflow from backward ds_bpermute."
+        },
+        {
+          "url": "https://github.com/ivall/xcl/pull/798",
+          "reason": "This work addresses split-wave synchronization and early exit barriers. It does not supply the expected lane selection for ds_bpermute_b32."
+        }
+      ],
+      "rationale": "The XCL issue identifies an unresolved within-half gather discrepancy. VIctory implements the same possible within-half interpretation and explicitly notes the console-hardware limit. This is relevant cross-project technical evidence, not hardware confirmation."
+    },
+    {
+      "id": "Q10",
+      "query": "viewer camera speed AbortController not defined",
+      "relationship": "same_problem",
+      "origin_url": "https://github.com/LeonidaReforge/Leonida/pull/3",
+      "positives": [
+        {
+          "url": "https://github.com/LeonidaReforge/Leonida/pull/3"
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/93"
+        }
+      ],
+      "hard_negatives": [],
+      "rationale": "Both PRs target the same named case in tests/test_viewer_streaming.cjs. Each documents the omitted AbortController/timers, the same failing error, and a 57/57 result from its contributor after the fix."
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "S01",
+      "query": "mesh allocation from wave 1 leaves frame clear",
+      "relationship": "source_port",
+      "origin_url": "https://github.com/LeonidaReforge/Leonida/issues/8",
+      "positives": [
+        {
+          "url": "https://github.com/LeonidaReforge/Leonida/issues/8"
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/commit/0b589ea999bde037c6c9a6f8aaa272a906216334"
+        }
+      ],
+      "hard_negatives": [],
+      "rationale": "The Reforge issue attributes the mesh fix to a Continued-origin commit and reports a synthetic full-frame check. GitHub issue/PR search does not return the commit endpoint."
+    },
+    {
+      "id": "S02",
+      "query": "queue capacity fault after menus",
+      "relationship": "shared_symptom",
+      "origin_url": "https://github.com/ivall/xcl/issues/723",
+      "positives": [
+        {
+          "url": "https://github.com/ivall/xcl/issues/723"
+        },
+        {
+          "url": "https://github.com/Marvisak/VIctory/pull/346",
+          "evidence_url": "https://github.com/Marvisak/VIctory/pull/346#issuecomment-7121170075"
+        }
+      ],
+      "hard_negatives": [],
+      "rationale": "The same user reported the after-menu failure on XCL and VIctory; no shared mechanism is proven. The VIctory signal is a comment whose parent PR concerns a different primary topic already scored in Q01."
+    }
+  ],
+  "observations": [
+    {
+      "project": "continued",
+      "kind": "issue",
+      "source_id": "14",
+      "title": "Coordinating who works on what",
+      "url": "https://github.com/ubiquitarianism/leonida/issues/14",
+      "status": "open",
+      "updated_at": "2026-11-24T05:58:13Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "atomic"
+          ],
+          "signals": [],
+          "references": [
+            "https://github.com/ubiquitarianism/leonida/issues/14"
+          ]
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "issue",
+      "source_id": "15",
+      "title": "test_exec_computed is red on main: the fixtures landed without the translator half (SHADER-1264)",
+      "url": "https://github.com/ubiquitarianism/leonida/issues/15",
+      "status": "open",
+      "updated_at": "2026-11-24T02:06:02Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "atomic"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "issue",
+      "source_id": "31",
+      "title": "AMD Radeon 780M (RDNA3 iGPU, driver 26.10.2): cs_imgload_tfe and cs_imgload_d16_tfe fail on main - the tfe fetch status VGPR is read but never written",
+      "url": "https://github.com/ubiquitarianism/leonida/issues/31",
+      "status": "open",
+      "updated_at": "2026-11-24T05:05:14Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "vulkan",
+            "shader",
+            "spir-v"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "issue",
+      "source_id": "397",
+      "title": "IMPORTANT! Creating a decentralized chat for communication and coordination. Stage 1",
+      "url": "https://github.com/ubiquitarianism/leonida/issues/397",
+      "status": "open",
+      "updated_at": "2026-11-24T05:44:37Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "2",
+      "title": "D3D12: fix the slot-14 and acphal build breaks, report slot-133 texture GPU VAs",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2",
+      "status": "merged",
+      "updated_at": "2026-11-24T00:42:25Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "vulkan",
+            "atomic"
+          ],
+          "signals": [
+            "id3d12resource"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "12",
+      "title": "Refactor tool management and subprocess execution",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/12",
+      "status": "open",
+      "updated_at": "2026-11-24T05:43:33Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "spir-v"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "20",
+      "title": "tests: the image atomics guard accepts the folded %true when no lane can be inactive",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/20",
+      "status": "merged",
+      "updated_at": "2026-11-24T02:26:11Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "atomic",
+            "shader",
+            "arm64"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "48",
+      "title": "w64_graphics: a vk_harness timeout fails that fixture; the rest still run (#9764)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/48",
+      "status": "open",
+      "updated_at": "2026-11-24T04:02:46Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "52",
+      "title": "docs(i18n): shaders, assets and runtime run together since #1797 in the de, es and ja quickstarts (PROC-544)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/52",
+      "status": "open",
+      "updated_at": "2026-11-24T04:02:43Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "59",
+      "title": "GPU fixture for the packed integer dot products (cs_w32_dot_int)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/59",
+      "status": "open",
+      "updated_at": "2026-11-24T04:49:50Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "wave32",
+            "vulkan",
+            "spir-v"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "64",
+      "title": "Retail boot v35",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/64",
+      "status": "open",
+      "updated_at": "2026-11-24T04:02:37Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "vulkan",
+            "shader",
+            "spir-v"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "67",
+      "title": "docs/gpu_test_results.md: record NVIDIA GeForce RTX 5060 Ti (Windows 11, 610.88) results",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/67",
+      "status": "open",
+      "updated_at": "2026-11-24T04:02:35Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "spir-v",
+            "d3d12",
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "72",
+      "title": "docs(i18n): describe parallel build stages in ar, it and zh-CN (PROC-544)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/72",
+      "status": "open",
+      "updated_at": "2026-11-24T04:02:33Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "93",
+      "title": "tests: provide AbortController and timers in viewer camera speed test sandbox",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/93",
+      "status": "open",
+      "updated_at": "2026-11-24T02:16:29Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "97",
+      "title": "rdna2spirv: redirect absent subgroup lanes before OpGroupNonUniformShuffle in ds_permute",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/97",
+      "status": "open",
+      "updated_at": "2026-11-24T02:17:24Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "vulkan",
+            "spir-v",
+            "wave32",
+            "wave64",
+            "shader"
+          ],
+          "signals": [
+            "opgroupnonuniformshuffle",
+            "opgroupnonuniformballotbitextract"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "100",
+      "title": "docs, tools: point repository links at ProjectLeonida/Leonida",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/100",
+      "status": "open",
+      "updated_at": "2026-11-24T05:39:02Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "117",
+      "title": "tests/semantic: narrow EXEC in test_image_atomics_guard so dynamic %active guard is exercised",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/117",
+      "status": "open",
+      "updated_at": "2026-11-24T02:40:11Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "spir-v"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "135",
+      "title": "Tests: GPU coverage for v_cmp_class_f16/f64, v_fmamk/fmaak_f16, v_cvt_pknorm_*_f16 and v_mac_legacy_f32",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/135",
+      "status": "open",
+      "updated_at": "2026-11-24T04:01:49Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "spir-v",
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "139",
+      "title": "CI: suppress pass notices when the runner reports no failure names",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/139",
+      "status": "open",
+      "updated_at": "2026-11-24T05:28:47Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "140",
+      "title": "tools/native: unified zero-dependency Rust workspace for 8 hot accelerators (13x-228x, Python fallback)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/140",
+      "status": "open",
+      "updated_at": "2026-11-24T05:28:48Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "141",
+      "title": "runtime: build again on MSVC after #9576 (slot 14 console descriptor heap)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/141",
+      "status": "open",
+      "updated_at": "2026-11-24T04:48:06Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "vulkan"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "142",
+      "title": "d3d12_xs: answer the console command-list IID the retail executable asks for",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/142",
+      "status": "open",
+      "updated_at": "2026-11-24T04:31:19Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wine",
+            "vulkan",
+            "d3d12"
+          ],
+          "signals": [
+            "id3d12graphicscommandlist6",
+            "id3d12graphicscommandlist"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "207",
+      "title": "d3d12: draw the console rectangle lists and quad lists (topologies 17 and 19) as triangles",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/207",
+      "status": "open",
+      "updated_at": "2026-11-24T04:28:37Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "rectlist",
+            "shader",
+            "spir-v",
+            "wine"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "214",
+      "title": "ASSET-430: Integrate merged rpf9-explorer fragment recovery fix",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/214",
+      "status": "closed",
+      "updated_at": "2026-11-24T05:39:05Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "readback"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "219",
+      "title": "d3d12_xs: route device slots 86, 101, and 108 to PC Device2/Device5/Device8 (reopens #7201)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/219",
+      "status": "open",
+      "updated_at": "2026-11-24T04:19:14Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wine"
+          ],
+          "signals": [
+            "id3d12device2",
+            "id3d12device5",
+            "id3d12device8"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "221",
+      "title": "ci: validate pull request coordination claims",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/221",
+      "status": "open",
+      "updated_at": "2026-11-24T05:55:19Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "226",
+      "title": "tests: GPU fixture cs_w32_cvt_flr_rpi for v_cvt_flr_i32_f32 and v_cvt_rpi_i32_f32",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/226",
+      "status": "open",
+      "updated_at": "2026-11-24T02:48:37Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wave32",
+            "shader",
+            "vulkan",
+            "spir-v"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "238",
+      "title": "d3d12_vulkan_device_test: query ID3D12Device10 on inner device to avoid slot 78 SetFrameIntervalX shadow",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/238",
+      "status": "open",
+      "updated_at": "2026-11-24T04:48:08Z",
+      "metadata": {
+        "technical": {
+          "terms": [],
+          "signals": [
+            "id3d12device10"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "251",
+      "title": "rdna2spirv: fix ds_wrxchg_rtn_b64 / atomic_swap_x2 64-bit address and data handling",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/251",
+      "status": "open",
+      "updated_at": "2026-11-24T05:06:09Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "atomic"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "265",
+      "title": "rdna2spirv: fix Wave64 halves partial destination read-modify-write",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/265",
+      "status": "merged",
+      "updated_at": "2026-11-24T03:28:20Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "306",
+      "title": "d3d12_execute_indirect_validation_test: handle Windows 11 26300 relaxed max=0 and padded-stride bounds",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/306",
+      "status": "open",
+      "updated_at": "2026-11-24T03:21:28Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "339",
+      "title": "docs: proposal for a change gate (module boundaries, function complexity, doubled text)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/339",
+      "status": "open",
+      "updated_at": "2026-11-24T05:45:06Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "359",
+      "title": "d3d12_xs_device: handle Xbox struct-return ABI (slots 25/26/58), slot 48 desc sanitize and slot 73 IID fallback",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/359",
+      "status": "open",
+      "updated_at": "2026-11-24T05:44:38Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "378",
+      "title": "OLD-7067: build scripts refuse a folder with % in its path up front",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/378",
+      "status": "open",
+      "updated_at": "2026-11-24T05:43:31Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "434",
+      "title": "vulkan_replay: honor format alignment, block size, and depth in tile_footprint staging",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/434",
+      "status": "open",
+      "updated_at": "2026-11-24T05:45:27Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "441",
+      "title": "runtime: honor LEONIDA_TITLE_MEMORY_MB in XSystemGetAppMemoryUsageLimit and XMemGetWorkingSetStatistics (RT-TITLE-MEMORY-CAP)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/441",
+      "status": "open",
+      "updated_at": "2026-11-24T05:44:04Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "448",
+      "title": "tests: cover the computed-EXEC write path #24 left without a test",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/448",
+      "status": "closed",
+      "updated_at": "2026-11-24T05:43:24Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "451",
+      "title": "Repair zero-byte DDS files on TTPF export resume",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/451",
+      "status": "open",
+      "updated_at": "2026-11-24T05:40:08Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "452",
+      "title": "make_game: scope interrupted shader-shard reuse to translator inputs",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/452",
+      "status": "open",
+      "updated_at": "2026-11-24T05:40:12Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "453",
+      "title": "shader_diff: exercise scalar addition and carry (s_add_u32)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/453",
+      "status": "open",
+      "updated_at": "2026-11-24T05:40:15Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "454",
+      "title": "rbf0_encode: refuse invalid descriptor names during batch export",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/454",
+      "status": "open",
+      "updated_at": "2026-11-24T05:40:18Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "455",
+      "title": "world_grid_atlas: diagnose one-cell shoreline grids",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/455",
+      "status": "open",
+      "updated_at": "2026-11-24T05:42:31Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "456",
+      "title": "frexp_ldexp_f16_mods_probe: prevent duplicate selections from hiding failures",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/456",
+      "status": "open",
+      "updated_at": "2026-11-24T05:42:35Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "457",
+      "title": "fspx_prologue_probe: handle hardware oracle Unavailable during run()",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/457",
+      "status": "open",
+      "updated_at": "2026-11-24T05:42:38Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "458",
+      "title": "store: offline *Async slots start and complete their XAsyncBlock with E_FAIL (RT-STORE-ASYNC-COMPLETE)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/458",
+      "status": "open",
+      "updated_at": "2026-11-24T05:42:40Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "459",
+      "title": "image_d16_probe: report packed Y mismatches in first_off",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/459",
+      "status": "open",
+      "updated_at": "2026-11-24T05:42:41Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "460",
+      "title": "tests: cover the computed-EXEC write path #24 left without a test",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/460",
+      "status": "open",
+      "updated_at": "2026-11-24T05:42:51Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "461",
+      "title": "xg_xs: lay out console textures and serve the texture computer (RT-XG-TEXTURE-COMPUTER)",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/461",
+      "status": "open",
+      "updated_at": "2026-11-24T05:49:06Z",
+      "metadata": {}
+    },
+    {
+      "project": "continued",
+      "kind": "pr",
+      "source_id": "462",
+      "title": "SDWA-LLVM19-ENC: recover native SDWA inline float listings",
+      "url": "https://github.com/ubiquitarianism/leonida/pull/462",
+      "status": "open",
+      "updated_at": "2026-11-24T05:45:16Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "5",
+      "title": "Scope check for three inherited fixes / \u786e\u8ba4\u4e09\u9879\u65e7\u4fee\u590d\u7684\u8d21\u732e\u8303\u56f4",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/5",
+      "status": "open",
+      "updated_at": "2026-11-24T02:01:44Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "6",
+      "title": "Computed EXEC writes activate the wrong lanes / \u8ba1\u7b97\u6240\u5f97 EXEC \u5199\u5165\u542f\u7528\u4e86\u9519\u8bef\u7684 lane",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/6",
+      "status": "open",
+      "updated_at": "2026-11-24T02:08:45Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wave64",
+            "spir-v",
+            "shader",
+            "wave32",
+            "bindless",
+            "vulkan",
+            "moltenvk"
+          ],
+          "signals": [],
+          "references": [
+            "https://github.com/ubiquitarianism/leonida/issues/15"
+          ]
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "8",
+      "title": "Mesh allocation from wave 1 leaves the frame clear / Wave 1 \u53d1\u8d77 mesh \u5206\u914d\u540e\u53ea\u8bfb\u56de\u6e05\u5c4f\u8272",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/8",
+      "status": "open",
+      "updated_at": "2026-11-24T02:25:24Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "atomic",
+            "wave64"
+          ],
+          "signals": [
+            "opatomicstore"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "9",
+      "title": "Dense image-load TFE preserves a seeded status word / \u5e38\u9a7b\u56fe\u50cf\u7684 TFE \u4fdd\u7559\u9884\u7f6e\u72b6\u6001\u5b57",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/9",
+      "status": "open",
+      "updated_at": "2026-11-24T02:45:38Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "readback",
+            "shader",
+            "spir-v",
+            "vulkan"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "10",
+      "title": "GPU runner drops the typed-buffer store verdict / GPU runner \u9057\u6f0f typed-buffer store \u5224\u5b9a",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/10",
+      "status": "open",
+      "updated_at": "2026-11-24T02:27:13Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "readback",
+            "spir-v"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "20",
+      "title": "[P0][CI] Restore a green and reproducible CI baseline on main",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/20",
+      "status": "open",
+      "updated_at": "2026-11-24T05:10:08Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "21",
+      "title": "Image atomic guard checker misses folded and cached EXEC / \u56fe\u50cf\u539f\u5b50\u68c0\u67e5\u5668\u9057\u6f0f\u4e86\u6298\u53e0\u548c\u7f13\u5b58\u7684 EXEC",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/21",
+      "status": "open",
+      "updated_at": "2026-11-24T02:46:05Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "atomic",
+            "spir-v",
+            "shader",
+            "proton",
+            "vulkan"
+          ],
+          "signals": [
+            "opatomiciadd"
+          ],
+          "references": [
+            "https://github.com/ubiquitarianism/leonida/pull/20"
+          ]
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "22",
+      "title": "follow the white rabbit again",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/22",
+      "status": "open",
+      "updated_at": "2026-11-24T02:50:27Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "issue",
+      "source_id": "40",
+      "title": "Cross-project observation: the VIctory\u2194Leonida gap is platform, not knowledge \u2014 and one direction closes it",
+      "url": "https://github.com/LeonidaReforge/Leonida/issues/40",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:45Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "dxil",
+            "wave64",
+            "vulkan",
+            "spir-v",
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "2",
+      "title": "Establish independent LeonidaReforge project governance",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/2",
+      "status": "merged",
+      "updated_at": "2026-11-24T00:46:37Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "3",
+      "title": "tests: pass AbortController and timers in viewer camera speed test",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/3",
+      "status": "open",
+      "updated_at": "2026-11-24T03:54:07Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "4",
+      "title": "Route security-sensitive review to the Core Team",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/4",
+      "status": "merged",
+      "updated_at": "2026-11-24T01:54:34Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "7",
+      "title": "Verify unit-test freshness in the progress dashboard",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/7",
+      "status": "open",
+      "updated_at": "2026-11-24T05:25:57Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "11",
+      "title": "rdna2spirv: add --int64-atomics 64-bit OpAtomicExchange for *_atomic_swap_x2 (SHADER-868)",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/11",
+      "status": "open",
+      "updated_at": "2026-11-24T05:18:29Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "atomic",
+            "shader"
+          ],
+          "signals": [
+            "opatomicexchange"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "12",
+      "title": "spirv_gs_to_compute: shift capture bindings past existing set 1 bindings (--pc-tail-ubo)",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/12",
+      "status": "open",
+      "updated_at": "2026-11-24T05:25:55Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "13",
+      "title": "skinned_glb: reject bool vertex_count and non-integer/inf gfx_off cleanly (BUILD-1532)",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/13",
+      "status": "open",
+      "updated_at": "2026-11-24T05:18:27Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "14",
+      "title": "rdna2spirv: wire Wave64 emulate barrier/sync optimization pass",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/14",
+      "status": "open",
+      "updated_at": "2026-11-24T05:25:52Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wave64"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "15",
+      "title": "rdna2spirv: fix Wave64 halves partial destination read-modify-write",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/15",
+      "status": "open",
+      "updated_at": "2026-11-24T05:25:50Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wave64"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "16",
+      "title": "rdna2spirv: guard out-of-bounds swizzle search offsets",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/16",
+      "status": "open",
+      "updated_at": "2026-11-24T05:18:24Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "17",
+      "title": "raytracing: fix BVH index building and validation",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/17",
+      "status": "open",
+      "updated_at": "2026-11-24T05:25:47Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "18",
+      "title": "rdna2spirv: fix V_SAD_U32 clamping and u32 overflow handling",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/18",
+      "status": "open",
+      "updated_at": "2026-11-24T05:18:22Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "19",
+      "title": "rdna2spirv: decode gfx1013 VOP3 0x16b opcode",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/19",
+      "status": "open",
+      "updated_at": "2026-11-24T05:25:45Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "23",
+      "title": "fix(ci): resolve Windows XMA2 FFI synchronization linkage",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/23",
+      "status": "open",
+      "updated_at": "2026-11-24T04:26:12Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "xaudio2"
+          ],
+          "signals": [],
+          "references": [
+            "https://github.com/LeonidaReforge/Leonida/issues/20"
+          ]
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "24",
+      "title": "pe_inspect: parse and validate PE export forwarders table",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/24",
+      "status": "open",
+      "updated_at": "2026-11-24T03:21:40Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "25",
+      "title": "pe_shader_containers: parse and validate multi-image container layouts",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/25",
+      "status": "open",
+      "updated_at": "2026-11-24T03:22:04Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "26",
+      "title": "find_hash_lookup: clamp raw section sizes and validate window and top parameters",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/26",
+      "status": "open",
+      "updated_at": "2026-11-24T03:22:20Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "27",
+      "title": "test: unit tests for tools/gen_gdk_runtime_classes.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/27",
+      "status": "open",
+      "updated_at": "2026-11-24T04:48:06Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "28",
+      "title": "test: unit tests for tools/conformance/compare.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/28",
+      "status": "open",
+      "updated_at": "2026-11-24T04:48:41Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "29",
+      "title": "test: unit tests for tools/hw_oracle/runner.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/29",
+      "status": "open",
+      "updated_at": "2026-11-24T04:49:17Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "30",
+      "title": "test: unit tests for runtime/test/shaders/w64_graphics.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/30",
+      "status": "open",
+      "updated_at": "2026-11-24T04:51:39Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "31",
+      "title": "test: unit tests for tools/hw_oracle/asm.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/31",
+      "status": "open",
+      "updated_at": "2026-11-24T04:51:47Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "32",
+      "title": "test: unit tests for scripts/run_guest_scene.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/32",
+      "status": "open",
+      "updated_at": "2026-11-24T05:18:19Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "33",
+      "title": "test: unit tests for tools/buffer_format_fuzz.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/33",
+      "status": "open",
+      "updated_at": "2026-11-24T04:46:49Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "34",
+      "title": "test: unit tests for tools/sandbox.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/34",
+      "status": "open",
+      "updated_at": "2026-11-24T05:11:18Z",
+      "metadata": {}
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "35",
+      "title": "test: unit tests for runtime/test/shaders/check.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/35",
+      "status": "open",
+      "updated_at": "2026-11-24T05:11:24Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "36",
+      "title": "test: unit tests for runtime/test/shaders/build.py",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/36",
+      "status": "open",
+      "updated_at": "2026-11-24T05:11:49Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "37",
+      "title": "runtime: fix MSVC and clang-cl compile errors in D3D12 shims and acphal",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/37",
+      "status": "open",
+      "updated_at": "2026-11-24T04:23:59Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "reforge",
+      "kind": "pr",
+      "source_id": "38",
+      "title": "test(tools): fix folding-volume collision mock in test_user_sgpr_census",
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/38",
+      "status": "open",
+      "updated_at": "2026-11-24T05:09:53Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "issue",
+      "source_id": "22",
+      "title": "Is there any way to help?",
+      "url": "https://github.com/Marvisak/VIctory/issues/22",
+      "status": "open",
+      "updated_at": "2026-11-24T05:52:43Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "issue",
+      "source_id": "71",
+      "title": "NVIDIA RTX 5070 Ti: world hang (DEVICE_HUNG) on 97c78d1 is not one program, not loops, not barriers; 77 compute pipelines refused",
+      "url": "https://github.com/Marvisak/VIctory/issues/71",
+      "status": "open",
+      "updated_at": "2026-11-24T06:00:04Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wave64",
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "issue",
+      "source_id": "97",
+      "title": "Host GPU device removed on RTX 4070 (diag build, DRED) - many shaders fail to translate",
+      "url": "https://github.com/Marvisak/VIctory/issues/97",
+      "status": "open",
+      "updated_at": "2026-11-24T05:53:49Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "atomic"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "issue",
+      "source_id": "201",
+      "title": "Corpus census: 185 emitted DXIL modules fail dxil.dll validation",
+      "url": "https://github.com/Marvisak/VIctory/issues/201",
+      "status": "open",
+      "updated_at": "2026-11-24T05:51:13Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "dxil",
+            "dxbc",
+            "shader",
+            "d3d12"
+          ],
+          "signals": [],
+          "references": [
+            "https://github.com/Marvisak/VIctory/issues/71"
+          ]
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "issue",
+      "source_id": "225",
+      "title": "Shaders: v_readlane inside a loop the lanes leave at different iterations reads wrong lanes (wave32 and wave64, every GPU)",
+      "url": "https://github.com/Marvisak/VIctory/issues/225",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:43Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "wave32",
+            "wave64"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "issue",
+      "source_id": "348",
+      "title": "Title crashes in Game Init at [address omitted] (null read 0x68) right after XUserAddAsync \u2013 identical signature under XCL (ivall/xcl#598); Win10 19044, RTX 3080",
+      "url": "https://github.com/Marvisak/VIctory/issues/348",
+      "status": "closed",
+      "updated_at": "2026-11-24T03:10:01Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "issue",
+      "source_id": "598",
+      "title": "Crash [address omitted] on world load due to unsupported root signature flags (c01/c00)",
+      "url": "https://github.com/Marvisak/VIctory/issues/598",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:26Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "issue",
+      "source_id": "619",
+      "title": "RTX 3060 (8 GB): DXGI_ERROR_DEVICE_HUNG in world load (mesh 1da1eb9822214321, pixel ef9b757c9c1e4b26, command 1733/2145)",
+      "url": "https://github.com/Marvisak/VIctory/issues/619",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:17Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "55",
+      "title": "GPU: create host textures without the uses the host refuses",
+      "url": "https://github.com/Marvisak/VIctory/pull/55",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:37Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "vkd3d",
+            "proton",
+            "wine",
+            "d3d12"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "89",
+      "title": "gpu: packed 16-bit render targets are R8G8B8A8 where the GPU cannot render to them",
+      "url": "https://github.com/Marvisak/VIctory/pull/89",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:38Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "101",
+      "title": "Shaders: lower sub-dword LDS reads and writes",
+      "url": "https://github.com/Marvisak/VIctory/pull/101",
+      "status": "open",
+      "updated_at": "2026-11-24T05:50:48Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "atomic",
+            "dxil"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "148",
+      "title": "Shaders: lower s_bcnt0_i32_b32/_b64, s_ff0_i32_b32/_b64 and s_flbit_i32_b64/_i64",
+      "url": "https://github.com/Marvisak/VIctory/pull/148",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:47Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "dxil",
+            "arm64"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "158",
+      "title": "GPU: the depth bounds test reaches the host",
+      "url": "https://github.com/Marvisak/VIctory/pull/158",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:21Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "stencil"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "162",
+      "title": "Shaders: lower v_sad_u8, v_sad_hi_u8, v_sad_u16, v_sad_u32 and v_msad_u8",
+      "url": "https://github.com/Marvisak/VIctory/pull/162",
+      "status": "open",
+      "updated_at": "2026-11-24T05:55:42Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "arm64",
+            "dxil"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "163",
+      "title": "Shaders: an audit of which opcodes lower, and 106 more that do",
+      "url": "https://github.com/Marvisak/VIctory/pull/163",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:18Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "dxil"
+          ],
+          "signals": [],
+          "references": [
+            "https://github.com/Marvisak/VIctory/issues/293"
+          ]
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "184",
+      "title": "gpu: parallelize texture detiling across subresources and textures",
+      "url": "https://github.com/Marvisak/VIctory/pull/184",
+      "status": "open",
+      "updated_at": "2026-11-24T05:50:43Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "192",
+      "title": "Shaders: replace single-wave Wave64 LDS lockstep with barriers and lower 32-lane swizzle/DPP at WaveSize(32)",
+      "url": "https://github.com/Marvisak/VIctory/pull/192",
+      "status": "open",
+      "updated_at": "2026-11-24T05:57:37Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "wave64",
+            "wave32",
+            "d3d12",
+            "dxil"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "193",
+      "title": "Shaders, GPU: add runtime stride table for structured buffers",
+      "url": "https://github.com/Marvisak/VIctory/pull/193",
+      "status": "open",
+      "updated_at": "2026-11-24T05:51:22Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "atomic",
+            "dxil",
+            "d3d12"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "200",
+      "title": "Shaders: lower v_div_scale_f32, v_div_fmas_f32 and v_div_fixup_f32",
+      "url": "https://github.com/Marvisak/VIctory/pull/200",
+      "status": "open",
+      "updated_at": "2026-11-24T05:58:47Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "dxil",
+            "d3d12"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "205",
+      "title": "GPU: give null texture UAVs the title's view dimension",
+      "url": "https://github.com/Marvisak/VIctory/pull/205",
+      "status": "open",
+      "updated_at": "2026-11-24T05:51:05Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "d3d12"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "215",
+      "title": "Reuse one CPU read buffer for watched textures",
+      "url": "https://github.com/Marvisak/VIctory/pull/215",
+      "status": "open",
+      "updated_at": "2026-11-24T06:00:32Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12"
+          ],
+          "signals": [
+            "dxgi_error_device_hung"
+          ],
+          "references": [
+            "https://github.com/Marvisak/VIctory/issues/99",
+            "https://github.com/Marvisak/VIctory/issues/325",
+            "https://github.com/Marvisak/VIctory/pull/143"
+          ]
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "223",
+      "title": "Shaders: translate for the host's wave sizes",
+      "url": "https://github.com/Marvisak/VIctory/pull/223",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:33Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "d3d12",
+            "wave64",
+            "wave32"
+          ],
+          "signals": [],
+          "references": [
+            "https://github.com/Marvisak/VIctory/pull/233"
+          ]
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "232",
+      "title": "Linux/Wine testing: interim Linux CI subset; skip load_probe cargo build under Wine",
+      "url": "https://github.com/Marvisak/VIctory/pull/232",
+      "status": "open",
+      "updated_at": "2026-11-24T05:55:46Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wine",
+            "proton",
+            "shader",
+            "x86_64",
+            "d3d12"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "233",
+      "title": "Shaders: wave64 compute on 32-lane hosts, in halves and in the console flow",
+      "url": "https://github.com/Marvisak/VIctory/pull/233",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:35Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "wave64",
+            "dxil",
+            "d3d12",
+            "wave32",
+            "atomic"
+          ],
+          "signals": [],
+          "references": [
+            "https://github.com/Marvisak/VIctory/pull/233",
+            "https://github.com/Marvisak/VIctory/issues/201",
+            "https://github.com/Marvisak/VIctory/pull/320"
+          ]
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "241",
+      "title": "Core host UX: XDG data dir, config-relative paths, and clearer VICTORY_LOG handling",
+      "url": "https://github.com/Marvisak/VIctory/pull/241",
+      "status": "open",
+      "updated_at": "2026-11-24T05:58:32Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "x86_64",
+            "proton",
+            "wine"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "246",
+      "title": "Policy and hooks: staged type changes, pinned exception, executable pre-commit",
+      "url": "https://github.com/Marvisak/VIctory/pull/246",
+      "status": "open",
+      "updated_at": "2026-11-24T05:55:43Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "hlsl",
+            "x86_64"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "251",
+      "title": "Find free descriptor tables that span the search cursor",
+      "url": "https://github.com/Marvisak/VIctory/pull/251",
+      "status": "open",
+      "updated_at": "2026-11-24T05:46:40Z",
+      "metadata": {
+        "technical": {
+          "terms": [],
+          "signals": [],
+          "references": [
+            "https://github.com/Marvisak/VIctory/issues/325"
+          ]
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "254",
+      "title": "Pipeline & CLI: stable shader cache key, in-flight dedup, and AOT warm-up",
+      "url": "https://github.com/Marvisak/VIctory/pull/254",
+      "status": "open",
+      "updated_at": "2026-11-24T05:53:29Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "dxbc",
+            "d3d12"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "256",
+      "title": "fix(hle): skip unavailable host exports in net test",
+      "url": "https://github.com/Marvisak/VIctory/pull/256",
+      "status": "open",
+      "updated_at": "2026-11-24T05:56:55Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "260",
+      "title": "GPU: a half-float rounding carry raises the exponent instead of halving the value",
+      "url": "https://github.com/Marvisak/VIctory/pull/260",
+      "status": "open",
+      "updated_at": "2026-11-24T05:59:33Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "shader",
+            "rectlist"
+          ],
+          "signals": [
+            "status_access_violation"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "273",
+      "title": "SGD5: a marker inside a record's packed bytes is not another record",
+      "url": "https://github.com/Marvisak/VIctory/pull/273",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:55Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "333",
+      "title": "Shaders: keep native root parameters inside the SGPRs, clamp the thread-id count, and name each blob refusal",
+      "url": "https://github.com/Marvisak/VIctory/pull/333",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:34Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "346",
+      "title": "GPU: expand indirect rectangle-list draws on the GPU",
+      "url": "https://github.com/Marvisak/VIctory/pull/346",
+      "status": "open",
+      "updated_at": "2026-11-24T05:02:57Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "376",
+      "title": "Shaders: lower v_cvt_norm_i16_f16 and v_cvt_norm_u16_f16",
+      "url": "https://github.com/Marvisak/VIctory/pull/376",
+      "status": "open",
+      "updated_at": "2026-11-24T04:10:57Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "436",
+      "title": "GPU: copy a shadow's edge pages whole so they are not copied again",
+      "url": "https://github.com/Marvisak/VIctory/pull/436",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:16Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "439",
+      "title": "Shaders: one console wave sharing LDS runs in the console flow on 32-lane hosts",
+      "url": "https://github.com/Marvisak/VIctory/pull/439",
+      "status": "open",
+      "updated_at": "2026-11-24T05:59:37Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "455",
+      "title": "HLE: honor the requested executable on relaunch",
+      "url": "https://github.com/Marvisak/VIctory/pull/455",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:23Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "461",
+      "title": "GPU: keep the initial pipeline of new command lists",
+      "url": "https://github.com/Marvisak/VIctory/pull/461",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:36Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "462",
+      "title": "GPU: refresh directly indexed SRVs that share a page as one range",
+      "url": "https://github.com/Marvisak/VIctory/pull/462",
+      "status": "closed",
+      "updated_at": "2026-11-24T05:47:45Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "472",
+      "title": "GPU: grow the write snapshot in place, and cap idle pool memory",
+      "url": "https://github.com/Marvisak/VIctory/pull/472",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:20Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "515",
+      "title": "GPU: ask for written pages allocation by allocation when a range spans several",
+      "url": "https://github.com/Marvisak/VIctory/pull/515",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:18Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "578",
+      "title": "GPU: refuse wave64 mesh and compute programs on hosts without 64-lane waves",
+      "url": "https://github.com/Marvisak/VIctory/pull/578",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:10Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "592",
+      "title": "Shaders: second rows of packed 16-bit pixel inputs",
+      "url": "https://github.com/Marvisak/VIctory/pull/592",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:18Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "596",
+      "title": "Shaders: lower v_cvt_pknorm_{i16,u16}_{f32,f16} with exact rounding",
+      "url": "https://github.com/Marvisak/VIctory/pull/596",
+      "status": "open",
+      "updated_at": "2026-11-24T05:52:45Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "600",
+      "title": "GPU: ask for directly indexed SRVs' written pages once per span of title memory",
+      "url": "https://github.com/Marvisak/VIctory/pull/600",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:22Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "605",
+      "title": "Shaders: v_cvt_rpi_i32_f32 rounds the exact sum; v_cvt_flr/rpi_i32_f32 saturate a NaN by its sign",
+      "url": "https://github.com/Marvisak/VIctory/pull/605",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:44Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "606",
+      "title": "Shaders: ds_swizzle_b32 offsets from 0xC000 are the rotate and FFT modes",
+      "url": "https://github.com/Marvisak/VIctory/pull/606",
+      "status": "open",
+      "updated_at": "2026-11-24T05:49:01Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "623",
+      "title": "Fix Windows 10 Game-Init crash and root-signature fallback",
+      "url": "https://github.com/Marvisak/VIctory/pull/623",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:51Z",
+      "metadata": {}
+    },
+    {
+      "project": "victory",
+      "kind": "pr",
+      "source_id": "624",
+      "title": "DirectStorage: report queue read failures",
+      "url": "https://github.com/Marvisak/VIctory/pull/624",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:53Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "42",
+      "title": "GPU test results: NVIDIA RTX 3080 (wave32) and AMD RDNA2 iGPU (no mesh shaders)",
+      "url": "https://github.com/ivall/xcl/issues/42",
+      "status": "open",
+      "updated_at": "2026-11-24T05:53:51Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wave32",
+            "shader",
+            "x86_64",
+            "wave64",
+            "d3d12"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "161",
+      "title": "Early init: an empty pack-name table (12 joaat keys) \u2014 how is it built?",
+      "url": "https://github.com/ivall/xcl/issues/161",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:49Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "shader"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "175",
+      "title": "Linux (Wine + vkd3d-proton): a retail game reaches what `main` reaches on Windows; the obstacle is replaced vtables \u2014 proposal: proxies",
+      "url": "https://github.com/ivall/xcl/issues/175",
+      "status": "open",
+      "updated_at": "2026-11-24T05:57:06Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wine",
+            "vkd3d",
+            "proton",
+            "shader",
+            "dxgi",
+            "d3d12",
+            "wave64",
+            "direct3d"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "198",
+      "title": "coordination?",
+      "url": "https://github.com/ivall/xcl/issues/198",
+      "status": "open",
+      "updated_at": "2026-11-24T05:52:31Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "232",
+      "title": "Retail title: null write at [address omitted] (#159) still hits on NVIDIA RTX 4070 Ti, with and without XCL_NETWORK=0",
+      "url": "https://github.com/ivall/xcl/issues/232",
+      "status": "open",
+      "updated_at": "2026-11-24T05:58:43Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "swapchain"
+          ],
+          "signals": [
+            "dispatchmesh",
+            "id3d12commandqueue",
+            "id3d12commandallocator",
+            "id3d12graphicscommandlist10"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "535",
+      "title": "host elsewhere too",
+      "url": "https://github.com/ivall/xcl/issues/535",
+      "status": "open",
+      "updated_at": "2026-11-24T05:40:46Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "584",
+      "title": "Discord censorship, move to Fluxer",
+      "url": "https://github.com/ivall/xcl/issues/584",
+      "status": "open",
+      "updated_at": "2026-11-24T05:39:32Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "595",
+      "title": "Crash after 2 secs ( unhandled exception [address omitted] in game_scarlett_master.exe[address omitted] )",
+      "url": "https://github.com/ivall/xcl/issues/595",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:29Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "598",
+      "title": "Retail title 1.0.2.1: null read at [address omitted] right after the auth token refusals \u2013 crashes at the account prompt with no input (RTX 3080, Win10 19044)",
+      "url": "https://github.com/ivall/xcl/issues/598",
+      "status": "open",
+      "updated_at": "2026-11-24T03:31:35Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "616",
+      "title": "Retail title: audio runs, present stops updating (no 3D/text), then null write; console command-list slots #126/#131/#132/#142 called",
+      "url": "https://github.com/ivall/xcl/issues/616",
+      "status": "open",
+      "updated_at": "2026-11-24T05:42:14Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "675",
+      "title": "Retail title 1.0.2.1: GPU hang / crash at [address omitted] when the story loads (RTX 3070 Ti)",
+      "url": "https://github.com/ivall/xcl/issues/675",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:35Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "698",
+      "title": "Fluxer service",
+      "url": "https://github.com/ivall/xcl/issues/698",
+      "status": "open",
+      "updated_at": "2026-11-24T05:36:27Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "718",
+      "title": "Tests: placed_title_textures_share_vram_and_preserve_pixels fails now and then at its cubemap reuse check (main 9ce2070)",
+      "url": "https://github.com/ivall/xcl/issues/718",
+      "status": "open",
+      "updated_at": "2026-11-24T05:42:07Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "725",
+      "title": "Feature Request: Consider Creating an Official Telegram Community",
+      "url": "https://github.com/ivall/xcl/issues/725",
+      "status": "open",
+      "updated_at": "2026-11-24T05:34:24Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "772",
+      "title": "Recompiler: ds_bpermute_b32 in wave64 may stay within each 32-lane half on RDNA2 (needs a hardware run)",
+      "url": "https://github.com/ivall/xcl/issues/772",
+      "status": "open",
+      "updated_at": "2026-11-24T05:59:16Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "773",
+      "title": "Discord invite is not working",
+      "url": "https://github.com/ivall/xcl/issues/773",
+      "status": "open",
+      "updated_at": "2026-11-24T05:45:31Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "780",
+      "title": "Your Discord \u201everify app\u201c was adding me to a scam/cheat server",
+      "url": "https://github.com/ivall/xcl/issues/780",
+      "status": "open",
+      "updated_at": "2026-11-24T05:39:20Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "781",
+      "title": "GTA VI 1.0.2.1, RTX 4060 8 GB: no crash at 30 fps, but the window stays black; 2048 BCPack refusals",
+      "url": "https://github.com/ivall/xcl/issues/781",
+      "status": "open",
+      "updated_at": "2026-11-24T05:36:54Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "804",
+      "title": "DXGI-aware retention for empty D3D12.X texture heaps",
+      "url": "https://github.com/ivall/xcl/issues/804",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:24Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "809",
+      "title": "XCL Verify probably hijacked",
+      "url": "https://github.com/ivall/xcl/issues/809",
+      "status": "closed",
+      "updated_at": "2026-11-24T05:46:34Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "810",
+      "title": "Tests: pls_quota expects ERROR_PATH_NOT_FOUND for a missing path below S:\\, Wine returns ERROR_FILE_NOT_FOUND",
+      "url": "https://github.com/ivall/xcl/issues/810",
+      "status": "open",
+      "updated_at": "2026-11-24T05:43:44Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "issue",
+      "source_id": "813",
+      "title": "Retail title (1.0.2.1) on RTX 3080 + i9-14900KF: deterministic [address omitted] read at 0xe (NULL deref) at [address omitted] after the loading panel",
+      "url": "https://github.com/ivall/xcl/issues/813",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:54Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "194",
+      "title": "A memory line at every crash and while the title runs: process and system commit, video memory, what the title asked for",
+      "url": "https://github.com/ivall/xcl/pull/194",
+      "status": "open",
+      "updated_at": "2026-11-24T05:29:19Z",
+      "metadata": {
+        "technical": {
+          "terms": [],
+          "signals": [
+            "idxgiadapter3"
+          ],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "237",
+      "title": "Config: recreate xcl.toml only on NotFound and resolve memory mode case-insensitively (#106)",
+      "url": "https://github.com/ivall/xcl/pull/237",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:04Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "240",
+      "title": "Report: lock-safe crash report persistence under contention and re-entrancy (#106)",
+      "url": "https://github.com/ivall/xcl/pull/240",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:02Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "242",
+      "title": "D3D12.X: R9G9B9E5 render targets / UAVs are half floats where the device refuses them (GTA VI, Series S)",
+      "url": "https://github.com/ivall/xcl/pull/242",
+      "status": "open",
+      "updated_at": "2026-11-24T05:56:20Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "d3d12",
+            "shader",
+            "wave64"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "243",
+      "title": "VFS: clamp S:\\ free and total bytes to config.pls_mb in GetDiskFreeSpaceEx (#106)",
+      "url": "https://github.com/ivall/xcl/pull/243",
+      "status": "open",
+      "updated_at": "2026-11-24T05:53:59Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "253",
+      "title": "xcl run: thread dumps unwind a copy of each stopped thread's stack",
+      "url": "https://github.com/ivall/xcl/pull/253",
+      "status": "open",
+      "updated_at": "2026-11-24T05:54:01Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wave64",
+            "wine"
+          ],
+          "signals": [],
+          "references": [
+            "https://github.com/ivall/xcl/issues/106",
+            "https://github.com/ivall/xcl/pull/253"
+          ]
+        }
+      }
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "257",
+      "title": "Linux: docs/linux.md, scripts/linux and Wine start-up checks for vkd3d-proton and DXVK (#154, #241)",
+      "url": "https://github.com/ivall/xcl/pull/257",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:02Z",
+      "metadata": {
+        "technical": {
+          "terms": [
+            "wine",
+            "vkd3d",
+            "proton",
+            "x86_64",
+            "dxgi"
+          ],
+          "signals": [],
+          "references": []
+        }
+      }
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "450",
+      "title": "D3D12.X: XCL_OVERLAY draws fps / stats into the shown frame",
+      "url": "https://github.com/ivall/xcl/pull/450",
+      "status": "open",
+      "updated_at": "2026-11-24T05:43:02Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "541",
+      "title": "D3D12.X: a console MS in the AS slot is translated as the mesh shader it is",
+      "url": "https://github.com/ivall/xcl/pull/541",
+      "status": "open",
+      "updated_at": "2026-11-24T05:46:28Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "640",
+      "title": "D3D12.X: an optional page budget evicts CPU-filled title textures LRU",
+      "url": "https://github.com/ivall/xcl/pull/640",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:01Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "680",
+      "title": "Recompiler: memory windows from the descriptor heap (no per-access switch)",
+      "url": "https://github.com/ivall/xcl/pull/680",
+      "status": "open",
+      "updated_at": "2026-11-24T05:47:22Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "689",
+      "title": "Scripts: smoke blocks name the game folder by a hash, not its name",
+      "url": "https://github.com/ivall/xcl/pull/689",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:11Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "789",
+      "title": "D3D12.X: release sparse buffer pins outside the driver callback",
+      "url": "https://github.com/ivall/xcl/pull/789",
+      "status": "open",
+      "updated_at": "2026-11-24T05:46:15Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "790",
+      "title": "Shaders: xcl disasm prints SDWA selectors, modifiers and scalar sources",
+      "url": "https://github.com/ivall/xcl/pull/790",
+      "status": "open",
+      "updated_at": "2026-11-24T05:46:13Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "791",
+      "title": "Shaders: xcl disasm prints DPP controls, masks and source modifiers",
+      "url": "https://github.com/ivall/xcl/pull/791",
+      "status": "open",
+      "updated_at": "2026-11-24T05:46:12Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "792",
+      "title": "Recompiler: range-check UMA memory windows and propagate 64-bit carry/borrow",
+      "url": "https://github.com/ivall/xcl/pull/792",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:43Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "798",
+      "title": "Recompiler: bounded split-wave64 spin default and early-exit-safe s_barrier",
+      "url": "https://github.com/ivall/xcl/pull/798",
+      "status": "merged",
+      "updated_at": "2026-11-24T05:57:43Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "802",
+      "title": "Recompiler: apply ABS / NEG on v_mov_b32, v_cndmask_b32 and two cvts",
+      "url": "https://github.com/ivall/xcl/pull/802",
+      "status": "open",
+      "updated_at": "2026-11-24T05:46:10Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "803",
+      "title": "Recompiler: v_swaprel_b32 indexes the destination with M0[25:16]",
+      "url": "https://github.com/ivall/xcl/pull/803",
+      "status": "open",
+      "updated_at": "2026-11-24T05:46:09Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "805",
+      "title": "XGameRuntime: grow the task queue thread pool when all workers are busy",
+      "url": "https://github.com/ivall/xcl/pull/805",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:30Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "806",
+      "title": "D3D12.X: allocate an oversized chunk for console list records larger than CHUNK",
+      "url": "https://github.com/ivall/xcl/pull/806",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:33Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "807",
+      "title": "XCL_NETWORK=0: WSASendTo lets loopback and connected sockets through, matching sendto",
+      "url": "https://github.com/ivall/xcl/pull/807",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:35Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "808",
+      "title": "XCL_NETWORK=0: parse loopback IPs in local_name instead of matching any 127. prefix",
+      "url": "https://github.com/ivall/xcl/pull/808",
+      "status": "open",
+      "updated_at": "2026-11-24T05:41:37Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "811",
+      "title": "Recompiler: SDWA register uses come from the extension dword",
+      "url": "https://github.com/ivall/xcl/pull/811",
+      "status": "open",
+      "updated_at": "2026-11-24T05:45:52Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "812",
+      "title": "Shaders: xcl disasm prints image operands, dmask, dim and flags",
+      "url": "https://github.com/ivall/xcl/pull/812",
+      "status": "open",
+      "updated_at": "2026-11-24T05:45:56Z",
+      "metadata": {}
+    },
+    {
+      "project": "xcl",
+      "kind": "pr",
+      "source_id": "814",
+      "title": "Recompiler: translate s_quadmask_b32/b64 and s_bitreplicate_b64_b32",
+      "url": "https://github.com/ivall/xcl/pull/814",
+      "status": "open",
+      "updated_at": "2026-11-24T05:48:49Z",
+      "metadata": {}
+    }
+  ]
+}

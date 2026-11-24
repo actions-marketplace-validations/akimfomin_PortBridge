@@ -11,7 +11,7 @@ PortBridge helps Xbox Series compatibility teams reuse each other's findings. On
 - Before investigating, search by an issue number, a technical term, or a PortBridge ID. Check the linked implementation and test scope.
 - To share a fix or test, submit the original link, exact revision, platform, outcome, and any related discussions. The PortBridge team reviews the report and identifies where it may help. [Share compatibility evidence](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml)
 - To improve the catalog or how teams use it, tell us which work could be shared and where the current process gets in the way. Code and catalog contributions are welcome through pull requests. [Suggest an improvement](https://github.com/akimfomin/PortBridge/issues/new?template=idea.yml)
-- Coding assistants can check for prior work and report findings with sources. [Agent instructions](AGENTS.md) · [Copy an agent prompt](docs/AGENT-PROMPT.md) · [API guide](API.md)
+- Coding assistants can check for prior work and report findings with sources. [Agent instructions](AGENTS.md) · [Copy an agent prompt](docs/AGENT-PROMPT.md) · [MCP setup](docs/MCP.md) · [API guide](API.md) · [Optional PR check](docs/GITHUB-ACTION.md)
 
 ## Запуск на Windows
 
@@ -26,10 +26,12 @@ python -m portbridge serve
 
 `python -m portbridge status` показывает время последней попытки и состояние синхронизации. `python -m portbridge sync --force --pages 2` обновляет кэш и берёт до двух страниц. Для регулярного сбора можно передать `PORTBRIDGE_GITHUB_TOKEN` через переменные окружения с доступом только на чтение публичных данных. В файлах проекта токен хранить не нужно.
 
+`python -m portbridge backfill --pages 6` догружает старые публичные задачи и PR. Повторный запуск продолжает с сохранённой страницы. `python -m portbridge incremental --pages 6` подбирает изменения с прошлого обновления. Оба запуска ограничены по времени и сохраняют прогресс. GitHub Actions выполняет эти команды при публикации.
+
 ## Что выбрать на главной
 
 - Введите название ошибки, номер PR или ID `PB-0001`. Карточка показывает реализацию в каждом проекте, версии, платформы, ссылки и происхождение проверок.
-- Во вкладке совпадений сверьте первоисточники. Автоматическое сходство заголовков остаётся подсказкой. Группировку постоянных карточек проверяет куратор.
+- Во вкладке совпадений сверьте первоисточники. PortBridge учитывает прямые ссылки между репозиториями, технические термины и коды ошибок. Подсказка требует проверки куратором перед внесением в постоянную карточку.
 - В частичном прогрессе найдите, где одна команда уже продвинулась. Откройте её PR, затем найдите обсуждение команды, которая ещё разбирает проблему.
 - Ориентир для общей сборки имеет обозначенный статус. Он меняется после подтверждённого прогона и решения сопровождающих. Скриншот меню, успешный тест шейдера и запуск игры считаются разными результатами.
 - Подпишитесь на `feed.xml` в приложении для Atom, если хотите получать проверенные обновления. Лента показывает карточки, где есть проверенное или принятое решение. Подробности проверки доступны по ID карточки.
@@ -67,6 +69,8 @@ Workflow `.github/workflows/pages.yml` выполняет тесты и эксп
 
 PortBridge выполняет только запросы чтения к GitHub. В кэше остаются нормализованные метаданные. Тела сообщений, вложения, логи заданий и исходники при синхронизации не сохраняются. Текст источников не исполняется. Публичный экспорт включает только файлы интерфейса и каталог. Для совместной работы нужны решение о сборке-ориентире, подтверждение спорных совпадений, независимые прогоны и согласие сопровождающих на переносы.
 
+Если находка PortBridge помогла переиспользовать тест или отказаться от повторной работы, добавьте ссылку на подтверждение в форму. Такие отчёты позволяют считать наблюдаемый эффект отдельно от числа предложенных совпадений. [Форма подтверждений](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml)
+
 Собственный код PortBridge открыт по лицензии MIT. Ссылки на другие проекты и имена авторов сохраняются. Лицензия PortBridge распространяется на его код и документацию. [Лицензия](LICENSE)
 
 ## Проверки и структура
@@ -79,6 +83,8 @@ python -m unittest discover -s tests -v
 - `portbridge/catalog.py` хранит карточки и связи в SQLite, строит подсказки совпадений. [Python SQLite](https://docs.python.org/3/library/sqlite3.html)
 - `portbridge/__main__.py` запускает локальный API. [Python HTTP server](https://docs.python.org/3/library/http.server.html)
 - `portbridge/export.py` формирует переносимую публикацию. [API для агентов](API.md)
+
+Для быстрой проверки описания задачи или ссылки можно запустить `python -m portbridge.preflight --q rectlist`. Команда читает публичный каталог без ключа GitHub и показывает, какой источник проверить первым. [Результаты оценки поиска](docs/SEARCH-EVALUATION.md)
 
 ## Что добавляет PortBridge
 

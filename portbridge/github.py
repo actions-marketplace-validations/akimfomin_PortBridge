@@ -1,5 +1,6 @@
 """Read-only GitHub metadata sync with a conditional-request SQLite cache."""
 
+from contextlib import closing
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from http.client import HTTPException
@@ -21,6 +22,36 @@ PAGE_SIZE = 20
 CACHE_TTL = 900
 MAX_RESPONSE = 4 * 1024 * 1024
 NOT_MODIFIED = object()
+BODY_LIMIT = 32_768
+SIGNATURE_LIMIT = 16
+UPDATE_OVERLAP = 60
+INITIAL_UPDATE_WINDOW = 24 * 60 * 60
+URL = re.compile(r"https?://[^\s<>()\[\]\"`]+", re.I)
+REFERENCE = re.compile(r"/([A-Za-z0-9_-]+/[A-Za-z0-9_.-]+)/(issues|pull|commit)/([A-Za-z0-9]+)/?")
+TECHNICAL_TERM = re.compile(
+    r"\b(?:d3d12|direct3d(?: 12)?|directx(?: 12)?|dxgi|vulkan|metal|xenos|xggraphics|"
+    r"dxil|dxbc|spir[- ]?v|hlsl|glsl|rectlist|rectangle list|quadlist|shader(?:s)?|"
+    r"tessellation|atomic(?:s)?|bindless|descriptor heap|resource barrier|swapchain|swap chain|"
+    r"pipeline cache|root signature|command queue|command list|executeindirect|"
+    r"wave(?:32|64)|mesh shader|sampler feedback|device (?:lost|removed|hung)|"
+    r"black frame|black screen|memory leak|out of memory|vertex fetch|"
+    r"buffer overflow|data race|deadlock|access violation|frame pacing|"
+    r"stencil|depth test|depth buffer|texture tiling|readback|workgraph|work graph|"
+    r"xinput|xaudio2|wasapi|avx2|arm64|x86_64|wine|proton|moltenvk|vkd3d)\b", re.I,
+)
+TERM_ALIASES = {
+    "direct3d 12": "d3d12", "directx 12": "d3d12", "spirv": "spir-v",
+    "spir v": "spir-v", "rectangle list": "rectlist", "swap chain": "swapchain",
+    "atomics": "atomic", "shaders": "shader", "work graph": "workgraph",
+}
+API_SYMBOL = re.compile(
+    r"\b(?:vk(?:[A-Z][A-Za-z0-9]{1,62})|ID3D12[A-Za-z0-9_]{1,58}|"
+    r"IDXGI[A-Za-z0-9_]{1,59}|(?:VK_ERROR|DXGI_ERROR|D3D12_ERROR|D3D12_MESSAGE_ID|"
+    r"STATUS_ACCESS|SPV_ERROR|XAUDIO2_E)_[A-Z0-9_]{1,43}|VUID-[A-Za-z0-9_-]{1,59}|"
+    r"(?:OpAtomic|OpGroupNonUniform)[A-Z][A-Za-z0-9]{0,46}|"
+    r"ExecuteIndirect|DispatchMesh|DrawIndexedInstanced|CreateGraphicsPipelineState|"
+    r"0[xX](?:887[Aa]00[0-9a-fA-F]{2}|80070057|8007000[Ee]|80004005|[Cc]0000005))\b"
+)
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -66,6 +97,17 @@ def _utc(value):
     return datetime.fromtimestamp(value, timezone.utc).isoformat(timespec="seconds") if value else None
 
 
+def _timestamp(value):
+    if isinstance(value, str):
+        try:
+            date = datetime.fromisoformat(value.replace("Z", "+00:00"))
+            if date.tzinfo is not None:
+                return int(date.timestamp())
+        except (ValueError, OverflowError, OSError):
+            pass
+    return 0
+
+
 def _number(value):
     return value if type(value) is int and value > 0 else None
 
@@ -80,7 +122,45 @@ def _project(entry):
     return {**entry, "slug": slug, "repo": repo}
 
 
-def _item(entry, kind, project):
+def _limited(values):
+    return list(dict.fromkeys(values))[:SIGNATURE_LIMIT]
+
+
+def _technical(entry, label_names, repositories):
+    # Only bounded, controlled vocabulary and typed source references leave memory.
+    body = entry.get("body")
+    body = body[:BODY_LIMIT] if isinstance(body, str) else ""
+    value = f"{_text(entry.get('title'))}\n{' '.join(label_names)}\n{body}"
+    references = []
+
+    def reference(match):
+        try:
+            parsed = urlsplit(match[0].rstrip(".,;!:"))
+        except ValueError:
+            return " "
+        path = REFERENCE.fullmatch(parsed.path) if parsed.netloc.lower() == "github.com" else None
+        if parsed.scheme == "https" and path:
+            repo, route, ident = path.groups()
+            if route == "commit":
+                ident = _sha(ident)
+            elif not re.fullmatch(r"[1-9][0-9]{0,11}", ident):
+                ident = ""
+            if ident and repo.lower() in repositories and len(references) < SIGNATURE_LIMIT:
+                canonical = f"https://github.com/{repositories[repo.lower()]}/{route}/{ident}"
+                if canonical not in references:
+                    references.append(canonical)
+        return " "
+
+    searchable = URL.sub(reference, value)
+    terms = (match[0].casefold() for match in TECHNICAL_TERM.finditer(searchable))
+    return {
+        "terms": _limited(TERM_ALIASES.get(term, term) for term in terms),
+        "signals": _limited(match[0].casefold() for match in API_SYMBOL.finditer(searchable)),
+        "references": references,
+    }
+
+
+def _item(entry, kind, project, repositories, *, repository_issues=False):
     repo = project["repo"]
     metadata = {"evidence_kind": "reported", "github_endpoint": kind}
     author = _login(entry.get("user"))
@@ -129,8 +209,13 @@ def _item(entry, kind, project):
             for label in _array(entry.get("labels"))[:30]
         ]
         metadata.update({"number": ident, "labels": [label for label in labels if label]})
+        metadata["technical"] = _technical(entry, metadata["labels"], repositories)
+        title = _text(URL.sub(" ", title))
+        if repository_issues:
+            metadata["github_endpoint"] = "repository_issues"
         if kind == "pr":
-            merged_at = _text(entry.get("merged_at"), 40)
+            pull = _object(entry.get("pull_request"))
+            merged_at = _text(entry.get("merged_at") or pull.get("merged_at"), 40)
             if merged_at:
                 status = "merged"
             metadata.update({
@@ -151,9 +236,14 @@ def _item(entry, kind, project):
     }
 
 
-def _query(project, kind, page):
+def _query(project, kind, page, *, since=None):
     params = {"per_page": PAGE_SIZE, "page": page}
     repo = project["repo"]
+    if kind == "repository_issues":
+        params.update(state="all", sort="created" if since is None else "updated", direction="asc")
+        if since is not None:
+            params["since"] = _utc(since).replace("+00:00", "Z")
+        return f"{API}/repos/{repo}/issues?{urlencode(params)}", "core"
     if kind == "issue":
         params.update(q=f"repo:{repo} is:issue", sort="updated", order="desc")
         return f"{API}/search/issues?{urlencode(params)}", "search"
@@ -164,7 +254,7 @@ def _query(project, kind, page):
 
 
 class _Sync:
-    def __init__(self, db, refresh):
+    def __init__(self, db, refresh, projects=()):
         self.db = db
         self.refresh = refresh
         self.token = os.environ.get("PORTBRIDGE_GITHUB_TOKEN") or os.environ.get("GITHUB_TOKEN")
@@ -172,6 +262,7 @@ class _Sync:
         self.opener = build_opener(NoRedirect())
         self.deadline = time.monotonic() + 45
         self.public_checks = {}
+        self.repositories = {project["repo"].lower(): project["repo"] for project in projects}
         self.db.executescript("""
             CREATE TABLE IF NOT EXISTS github_cache (
                 url TEXT PRIMARY KEY,
@@ -287,11 +378,12 @@ class _Sync:
         if self.public_checks[repo]:
             raise Unavailable(self.public_checks[repo])
 
-    def page(self, project, kind, number):
-        url, resource = _query(project, kind, number)
+    def page(self, project, kind, number, *, since=None):
+        url, resource = _query(project, kind, number, since=since)
         row = self.db.execute("SELECT etag, fetched_at, items, has_next FROM github_cache WHERE url=?",
                               (url,)).fetchone()
         cached = None
+        current_schema = False
         if row:
             etag, fetched_at, encoded, has_next = row
             try:
@@ -300,11 +392,13 @@ class _Sync:
                     cached = None
             except (TypeError, ValueError):
                 pass
-            if fetched_at + CACHE_TTL > time.time() and cached is not None and not self.refresh:
+            current_schema = cached is not None and (kind not in ("issue", "pr", "repository_issues") or
+                all("technical" in _object(_object(item).get("metadata")) for item in cached))
+            if fetched_at + CACHE_TTL > time.time() and current_schema and not self.refresh:
                 return cached, has_next, "cached", fetched_at, None
         try:
             self._require_public(project["repo"])
-            raw, headers = self._request(url, resource, row[0] if cached is not None else None)
+            raw, headers = self._request(url, resource, row[0] if current_schema else None)
             if raw is NOT_MODIFIED:
                 if cached is None:
                     raise Unavailable("GitHub returned 304 without a cached page")
@@ -322,11 +416,15 @@ class _Sync:
                     records = raw
                 if not isinstance(records, list):
                     raise Unavailable("GitHub returned unexpected metadata")
-                items = [
-                    normalized for record in records[:PAGE_SIZE]
-                    if isinstance(record, dict) and (kind != "issue" or "pull_request" not in record)
-                    and (normalized := _item(record, kind, project)) is not None
-                ]
+                items = []
+                for record in records[:PAGE_SIZE]:
+                    if not isinstance(record, dict) or (kind == "issue" and "pull_request" in record):
+                        continue
+                    item_kind = ("pr" if "pull_request" in record else "issue") if kind == "repository_issues" else kind
+                    item = _item(record, item_kind, project, self.repositories,
+                                 repository_issues=kind == "repository_issues")
+                    if item is not None:
+                        items.append(item)
                 # Follow pagination numerically and ignore the untrusted URLs inside Link.
                 has_next = 'rel="next"' in headers.get("Link", "")
                 etag = _etag(headers.get("ETag"))
@@ -376,7 +474,7 @@ def collect(projects: list[dict], db_path: Path, *, refresh=False, pages=1) -> d
     db = sqlite3.connect(db_path, timeout=8)
     result = {"items": [], "warnings": [], "projects": []}
     try:
-        sync = _Sync(db, refresh)
+        sync = _Sync(db, refresh, checked)
         for project in checked:
             source_data = {}
             results = []
@@ -423,3 +521,286 @@ def collect(projects: list[dict], db_path: Path, *, refresh=False, pages=1) -> d
     finally:
         db.close()
     return result
+
+
+def _history_table(db):
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS github_history (
+            slug TEXT NOT NULL,
+            repo TEXT NOT NULL,
+            mode TEXT NOT NULL,
+            revision INTEGER NOT NULL,
+            next_page INTEGER NOT NULL,
+            complete INTEGER NOT NULL,
+            started_at INTEGER NOT NULL,
+            since INTEGER,
+            updated_at INTEGER NOT NULL,
+            PRIMARY KEY (slug, repo, mode)
+        )
+    """)
+
+
+def _history_db(db_path):
+    path = Path(db_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    db = sqlite3.connect(path, timeout=8)
+    db.row_factory = sqlite3.Row
+    _history_table(db)
+    return db
+
+
+def backfill_status(db_path: Path, *, mode="backfill") -> list[dict]:
+    """Read persisted backfill (or incremental) cursor state per project."""
+    with closing(_history_db(db_path)) as db:
+        rows = db.execute("SELECT * FROM github_history WHERE mode=? ORDER BY slug, repo", (mode,)).fetchall()
+    return [
+        {"slug": row["slug"], "repo": row["repo"], "mode": row["mode"], "next_page": row["next_page"],
+         "complete": bool(row["complete"]), "since": _utc(row["since"]),
+         "started_at": _utc(row["started_at"]), "updated_at": _utc(row["updated_at"])}
+        for row in rows
+    ]
+
+
+def refresh_references(projects, db_path, references, *, refresh=False):
+    """Recheck exact public Issue, PR and CI links already in reviewed cards."""
+    checked = [_project(project) for project in projects]
+    by_repo = {project["repo"].lower(): project for project in checked}
+    watched = {}
+    for url in references:
+        parsed = urlsplit(url)
+        parts = parsed.path.strip("/").split("/")
+        if parsed.scheme != "https" or parsed.netloc != "github.com" or len(parts) < 4:
+            continue
+        project = by_repo.get("/".join(parts[:2]).lower())
+        if not project:
+            continue
+        path = "/".join(parts[2:])
+        match = re.fullmatch(r"(issues|pull)/([1-9][0-9]*)|actions/runs/([1-9][0-9]*)(?:/job/([1-9][0-9]*))?", path)
+        if not match:
+            continue
+        collection, number, run, job = match.groups()
+        if collection:
+            kind = "pr" if collection == "pull" else "issue"
+            endpoint = f"{'pulls' if kind == 'pr' else 'issues'}/{number}"
+        else:
+            kind = "test"
+            endpoint = f"actions/jobs/{job}" if job else f"actions/runs/{run}"
+        repo = project["repo"]
+        target = f"https://github.com/{repo}/{path}"
+        watched[target] = (project, kind, f"{API}/repos/{repo}/{endpoint}", run, job)
+
+    result = {"items": [], "warnings": []}
+    with closing(sqlite3.connect(db_path, timeout=8)) as db:
+        sync = _Sync(db, refresh, checked)
+        for target, (project, kind, endpoint, run, job) in watched.items():
+            cached = db.execute("SELECT etag, fetched_at, items FROM github_cache WHERE url=?", (endpoint,)).fetchone()
+            if cached and cached[1] + CACHE_TTL > time.time() and not refresh:
+                result["items"].extend(json.loads(cached[2]))
+                continue
+            try:
+                sync._require_public(project["repo"])
+                raw, headers = sync._request(endpoint, "core", cached[0] if cached else None)
+                now = time.time()
+                if raw is NOT_MODIFIED and cached:
+                    items, etag = json.loads(cached[2]), cached[0]
+                elif isinstance(raw, dict):
+                    item = _item(raw, kind, project, sync.repositories)
+                    if not item or (job and (str(raw.get("id")) != job or str(raw.get("run_id")) != run)):
+                        raise Unavailable("GitHub returned a different source")
+                    if job:
+                        item["source_id"] = f"job-{job}"
+                        item["metadata"]["scope"] = "workflow_job"
+                    elif item["url"].lower() != target.lower():
+                        raise Unavailable("GitHub returned a different source")
+                    item.update(url=target, fetched_at=_utc(now))
+                    items, etag = [item], _etag(headers.get("ETag"))
+                else:
+                    raise Unavailable("GitHub returned unexpected source data")
+                with db:
+                    db.execute("""INSERT INTO github_cache VALUES (?, ?, ?, ?, 0)
+                                  ON CONFLICT(url) DO UPDATE SET etag=excluded.etag, fetched_at=excluded.fetched_at,
+                                  items=excluded.items""", (endpoint, etag, now, json.dumps(items, ensure_ascii=True)))
+            except Unavailable as error:
+                result["warnings"].append(f"{target}: {error}")
+                items = json.loads(cached[2]) if cached else []
+            result["items"].extend(items)
+    return result
+
+
+def _history_anchor_table(db):
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS github_history_anchor (
+            slug TEXT NOT NULL,
+            repo TEXT NOT NULL,
+            mode TEXT NOT NULL,
+            members TEXT NOT NULL,
+            PRIMARY KEY (slug, repo, mode)
+        )
+    """)
+
+
+def _history_cursor(db, project, mode, started):
+    slug, repo = project["slug"], project["repo"]
+    lookup = """SELECT github_history.*, github_history_anchor.members FROM github_history
+                LEFT JOIN github_history_anchor USING (slug, repo, mode)
+                WHERE slug=? AND repo=? AND mode=?"""
+    previous = db.execute(lookup, (slug, repo, mode)).fetchone()
+    since = None
+    if mode == "incremental":
+        historical = db.execute(lookup, (slug, repo, "backfill")).fetchone()
+        since = (historical["started_at"] - UPDATE_OVERLAP if historical
+                 else (previous["started_at"] if previous else started) - INITIAL_UPDATE_WINDOW)
+    if previous is not None:
+        cursor = dict(previous)
+        members = cursor.pop("members")
+        if members is None:
+            # Older checkpoints had no boundary verification. Safely replay
+            # their original scope once while keeping the stored observations.
+            cursor.update(next_page=1, complete=False, since=since, anchor=[])
+        else:
+            cursor["anchor"] = json.loads(members)
+        return cursor
+    return {"slug": slug, "repo": repo, "mode": mode, "revision": 0, "next_page": 1,
+            "complete": False, "started_at": started, "since": since, "updated_at": started, "anchor": []}
+
+
+def _page_members(items, mode):
+    return [[item["kind"], item["source_id"], item["updated_at"] if mode == "incremental" else ""]
+            for item in items]
+
+
+def _advance_incremental(cursor, items, has_next, started):
+    since = cursor["since"]
+    latest = max((_timestamp(item["updated_at"]) for item in items), default=0)
+    cutoff = started - UPDATE_OVERLAP
+    if not has_next:
+        cursor.update(next_page=1, since=max(since, cutoff))
+        return False
+
+    # Move by time on ordinary pages: offset pagination over an editable list
+    # can skip entries when an earlier issue is updated between requests. Keep
+    # the final timestamp in scope because multiple issues can share a second.
+    boundary = min(latest - 1, cutoff)
+    if boundary > since:
+        cursor.update(next_page=1, since=boundary)
+    else:
+        # Several pages can share the same timestamp. Walk those pages without
+        # advancing the time boundary until the timestamp group has been read.
+        cursor["next_page"] += 1
+    return True
+
+
+def _collect_history(projects, db_path, *, mode, pages):
+    if type(pages) is not int or not 1 <= pages <= 50:
+        raise ValueError("pages must be an integer from 1 to 50")
+    checked = [_project(entry) for entry in projects]
+    result = {"items": [], "warnings": [], "projects": [], "checkpoint": []}
+    started = int(time.time())
+    with closing(_history_db(db_path)) as db:
+        sync = _Sync(db, True, checked)
+        _history_anchor_table(db)
+        for project in checked:
+            cursor = _history_cursor(db, project, mode, started)
+            if cursor["complete"]:
+                result["projects"].append({**project, "sync_status": "ok", "last_success": _utc(cursor["updated_at"]),
+                                           "sources": {}})
+                continue
+            states, times, records = [], [], {}
+            checkpoint_changed = False
+            for _ in range(pages):
+                number = cursor["next_page"]
+                items, has_next, state, stamp, warning = sync.page(
+                    project, "repository_issues", number, since=cursor["since"],
+                )
+                states.append(state)
+                if stamp is not None:
+                    times.append(stamp)
+                for item in items:
+                    key = (item["kind"], item["source_id"])
+                    previous = records.get(key)
+                    if previous is None or item["updated_at"] >= previous["updated_at"]:
+                        records[key] = {**item, "project": project["slug"],
+                                        "fetched_at": item.get("fetched_at") or _utc(stamp)}
+                if warning:
+                    result["warnings"].append(f"{project['repo']} {mode} page {number}: {warning}")
+                    break
+                if number > 1:
+                    prior, _, _, _, boundary_error = sync.page(
+                        project, "repository_issues", number - 1, since=cursor["since"],
+                    )
+                    if boundary_error or _page_members(prior, mode) != cursor["anchor"]:
+                        if not boundary_error:
+                            cursor.update(next_page=1, anchor=[])
+                            checkpoint_changed = True
+                        reason = boundary_error or "page boundary changed; will replay the current window"
+                        result["warnings"].append(f"{project['repo']} {mode} page {number}: {reason}")
+                        states[-1] = "partial"
+                        has_next = True
+                        break
+                if mode == "backfill":
+                    cursor.update(next_page=number + 1, complete=not has_next)
+                else:
+                    has_next = _advance_incremental(cursor, items, has_next, started)
+                cursor["anchor"] = _page_members(items, mode) if cursor["next_page"] > 1 else []
+                checkpoint_changed = True
+                if not has_next:
+                    break
+            if checkpoint_changed:
+                result["checkpoint"].append({**cursor, "updated_at": started})
+            source_status, success = _status(states), _utc(max(times, default=None))
+            source = {
+                "sync_status": source_status, "last_success": success, "pages_checked": len(states),
+                "more_available": not cursor["complete"] if mode == "backfill" else bool(has_next),
+            }
+            result["projects"].append({
+                **project, "sync_status": source_status, "last_success": success,
+                "sources": {
+                    kind: {**source, "item_count": sum(item_key[0] == kind for item_key in records)}
+                    for kind in ("issue", "pr")
+                },
+            })
+            result["items"].extend(records.values())
+    return result
+
+
+def backfill(projects: list[dict], db_path: Path, *, pages=1) -> dict:
+    """Read up to pages per project from oldest to newest, without advancing the cursor.
+
+    The repository endpoint includes issues and PRs sorted by creation date.
+    A changed page boundary causes a replay before confirming the end.
+    Save the returned observations before calling commit_backfill. Repeating a
+    batch after a crash is safe when the caller upserts by observation ID.
+    """
+    return _collect_history(projects, db_path, mode="backfill", pages=pages)
+
+
+def incremental(projects: list[dict], db_path: Path, *, pages=1) -> dict:
+    """Read updated issues and PRs with a time cursor and a short replay overlap.
+
+    Starts at the first existing backfill batch time with overlap, or 24 hours
+    ago on first use. Save observations before committing its checkpoint.
+    """
+    return _collect_history(projects, db_path, mode="incremental", pages=pages)
+
+
+def commit_backfill(db_path: Path, checkpoint: list[dict]) -> None:
+    """Commit progress only after the caller has durably upserted observations.
+
+    A revision check lets concurrent or repeated saves replay observations
+    without allowing a late writer to roll back a project's cursor.
+    """
+    if not checkpoint:
+        return
+    with closing(_history_db(db_path)) as db, db:
+        _history_anchor_table(db)
+        for cursor in checkpoint:
+            changed = db.execute("""INSERT INTO github_history VALUES
+                (:slug, :repo, :mode, :revision + 1, :next_page, :complete, :started_at, :since, :updated_at)
+                ON CONFLICT(slug, repo, mode) DO UPDATE SET
+                    revision=excluded.revision, next_page=excluded.next_page, complete=excluded.complete,
+                    since=excluded.since, updated_at=excluded.updated_at
+                WHERE github_history.revision = :revision""", cursor).rowcount
+            if changed:
+                db.execute("""INSERT INTO github_history_anchor VALUES (?, ?, ?, ?)
+                    ON CONFLICT(slug, repo, mode) DO UPDATE SET members=excluded.members""",
+                    (cursor["slug"], cursor["repo"], cursor["mode"], json.dumps(cursor["anchor"])))

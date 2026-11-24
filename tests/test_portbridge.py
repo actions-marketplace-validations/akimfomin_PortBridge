@@ -101,7 +101,7 @@ class CatalogTest(CatalogFixture):
         suggestion = proposals[0]
         self.assertIsNone(suggestion["problem_id"])
         self.assertGreaterEqual(suggestion["score"], 0.25)
-        self.assertIn("Разные стеки", suggestion["reason"])
+        self.assertTrue(suggestion["different_stacks"])
         self.assertEqual({suggestion["left"]["url"], suggestion["right"]["url"]}, {left["url"], right["url"]})
         self.assertEqual(self.catalog.problems(), original)
         self.assertTrue(any(item["state"] == "reviewed_same" and item["problem_id"] == "PB-0001"
@@ -125,6 +125,50 @@ class CatalogTest(CatalogFixture):
         self.assertEqual(records[0]["metadata"], {"head_sha": "a" * 40})
         project = next(item for item in self.catalog.projects() if item["slug"] == "continued")
         self.assertEqual((project["sync_status"], project["last_success"]), ("stale", when))
+
+    def test_related_looks_beyond_titles_and_keeps_direct_links_tentative(self):
+        first = self.observation("continued", "pr", 301, "Wrong selection in a graphics pass",
+                                 "https://github.com/ubiquitarianism/leonida/pull/301",
+                                 {"technical": {"terms": ["rectangle", "d3d12"],
+                                                "signals": ["ExecuteIndirect"]}})
+        second = self.observation("victory", "issue", 302, "Missing draw after setup",
+                                  "https://github.com/Marvisak/VIctory/issues/302",
+                                  {"technical": {"terms": ["rectlist", "Direct3D12"],
+                                                 "signals": ["ExecuteIndirect"]}})
+        cite = self.observation("reforge", "issue", 303, "Port a tested case",
+                                "https://github.com/LeonidaReforge/Leonida/issues/303",
+                                {"technical": {"references": [first["url"]]}})
+        unrelated = self.observation("xcl", "issue", 304, "Change a desktop setting",
+                                     "https://github.com/ivall/xcl/issues/304",
+                                     {"technical": {"terms": ["d3d12"]}})
+        self.catalog.record_sync({"items": [first, second, cite, unrelated]})
+        result = self.catalog.related(first["url"] + "#comment")
+        self.assertTrue(result["indexed"])
+        self.assertEqual([(entry["right"]["url"], entry["basis"], entry["state"]) for entry in result["matches"]],
+                         [(cite["url"], "reference", "suggested"), (second["url"], "technical_signal", "suggested")])
+
+    def test_source_status_does_not_overwrite_the_recorded_test_or_merge(self):
+        first = self.observation("continued", "pr", 20, "Handle EXEC",
+                                 "https://github.com/ubiquitarianism/leonida/pull/20", {"head_sha": "a" * 40})
+        self.catalog.record_sync({"items": [{**first, "status": "merged"}], "projects": [
+            {"slug": "continued", "sync_status": "ok"},
+        ]})
+        previous_health = self.catalog.health()
+        old = {**first, "status": "closed", "metadata": {"head_sha": None},
+               "updated_at": "2026-11-23T05:00:00+00:00"}
+        self.catalog.record_sync({"items": [old], "warnings": ["backfill stopped"]}, update_health=False)
+        card = self.catalog.problem("PB-0002")
+        self.assertEqual(self.catalog.health(), previous_health)
+        source = card["solutions"][0]
+        self.assertEqual(source["source_refs"][0]["github"]["status"], "merged")
+        self.assertEqual(source["source_refs"][0]["github"]["revision"], "a" * 40)
+        ci = next(e for e in source["evidence"] if e["kind"] == "automated_test")
+        self.assertEqual(ci["outcome"], "failed")
+        newer = {**old, "updated_at": "2026-11-24T06:00:00Z"}
+        self.catalog.record_sync({"items": [newer]}, update_health=False)
+        observed = self.catalog.problem("PB-0002")["solutions"][0]["source_refs"][0]["github"]
+        self.assertIsNone(observed["revision"])
+        self.assertEqual(observed["status"], "merged")
 
 
 class LocalAPITest(CatalogFixture):
@@ -169,6 +213,7 @@ class LocalAPITest(CatalogFixture):
         self.assertEqual(self.request("GET", "/api/v1/problems?limit=-1")[0], 400)
         self.assertEqual(self.request("GET", "/api/v1/problems/PB-9999")[0], 404)
         self.assertEqual(self.request("GET", "/api/docs")[0], 200)
+        self.assertEqual(self.request("GET", "/api/v1/related?url=https://example.com")[0], 400)
 
     def test_modifications_and_nonlocal_host_are_rejected(self):
         original = self.catalog.problems()

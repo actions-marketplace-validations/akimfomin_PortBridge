@@ -1,0 +1,373 @@
+{
+  "corpus_size": 184,
+  "top_k": 5,
+  "queries": [
+    {
+      "id": "Q01",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "technical_only": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "portbridge": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "github": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 2,
+        "results": [
+          "https://github.com/ivall/xcl/pull/199",
+          "https://github.com/ivall/xcl/pull/195"
+        ]
+      }
+    },
+    {
+      "id": "Q02",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/leonidareforge/leonida/issues/21"
+        ]
+      },
+      "technical_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/leonidareforge/leonida/issues/21"
+        ]
+      },
+      "portbridge": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/leonidareforge/leonida/issues/21"
+        ]
+      },
+      "github": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 1,
+        "results": [
+          "https://github.com/leonidareforge/leonida/issues/21",
+          "https://github.com/marvisak/victory/issues/71"
+        ]
+      }
+    },
+    {
+      "id": "Q03",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "technical_only": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "portbridge": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/leonidareforge/leonida/issues/6"
+        ]
+      },
+      "github": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/leonidareforge/leonida/issues/6"
+        ]
+      }
+    },
+    {
+      "id": "Q04",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/issues/348"
+        ]
+      },
+      "technical_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/issues/348"
+        ]
+      },
+      "portbridge": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/issues/348"
+        ]
+      },
+      "github": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      }
+    },
+    {
+      "id": "Q05",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/leonidareforge/leonida/pull/15"
+        ]
+      },
+      "technical_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/leonidareforge/leonida/pull/15"
+        ]
+      },
+      "portbridge": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/leonidareforge/leonida/pull/15"
+        ]
+      },
+      "github": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 1,
+        "results": [
+          "https://github.com/leonidareforge/leonida/pull/15",
+          "https://github.com/ivall/xcl/pull/94"
+        ]
+      }
+    },
+    {
+      "id": "Q06",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "technical_only": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "portbridge": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "github": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 4,
+        "results": [
+          "https://github.com/leonidareforge/leonida/pull/37",
+          "https://github.com/ivall/xcl/issues/156",
+          "https://github.com/ivall/xcl/issues/175",
+          "https://github.com/ivall/xcl/issues/441",
+          "https://github.com/ivall/xcl/issues/258"
+        ]
+      }
+    },
+    {
+      "id": "Q07",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/pull/596"
+        ]
+      },
+      "technical_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/pull/596"
+        ]
+      },
+      "portbridge": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/pull/596"
+        ]
+      },
+      "github": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 1,
+        "results": [
+          "https://github.com/marvisak/victory/pull/596",
+          "https://github.com/ivall/xcl/pull/80"
+        ]
+      }
+    },
+    {
+      "id": "Q08",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/pull/605"
+        ]
+      },
+      "technical_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/pull/605"
+        ]
+      },
+      "portbridge": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/pull/605"
+        ]
+      },
+      "github": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/pull/605"
+        ]
+      }
+    },
+    {
+      "id": "Q09",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "technical_only": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "portbridge": {
+        "hits": 0,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": []
+      },
+      "github": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/marvisak/victory/pull/439"
+        ]
+      }
+    },
+    {
+      "id": "Q10",
+      "positive_count": 1,
+      "present_in_corpus": 1,
+      "origin_indexed": true,
+      "title_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/ubiquitarianism/leonida/pull/93"
+        ]
+      },
+      "technical_only": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/ubiquitarianism/leonida/pull/93"
+        ]
+      },
+      "portbridge": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 0,
+        "results": [
+          "https://github.com/ubiquitarianism/leonida/pull/93"
+        ]
+      },
+      "github": {
+        "hits": 1,
+        "judged_negatives": 0,
+        "unjudged": 3,
+        "results": [
+          "https://github.com/ubiquitarianism/leonida/pull/93",
+          "https://github.com/ubiquitarianism/leonida/pull/13",
+          "https://github.com/ubiquitarianism/leonida/pull/133",
+          "https://github.com/ubiquitarianism/leonida/issues/14"
+        ]
+      }
+    }
+  ]
+}

@@ -53,7 +53,7 @@ def export(catalog, directory, repository=""):
         "problems": {"problems": catalog.problems()},
         "matches": {"matches": catalog.matches(limit=200)},
         "health": catalog.health(),
-        "observations": {"observations": catalog.observations(limit=1000)},
+        "observations": {"observations": catalog.observations(limit=None)},
         "coordination": {"coordination": catalog.coordination()},
         "outreach": {"drafts": catalog.outreach()},
     }

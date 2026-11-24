@@ -205,8 +205,10 @@ async function initializeData() {
 
 function setHealth(health) {
   const line = byId('sync-status');
-  const variant = health.status === 'ok' ? 'sync-ok' : (health.status ? 'sync-warning' : '');
-  const title = snapshotSite && health.status === 'ok' ? 'Снимок данных GitHub' : syncStates[health.status];
+  const aged = Date.now() - Date.parse(health.refresh_at) > 2 * 60 * 60 * 1000;
+  const variant = health.status === 'ok' && !aged ? 'sync-ok' : (health.status ? 'sync-warning' : '');
+  let title = snapshotSite && health.status === 'ok' ? 'Снимок данных GitHub' : syncStates[health.status];
+  if (aged) title = 'Данные старше двух часов';
   line.replaceChildren(element('span', `sync-label ${variant}`, title || 'Данные GitHub недоступны'));
   if (health.refresh_at) line.append(element('span', '', stamp(health.refresh_at)));
 }
@@ -292,9 +294,20 @@ function drawProblems(problems, view) {
   content.replaceChildren(wrapper);
 }
 
+const evidenceOutcomes = {passed: 'Проверка прошла', failed: 'Обнаружен сбой',
+  mixed: 'Результаты различаются', observed: 'Наблюдение'};
+const githubStates = {open: 'Открыто', closed: 'Закрыто', merged: 'Слито',
+  success: 'Проверка прошла', failure: 'Проверка провалилась', cancelled: 'Отменено', in_progress: 'Выполняется'};
+
+function githubStatus(state) {
+  if (!state || !githubStates[state.status]) return null;
+  return element('span', 'revision', `GitHub: ${githubStates[state.status]} · ${stamp(state.fetched_at)}`);
+}
+
 function evidenceItem(evidence) {
   const item = element('li', 'evidence');
   item.append(badge(evidence.kind, evidenceKinds));
+  if (evidenceOutcomes[evidence.outcome]) item.append(badge(evidence.outcome, evidenceOutcomes));
   const title = githubLink(evidence.title || 'Первоисточник', evidence.url);
   title.classList.add('evidence-title');
   item.append(title);
@@ -304,6 +317,8 @@ function evidenceItem(evidence) {
     const observed = /^\d{4}-\d\d-\d\d[T ]/.test(evidence.observed) ? stamp(evidence.observed) : evidence.observed;
     item.append(element('p', '', observed));
   }
+  const state = githubStatus(evidence.github);
+  if (state && evidence.kind === 'automated_test') item.append(state);
   return item;
 }
 
@@ -326,6 +341,8 @@ function solutionCard(solution) {
     solution.source_refs.forEach((ref) => {
       const item = element('li');
       item.append(githubLink(ref.title || 'Первоисточник', ref.url));
+      const state = githubStatus(ref.github);
+      if (state) item.append(document.createTextNode(' · '), state);
       links.append(item);
     });
     sources.append(element('h4', '', 'Первоисточники'), links);

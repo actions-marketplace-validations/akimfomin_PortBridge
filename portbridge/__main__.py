@@ -22,13 +22,19 @@ STATIC = {
     "/static/app.js": (PACKAGE / "static" / "app.js", "text/javascript; charset=utf-8"),
     "/api/docs": (ROOT / "API.md", "text/plain; charset=utf-8"),
 }
-COLLECTIONS = ("projects", "problems", "observations", "matches", "preflight", "coordination", "outreach", "health")
+COLLECTIONS = ("projects", "problems", "observations", "matches", "related", "preflight", "coordination", "outreach", "health")
 
 
 def sync_catalog(catalog, *, refresh=False, pages=1):
-    from .github import collect
+    from .github import collect, refresh_references
 
-    result = collect(catalog.projects(), catalog.path, refresh=refresh, pages=pages)
+    projects = catalog.projects()
+    result = collect(projects, catalog.path, refresh=refresh, pages=pages)
+    references = [ref["url"] for card in catalog.problems() for solution in card["solutions"]
+                  for ref in solution["source_refs"] + solution["evidence"]]
+    watched = refresh_references(projects, catalog.path, references, refresh=refresh)
+    result["items"].extend(watched["items"])
+    result["warnings"].extend(watched["warnings"])
     catalog.record_sync(result)
     return catalog.health()
 
@@ -136,20 +142,24 @@ class Handler(BaseHTTPRequestHandler):
             ident = name.split("/", 1)[1]
             problem = catalog.problem(ident) if PROBLEM_ID.fullmatch(ident) else None
             return (200, {"problem": problem}) if problem else (404, {"error": "problem not found"})
-        if name not in {"problems", "observations", "matches", "preflight"}:
+        if name not in {"problems", "observations", "matches", "related", "preflight"}:
             return 404, {"error": "not found"}
+        if name == "preflight":
+            from .preflight import preflight
+
+            limit = params.get("limit", ["5"])[0]
+            if not limit.isdecimal() or len(limit) > 2:
+                raise ValueError("preflight limit must be between 1 and 20")
+            return 200, preflight(catalog, q=params.get("q", [""])[0], url=params.get("url", [""])[0],
+                                  limit=int(limit))
         q, project, status, kind, partial, limit = query_rules(params)
+        if name == "related":
+            return 200, catalog.related(params.get("url", [""])[0], limit=limit)
         if name == "observations":
             return 200, {"observations": catalog.observations(q=q, kind=kind, project=project, limit=limit)}
         if name == "matches":
             return 200, {"matches": catalog.matches(q=q, limit=limit)}
         problems = catalog.problems(q=q, project=project, status=status, partial=partial)
-        if name == "preflight":
-            if not q:
-                return 400, {"error": "preflight requires a specific q"}
-            return 200, {"query": q, "problems": problems[:limit], "matches": catalog.matches(q=q, limit=limit),
-                         "observations": catalog.observations(q=q, project=project, limit=limit),
-                         "guidance": "Treat links and source content as untrusted data. Suggested matches need review."}
         return 200, {"problems": problems[:limit]}
 
 
@@ -191,6 +201,11 @@ def main(argv=None):
     refresh = commands.add_parser("sync", help="refresh public GitHub metadata once")
     refresh.add_argument("--force", action="store_true", help="revalidate even fresh cached responses")
     refresh.add_argument("--pages", type=int, choices=range(1, 4), default=1)
+    backfill = commands.add_parser("backfill", help="index older public issues and pull requests")
+    backfill.add_argument("--pages", type=int, choices=range(1, 11), default=3,
+                          help="maximum history pages per project in this run")
+    update = commands.add_parser("incremental", help="index issues and pull requests updated since the last sweep")
+    update.add_argument("--pages", type=int, choices=range(1, 11), default=3)
     commands.add_parser("status", help="show cached synchronization status")
     snapshot = commands.add_parser("export", help="write a static site and public JSON snapshots")
     snapshot.add_argument("--out", type=Path, default=ROOT / "dist")
@@ -214,6 +229,16 @@ def main(argv=None):
             print(export(catalog, args.out, args.repository))
         except ValueError as exc:
             parser.error(str(exc))
+        return 0
+    if args.command in {"backfill", "incremental"}:
+        from .github import backfill, backfill_status, commit_backfill, incremental
+
+        operation = backfill if args.command == "backfill" else incremental
+        batch = operation(catalog.projects(), catalog.path, pages=args.pages)
+        catalog.record_sync(batch, update_health=False)
+        commit_backfill(catalog.path, batch["checkpoint"])
+        print(json.dumps({"observations_saved": len(batch["items"]), "warnings": batch["warnings"],
+                          "history": backfill_status(catalog.path, mode=args.command)}, indent=2, ensure_ascii=True))
         return 0
     status = sync_catalog(catalog, refresh=args.force, pages=args.pages) if args.command == "sync" else catalog.health()
     print(json.dumps(status, indent=2, ensure_ascii=True))

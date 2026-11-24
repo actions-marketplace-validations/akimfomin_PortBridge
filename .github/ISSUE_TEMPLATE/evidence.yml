@@ -58,6 +58,11 @@ body:
       description: State the tested condition and outcome. Include the linked fix and any dependencies or limits.
     validations:
       required: true
+  - type: textarea
+    id: coordination
+    attributes:
+      label: What changed because of the shared finding?
+      description: If someone reused the result, linked a prior test, or dropped duplicate work, link the public confirmation. Leave blank if the impact is still unknown.
   - type: checkboxes
     id: metadata_only
     attributes:

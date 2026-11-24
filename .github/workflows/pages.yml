@@ -50,6 +50,13 @@ jobs:
             python -m portbridge status
           fi
 
+      - name: Continue historical and incremental index
+        env:
+          PORTBRIDGE_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python -m portbridge backfill --pages 6
+          python -m portbridge incremental --pages 6
+
       - name: Export site and JSON
         run: python -m portbridge export --out dist --repository "$GITHUB_REPOSITORY"
 

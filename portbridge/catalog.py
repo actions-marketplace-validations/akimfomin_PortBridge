@@ -1,6 +1,6 @@
 """Persistent curated problems and public GitHub observations."""
 
-from collections import Counter, defaultdict
+from collections import defaultdict
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from itertools import combinations
@@ -10,23 +10,25 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
+from .matching import RelatedIndex, canonical_url
+
 
 PROBLEM_STATUS = {"investigating", "partial", "verified", "resolved"}
 SOLUTION_STATUS = {"reported", "open", "partial", "verified", "merged", "unknown"}
 EVIDENCE_KIND = {"maintainer_claim", "automated_test", "independent", "source_observation"}
+EVIDENCE_OUTCOME = {"passed", "failed", "mixed", "observed", "unknown"}
 OBSERVATION_KIND = {"issue", "pr", "commit", "test"}
 SYNC_STATUS = {"ok", "partial", "stale", "error", "seed-only"}
 PROBLEM_ID = re.compile(r"PB-[0-9]{4,}")
 REPO_NAME = re.compile(r"[\w.-]+/[\w.-]+", re.ASCII)
-WORDS = re.compile(r"[^\W_]+")
-STOP_WORDS = set("a an the on in to of for by and or from that it its is at with into after before as this then "
-                 "test tests tested fix fixes add adds support update merge pull request windows linux xbox "
-                 "game would about when build issue code commit main using use like fails error crash "
-                 "this github before after make target runtime".split())
 
 
 def timestamp():
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def utc_sort_key(value):
+    return (value or "").removesuffix("Z").removesuffix("+00:00")
 
 
 def public_url(url):
@@ -38,12 +40,6 @@ def public_url(url):
         return False
     return (parsed.scheme == "https" and parsed.netloc == "github.com" and
             bool(parsed.path.strip("/")) and not any(ch.isspace() for ch in url))
-
-
-def canonical_url(url):
-    parsed = urlsplit(url)
-    path = parsed.path.rstrip("/").lower()
-    return f"https://github.com{path}"
 
 
 def expect(condition, message):
@@ -80,6 +76,7 @@ def validate_seed(seed):
                 expect(public_url(source["url"]), f"Invalid source URL: {ident}")
             for evidence in solution["evidence"]:
                 expect(evidence["kind"] in EVIDENCE_KIND, f"Invalid evidence kind: {ident}")
+                expect(evidence.get("outcome", "unknown") in EVIDENCE_OUTCOME, f"Invalid evidence outcome: {ident}")
                 expect(bool(evidence["observed"]), f"Missing evidence summary: {ident}")
     reference = seed.get("coordination", {}).get("reference")
     if reference:
@@ -106,6 +103,7 @@ CREATE TABLE IF NOT EXISTS observations (
     PRIMARY KEY (project, kind, source_id)
 );
 CREATE INDEX IF NOT EXISTS observation_recent ON observations(updated_at DESC);
+CREATE INDEX IF NOT EXISTS observation_url ON observations(lower(url));
 CREATE TABLE IF NOT EXISTS sync_projects (
     slug TEXT PRIMARY KEY REFERENCES projects(slug), payload TEXT NOT NULL
 );
@@ -162,21 +160,41 @@ class Catalog:
             row = db.execute("SELECT value FROM settings WHERE key='coordination'").fetchone()
         return json.loads(row[0]) if row else {}
 
-    def record_sync(self, result):
+    def record_sync(self, result, *, update_health=True):
         observed_at = timestamp()
         with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
             projects = {row[0] for row in db.execute("SELECT slug FROM projects")}
             for item in result["items"]:
                 if (item["project"] not in projects or item["kind"] not in OBSERVATION_KIND or
                         not public_url(item["url"])):
                     continue
+                key = (item["project"], item["kind"], str(item["source_id"]))
+                previous = db.execute("""SELECT updated_at, fetched_at, status, metadata FROM observations
+                    WHERE project=? AND kind=? AND source_id=?""", key).fetchone()
+                updated_at = utc_sort_key(item["updated_at"])
+                fetched_at = item.get("fetched_at") or observed_at
+                status, metadata = item["status"], item["metadata"]
+                if previous:
+                    older_update = utc_sort_key(previous["updated_at"])
+                    prev_state = (older_update, utc_sort_key(previous["fetched_at"]))
+                    if (updated_at, utc_sort_key(fetched_at)) < prev_state:
+                        continue
+                    old_metadata = json.loads(previous["metadata"])
+                    metadata = {**old_metadata, **metadata}
+                    preserve = ("merged_at", "head_sha", "base_branch") if updated_at == older_update else ("merged_at",)
+                    for name in preserve:
+                        if not metadata.get(name) and name in old_metadata:
+                            metadata[name] = old_metadata[name]
+                    if previous["status"] == "merged" and status == "closed":
+                        status = "merged"
                 db.execute("""INSERT INTO observations VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(project, kind, source_id) DO UPDATE SET
                     title=excluded.title, url=excluded.url, status=excluded.status,
                     updated_at=excluded.updated_at, fetched_at=excluded.fetched_at, metadata=excluded.metadata""",
-                    (item["project"], item["kind"], str(item["source_id"]), item["title"][:300],
-                     item["url"], item["status"], item["updated_at"], item.get("fetched_at") or observed_at,
-                     encode(item["metadata"])))
+                    (*key, item["title"][:300], item["url"], status, item["updated_at"], fetched_at, encode(metadata)))
+            if not update_health:
+                return
             for status in result.get("projects", []):
                 slug = status.get("slug")
                 if slug in projects:
@@ -194,11 +212,16 @@ class Catalog:
         with self.connect() as db:
             row = db.execute("SELECT value FROM settings WHERE key='sync'").fetchone()
             count = db.execute("SELECT count(*) FROM observations").fetchone()[0]
+            table = db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='github_history'").fetchone()
+            history = [dict(state) for state in db.execute(
+                "SELECT slug, next_page, complete FROM github_history WHERE mode='backfill' ORDER BY slug"
+            )] if table else []
         projects = self.projects()
         states = {project["sync_status"] for project in projects}
+        details = json.loads(row[0]) if row else {"refresh_at": None, "warnings": []}
         if row is None:
             status = "seed-only"
-        elif states == {"ok"}:
+        elif states == {"ok"} and not details["warnings"]:
             status = "ok"
         elif states == {"stale"}:
             status = "stale"
@@ -206,8 +229,7 @@ class Catalog:
             status = "error"
         else:
             status = "partial"
-        details = json.loads(row[0]) if row else {"refresh_at": None, "warnings": []}
-        return {"status": status, "observation_count": count, **details}
+        return {"status": status, "observation_count": count, "history": history, **details}
 
     def problems(self, *, q="", project="", status="", partial=False):
         with self.connect() as db:
@@ -223,12 +245,32 @@ class Catalog:
                 continue
             if contains(problem, q):
                 found.append(problem)
-        return found
+        return self.annotate_sources(found)
 
     def problem(self, ident):
         with self.connect() as db:
             row = db.execute("SELECT payload FROM problems WHERE id=?", (ident,)).fetchone()
-        return summarize(json.loads(row[0])) if row else None
+        return self.annotate_sources([summarize(json.loads(row[0]))])[0] if row else None
+
+    def annotate_sources(self, problems):
+        references = defaultdict(list)
+        for problem in problems:
+            for solution in problem["solutions"]:
+                for item in solution["source_refs"] + solution["evidence"]:
+                    references[canonical_url(item["url"])].append(item)
+        with self.connect() as db:
+            for chunk in range(0, len(references), 200):
+                urls = list(references)[chunk:chunk + 200]
+                params = ",".join("?" for _ in urls)
+                rows = db.execute(f"""SELECT lower(url) AS key, kind, status, updated_at, fetched_at, metadata
+                                   FROM observations WHERE lower(url) IN ({params})""", urls)
+                for row in rows:
+                    snapshot = json.loads(row["metadata"])
+                    state = {key: row[key] for key in ("kind", "status", "updated_at", "fetched_at")}
+                    state["revision"] = snapshot.get("head_sha")
+                    for ref in references[row["key"]]:
+                        ref["github"] = state
+        return problems
 
     def observations(self, *, q="", kind="", project="", limit=100):
         clauses, arguments = [], []
@@ -244,7 +286,7 @@ class Catalog:
                 item["metadata"] = json.loads(item["metadata"])
                 if contains(item, q):
                     result.append(item)
-                    if len(result) >= limit:
+                    if limit is not None and len(result) >= limit:
                         break
         return result
 
@@ -264,10 +306,22 @@ class Catalog:
                           else "Связь указана в проверенной карточке каталога.")
                 for left, right in combinations(references, 2):
                     approved.append(match(left, right, None, reason, state, problem["id"]))
-        records = self.observations(limit=600)
         stacks = {project["slug"]: project["stack"] for project in self.projects()}
-        suggested = similar(records, known_links, stacks, q)
+        suggested = self.search_index().matches(stacks, exclude=lambda a, b: known_links[a] & known_links[b],
+                                                keep=lambda pair: contains(pair, q), limit=limit)
         return (approved + suggested)[:limit]
+
+    def search_index(self):
+        return RelatedIndex(self.observations(limit=None))
+
+    def related(self, url, *, limit=20):
+        if not public_url(url):
+            raise ValueError("related requires a public GitHub source URL")
+        stacks = {project["slug"]: project["stack"] for project in self.projects()}
+        origin = canonical_url(url)
+        index = self.search_index()
+        return {"indexed": origin in index.rows,
+                "matches": index.matches(stacks, origin=origin, limit=limit)}
 
     def outreach(self):
         projects = {project["slug"]: project for project in self.projects()}
@@ -341,44 +395,7 @@ def contains(payload, query):
     return True
 
 
-def keywords(title):
-    return {word for word in WORDS.findall(title.casefold())
-            if len(word) >= 3 and word not in STOP_WORDS and not word.isdecimal()}
-
-
 def match(left, right, score, reason, state, problem_id=None):
     return {"left": {k: left[k] for k in ("project", "title", "url")},
             "right": {k: right[k] for k in ("project", "title", "url")},
             "score": score, "reason": reason, "state": state, "problem_id": problem_id}
-
-
-def similar(records, known_links, stacks, query):
-    items = [item for item in records if item["kind"] in {"issue", "pr", "commit"}]
-    terms = [keywords(item["title"]) for item in items]
-    frequency = Counter(word for words in terms for word in words)
-    common = {word for word, count in frequency.items() if count > max(20, len(items) // 6)}
-    inverted = defaultdict(list)
-    found = []
-    for i, left in enumerate(items):
-        words = terms[i] - common
-        seen = Counter(j for word in words for j in inverted[word])
-        for j, shared_count in seen.items():
-            right = items[j]
-            if shared_count < 3 or left["project"] == right["project"]:
-                continue
-            if query and not contains([left, right], query):
-                continue
-            if known_links.get(canonical_url(left["url"]), set()) & known_links.get(canonical_url(right["url"]), set()):
-                continue
-            right_words = terms[j] - common
-            score = shared_count / len(words | right_words)
-            if score < 0.25:
-                continue
-            common_text = ", ".join(sorted(words & right_words)[:6])
-            reason = f"Общие термины в заголовках — {common_text}."
-            if stacks.get(left["project"]) != stacks.get(right["project"]):
-                reason += " Разные стеки могут требовать разных исправлений."
-            found.append(match(left, right, round(score, 3), reason, "suggested"))
-        for word in words:
-            inverted[word].append(i)
-    return sorted(found, key=lambda row: (-row["score"], row["left"]["url"], row["right"]["url"]))
