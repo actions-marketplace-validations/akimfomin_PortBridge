@@ -5,13 +5,15 @@ import json
 from pathlib import Path
 
 from .catalog import REPO_NAME, timestamp
+from .coordination import knowledge_graph, recommendations
 from .feed import build_feed
 
 
 PACKAGE = Path(__file__).resolve().parent
 ROOT = PACKAGE.parent
 ASSETS = {"index.html": "index.html", "static/styles.css": "styles.css", "static/app.js": "app.js"}
-SNAPSHOTS = {"site", "projects", "problems", "matches", "health", "observations", "coordination", "outreach"}
+SNAPSHOTS = {"site", "projects", "problems", "matches", "health", "observations", "coordination", "outreach",
+             "graph", "source-history", "recommendations"}
 EXPORT_FILES = {*ASSETS, "api.html", "feed.xml", ".nojekyll", *(f"data/{name}.json" for name in SNAPSHOTS)}
 
 
@@ -55,6 +57,9 @@ def export(catalog, directory, repository=""):
         "health": catalog.health(),
         "observations": {"observations": catalog.observations(limit=None)},
         "coordination": {"coordination": catalog.coordination()},
+        "graph": knowledge_graph(catalog),
+        "source-history": {"changes": catalog.source_changes()},
+        "recommendations": {"recommendations": recommendations(catalog)},
         "outreach": {"drafts": catalog.outreach()},
     }
     contents = {f"data/{name}.json": json.dumps(value, ensure_ascii=False).encode("utf-8")

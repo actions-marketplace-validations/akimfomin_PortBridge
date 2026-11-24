@@ -104,6 +104,13 @@ CREATE TABLE IF NOT EXISTS observations (
 );
 CREATE INDEX IF NOT EXISTS observation_recent ON observations(updated_at DESC);
 CREATE INDEX IF NOT EXISTS observation_url ON observations(lower(url));
+CREATE TABLE IF NOT EXISTS source_changes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project TEXT NOT NULL, kind TEXT NOT NULL, url TEXT NOT NULL,
+    previous_status TEXT NOT NULL, status TEXT NOT NULL,
+    previous_revision TEXT, revision TEXT, observed_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS source_changes_url ON source_changes(lower(url), id);
 CREATE TABLE IF NOT EXISTS sync_projects (
     slug TEXT PRIMARY KEY REFERENCES projects(slug), payload TEXT NOT NULL
 );
@@ -175,6 +182,7 @@ class Catalog:
                 updated_at = utc_sort_key(item["updated_at"])
                 fetched_at = item.get("fetched_at") or observed_at
                 status, metadata = item["status"], item["metadata"]
+                old_metadata = {}
                 if previous:
                     older_update = utc_sort_key(previous["updated_at"])
                     prev_state = (older_update, utc_sort_key(previous["fetched_at"]))
@@ -193,6 +201,14 @@ class Catalog:
                     title=excluded.title, url=excluded.url, status=excluded.status,
                     updated_at=excluded.updated_at, fetched_at=excluded.fetched_at, metadata=excluded.metadata""",
                     (*key, item["title"][:300], item["url"], status, item["updated_at"], fetched_at, encode(metadata)))
+                if previous:
+                    before = old_metadata.get("head_sha")
+                    after = metadata.get("head_sha")
+                    if previous["status"] != status or (before and after and before != after):
+                        db.execute("""INSERT INTO source_changes(project, kind, url, previous_status, status,
+                                      previous_revision, revision, observed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                                   (item["project"], item["kind"], item["url"], previous["status"], status,
+                                    before, after, fetched_at))
             if not update_health:
                 return
             for status in result.get("projects", []):
@@ -322,6 +338,14 @@ class Catalog:
         index = self.search_index()
         return {"indexed": origin in index.rows,
                 "matches": index.matches(stacks, origin=origin, limit=limit)}
+
+    def source_changes(self, *, url="", limit=100):
+        if url and not public_url(url):
+            raise ValueError("use a public GitHub source URL")
+        condition, args = ("WHERE lower(url)=?", (canonical_url(url),)) if url else ("", ())
+        with self.connect() as db:
+            return [dict(row) for row in db.execute(
+                f"SELECT * FROM source_changes {condition} ORDER BY id DESC LIMIT ?", (*args, limit))]
 
     def outreach(self):
         projects = {project["slug"]: project for project in self.projects()}

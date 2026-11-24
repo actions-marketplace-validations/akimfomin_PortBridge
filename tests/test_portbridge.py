@@ -12,7 +12,9 @@ from urllib.parse import urlencode
 from xml.etree import ElementTree
 
 from portbridge.__main__ import DEFAULT_SEED, make_server
+from portbridge.backup import backup_database
 from portbridge.catalog import Catalog
+from portbridge.coordination import knowledge_graph, recommendations
 from portbridge.export import EXPORT_FILES, export
 
 
@@ -39,6 +41,28 @@ class CatalogFixture(unittest.TestCase):
 
 
 class CatalogTest(CatalogFixture):
+    def test_recommendation_records_only_observed_ci_change(self):
+        source = self.observation("continued", "test", 11228, "Workflow test",
+                                  "https://github.com/ubiquitarianism/leonida/actions/runs/11228")
+        self.catalog.record_sync({"items": [{**source, "status": "success"}]})
+        self.catalog.record_sync({"items": [{**source, "status": "failure"}]})
+        self.assertEqual(self.catalog.source_changes(url=source["url"])[0]["previous_status"], "success")
+        changes = [row for row in recommendations(self.catalog, project="continued") if row["kind"] == "check_ci_change"]
+        self.assertEqual(changes[0]["confidence"], "observed_workflow_status")
+        self.catalog.record_sync({"items": [{**source, "status": "success"}]})
+        self.assertFalse(any(row["kind"] == "check_ci_change" for row in recommendations(self.catalog)))
+        graph = knowledge_graph(self.catalog)
+        self.assertTrue(any(row["to"] == "PB-0002" and row["relationship"] == "source_port"
+                            for row in graph["edges"] if row["kind"] == "technical_work"))
+
+    def test_online_backup_reopens_and_refuses_to_replace_files(self):
+        target = self.workspace / "backup.sqlite3"
+        self.assertEqual(backup_database(self.db_path, target), target)
+        with self.assertRaises(FileExistsError):
+            backup_database(self.db_path, target)
+        reopened = Catalog(target, DEFAULT_SEED)
+        self.assertEqual(reopened.problems(), self.catalog.problems())
+
     def test_outreach_preserves_scope_and_skips_closed_discussions(self):
         drafts = {draft["problem_id"]: draft for draft in self.catalog.outreach()}
         self.assertEqual(set(drafts), {"PB-0001", "PB-0002"})

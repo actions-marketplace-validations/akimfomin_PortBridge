@@ -9,6 +9,8 @@ from threading import Event, Thread
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from .catalog import Catalog, OBSERVATION_KIND, PROBLEM_ID, PROBLEM_STATUS
+from .coordination import knowledge_graph, recommendations
+from .exchange_api import ExchangeHandlerMixin
 from .feed import build_feed
 
 
@@ -22,7 +24,8 @@ STATIC = {
     "/static/app.js": (PACKAGE / "static" / "app.js", "text/javascript; charset=utf-8"),
     "/api/docs": (ROOT / "API.md", "text/plain; charset=utf-8"),
 }
-COLLECTIONS = ("projects", "problems", "observations", "matches", "related", "preflight", "coordination", "outreach", "health")
+COLLECTIONS = ("projects", "problems", "observations", "matches", "related", "preflight", "coordination",
+               "graph", "source-history", "recommendations", "outreach", "health")
 
 
 def sync_catalog(catalog, *, refresh=False, pages=1):
@@ -59,7 +62,7 @@ def query_rules(params):
     return query, project, status, kind, partial == "1", int(limit)
 
 
-class Handler(BaseHTTPRequestHandler):
+class Handler(ExchangeHandlerMixin, BaseHTTPRequestHandler):
     server_version = "PortBridge/0.1"
 
     def log_message(self, format, *args):
@@ -92,6 +95,8 @@ class Handler(BaseHTTPRequestHandler):
         self.read_route(head=True)
 
     def do_POST(self):
+        if self.handle_exchange(self.path, self.command):
+            return
         self.json_response(405, {"error": "read-only API"})
 
     do_PUT = do_POST
@@ -100,6 +105,8 @@ class Handler(BaseHTTPRequestHandler):
     do_OPTIONS = do_POST
 
     def read_route(self, *, head=False):
+        if self.handle_exchange(self.path, self.command, head=head):
+            return
         host = self.headers.get("Host", "").lower()
         if host not in {"127.0.0.1", "localhost", f"127.0.0.1:{self.server.server_port}",
                         f"localhost:{self.server.server_port}"}:
@@ -128,6 +135,7 @@ class Handler(BaseHTTPRequestHandler):
         catalog = self.server.catalog
         if path in {"/api/v1", "/api/v1/"}:
             return 200, {"name": "PortBridge", "version": 1, "read_only": True, "docs": "/api/docs",
+                         "exchange_enabled": self.server.exchange is not None,
                          "routes": {key: f"/api/v1/{key}" for key in COLLECTIONS}}
         name = path.removeprefix("/api/v1/")
         if name == "projects":
@@ -136,6 +144,14 @@ class Handler(BaseHTTPRequestHandler):
             return 200, catalog.health()
         if name == "coordination":
             return 200, {"coordination": catalog.coordination()}
+        if name == "graph":
+            return 200, knowledge_graph(catalog)
+        if name == "source-history":
+            _, _, _, _, _, limit = query_rules(params)
+            return 200, {"changes": catalog.source_changes(url=params.get("url", [""])[0], limit=limit)}
+        if name == "recommendations":
+            _, project, _, _, _, limit = query_rules(params)
+            return 200, {"recommendations": recommendations(catalog, project=project, limit=limit)}
         if name == "outreach":
             return 200, {"drafts": catalog.outreach()}
         if name.startswith("problems/"):
@@ -163,9 +179,10 @@ class Handler(BaseHTTPRequestHandler):
         return 200, {"problems": problems[:limit]}
 
 
-def make_server(catalog, port):
+def make_server(catalog, port, *, exchange=None):
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     server.catalog = catalog
+    server.exchange = exchange
     return server
 
 
@@ -181,7 +198,12 @@ def serve(catalog, args):
             if stop.wait(args.interval):
                 return
 
-    with make_server(catalog, args.port) as server:
+    exchange = None
+    if args.exchange_db:
+        from .exchange import Exchange
+
+        exchange = Exchange(args.exchange_db, problem_exists=lambda ident: catalog.problem(ident) is not None)
+    with make_server(catalog, args.port, exchange=exchange) as server:
         if not args.offline:
             Thread(target=poll, name="portbridge-sync", daemon=True).start()
         print(f"PortBridge — http://127.0.0.1:{server.server_port}", flush=True)
@@ -207,17 +229,48 @@ def main(argv=None):
     update = commands.add_parser("incremental", help="index issues and pull requests updated since the last sweep")
     update.add_argument("--pages", type=int, choices=range(1, 11), default=3)
     commands.add_parser("status", help="show cached synchronization status")
+    backup = commands.add_parser("backup", help="write a separate verified SQLite backup of --db")
+    backup.add_argument("--out", type=Path, required=True)
+    principal = commands.add_parser("exchange-key", help="create a scoped local exchange key")
+    principal.add_argument("--exchange-db", type=Path, required=True)
+    principal.add_argument("--name", required=True)
+    principal.add_argument("--scope", action="append", choices=("read", "contribute", "review"), required=True)
+    revoke = commands.add_parser("exchange-revoke", help="revoke a local exchange key")
+    revoke.add_argument("--exchange-db", type=Path, required=True)
+    revoke.add_argument("--name", required=True)
     snapshot = commands.add_parser("export", help="write a static site and public JSON snapshots")
     snapshot.add_argument("--out", type=Path, default=ROOT / "dist")
     snapshot.add_argument("--repository", default="", help="optional own GitHub repo for public submissions")
     run = commands.add_parser("serve", help="start the local dashboard and read-only API")
     run.add_argument("--port", type=int, default=8765)
     run.add_argument("--offline", action="store_true", help="serve without any requests to GitHub")
+    run.add_argument("--exchange-db", type=Path, help="enable optional exchange with this separate local database")
     run.add_argument("--interval", type=int, default=900, help="automatic refresh seconds (minimum 60)")
     run.add_argument("--pages", type=int, choices=range(1, 4), default=1)
     args = parser.parse_args(argv)
     if args.command == "serve" and (args.interval < 60 or not 0 <= args.port <= 65535):
         parser.error("use an interval of at least 60 seconds and a valid port")
+    if getattr(args, "exchange_db", None) and args.exchange_db.resolve() == args.db.resolve():
+        parser.error("the exchange needs a separate SQLite database")
+    if args.command in {"exchange-key", "exchange-revoke"}:
+        from .exchange import Conflict, Exchange
+
+        try:
+            exchange = Exchange(args.exchange_db)
+            result = (exchange.create_principal(args.name, args.scope) if args.command == "exchange-key"
+                      else exchange.revoke_principal(args.name))
+        except (Conflict, LookupError, ValueError) as exc:
+            parser.error(str(exc))
+        print(json.dumps(result, ensure_ascii=True))
+        return 0
+    if args.command == "backup":
+        from .backup import backup_database
+
+        try:
+            print(backup_database(args.db, args.out))
+        except (OSError, ValueError) as exc:
+            parser.error(str(exc))
+        return 0
     catalog = Catalog(args.db, args.seed)
     if args.command == "serve":
         serve(catalog, args)
