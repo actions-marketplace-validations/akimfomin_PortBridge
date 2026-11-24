@@ -31,6 +31,38 @@
       "url": "https://github.com/Marvisak/VIctory",
       "stack": "Rust, Windows D3D12 и DXIL",
       "license": "GPL-3.0-or-later"
+    },
+    {
+      "slug": "leonida-ce",
+      "name": "Leonida CE",
+      "repo": "IAmNotSiob/leonida-ce",
+      "url": "https://github.com/IAmNotSiob/leonida-ce",
+      "stack": "Статическая перекомпиляция Leonida",
+      "license": "GPL-3.0-or-later"
+    },
+    {
+      "slug": "kestrelx",
+      "name": "KestrelX",
+      "repo": "Batushn/KestrelX",
+      "url": "https://github.com/Batushn/KestrelX",
+      "stack": "C++23, Windows D3D12 и DXIL",
+      "license": "MIT"
+    },
+    {
+      "slug": "xportpc",
+      "name": "XPortPC",
+      "repo": "Its3rr0rsWRLD/XPortPC",
+      "url": "https://github.com/Its3rr0rsWRLD/XPortPC",
+      "stack": "Windows D3D12, HLSL и DXIL",
+      "license": "MIT"
+    },
+    {
+      "slug": "rebox",
+      "name": "Rebox",
+      "repo": "idvwork/rebox",
+      "url": "https://github.com/idvwork/rebox",
+      "stack": "Linux, WineGDK, vkd3d-proton и SPIR-V",
+      "license": "GPL-2.0"
     }
   ],
   "coordination": {

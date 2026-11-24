@@ -79,7 +79,8 @@ class CatalogTest(CatalogFixture):
 
     def test_real_demo_cards_have_persistent_ids_sources_and_evidence(self):
         projects = {project["slug"] for project in self.catalog.projects()}
-        self.assertEqual(projects, {"continued", "reforge", "xcl", "victory"})
+        self.assertEqual(projects, {"continued", "reforge", "xcl", "victory",
+                                    "leonida-ce", "kestrelx", "xportpc", "rebox"})
         cards = self.catalog.problems()
         ids = [card["id"] for card in cards]
         self.assertGreaterEqual(len(ids), 3)
