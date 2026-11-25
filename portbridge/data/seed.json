@@ -2761,7 +2761,7 @@
       "id": "PB-0025",
       "recorded_at": "2026-11-25T13:36:47Z",
       "title": "Уменьшение временного буфера в XCL",
-      "summary": "ettehn подтвердил снижение временной памяти с 47 712 до 20 064 DWORD на группу на одной записи. В отдельном черновике PortBridge #2322 nnonno91 проверил точный коммит на Radeon и RTX 5090: по 10 тестов без пропусков. Базовая работа Kalmarv влита. Для нашего патча ещё нужны замеры GPU на трёх программах и обязательные прогоны XCL.",
+      "summary": "ettehn подтвердил снижение временной памяти с 47 712 до 20 064 DWORD на группу на одной записи. В отдельном черновике PortBridge #2322 nnonno91 проверил точный коммит на Radeon и RTX 5090: по 10 тестов без пропусков. Базовая работа Kalmarv влита. Kalmarv согласился независимо выполнить парные замеры трёх программ и контрольный прогон. Результаты ещё ожидаются.",
       "status": "verified",
       "tags": [
         "Wave32",
@@ -2776,7 +2776,7 @@
       "translations": {
         "en": {
           "title": "Smaller scratch buffers in XCL",
-          "summary": "ettehn confirmed that scratch for one record fell from 47,712 to 20,064 DWORDs per workgroup. In separate PortBridge draft #2322, nnonno91 tested the exact commit on Radeon and RTX 5090, with ten passes and zero skips on each. Kalmarv's base work merged. Three GPU workload measurements and XCL's required regression runs remain open for our patch.",
+          "summary": "ettehn confirmed that scratch for one record fell from 47,712 to 20,064 DWORDs per workgroup. In separate PortBridge draft #2322, nnonno91 tested the exact commit on Radeon and RTX 5090, with ten passes and zero skips on each. Kalmarv's base work merged. Kalmarv volunteered to measure three workloads in pairs and run a smoke pair. Results remain pending.",
           "tags": [
             "Wave32",
             "DXIL",
@@ -2789,7 +2789,7 @@
         {
           "project": "xcl",
           "status": "verified",
-          "summary": "PortBridge разработал повторное использование слотов. ettehn подтвердил снижение с 47 712 до 20 064 DWORD на группу на одной записи и восемь успешных проверок. Черновик #2322 независимо проверен на Radeon и RTX 5090. Kalmarv запросил измерения памяти и времени GPU на трёх программах.",
+          "summary": "PortBridge разработал повторное использование слотов. ettehn подтвердил снижение с 47 712 до 20 064 DWORD на группу на одной записи и восемь успешных проверок. Черновик #2322 независимо проверен на Radeon и RTX 5090. Kalmarv согласился сравнить память, результаты и время полных цепочек на трёх программах и выполнить контрольный прогон.",
           "source_refs": [
             {
               "title": "Базовый PR Kalmarv",
@@ -2833,6 +2833,11 @@
               "title": "Проверка luckyteagirl на Radeon RX 6800M",
               "url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165844270",
               "translations": {"en": {"title": "luckyteagirl's check on Radeon RX 6800M"}}
+            },
+            {
+              "title": "Kalmarv взял независимую проверку",
+              "url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7166919956",
+              "translations": {"en": {"title": "Kalmarv agreed to run the independent comparison"}}
             }
           ],
           "evidence": [
@@ -2920,7 +2925,7 @@
           ],
           "translations": {
             "en": {
-              "summary": "PortBridge developed the scratch-slot reuse. ettehn confirmed 47,712 to 20,064 DWORDs per group on one record and eight passing checks. Draft #2322 was independently checked on Radeon and RTX 5090. Kalmarv requested scratch size and GPU time on three programs."
+              "summary": "PortBridge developed the scratch-slot reuse. ettehn confirmed 47,712 to 20,064 DWORDs per group on one record and eight passing checks. Draft #2322 was independently checked on Radeon and RTX 5090. Kalmarv volunteered to compare scratch, outputs and full-chain GPU times on three programs and run a smoke pair."
             }
           }
         }
