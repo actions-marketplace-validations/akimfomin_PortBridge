@@ -2,12 +2,12 @@
   {
     "at": "2026-11-25T15:29:00Z",
     "title": "Переносимая генерация уровней текстуры в Vulkan",
-    "summary": "В открытом быстром шейдере NVIDIA нашли зависимость от порядка потоков, который Vulkan не гарантирует. Исправление PortBridge использует нумерацию по подгруппам. На RTX совпали все 28 180 468 выходных байтов. Выигрыш над исходным быстрым шейдером не установлен.",
+    "summary": "В открытом быстром шейдере NVIDIA нашли зависимость от порядка потоков, который Vulkan не гарантирует. Исправление PortBridge использует нумерацию по подгруппам. На трёх открытых текстурах Khronos исходный и исправленный шейдеры дали 8 388 604 совпадающих байта. При искусственной перестановке потоков исходный шейдер исказил 14 194 байта. Проверена штатная загрузка текстур в Blender 5.3. Ускорение в Blender пока не установлено.",
     "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/mipmap-contract",
     "translations": {
       "en": {
         "title": "Portable Vulkan mipmap generation",
-        "summary": "The NVIDIA fast shader assumes an invocation order Vulkan does not guarantee. The PortBridge correction uses subgroup-derived numbering. All 28,180,468 output bytes matched on RTX. A speedup over the stock fast shader remains unproven."
+        "summary": "The NVIDIA fast shader assumes an invocation order Vulkan does not guarantee. The PortBridge correction uses subgroup-derived numbering. Across three Khronos textures, the original and rewritten shaders matched all 8,388,604 bytes. A simulated lane permutation changed 14,194 bytes in the original. We verified the stock Blender 5.3 load path. A speedup in Blender remains unproven."
       }
     }
   },
