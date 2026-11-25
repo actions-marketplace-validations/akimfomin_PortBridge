@@ -200,6 +200,8 @@ def structured_comment(task, source, ident, *, equipment, actor_id=9876, associa
               "Opt-in: yes"]
     if pci:
         fields.extend((f"PCI: {pci}", "Driver: 1.2.3"))
+    if task["report_profile"] == "vulkan-wave64":
+        fields.append("Subgroup-width: 64")
     fields.extend(f"Case: {name} = {outcome}" for name, outcome in
                   (cases or {name: "pass" for name in task["report_cases"]}).items())
     return {"id": ident, "html_url": f"{source}#issuecomment-{ident}", "issue_url": issue,
