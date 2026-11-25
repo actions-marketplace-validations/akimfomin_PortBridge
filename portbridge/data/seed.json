@@ -2638,6 +2638,11 @@
               "title": "Слияние базового PR Kalmarv",
               "url": "https://github.com/xcl-dev/xcl/commit/afc5ee86ae3a9521c9f15d96505cd73fe72f2191",
               "translations": {"en": {"title": "Merge of Kalmarv's base PR"}}
+            },
+            {
+              "title": "Готовая ветка PortBridge поверх слитой базы",
+              "url": "https://github.com/akimfomin/xcl/commit/b3f7ab5574c4489761141e2de0ce31d2eb216412",
+              "translations": {"en": {"title": "PortBridge review branch on the merged base"}}
             }
           ],
           "evidence": [
@@ -2701,9 +2706,9 @@
     },
     {
       "id": "PB-0026",
-      "recorded_at": "2026-11-25T11:22:09Z",
+      "recorded_at": "2026-11-25T13:58:42Z",
       "title": "Раздельный расчёт координат GFX10 в AnyXboxX",
-      "summary": "PortBridge предложил переиспользовать отдельные части адреса. Lewandox реализовал раздельный расчёт X, Y и Z в ветке #188 и сообщил о 14 успешных тестах Rust. Yoshi-233 независимо проверил предыдущую версию #188 на Ubuntu. Правка BC7 рассматривается отдельно.",
+      "summary": "PortBridge предложил переиспользовать части адреса, а Lewandox реализовал раздельный расчёт X, Y и Z в ветке #188. PortBridge независимо повторил тесты на точном коммите реализации. Прошли все 15. Yoshi-233 отдельно проверил предыдущую версию на Ubuntu.",
       "status": "verified",
       "tags": [
         "gfx10",
@@ -2718,7 +2723,7 @@
       "translations": {
         "en": {
           "title": "Separable GFX10 coordinate evaluation in AnyXboxX",
-          "summary": "PortBridge proposed reusing the separate address terms. Lewandox implemented X, Y and Z factorization in the branch for PR #188 and reported 14 passing Rust tests. Yoshi-233 independently checked the earlier PR revision on Ubuntu. The BC7 patch is tracked separately.",
+          "summary": "PortBridge proposed reusing the address terms and Lewandox implemented X, Y and Z factorization in the branch for PR #188. PortBridge independently reran the exact implementation commit and all 15 tests passed. Yoshi-233 separately checked the earlier revision on Ubuntu.",
           "tags": [
             "gfx10",
             "detile",
@@ -2802,6 +2807,17 @@
               "reported_at": "2026-11-25T11:22:09Z",
               "platforms": ["Rust texture crate"],
               "translations": {"en": {"title": "Lewandox tested the implementation", "observed": "The author reported 14 passing Rust tests, including copy output compared with the per-element calculation across layouts, plus passing pytest and ruff."}}
+            },
+            {
+              "kind": "independent",
+              "outcome": "passed",
+              "title": "PortBridge независимо повторил проверку реализации Lewandox",
+              "observed": "На точной версии c5ca937 прошли 15 тестов Rust без пропусков. Девять проверок охватывают GFX10, включая новое побайтное сравнение. Остальные шесть относятся к BC7.",
+              "url": "https://github.com/LooperSalty/AnyXboxX/pull/188#issuecomment-7164567766",
+              "revision": "c5ca937c371d8b21e56feb36f3d009ecffe5765a",
+              "reported_at": "2026-11-25T13:58:42Z",
+              "platforms": ["Windows 11", "Rust 1.100.0 gnullvm", "CPU"],
+              "translations": {"en": {"title": "PortBridge independently reran Lewandox's implementation", "observed": "All 15 Rust tests passed without skips at c5ca937. Nine cover GFX10, including the new byte-comparison test. The other six cover BC7."}}
             }
           ],
           "translations": {

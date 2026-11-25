@@ -1428,6 +1428,7 @@ function labReport(task, returnPath, equipment) {
     ...(selected === 'cpu' ? [] : ['PCI: ', 'Driver: ']),
     'OS: ',
     'Toolchain: ',
+    ...(task.report_profile === 'vulkan-wave64' ? ['Subgroup-width: '] : []),
     'Opt-in: no',
     ...cases.map((name) => 'Case: ' + name + ' = '),
     '',

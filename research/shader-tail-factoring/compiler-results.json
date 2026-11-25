@@ -1,0 +1,3652 @@
+{
+  "dxc_binary_only": {
+    "toolchain": {
+      "dxc": "dxcompiler.dll: 1.9(5512-01b62ad4)(1.9.2609.5) - 1.9.2609.5 (01b62ad47)",
+      "spirv_opt": "SPIRV-Tools v2026.5 v2026.4-121-g340b4c41",
+      "spirv_val": "SPIRV-Tools v2026.5 v2026.4-121-g340b4c41",
+      "clang": "clang version 23.1.6 (https://github.com/llvm/llvm-project.git 5b10d2d74929eae78912771222c9855af97496f4)"
+    },
+    "platform": "Windows AMD64",
+    "rounds": 11,
+    "d3d12_adapter": null,
+    "dxil_listings": false,
+    "cases": {
+      "pcg-8": {
+        "arms": 8,
+        "unfactored_operations": 88,
+        "planning_ms": 0.133,
+        "matched_tail": 9,
+        "edge_parameters": 1,
+        "arms_measured": {
+          "baseline": {
+            "generate_ms": 0.0797,
+            "hlsl_bytes": 3660,
+            "hlsl_sha256": "1d965779cc0c2d76035a626b46afd6fa9769e4cbda5e1f6e3604fbbf46ddca31",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.8852,
+                  "peak_ws": 19447808
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 21.1066,
+                  "peak_ws": 18059264
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.4471,
+                  "peak_ws": 14082048
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.5524,
+                  "peak_ws": 19419136
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 21.1848,
+                  "peak_ws": 18071552
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.0114,
+                  "peak_ws": 14127104
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.1957,
+                  "peak_ws": 19451904
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.9201,
+                  "peak_ws": 18120704
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 12.9652,
+                  "peak_ws": 14110720
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.5294,
+                  "peak_ws": 19464192
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.6221,
+                  "peak_ws": 18124800
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.4856,
+                  "peak_ws": 14102528
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 20.3893,
+                  "peak_ws": 19456000
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.3227,
+                  "peak_ws": 18071552
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.5912,
+                  "peak_ws": 14069760
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.8448,
+                  "peak_ws": 19451904
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.9437,
+                  "peak_ws": 18046976
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.0925,
+                  "peak_ws": 14082048
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.6241,
+                  "peak_ws": 19439616
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.2203,
+                  "peak_ws": 18063360
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.6264,
+                  "peak_ws": 14082048
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.6832,
+                  "peak_ws": 19447808
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.1223,
+                  "peak_ws": 18104320
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.0476,
+                  "peak_ws": 14110720
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.859,
+                  "peak_ws": 19460096
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 24.295,
+                  "peak_ws": 18071552
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.5537,
+                  "peak_ws": 14036992
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.7626,
+                  "peak_ws": 19451904
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.3096,
+                  "peak_ws": 18251776
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.3281,
+                  "peak_ws": 14049280
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.7576,
+                  "peak_ws": 19468288
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 21.3991,
+                  "peak_ws": 18079744
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.2999,
+                  "peak_ws": 14090240
+                },
+                "sizes": {
+                  "dxil_bytes": 3552,
+                  "dxc_spirv_bytes": 3584,
+                  "spirv_opt_bytes": 3584
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 18.8448,
+                "peak_ws": 19451904
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 20.3227,
+                "peak_ws": 18071552
+              },
+              "spirv_opt_o": {
+                "wall_ms": 13.5912,
+                "peak_ws": 14082048
+              }
+            }
+          },
+          "factored": {
+            "generate_ms": 0.0364,
+            "hlsl_bytes": 1661,
+            "hlsl_sha256": "6be6a7cfceddae2de1362c2abb8628b5856d24c2cd1f772f7fb64fede6edd1ba",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.3376,
+                  "peak_ws": 19034112
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 17.7108,
+                  "peak_ws": 17813504
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.1344,
+                  "peak_ws": 14127104
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.9277,
+                  "peak_ws": 19050496
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 17.8366,
+                  "peak_ws": 17838080
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.0827,
+                  "peak_ws": 14094336
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 16.8967,
+                  "peak_ws": 19050496
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 16.8734,
+                  "peak_ws": 17874944
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 12.1153,
+                  "peak_ws": 14077952
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.9209,
+                  "peak_ws": 19021824
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 18.5786,
+                  "peak_ws": 17846272
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.2092,
+                  "peak_ws": 14110720
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.2987,
+                  "peak_ws": 19030016
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 17.2984,
+                  "peak_ws": 17866752
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.1,
+                  "peak_ws": 14045184
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.3007,
+                  "peak_ws": 19058688
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 17.3554,
+                  "peak_ws": 17874944
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.1919,
+                  "peak_ws": 14086144
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.5895,
+                  "peak_ws": 19075072
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 17.4068,
+                  "peak_ws": 17870848
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.0667,
+                  "peak_ws": 14106624
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.1267,
+                  "peak_ws": 19054592
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 18.3021,
+                  "peak_ws": 17866752
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.1223,
+                  "peak_ws": 14086144
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.3817,
+                  "peak_ws": 19021824
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 18.5272,
+                  "peak_ws": 17829888
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 12.5443,
+                  "peak_ws": 14069760
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.0792,
+                  "peak_ws": 19038208
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 17.4703,
+                  "peak_ws": 17866752
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 12.3969,
+                  "peak_ws": 14069760
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 17.6,
+                  "peak_ws": 19128320
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 17.2168,
+                  "peak_ws": 17797120
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 12.4933,
+                  "peak_ws": 14053376
+                },
+                "sizes": {
+                  "dxil_bytes": 3344,
+                  "dxc_spirv_bytes": 2184,
+                  "spirv_opt_bytes": 2184
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 17.3817,
+                "peak_ws": 19050496
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 17.4703,
+                "peak_ws": 17866752
+              },
+              "spirv_opt_o": {
+                "wall_ms": 13.0827,
+                "peak_ws": 14086144
+              }
+            }
+          }
+        },
+        "clang_o3_exact_tuple_checks": 1024
+      },
+      "pcg-32": {
+        "arms": 32,
+        "unfactored_operations": 352,
+        "planning_ms": 0.2231,
+        "matched_tail": 9,
+        "edge_parameters": 1,
+        "arms_measured": {
+          "baseline": {
+            "generate_ms": 0.2462,
+            "hlsl_bytes": 13324,
+            "hlsl_sha256": "ebd08ee6e0ab50af265bf0f99e8fb8ff4dfcd08c269310a9289db6507981a633",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.6993,
+                  "peak_ws": 20623360
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 31.5516,
+                  "peak_ws": 20291584
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.5257,
+                  "peak_ws": 14131200
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 24.668,
+                  "peak_ws": 20533248
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 32.072,
+                  "peak_ws": 20275200
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.8568,
+                  "peak_ws": 14159872
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 32.2362,
+                  "peak_ws": 20520960
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 31.7468,
+                  "peak_ws": 20295680
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.234,
+                  "peak_ws": 14127104
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 32.2878,
+                  "peak_ws": 20578304
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 30.7217,
+                  "peak_ws": 20230144
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.0627,
+                  "peak_ws": 14143488
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.1255,
+                  "peak_ws": 20520960
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 30.3347,
+                  "peak_ws": 20283392
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.5413,
+                  "peak_ws": 14143488
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 24.5311,
+                  "peak_ws": 20504576
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 33.1526,
+                  "peak_ws": 20262912
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.2406,
+                  "peak_ws": 14118912
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.078,
+                  "peak_ws": 20529152
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 30.7866,
+                  "peak_ws": 20262912
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.8655,
+                  "peak_ws": 14135296
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 26.0837,
+                  "peak_ws": 20484096
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 30.756,
+                  "peak_ws": 20242432
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.1495,
+                  "peak_ws": 14159872
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.5134,
+                  "peak_ws": 20533248
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 31.6189,
+                  "peak_ws": 20267008
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.8288,
+                  "peak_ws": 14127104
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.6945,
+                  "peak_ws": 20537344
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 31.8974,
+                  "peak_ws": 20242432
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.1592,
+                  "peak_ws": 14172160
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.6907,
+                  "peak_ws": 20537344
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 31.3718,
+                  "peak_ws": 20283392
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.5274,
+                  "peak_ws": 14159872
+                },
+                "sizes": {
+                  "dxil_bytes": 4756,
+                  "dxc_spirv_bytes": 10512,
+                  "spirv_opt_bytes": 10512
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 25.6907,
+                "peak_ws": 20533248
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 31.5516,
+                "peak_ws": 20267008
+              },
+              "spirv_opt_o": {
+                "wall_ms": 17.1592,
+                "peak_ws": 14143488
+              }
+            }
+          },
+          "factored": {
+            "generate_ms": 0.0795,
+            "hlsl_bytes": 4461,
+            "hlsl_sha256": "92c26cd4fbedf2f493695a7672b207f22b8598925b2269f7edf913556304be8e",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.4975,
+                  "peak_ws": 19509248
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 21.4428,
+                  "peak_ws": 18104320
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.8771,
+                  "peak_ws": 14127104
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.0748,
+                  "peak_ws": 19488768
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.4213,
+                  "peak_ws": 18149376
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.8945,
+                  "peak_ws": 14053376
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.562,
+                  "peak_ws": 19492864
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.1028,
+                  "peak_ws": 18100224
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.3367,
+                  "peak_ws": 14114816
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.445,
+                  "peak_ws": 19566592
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.5563,
+                  "peak_ws": 18153472
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.4207,
+                  "peak_ws": 14086144
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.9146,
+                  "peak_ws": 19480576
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.3956,
+                  "peak_ws": 18128896
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.2677,
+                  "peak_ws": 14102528
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.9676,
+                  "peak_ws": 19501056
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.9474,
+                  "peak_ws": 18157568
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.1802,
+                  "peak_ws": 14086144
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.5147,
+                  "peak_ws": 19496960
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 21.0715,
+                  "peak_ws": 18157568
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.2888,
+                  "peak_ws": 14131200
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.6576,
+                  "peak_ws": 19525632
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.8368,
+                  "peak_ws": 18083840
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.0717,
+                  "peak_ws": 14163968
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.5477,
+                  "peak_ws": 19468288
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 21.6066,
+                  "peak_ws": 18161664
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.5792,
+                  "peak_ws": 14090240
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.5958,
+                  "peak_ws": 19468288
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.7446,
+                  "peak_ws": 18190336
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.7509,
+                  "peak_ws": 14106624
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 20.4767,
+                  "peak_ws": 19447808
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 21.0813,
+                  "peak_ws": 18153472
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.3012,
+                  "peak_ws": 14073856
+                },
+                "sizes": {
+                  "dxil_bytes": 3872,
+                  "dxc_spirv_bytes": 4312,
+                  "spirv_opt_bytes": 4312
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 19.4975,
+                "peak_ws": 19492864
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 20.8368,
+                "peak_ws": 18153472
+              },
+              "spirv_opt_o": {
+                "wall_ms": 14.3012,
+                "peak_ws": 14102528
+              }
+            }
+          }
+        },
+        "clang_o3_exact_tuple_checks": 1024
+      },
+      "pure-4x16": {
+        "arms": 4,
+        "unfactored_operations": 324,
+        "planning_ms": 0.5576,
+        "matched_tail": 80,
+        "edge_parameters": 1,
+        "arms_measured": {
+          "baseline": {
+            "generate_ms": 0.2044,
+            "hlsl_bytes": 11706,
+            "hlsl_sha256": "ac0c151ee17c2876961f5a17ec1f13d9044ee57ed5545d927ec86bba44ded94f",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 27.0755,
+                  "peak_ws": 20344832
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 29.3049,
+                  "peak_ws": 19558400
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.2515,
+                  "peak_ws": 14045184
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.1485,
+                  "peak_ws": 20299776
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 28.2813,
+                  "peak_ws": 19615744
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.3016,
+                  "peak_ws": 14012416
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 26.9144,
+                  "peak_ws": 20291584
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 29.3364,
+                  "peak_ws": 19591168
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.5616,
+                  "peak_ws": 14049280
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.1643,
+                  "peak_ws": 20275200
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 27.535,
+                  "peak_ws": 19619840
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.7808,
+                  "peak_ws": 14065664
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.6726,
+                  "peak_ws": 20234240
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 27.484,
+                  "peak_ws": 19562496
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.9168,
+                  "peak_ws": 14041088
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.5409,
+                  "peak_ws": 20320256
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 27.7472,
+                  "peak_ws": 19619840
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.0335,
+                  "peak_ws": 14041088
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 26.4948,
+                  "peak_ws": 20316160
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 28.2041,
+                  "peak_ws": 19554304
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.4723,
+                  "peak_ws": 14028800
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 24.9877,
+                  "peak_ws": 20328448
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 27.7355,
+                  "peak_ws": 19615744
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.3982,
+                  "peak_ws": 14114816
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.4209,
+                  "peak_ws": 20357120
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 27.7529,
+                  "peak_ws": 19562496
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.6294,
+                  "peak_ws": 14024704
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.9726,
+                  "peak_ws": 20291584
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 28.601,
+                  "peak_ws": 19628032
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.6975,
+                  "peak_ws": 14053376
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 26.4032,
+                  "peak_ws": 20291584
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 27.7592,
+                  "peak_ws": 19570688
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.6331,
+                  "peak_ws": 14032896
+                },
+                "sizes": {
+                  "dxil_bytes": 4416,
+                  "dxc_spirv_bytes": 8644,
+                  "spirv_opt_bytes": 8644
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 25.6726,
+                "peak_ws": 20299776
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 27.7592,
+                "peak_ws": 19591168
+              },
+              "spirv_opt_o": {
+                "wall_ms": 15.6331,
+                "peak_ws": 14041088
+              }
+            }
+          },
+          "factored": {
+            "generate_ms": 0.0884,
+            "hlsl_bytes": 3256,
+            "hlsl_sha256": "7b10d1ba7b226d00fd5715cf0c7a50628f779c61ea8bb5a03dc21df8af9bf4ad",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.6039,
+                  "peak_ws": 19468288
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.4746,
+                  "peak_ws": 18051072
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.1537,
+                  "peak_ws": 14045184
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.177,
+                  "peak_ws": 19496960
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.2169,
+                  "peak_ws": 18079744
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.6969,
+                  "peak_ws": 14012416
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 20.2641,
+                  "peak_ws": 19443712
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.5386,
+                  "peak_ws": 18063360
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.7642,
+                  "peak_ws": 14016512
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.3379,
+                  "peak_ws": 19443712
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.8852,
+                  "peak_ws": 18046976
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.4012,
+                  "peak_ws": 14032896
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.7795,
+                  "peak_ws": 19468288
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.2959,
+                  "peak_ws": 18051072
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 12.7697,
+                  "peak_ws": 14041088
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 23.7642,
+                  "peak_ws": 19484672
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.5666,
+                  "peak_ws": 18055168
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.2421,
+                  "peak_ws": 14032896
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.7054,
+                  "peak_ws": 19427328
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 18.6864,
+                  "peak_ws": 18059264
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.3577,
+                  "peak_ws": 14036992
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.4469,
+                  "peak_ws": 19472384
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.6862,
+                  "peak_ws": 18063360
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.1127,
+                  "peak_ws": 14032896
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.9993,
+                  "peak_ws": 19468288
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.1291,
+                  "peak_ws": 18075648
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.6407,
+                  "peak_ws": 14036992
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 20.7605,
+                  "peak_ws": 19415040
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.1422,
+                  "peak_ws": 18059264
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.2326,
+                  "peak_ws": 14045184
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 18.8397,
+                  "peak_ws": 19423232
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 18.996,
+                  "peak_ws": 18051072
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.7182,
+                  "peak_ws": 14061568
+                },
+                "sizes": {
+                  "dxil_bytes": 3672,
+                  "dxc_spirv_bytes": 3844,
+                  "spirv_opt_bytes": 3844
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 19.4469,
+                "peak_ws": 19468288
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 19.8852,
+                "peak_ws": 18059264
+              },
+              "spirv_opt_o": {
+                "wall_ms": 13.6407,
+                "peak_ws": 14036992
+              }
+            }
+          }
+        },
+        "clang_o3_exact_tuple_checks": 1024
+      },
+      "pure-16x16": {
+        "arms": 16,
+        "unfactored_operations": 1296,
+        "planning_ms": 1.0459,
+        "matched_tail": 80,
+        "edge_parameters": 1,
+        "arms_measured": {
+          "baseline": {
+            "generate_ms": 0.7773,
+            "hlsl_bytes": 45355,
+            "hlsl_sha256": "24cb10b49ce5649cda1abafb9d43d277d81ab14e5a42813b20d8dded52aee1e3",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.6715,
+                  "peak_ws": 24383488
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 63.033,
+                  "peak_ws": 27709440
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 24.7078,
+                  "peak_ws": 15446016
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 52.0524,
+                  "peak_ws": 24387584
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 64.9168,
+                  "peak_ws": 27783168
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.3103,
+                  "peak_ws": 15470592
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 52.1098,
+                  "peak_ws": 24494080
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 67.4402,
+                  "peak_ws": 27848704
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.8841,
+                  "peak_ws": 15470592
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 52.9871,
+                  "peak_ws": 24489984
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 65.6991,
+                  "peak_ws": 27856896
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 24.6746,
+                  "peak_ws": 15446016
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 52.441,
+                  "peak_ws": 24481792
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 63.6354,
+                  "peak_ws": 27844608
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 24.7058,
+                  "peak_ws": 15466496
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.4298,
+                  "peak_ws": 24469504
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 62.6323,
+                  "peak_ws": 27779072
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.2039,
+                  "peak_ws": 15454208
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.205,
+                  "peak_ws": 24514560
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 64.0163,
+                  "peak_ws": 27766784
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 24.6108,
+                  "peak_ws": 15474688
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.0704,
+                  "peak_ws": 24498176
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 66.0438,
+                  "peak_ws": 27758592
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.7658,
+                  "peak_ws": 15437824
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 52.8237,
+                  "peak_ws": 24465408
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 64.7425,
+                  "peak_ws": 27766784
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 31.3481,
+                  "peak_ws": 15454208
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 50.8956,
+                  "peak_ws": 24522752
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 66.7011,
+                  "peak_ws": 27840512
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.3208,
+                  "peak_ws": 15454208
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.8084,
+                  "peak_ws": 24449024
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 65.557,
+                  "peak_ws": 27799552
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.6485,
+                  "peak_ws": 15450112
+                },
+                "sizes": {
+                  "dxil_bytes": 7728,
+                  "dxc_spirv_bytes": 28468,
+                  "spirv_opt_bytes": 28468
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 51.8084,
+                "peak_ws": 24481792
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 64.9168,
+                "peak_ws": 27783168
+              },
+              "spirv_opt_o": {
+                "wall_ms": 25.3103,
+                "peak_ws": 15454208
+              }
+            }
+          },
+          "factored": {
+            "generate_ms": 0.0837,
+            "hlsl_bytes": 4229,
+            "hlsl_sha256": "07a6f38221dc8450f5480f9819ecbd69f73d55c9caa09986530439e90e05c126",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.6837,
+                  "peak_ws": 19451904
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.9938,
+                  "peak_ws": 18116608
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.5426,
+                  "peak_ws": 14073856
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 20.0034,
+                  "peak_ws": 19435520
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 30.533,
+                  "peak_ws": 18132992
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.6906,
+                  "peak_ws": 14082048
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 21.1024,
+                  "peak_ws": 19505152
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.1598,
+                  "peak_ws": 18112512
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.3133,
+                  "peak_ws": 14061568
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 20.6876,
+                  "peak_ws": 19456000
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.2844,
+                  "peak_ws": 18100224
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.6118,
+                  "peak_ws": 14090240
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.8044,
+                  "peak_ws": 19509248
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.2103,
+                  "peak_ws": 18096128
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.777,
+                  "peak_ws": 14069760
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.1078,
+                  "peak_ws": 19501056
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 21.0363,
+                  "peak_ws": 18206720
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.9041,
+                  "peak_ws": 14061568
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 20.1659,
+                  "peak_ws": 19533824
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.5243,
+                  "peak_ws": 18079744
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.8649,
+                  "peak_ws": 14086144
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.1881,
+                  "peak_ws": 19501056
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.3808,
+                  "peak_ws": 18112512
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.7064,
+                  "peak_ws": 14073856
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.7844,
+                  "peak_ws": 19546112
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.9452,
+                  "peak_ws": 18141184
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.3295,
+                  "peak_ws": 14061568
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.7844,
+                  "peak_ws": 19554304
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 19.9962,
+                  "peak_ws": 18223104
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 13.6469,
+                  "peak_ws": 14123008
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 19.6609,
+                  "peak_ws": 19472384
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 20.585,
+                  "peak_ws": 18120704
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 14.2948,
+                  "peak_ws": 14069760
+                },
+                "sizes": {
+                  "dxil_bytes": 3792,
+                  "dxc_spirv_bytes": 4468,
+                  "spirv_opt_bytes": 4468
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 19.7844,
+                "peak_ws": 19501056
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 20.3808,
+                "peak_ws": 18116608
+              },
+              "spirv_opt_o": {
+                "wall_ms": 13.8649,
+                "peak_ws": 14073856
+              }
+            }
+          }
+        },
+        "clang_o3_exact_tuple_checks": 1024
+      },
+      "pure-64x16": {
+        "arms": 64,
+        "unfactored_operations": 5184,
+        "planning_ms": 3.2155,
+        "matched_tail": 80,
+        "edge_parameters": 1,
+        "arms_measured": {
+          "baseline": {
+            "generate_ms": 3.0253,
+            "hlsl_bytes": 179995,
+            "hlsl_sha256": "66fb5aabe178fafd8e3a357e5c0dae98c6115504c27539f7ba53cfb80f42d338",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 165.3043,
+                  "peak_ws": 40112128
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 240.0528,
+                  "peak_ws": 58982400
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 64.5771,
+                  "peak_ws": 22769664
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 166.9105,
+                  "peak_ws": 40083456
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 252.0589,
+                  "peak_ws": 58937344
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 70.8547,
+                  "peak_ws": 22757376
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 167.0695,
+                  "peak_ws": 39747584
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 249.6006,
+                  "peak_ws": 58834944
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 66.418,
+                  "peak_ws": 22700032
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 159.3192,
+                  "peak_ws": 39903232
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 241.7085,
+                  "peak_ws": 59002880
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 65.3517,
+                  "peak_ws": 22753280
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 163.5456,
+                  "peak_ws": 39587840
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 249.1448,
+                  "peak_ws": 58880000
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 65.9848,
+                  "peak_ws": 22876160
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 167.4857,
+                  "peak_ws": 39931904
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 253.0911,
+                  "peak_ws": 59006976
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 63.5477,
+                  "peak_ws": 22720512
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 162.814,
+                  "peak_ws": 39813120
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 249.7771,
+                  "peak_ws": 58941440
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 66.1077,
+                  "peak_ws": 22892544
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 162.6884,
+                  "peak_ws": 39714816
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 241.3857,
+                  "peak_ws": 58986496
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 64.5768,
+                  "peak_ws": 22790144
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 158.0584,
+                  "peak_ws": 39776256
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 240.5855,
+                  "peak_ws": 58871808
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 68.9242,
+                  "peak_ws": 22773760
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 164.9616,
+                  "peak_ws": 39837696
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 257.3274,
+                  "peak_ws": 59002880
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 67.7056,
+                  "peak_ws": 22786048
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 168.2507,
+                  "peak_ws": 40099840
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 246.7993,
+                  "peak_ws": 59027456
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 66.0677,
+                  "peak_ws": 22773760
+                },
+                "sizes": {
+                  "dxil_bytes": 22808,
+                  "dxc_spirv_bytes": 108484,
+                  "spirv_opt_bytes": 108484
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 164.9616,
+                "peak_ws": 39837696
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 249.1448,
+                "peak_ws": 58982400
+              },
+              "spirv_opt_o": {
+                "wall_ms": 66.0677,
+                "peak_ws": 22773760
+              }
+            }
+          },
+          "factored": {
+            "generate_ms": 0.1589,
+            "hlsl_bytes": 8165,
+            "hlsl_sha256": "c1acd8830a10f6d8877f18050e656456a2fc03194733809e1c86ed5ee71a0d2e",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.9925,
+                  "peak_ws": 19824640
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 24.7781,
+                  "peak_ws": 18583552
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.3844,
+                  "peak_ws": 14225408
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.0064,
+                  "peak_ws": 19804160
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.367,
+                  "peak_ws": 18526208
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.8623,
+                  "peak_ws": 14270464
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.2185,
+                  "peak_ws": 19857408
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 24.9257,
+                  "peak_ws": 18522112
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.8247,
+                  "peak_ws": 14274560
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.9216,
+                  "peak_ws": 19820544
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 24.9562,
+                  "peak_ws": 18522112
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.6347,
+                  "peak_ws": 14217216
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 23.4516,
+                  "peak_ws": 19824640
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.8725,
+                  "peak_ws": 18591744
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.1167,
+                  "peak_ws": 14262272
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.977,
+                  "peak_ws": 19775488
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.1662,
+                  "peak_ws": 18583552
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.1552,
+                  "peak_ws": 14233600
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 23.3863,
+                  "peak_ws": 19783680
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 29.6014,
+                  "peak_ws": 18542592
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 15.9494,
+                  "peak_ws": 14229504
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.4585,
+                  "peak_ws": 19816448
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.4149,
+                  "peak_ws": 18571264
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.5024,
+                  "peak_ws": 14254080
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 23.0378,
+                  "peak_ws": 19877888
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.1797,
+                  "peak_ws": 18583552
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.9188,
+                  "peak_ws": 14290944
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.2049,
+                  "peak_ws": 19820544
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.5678,
+                  "peak_ws": 18710528
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.5379,
+                  "peak_ws": 14270464
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.5262,
+                  "peak_ws": 19804160
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.2012,
+                  "peak_ws": 18591744
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.575,
+                  "peak_ws": 14278656
+                },
+                "sizes": {
+                  "dxil_bytes": 4508,
+                  "dxc_spirv_bytes": 7684,
+                  "spirv_opt_bytes": 7684
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 22.9216,
+                "peak_ws": 19820544
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 25.2012,
+                "peak_ws": 18583552
+              },
+              "spirv_opt_o": {
+                "wall_ms": 16.5379,
+                "peak_ws": 14262272
+              }
+            }
+          }
+        },
+        "clang_o3_exact_tuple_checks": 1024
+      },
+      "pure-16x64": {
+        "arms": 16,
+        "unfactored_operations": 5136,
+        "planning_ms": 5.2453,
+        "matched_tail": 320,
+        "edge_parameters": 1,
+        "arms_measured": {
+          "baseline": {
+            "generate_ms": 3.0765,
+            "hlsl_bytes": 185963,
+            "hlsl_sha256": "edd645dcafe5f2be442ea4e75b71d6898d7e79a645392c67b891743e6504f744",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 159.522,
+                  "peak_ws": 39514112
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 234.6299,
+                  "peak_ws": 58626048
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 62.0391,
+                  "peak_ws": 22654976
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 161.07,
+                  "peak_ws": 39510016
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 247.5771,
+                  "peak_ws": 58662912
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 64.1612,
+                  "peak_ws": 22720512
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 160.8371,
+                  "peak_ws": 39247872
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 238.8983,
+                  "peak_ws": 58699776
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 67.0298,
+                  "peak_ws": 22683648
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 161.2951,
+                  "peak_ws": 39411712
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 236.2203,
+                  "peak_ws": 58871808
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 63.7472,
+                  "peak_ws": 22634496
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 159.497,
+                  "peak_ws": 39358464
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 237.705,
+                  "peak_ws": 58658816
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 63.3205,
+                  "peak_ws": 22810624
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 164.8626,
+                  "peak_ws": 39174144
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 247.6,
+                  "peak_ws": 58617856
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 63.5919,
+                  "peak_ws": 22724608
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 165.2529,
+                  "peak_ws": 39350272
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 243.5547,
+                  "peak_ws": 58695680
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 62.4094,
+                  "peak_ws": 22691840
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 163.2259,
+                  "peak_ws": 39321600
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 244.2189,
+                  "peak_ws": 58716160
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 64.9008,
+                  "peak_ws": 22646784
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 160.6978,
+                  "peak_ws": 39444480
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 250.9385,
+                  "peak_ws": 58675200
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 63.5532,
+                  "peak_ws": 22728704
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 164.3515,
+                  "peak_ws": 39469056
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 239.0082,
+                  "peak_ws": 58695680
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 62.7397,
+                  "peak_ws": 22659072
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 161.0591,
+                  "peak_ws": 39370752
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 240.6684,
+                  "peak_ws": 58707968
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 63.3655,
+                  "peak_ws": 22749184
+                },
+                "sizes": {
+                  "dxil_bytes": 22500,
+                  "dxc_spirv_bytes": 106884,
+                  "spirv_opt_bytes": 106884
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 161.07,
+                "peak_ws": 39370752
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 240.6684,
+                "peak_ws": 58695680
+              },
+              "spirv_opt_o": {
+                "wall_ms": 63.5532,
+                "peak_ws": 22691840
+              }
+            }
+          },
+          "factored": {
+            "generate_ms": 0.2282,
+            "hlsl_bytes": 12055,
+            "hlsl_sha256": "4652f1ab966a2edcc9e58303671b1ad746f6ede0eb27bb965fabe82657ce7e12",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 28.0547,
+                  "peak_ws": 20553728
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 28.0917,
+                  "peak_ws": 19652608
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.7447,
+                  "peak_ws": 14131200
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 26.966,
+                  "peak_ws": 20545536
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 29.4651,
+                  "peak_ws": 19574784
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.2335,
+                  "peak_ws": 14135296
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 27.019,
+                  "peak_ws": 20516864
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 30.0616,
+                  "peak_ws": 19558400
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.7238,
+                  "peak_ws": 14118912
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 26.8307,
+                  "peak_ws": 20574208
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 28.8451,
+                  "peak_ws": 19578880
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 27.5241,
+                  "peak_ws": 14159872
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 28.0021,
+                  "peak_ws": 20549632
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 29.0792,
+                  "peak_ws": 19587072
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.8453,
+                  "peak_ws": 14106624
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 26.8854,
+                  "peak_ws": 20566016
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 29.5261,
+                  "peak_ws": 19570688
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.0652,
+                  "peak_ws": 14098432
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 28.7648,
+                  "peak_ws": 20566016
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 28.8625,
+                  "peak_ws": 19570688
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.2105,
+                  "peak_ws": 14127104
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 28.1303,
+                  "peak_ws": 20557824
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 30.841,
+                  "peak_ws": 19582976
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.9562,
+                  "peak_ws": 14135296
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 27.4359,
+                  "peak_ws": 20623360
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 28.6621,
+                  "peak_ws": 19562496
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.3816,
+                  "peak_ws": 14114816
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 25.9429,
+                  "peak_ws": 20492288
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 28.6567,
+                  "peak_ws": 19595264
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.4935,
+                  "peak_ws": 14114816
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 26.7829,
+                  "peak_ws": 20623360
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 29.6103,
+                  "peak_ws": 19648512
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.0328,
+                  "peak_ws": 14127104
+                },
+                "sizes": {
+                  "dxil_bytes": 5072,
+                  "dxc_spirv_bytes": 10884,
+                  "spirv_opt_bytes": 10884
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 27.019,
+                "peak_ws": 20557824
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 29.0792,
+                "peak_ws": 19578880
+              },
+              "spirv_opt_o": {
+                "wall_ms": 17.0652,
+                "peak_ws": 14127104
+              }
+            }
+          }
+        },
+        "clang_o3_exact_tuple_checks": 1024
+      },
+      "constants-16x16": {
+        "arms": 16,
+        "unfactored_operations": 1296,
+        "planning_ms": 5.8008,
+        "matched_tail": 80,
+        "edge_parameters": 17,
+        "arms_measured": {
+          "baseline": {
+            "generate_ms": 0.7632,
+            "hlsl_bytes": 45355,
+            "hlsl_sha256": "84bd2d8f25cadc5f790a4bd654d2015943fe528cbf6bbeacfe3a0767b4bde743",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.5444,
+                  "peak_ws": 24571904
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 65.2635,
+                  "peak_ws": 28069888
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 26.8515,
+                  "peak_ws": 15949824
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 52.9247,
+                  "peak_ws": 24678400
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 68.2533,
+                  "peak_ws": 28061696
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 26.7075,
+                  "peak_ws": 15900672
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 54.0896,
+                  "peak_ws": 24449024
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 65.1907,
+                  "peak_ws": 28168192
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.852,
+                  "peak_ws": 15908864
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.3554,
+                  "peak_ws": 24584192
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 66.5253,
+                  "peak_ws": 28069888
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.2709,
+                  "peak_ws": 15839232
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.5932,
+                  "peak_ws": 24522752
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 64.5311,
+                  "peak_ws": 28110848
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 27.4978,
+                  "peak_ws": 15900672
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.021,
+                  "peak_ws": 24510464
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 66.1512,
+                  "peak_ws": 28000256
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.9152,
+                  "peak_ws": 15929344
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.3552,
+                  "peak_ws": 24510464
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 66.0218,
+                  "peak_ws": 28119040
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 27.1263,
+                  "peak_ws": 15949824
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 54.2201,
+                  "peak_ws": 24596480
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 69.6648,
+                  "peak_ws": 28164096
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 26.1611,
+                  "peak_ws": 15966208
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.7559,
+                  "peak_ws": 24674304
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 66.8789,
+                  "peak_ws": 28012544
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 26.5037,
+                  "peak_ws": 15904768
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.9275,
+                  "peak_ws": 24539136
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 66.8646,
+                  "peak_ws": 28131328
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 26.0664,
+                  "peak_ws": 15904768
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 54.0833,
+                  "peak_ws": 24530944
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 68.9818,
+                  "peak_ws": 28073984
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.8238,
+                  "peak_ws": 15921152
+                },
+                "sizes": {
+                  "dxil_bytes": 9124,
+                  "dxc_spirv_bytes": 32308,
+                  "spirv_opt_bytes": 32308
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 53.5444,
+                "peak_ws": 24539136
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 66.5253,
+                "peak_ws": 28073984
+              },
+              "spirv_opt_o": {
+                "wall_ms": 26.1611,
+                "peak_ws": 15908864
+              }
+            }
+          },
+          "factored": {
+            "generate_ms": 0.1475,
+            "hlsl_bytes": 10760,
+            "hlsl_sha256": "fcd9088e7551dd9ebf517057ead87eb3bd9a4a0f1eafafaca8a59bfb05b038ea",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.4033,
+                  "peak_ws": 19812352
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.5523,
+                  "peak_ws": 18739200
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.3224,
+                  "peak_ws": 14254080
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 23.2911,
+                  "peak_ws": 19845120
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 26.6854,
+                  "peak_ws": 18710528
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.792,
+                  "peak_ws": 14151680
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.7778,
+                  "peak_ws": 19836928
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.4838,
+                  "peak_ws": 18685952
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.8081,
+                  "peak_ws": 14221312
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.3856,
+                  "peak_ws": 19890176
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 26.527,
+                  "peak_ws": 18747392
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 18.1682,
+                  "peak_ws": 14163968
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.4392,
+                  "peak_ws": 19791872
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 26.6218,
+                  "peak_ws": 18751488
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.4453,
+                  "peak_ws": 14213120
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.0094,
+                  "peak_ws": 19853312
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 27.1343,
+                  "peak_ws": 18771968
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 18.7923,
+                  "peak_ws": 14188544
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.724,
+                  "peak_ws": 19836928
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 26.7444,
+                  "peak_ws": 18706432
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.4372,
+                  "peak_ws": 14315520
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 23.5171,
+                  "peak_ws": 19775488
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 26.7628,
+                  "peak_ws": 18698240
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.3424,
+                  "peak_ws": 14200832
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.0739,
+                  "peak_ws": 19816448
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 26.1557,
+                  "peak_ws": 18735104
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 17.3178,
+                  "peak_ws": 14151680
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 22.6799,
+                  "peak_ws": 19779584
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 25.4443,
+                  "peak_ws": 18702336
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.754,
+                  "peak_ws": 14172160
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 23.0639,
+                  "peak_ws": 19836928
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 26.77,
+                  "peak_ws": 18698240
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 16.8908,
+                  "peak_ws": 14163968
+                },
+                "sizes": {
+                  "dxil_bytes": 5640,
+                  "dxc_spirv_bytes": 10548,
+                  "spirv_opt_bytes": 10548
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 22.6799,
+                "peak_ws": 19836928
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 26.6218,
+                "peak_ws": 18710528
+              },
+              "spirv_opt_o": {
+                "wall_ms": 17.4372,
+                "peak_ws": 14188544
+              }
+            }
+          }
+        },
+        "clang_o3_exact_tuple_checks": 1024
+      },
+      "heterogeneous-16x16": {
+        "arms": 16,
+        "unfactored_operations": 1297,
+        "planning_ms": 0.0111,
+        "matched_tail": 0,
+        "edge_parameters": 0,
+        "arms_measured": {
+          "baseline": {
+            "generate_ms": 0.7422,
+            "hlsl_bytes": 45384,
+            "hlsl_sha256": "91f25a696cd70e98bff743f725807735a317fe2813428aaec373ffecc4c39472",
+            "samples": [
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.7631,
+                  "peak_ws": 24461312
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 65.9239,
+                  "peak_ws": 27783168
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.4806,
+                  "peak_ws": 15454208
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 50.6527,
+                  "peak_ws": 24469504
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 64.6584,
+                  "peak_ws": 27770880
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 26.5241,
+                  "peak_ws": 15491072
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 54.2566,
+                  "peak_ws": 24530944
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 65.8874,
+                  "peak_ws": 27750400
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 27.9355,
+                  "peak_ws": 15470592
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 50.7542,
+                  "peak_ws": 24494080
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 62.0598,
+                  "peak_ws": 27734016
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 26.3128,
+                  "peak_ws": 15466496
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 50.4783,
+                  "peak_ws": 24485888
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 63.3017,
+                  "peak_ws": 27815936
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.7992,
+                  "peak_ws": 15478784
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 51.0186,
+                  "peak_ws": 24494080
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 66.6096,
+                  "peak_ws": 27811840
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 26.0689,
+                  "peak_ws": 15527936
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.3428,
+                  "peak_ws": 24391680
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 64.2454,
+                  "peak_ws": 27865088
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.9958,
+                  "peak_ws": 15511552
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.3203,
+                  "peak_ws": 24600576
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 63.5492,
+                  "peak_ws": 27811840
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 27.5992,
+                  "peak_ws": 15437824
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.6487,
+                  "peak_ws": 24498176
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 64.0532,
+                  "peak_ws": 27844608
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.761,
+                  "peak_ws": 15446016
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 52.6064,
+                  "peak_ws": 24412160
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 65.7309,
+                  "peak_ws": 27848704
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 24.7166,
+                  "peak_ws": 15474688
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              },
+              {
+                "dxc_dxil_o3": {
+                  "wall_ms": 53.3542,
+                  "peak_ws": 24576000
+                },
+                "dxc_spirv_o3": {
+                  "wall_ms": 65.1752,
+                  "peak_ws": 27840512
+                },
+                "spirv_opt_o": {
+                  "wall_ms": 25.8487,
+                  "peak_ws": 15466496
+                },
+                "sizes": {
+                  "dxil_bytes": 7732,
+                  "dxc_spirv_bytes": 28488,
+                  "spirv_opt_bytes": 28488
+                }
+              }
+            ],
+            "medians": {
+              "dxc_dxil_o3": {
+                "wall_ms": 52.6064,
+                "peak_ws": 24494080
+              },
+              "dxc_spirv_o3": {
+                "wall_ms": 64.6584,
+                "peak_ws": 27811840
+              },
+              "spirv_opt_o": {
+                "wall_ms": 25.9958,
+                "peak_ws": 15470592
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "clang_native_llvm_o3": {
+    "compiler": "clang version 23.1.6 (https://github.com/llvm/llvm-project.git 5b10d2d74929eae78912771222c9855af97496f4)",
+    "optimization": "-O3",
+    "cases": {
+      "constants-16x16-baseline": {
+        "ssa_definitions": 129,
+        "phi_instructions": 17,
+        "switches": 1
+      },
+      "constants-16x16-factored": {
+        "ssa_definitions": 114,
+        "phi_instructions": 17,
+        "switches": 1
+      },
+      "heterogeneous-16x16-baseline": {
+        "ssa_definitions": 1299,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pcg-32-baseline": {
+        "ssa_definitions": 74,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pcg-32-factored": {
+        "ssa_definitions": 74,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pcg-8-baseline": {
+        "ssa_definitions": 26,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pcg-8-factored": {
+        "ssa_definitions": 26,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pure-16x16-baseline": {
+        "ssa_definitions": 113,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pure-16x16-factored": {
+        "ssa_definitions": 98,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pure-16x64-baseline": {
+        "ssa_definitions": 353,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pure-16x64-factored": {
+        "ssa_definitions": 338,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pure-4x16-baseline": {
+        "ssa_definitions": 89,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pure-4x16-factored": {
+        "ssa_definitions": 86,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pure-64x16-baseline": {
+        "ssa_definitions": 209,
+        "phi_instructions": 1,
+        "switches": 1
+      },
+      "pure-64x16-factored": {
+        "ssa_definitions": 146,
+        "phi_instructions": 1,
+        "switches": 1
+      }
+    }
+  },
+  "single_instrumented_dxc_profile_pure_64x16": {
+    "baseline": {
+      "pass_total_s": 0.0965,
+      "top_named_passes_s": {
+        "Combine redundant instructions": 0.05199999999999999,
+        "Inliner for always_inline functions": 0.017,
+        "Reassociate expressions": 0.005,
+        "Dxil Conditional Mem2Reg": 0.0035,
+        "Global Value Numbering": 0.0035,
+        "DXIL Remove Dead Blocks": 0.003,
+        "SROA Parameter HLSL": 0.0025
+      }
+    },
+    "factored": {
+      "pass_total_s": 0.005,
+      "top_named_passes_s": {
+        "Combine redundant instructions": 0.0015,
+        "Inliner for always_inline functions": 0.001,
+        "Global Value Numbering": 0.0005,
+        "Dead Global Elimination": 0.0005,
+        "Dominator Tree Construction": 0.0005,
+        "Reducibility Analysis": 0.0005,
+        "Post-Dominator Tree Construction": 0.0005
+      }
+    }
+  }
+}

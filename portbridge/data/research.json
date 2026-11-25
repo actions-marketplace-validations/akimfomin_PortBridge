@@ -1,13 +1,25 @@
 [
   {
-    "at": "2026-11-25T10:52:00Z",
-    "title": "Модель проверки обмена данными между потоками шейдера",
-    "summary": "Наш прототип проверяет обмен данными между потоками по выводу двух компиляторов. На CPU проверили пять операций SPIR-V от Continued и восемь операций DXIL от XCL. Модель нашла ошибку выбора потока в контрольном модуле SPIR-V, принятом стандартным валидатором.",
+    "at": "2026-11-25T13:54:00Z",
+    "title": "Объединение повторяющихся вычислений в шейдерах",
+    "summary": "Проход PortBridge объединяет одинаковые части ветвей до компиляции. В синтетической нагрузке с 64 ветвями DXC сократился со 165 до 23 мс, создание конвейера на RTX — с 17,6 до 2,3 мс. Все выходы совпали. Стенд Xbox2Windows с выборкой текстур остался вне области прохода.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/shader-tail-factoring",
+    "translations": {
+      "en": {
+        "title": "Factor repeated arithmetic before shader compilation",
+        "summary": "The PortBridge pass shares repeated branch tails before compilation. On a generated 64-arm workload, optimized DXC fell from 165 to 23 ms and RTX pipeline creation from 17.6 to 2.3 ms. All outputs matched. The Xbox2Windows mixed-sampling workload was outside the pass's scope."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T13:53:00Z",
+    "title": "Оптимизация обмена между потоками шейдера",
+    "summary": "Модель PortBridge выбрала и записала более короткую реализацию SPIR-V в пяти местах двух шейдеров Continued. После штатного оптимизатора модули стали меньше на 176 и 80 байт. В 12 запусках на RTX 4070 Ti SUPER все выходные данные совпали.",
     "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/subgroup-validator",
     "translations": {
       "en": {
-        "title": "Semantic checks for data exchange between shader lanes",
-        "summary": "Our prototype checks emitted lane exchange from two compilers. The CPU study covered five SPIR-V reads from Continued and eight Direct DXIL reads from XCL. The PortBridge model found a wrong-lane error in a SPIR-V control accepted by the standard validator."
+        "title": "Model-guided optimization of shader lane exchange",
+        "summary": "The PortBridge model selected and emitted smaller SPIR-V at five sites in two Continued shaders. After the standard optimizer, the modules were 176 and 80 bytes smaller. All output values matched in 12 RTX 4070 Ti SUPER runs."
       }
     }
   },

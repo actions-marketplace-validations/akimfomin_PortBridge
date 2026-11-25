@@ -20,6 +20,24 @@ class Instruction:
     line: int
 
 
+@dataclass(frozen=True)
+class Transport:
+    lowering: Lowering
+    bindings: dict
+    shuffle: Instruction
+    store: Instruction
+    ballot: str
+    present: str
+    desired: str
+    safe_index: str
+    source_mask: str
+    result_mask: str
+    received: str
+    merge: str
+    write_masks: tuple[str, ...]
+    zero: str
+
+
 class Module:
     def __init__(self, assembly: str):
         self.definitions = {}
@@ -162,27 +180,36 @@ def recognize(module: Module, shuffle: Instruction):
     base = LaneBase.PARTITION if base_bits == 32 else LaneBase.HOST
     bindings = {"address_input": address_input, "offset_bytes": offset_bytes, "data_input": data_input,
                 "guest_active": guest_active, "old_value": old, "destination": slot}
-    return Lowering(32, guest_guard=True, host_guard=True, lane_base=base), store.line, bindings
+    return Transport(Lowering(32, guest_guard=True, host_guard=True, lane_base=base), bindings,
+                     shuffle, store, ballot, present, desired, selected, input_value, mask_result.args[2],
+                     mask_result.ident, write_back.ident, (exec_mask, complement, new_bits.ident, write_back.args[2]),
+                     mask_zero)
+
+
+def compute_entry(module: Module) -> str:
+    entries = [insn.args for insn in module.instructions if insn.opcode == "OpEntryPoint"]
+    require(len(entries) == 1 and len(entries[0]) >= 3 and entries[0][0] == "GLCompute",
+            "expected one compute entry point")
+    return entries[0][1]
 
 
 def inspect(assembly: str) -> dict:
     module = Module(assembly)
-    entries = [insn.args for insn in module.instructions if insn.opcode == "OpEntryPoint"]
-    require(len(entries) == 1 and len(entries[0]) >= 3 and entries[0][0] == "GLCompute",
-            "expected one compute entry point")
+    entry_point = compute_entry(module)
     reports = []
     for insn in module.instructions:
         if insn.opcode != "OpGroupNonUniformShuffle" or len(insn.args) != 4:
             continue
         entry = {"shuffle": insn.ident, "line": insn.line}
         try:
-            require(module.block_functions.get(insn.block) == entries[0][1], "shuffle outside the compute entry")
-            lowering, store_line, bindings = recognize(module, insn)
+            require(module.block_functions.get(insn.block) == entry_point, "shuffle outside the compute entry")
+            transport = recognize(module, insn)
         except UnsupportedPattern as exc:
             entry.update({"status": "unmodeled", "reason": str(exc)})
         else:
-            entry.update({"status": "recognized", "store_line": store_line, "bindings": bindings, "checks": {
-                f"{physical}/{participation}": check(Guest(32), lowering, Domain(64, physical, participation))
+            entry.update({"status": "recognized", "store_line": transport.store.line,
+                          "bindings": transport.bindings, "checks": {
+                f"{physical}/{participation}": check(Guest(32), transport.lowering, Domain(64, physical, participation))
                 for physical in (32, 64)
                 for participation in (Participation.SUPERSET, Participation.INDEPENDENT)
             }})

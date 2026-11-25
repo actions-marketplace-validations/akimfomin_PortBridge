@@ -1,6 +1,6 @@
 # Subgroup Transport Contract
 
-PortBridge research component for checking whether a compute-shader translation preserves one lane read. It returns a concrete destination lane, selector and pair of guest and host masks when a proposed lowering can change a defined result. One shared model now checks emitted SPIR-V from Continued and Direct DXIL from XCL. Each adapter recognizes a narrow local form and identifies unsupported shapes explicitly. [Direct DXIL replay](DXIL.md)
+PortBridge research component for checking whether a compute-shader translation preserves one lane read. It returns a concrete destination lane, selector and pair of guest and host masks when a proposed lowering can change a defined result. One shared model checks emitted SPIR-V from Continued and Direct DXIL from XCL. The SPIR-V optimizer uses it to choose and emit a smaller verified lowering for eligible sites. Each adapter recognizes a narrow local form and identifies unsupported shapes explicitly. [SPIR-V optimization and measurements](SYNTHESIS.md) · [Direct DXIL replay](DXIL.md)
 
 ## Reproduce
 

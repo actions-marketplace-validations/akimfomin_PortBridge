@@ -121,17 +121,20 @@ def active(mask: int, lane: int) -> bool:
     return bool(mask & (1 << lane))
 
 
+def guest_value(guest: Guest, p: Probe) -> tuple[Value, int]:
+    lane = p.destination
+    if not active(p.exec_mask, lane):
+        return Value.OLD, lane
+    origin = source(guest.scope, guest.addressing, lane, p.selector)
+    if active(p.exec_mask, origin):
+        return Value.CURRENT, origin
+    return Value(guest.inactive_source), -1
+
+
 def compare(guest: Guest, lower: Lowering, domain: Domain, p: Probe) -> Mismatch | None:
     """Compare abstract tokens. Different input-lane symbols can differ."""
     lane = p.destination
-    if not active(p.exec_mask, lane):
-        expected = (Value.OLD, lane)
-    else:
-        origin = source(guest.scope, guest.addressing, lane, p.selector)
-        if active(p.exec_mask, origin):
-            expected = (Value.CURRENT, origin)
-        else:
-            expected = (Value(guest.inactive_source), -1)
+    expected = guest_value(guest, p)
 
     selected = target_source(lower, domain, lane, p.selector)
     if not active(p.host_mask, lane):
@@ -151,6 +154,10 @@ def compare(guest: Guest, lower: Lowering, domain: Domain, p: Probe) -> Mismatch
     else:
         actual = (Value.UNDEFINED, -1)
 
+    return compare_values(p, expected, actual)
+
+
+def compare_values(p: Probe, expected: tuple[Value, int], actual: tuple[Value, int]) -> Mismatch | None:
     if expected[0] == Value.UNDEFINED or expected == actual:
         return None
     if actual[0] == Value.UNDEFINED:

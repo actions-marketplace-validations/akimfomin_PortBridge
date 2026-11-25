@@ -49,6 +49,10 @@ FRAMELAB_HANDOFF = f"{FRAMELAB}/pull/12"
 FRAMELAB_RESULTS = FRAMELAB_DISCUSSION
 XCL_SCRATCH = f"{XCL}/pull/2126"
 XCL_SCRATCH_SHA = "3283da481077c1962f13f1b4078841662f7a4ccb"
+SUBGROUP_REWRITE_SHA = "d74c531b8ce51bc2d57e8f3a49466c46e9096097"
+SUBGROUP_FIXTURES_SHA = "1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e"
+SUBGROUP_REQUEST = f"{PORTBRIDGE}/issues/63"
+SUBGROUP_REPORT = f"{PORTBRIDGE}/blob/{SUBGROUP_REWRITE_SHA}/research/subgroup-validator"
 FRAMELAB_HANDOFF_HEAD = FRAMELAB_REVISION
 
 
@@ -541,7 +545,47 @@ TASKS = (
                        "Начальная EXEC, восемь значений и отдельные результаты positive-down, positive-up, negative и exact-tie"],
         }},
     },
+    {
+        "id": "portbridge-subgroup-wave64", "priority": 13,
+        "title": "Check the PortBridge shader rewrite on Vulkan Wave64",
+        "projects": ["continued"], "equipment": ["amd"], "os": ["Windows", "Linux"],
+        "requirements": ["Physical AMD Vulkan GPU with observed subgroup width 64", "Python, SPIRV-Tools and C++20"],
+        "status": "needs_run", "evidence_stage": "author_gpu", "adoption": "pending",
+        "source_url": SUBGROUP_REQUEST, "result_url": SUBGROUP_REQUEST,
+        "procedure_url": f"{SUBGROUP_REPORT}/SYNTHESIS.md",
+        "evidence_url": f"{SUBGROUP_REPORT}/synthesis-results.json",
+        "revisions": [
+            revision("PortBridge shader rewrite", "Оптимизация PortBridge", "akimfomin/PortBridge", SUBGROUP_REWRITE_SHA),
+            revision("Continued public synthetic fixtures", "Открытые синтетические тесты Continued",
+                     "ubiquitarianism/leonida", SUBGROUP_FIXTURES_SHA),
+        ],
+        "why": "The model and CPU replay cover both widths. The physical proof so far is on RTX Wave32.",
+        "evidence": "On RTX 4070 Ti SUPER all 256 words matched in each of the 12 Vulkan runs.",
+        "steps": [
+            "Use the two listed commits and build the pinned Continued Vulkan compute runner.",
+            "Run the synthesis replay with your exact adapter name and --subgroup-width 64.",
+            "Compare the complete output before and after the default rewrite. Report bpermute as cross-half and partial as partial-workgroup.",
+        ],
+        "expected": "All 256 words for each synthetic case match the baseline. Report a skip if the adapter does not run Wave64.",
+        "report": ["Both revisions, GPU, driver, OS, SPIRV-Tools and observed subgroup width",
+                   "The two case outcomes and any output mismatch"],
+        "translations": {"ru": {
+            "title": "Проверить оптимизацию PortBridge через Vulkan в Wave64",
+            "requirements": ["Физическая AMD с Vulkan и подтверждённой шириной группы 64", "Python, SPIRV-Tools и C++20"],
+            "why": "Модель и проверка на CPU охватывают обе ширины. Физический прогон пока сделан на RTX в Wave32.",
+            "evidence": "На RTX 4070 Ti SUPER совпали все 256 слов в каждом из 12 запусков Vulkan.",
+            "steps": [
+                "Откройте две указанные версии и соберите закреплённый стенд Vulkan из Continued.",
+                "Запустите проверку с точным названием видеокарты и --subgroup-width 64.",
+                "Сравните весь вывод до и после оптимизации. В отчёте назовите bpermute как cross-half, а partial как partial-workgroup.",
+            ],
+            "expected": "Все 256 слов для каждого теста совпадут. Если Wave64 недоступен, укажите пропуск.",
+            "report": ["Оба коммита, модель видеокарты, драйвер, ОС, SPIRV-Tools и наблюдаемая ширина группы",
+                       "Исход обоих тестов и возможное расхождение"],
+        }},
+    },
 )
+
 TASKS = tuple({**entry, "report_profile": REPORT_POLICIES[entry["id"]][0],
                "report_cases": list(REPORT_POLICIES[entry["id"]][1])} for entry in TASKS)
 
