@@ -1,0 +1,112 @@
+[
+  {
+    "case": "heat-classroom",
+    "filename": "heat-classroom.tsv",
+    "scope": "Stock dense command schedule captured on mocked WebGPU, 0 injected map-delay frames",
+    "page_bytes": 4096,
+    "state_bytes": 65536,
+    "staging_pages": 16,
+    "frames": 48,
+    "observed_pages": 192,
+    "source": "https://github.com/OpenLyceum/HeatTransfer/tree/8d6bcecb643772730fc1ebacd3e0eba2aea7066c"
+  },
+  {
+    "case": "heat-extreme",
+    "filename": "heat-extreme.tsv",
+    "scope": "Stock dense command schedule captured on mocked WebGPU, 0 injected map-delay frames",
+    "page_bytes": 4096,
+    "state_bytes": 16777216,
+    "staging_pages": 4096,
+    "frames": 48,
+    "observed_pages": 49152,
+    "source": "https://github.com/OpenLyceum/HeatTransfer/tree/8d6bcecb643772730fc1ebacd3e0eba2aea7066c"
+  },
+  {
+    "case": "heat-extreme-busy",
+    "filename": "heat-extreme-busy.tsv",
+    "scope": "Stock dense command schedule captured on mocked WebGPU, 5 injected map-delay frames",
+    "page_bytes": 4096,
+    "state_bytes": 16777216,
+    "staging_pages": 4096,
+    "frames": 48,
+    "observed_pages": 24576,
+    "source": "https://github.com/OpenLyceum/HeatTransfer/tree/8d6bcecb643772730fc1ebacd3e0eba2aea7066c"
+  },
+  {
+    "case": "snowflow-grounding",
+    "filename": "snowflow-grounding.tsv",
+    "scope": "Stock CPU grounding addresses on scripted input with generated heights. Counterfactual deferred access after stock startup reduction",
+    "page_bytes": 4096,
+    "state_bytes": 16777216,
+    "staging_pages": 128,
+    "frames": 240,
+    "observed_pages": 2408,
+    "source": "https://github.com/Ditto190/snowflow_demo_webGPU_unreal5/tree/545039733b74eec742862f161990142c7ca7c7ec"
+  },
+  {
+    "case": "snowflow-grounding-exact-word",
+    "filename": "snowflow-grounding-exact-word.tsv",
+    "scope": "Stock CPU grounding addresses on scripted input with generated heights. Counterfactual deferred access after stock startup reduction",
+    "page_bytes": 4,
+    "state_bytes": 16777216,
+    "staging_pages": 128,
+    "frames": 240,
+    "observed_pages": 7776,
+    "source": "https://github.com/Ditto190/snowflow_demo_webGPU_unreal5/tree/545039733b74eec742862f161990142c7ca7c7ec"
+  },
+  {
+    "case": "snowflow-grounding-holdout",
+    "filename": "snowflow-grounding-holdout.tsv",
+    "scope": "Stock CPU grounding addresses on scripted input with generated heights. Counterfactual deferred access after stock startup reduction",
+    "page_bytes": 4096,
+    "state_bytes": 16777216,
+    "staging_pages": 128,
+    "frames": 240,
+    "observed_pages": 1442,
+    "source": "https://github.com/Ditto190/snowflow_demo_webGPU_unreal5/tree/545039733b74eec742862f161990142c7ca7c7ec"
+  },
+  {
+    "case": "snowflow-grounding-holdout-exact-word",
+    "filename": "snowflow-grounding-holdout-exact-word.tsv",
+    "scope": "Stock CPU grounding addresses on scripted input with generated heights. Counterfactual deferred access after stock startup reduction",
+    "page_bytes": 4,
+    "state_bytes": 16777216,
+    "staging_pages": 128,
+    "frames": 240,
+    "observed_pages": 7764,
+    "source": "https://github.com/Ditto190/snowflow_demo_webGPU_unreal5/tree/545039733b74eec742862f161990142c7ca7c7ec"
+  },
+  {
+    "case": "snowflow-stock-bake",
+    "filename": "snowflow-stock-bake.tsv",
+    "scope": "Stock one-shot RG32F command captured against mocked readPixels; an isolated readback event, not a gameplay frame",
+    "page_bytes": 4096,
+    "state_bytes": 134217728,
+    "staging_pages": 32768,
+    "frames": 1,
+    "observed_pages": 32768,
+    "source": "https://github.com/Ditto190/snowflow_demo_webGPU_unreal5/tree/545039733b74eec742862f161990142c7ca7c7ec"
+  },
+  {
+    "case": "water-shape-control",
+    "filename": "water-shape-control.tsv",
+    "scope": "Synthetic full-write crop control with VIctory #999-format sizes",
+    "page_bytes": 4,
+    "state_bytes": 786432,
+    "staging_pages": 12288,
+    "frames": 48,
+    "observed_pages": 589824,
+    "source": null
+  },
+  {
+    "case": "switch-16",
+    "filename": "switch-16.tsv",
+    "scope": "Synthetic phase and observation change control",
+    "page_bytes": 4096,
+    "state_bytes": 16777216,
+    "staging_pages": 1024,
+    "frames": 56,
+    "observed_pages": 57344,
+    "source": null
+  }
+]

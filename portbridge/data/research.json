@@ -1,13 +1,13 @@
 [
   {
-    "at": "2026-11-25T16:23:44Z",
+    "at": "2026-11-25T16:48:14Z",
     "title": "Выборочный возврат изменившихся GPU-данных",
-    "summary": "На RTX 4070 Ti SUPER в синтетической цепочке со стабильными чтениями возврат сократился на 83,3% по объёму. Относительно точных асинхронных диапазонов полный цикл занял на 69,4% меньше времени с учётом отдельно измеренного планирования. При полной перезаписи точные диапазоны предпочтительнее. Измерение в движке ещё открыто.",
-    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/readback-epochs",
+    "summary": "Адаптивный выбор без будущей трассы сократил полное время синтетической нагрузки со сменой фаз на 16,9%. На запросах из открытых приложений устойчивый системный выигрыш не подтверждён. Исходники и замеры сохранены, основной фокус перешёл к вычислительным зависимостям.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/main/research/readback-epochs/ONLINE.md",
     "translations": {
       "en": {
         "title": "Observation-scoped GPU readback",
-        "summary": "On the stable synthetic RTX replay, the planner transferred 83.3% fewer bytes than exact asynchronous ranges. The full sequence took 69.4% less time after charging the separately measured planning. Exact ranges remained preferable with full rewrites. Engine-level performance remains unmeasured."
+        "summary": "The online policy reduced end-to-end time by 16.9% on the synthetic phase-switch replay. Open application request shapes did not establish a consistent system benefit. The experiments remain reproducible while work moves to compute dependencies."
       }
     }
   },

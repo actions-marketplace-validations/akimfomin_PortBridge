@@ -35,6 +35,8 @@ Paired changes use medians of block-wise relative changes, so they can differ fr
 
 A real integration still needs the actual write and observation intervals, a proven fallback for unknown access, and an independent physical run. No engine wall-time, driver stall reduction or process-wide memory change was measured. Production software already explores async staging, generation tracking and range-based ownership. This result isolates the value and cost of retaining already observed bytes in a separate portable component.
 
+The [online follow-up](ONLINE.md) uses current-event decisions and whole-observation validation. Exact-word source-shaped controls show why the fixed-trace gain cannot be generalized to engine performance. The offline measurements above remain reproducible.
+
 ## Reproduction
 
 Python uses the standard library. The physical runner requires a Vulkan 1.1 compute device, suitable device-local storage, and coherent host-visible cached staging memory. The replay uses an ordered input of 4 KiB pages. The planner itself accepts byte intervals. Each of the three staging slots reserves its largest packed transfer over the known trace. The epoch arm also reserves a packed mirror of the union of observed pages. Reported host capacity counts actual Vulkan staging allocation sizes plus mirror payload bytes. It excludes interval metadata, driver overhead, and process RSS.

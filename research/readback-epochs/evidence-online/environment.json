@@ -1,0 +1,60 @@
+{
+  "runner": [
+    "NVIDIA GeForce RTX 4070 Ti SUPER Vulkan 1.4.351 driver 2588114944 staging host-visible/coherent/cached ring=3"
+  ],
+  "orders": [
+    [
+      "exact-online",
+      "retain-online",
+      "adaptive-online"
+    ],
+    [
+      "exact-online",
+      "adaptive-online",
+      "retain-online"
+    ],
+    [
+      "retain-online",
+      "exact-online",
+      "adaptive-online"
+    ],
+    [
+      "retain-online",
+      "adaptive-online",
+      "exact-online"
+    ],
+    [
+      "adaptive-online",
+      "exact-online",
+      "retain-online"
+    ],
+    [
+      "adaptive-online",
+      "retain-online",
+      "exact-online"
+    ]
+  ],
+  "gpu_samples": {
+    "0": [
+      "2026/11/25 19:47:33.756, NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 52 %, 1471 MiB"
+    ],
+    "1": [
+      "2026/11/25 19:47:40.758, NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 53 %, 1470 MiB"
+    ],
+    "2": [
+      "2026/11/25 19:47:47.629, NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 73 %, 1469 MiB"
+    ],
+    "3": [
+      "2026/11/25 19:47:54.443, NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 57 %, 1447 MiB"
+    ],
+    "4": [
+      "2026/11/25 19:48:01.167, NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 59 %, 1468 MiB"
+    ],
+    "5": [
+      "2026/11/25 19:48:07.932, NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 59 %, 1468 MiB"
+    ],
+    "end": [
+      "2026/11/25 19:48:14.774, NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 54 %, 1444 MiB"
+    ]
+  }
+}
