@@ -234,18 +234,18 @@
       "name": "KLBF Lab",
       "repo": "PastiiJay/klbf-lab",
       "url": "https://github.com/PastiiJay/klbf-lab",
-      "stack": "Ветка VIctory, Rust и D3D12, стабильные сборки для AMD",
+      "stack": "Активная производная VIctory, Rust и D3D12. Стабильные сборки в main, тестовые в beta, новые отчёты в Issues этого репозитория.",
       "license": "GPL-3.0-or-later",
-      "translations": {"en": {"stack": "VIctory derivative, Rust and D3D12, stable AMD builds"}}
+      "translations": {"en": {"stack": "Active VIctory derivative, Rust and D3D12. Stable builds on main, test builds on beta, and new reports in this repository's issues."}}
     },
     {
       "slug": "klbf-lab-beta",
       "name": "KLBF Lab Beta",
       "repo": "PastiiJay/klbf-lab-beta",
       "url": "https://github.com/PastiiJay/klbf-lab-beta",
-      "stack": "Тестовый репозиторий KLBF Lab, Rust, AMD Radeon и D3D12",
+      "stack": "Архив тестового GitHub-форка VIctory. Тестовые сборки перенесены в ветку beta репозитория PastiiJay/klbf-lab, прежние отчёты доступны здесь.",
       "license": "GPL-3.0-or-later",
-      "translations": {"en": {"stack": "KLBF Lab testing repository, Rust, AMD Radeon and D3D12"}}
+      "translations": {"en": {"stack": "Archived VIctory test fork. Test builds moved to the beta branch of PastiiJay/klbf-lab. Earlier reports remain available here."}}
     },
     {
       "slug": "xbvk",
@@ -2905,6 +2905,17 @@
               "reported_at": "2026-11-25T14:48:26Z",
               "platforms": ["Windows 11", "AMD Radeon RX 6800M", "DXC/DXIL 1.9.2609.5"],
               "translations": {"en": {"title": "luckyteagirl verified the exact draft on Radeon RX 6800M", "observed": "All ten targeted tests passed without skips at b3f7ab5. The synthetic Wave32 shader used 256 DWORDs per workgroup. The guest Wave64 check used hardware Wave32 halves."}}
+            },
+            {
+              "kind": "independent",
+              "outcome": "passed",
+              "title": "anes66 независимо проверил сроки жизни слотов на CPU",
+              "observed": "На точной версии b3f7ab5 прошли пять целевых проверок, включая 8 000 наборов сроков жизни, 216 планов и 1 242 передачи. Контроль с преждевременным освобождением слота обнаружил ожидаемое пересечение. GPU и время исполнения не измерялись.",
+              "url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7166113514",
+              "revision": "b3f7ab5574c4489761141e2de0ce31d2eb216412",
+              "reported_at": "2026-11-25T14:58:48Z",
+              "platforms": ["Windows 10 Pro 19045", "Rust 1.100 MSVC", "CPU"],
+              "translations": {"en": {"title": "anes66 independently validated CPU scratch-slot lifetimes", "observed": "Five targeted checks passed at b3f7ab5, covering 8,000 lifetime sets, 216 plans and 1,242 transfers. The deliberate early-release control found the expected overlap. GPU execution and timing were outside the check."}}
             }
           ],
           "translations": {
@@ -2920,7 +2931,7 @@
       "id": "PB-0026",
       "recorded_at": "2026-11-25T13:58:42Z",
       "title": "Раздельный расчёт координат GFX10 в AnyXboxX",
-      "summary": "PortBridge предложил переиспользовать части адреса, а Lewandox реализовал раздельный расчёт X, Y и Z в ветке #188. PortBridge независимо повторил тесты на точном коммите реализации. Прошли все 15. Yoshi-233 отдельно проверил предыдущую версию на Ubuntu.",
+      "summary": "Lewandox реализовал рекомендацию PortBridge в ветке #188, и независимый прогон подтвердил все 15 тестов. AnyXboxX закрыл ветку без слияния после перехода на код VIctory. В используемой реализации VIctory уже переиспользуются вычисления по строкам и столбцам.",
       "status": "verified",
       "tags": [
         "gfx10",
@@ -2935,7 +2946,7 @@
       "translations": {
         "en": {
           "title": "Separable GFX10 coordinate evaluation in AnyXboxX",
-          "summary": "PortBridge proposed reusing the address terms and Lewandox implemented X, Y and Z factorization in the branch for PR #188. PortBridge independently reran the exact implementation commit and all 15 tests passed. Yoshi-233 separately checked the earlier revision on Ubuntu.",
+          "summary": "Lewandox implemented the PortBridge suggestion in PR #188 and all 15 independent tests passed. AnyXboxX closed the proposal unmerged after moving to VIctory's code. Its active VIctory implementation already reuses row and column calculations.",
           "tags": [
             "gfx10",
             "detile",
@@ -2977,6 +2988,16 @@
               "title": "Отдельное исправление BC7",
               "url": "https://github.com/LooperSalty/AnyXboxX/pull/202",
               "translations": {"en": {"title": "Separate BC7 patch"}}
+            },
+            {
+              "title": "Сопровождающий закрыл #188 без слияния",
+              "url": "https://github.com/LooperSalty/AnyXboxX/pull/188#issuecomment-7166158013",
+              "translations": {"en": {"title": "Maintainer closed #188 without merging"}}
+            },
+            {
+              "title": "Используемый код VIctory с расчётом строк и столбцов",
+              "url": "https://github.com/LooperSalty/AnyXboxX/blob/ca8b76deafa6bcc3453d060eeee9c29586b8d423/third_party/victory/crates/victory-formats/src/texture.rs#L683-L724",
+              "translations": {"en": {"title": "Active VIctory code reuses row and column calculations"}}
             }
           ],
           "evidence": [
@@ -3045,7 +3066,7 @@
       "id": "PB-0027",
       "recorded_at": "2026-11-25T08:16:47Z",
       "title": "Точное и более быстрое округление FMA в AnyXboxX",
-      "summary": "Обновлённая правка совпала с эталоном на 3 072 целевых программах и 114 976 входах UCRT. В тесте интерпретатора её медиана 178 мс вместо 213 мс у предыдущей правки, исходный код занял 166 мс. Проверка GPU открыта.",
+      "summary": "PortBridge воспроизвёл двойное округление. AnyXboxX принял отдельное исправление KainanP для интерпретатора и HLSL в #203. Собственный прототип PortBridge совпал с эталоном на 3 072 программах и 114 976 входах UCRT. Независимое нативное сравнение RDNA2 открыто.",
       "status": "verified",
       "tags": [
         "v_fmac_f32",
@@ -3060,7 +3081,7 @@
       "translations": {
         "en": {
           "title": "Accurate, faster FMA rounding in AnyXboxX",
-          "summary": "The revised CPU patch matched the reference across 3,072 targeted programs and 114,976 UCRT inputs. Interpreter medians were 178 ms for the revised patch, 213 ms for the first fix, and 166 ms for the original. GPU measurement is still open.",
+          "summary": "PortBridge reproduced the double rounding. AnyXboxX merged KainanP's separate interpreter and HLSL correction in #203. The PortBridge prototype matched its reference across 3,072 targeted programs and 114,976 UCRT inputs. An independent native RDNA2 comparison remains open.",
           "tags": [
             "v_fmac_f32",
             "FMA",
@@ -3097,6 +3118,11 @@
               "title": "KainanP о следующем исправлении FMA",
               "url": "https://github.com/LooperSalty/AnyXboxX/pull/133#issuecomment-7159494945",
               "translations": {"en": {"title": "KainanP's separate FMA follow-up"}}
+            },
+            {
+              "title": "Принятое отдельное исправление KainanP с указанием отчёта PortBridge",
+              "url": "https://github.com/LooperSalty/AnyXboxX/pull/203",
+              "translations": {"en": {"title": "KainanP's merged correction credits the PortBridge report"}}
             }
           ],
           "evidence": [

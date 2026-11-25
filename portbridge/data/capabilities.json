@@ -175,14 +175,20 @@
   },
   {
     "project": "klbf-lab", "area": "performance", "kind": "reported",
-    "scope": "Автор сообщает 5,7 FPS в движении в прологе на Radeon RX 9070 XT, при рендеринге в 720p и масштабировании FSR.",
-    "translations": {"en": {"scope": "The author reports 5.7 FPS while playing the prologue on a Radeon RX 9070 XT, rendering at 720p with FSR upscaling."}},
+    "scope": "В прежнем отчёте автор указал 5,7 FPS в движении в прологе на Radeon RX 9070 XT при рендеринге в 720p и масштабировании FSR. Это результат указанной версии.",
+    "translations": {"en": {"scope": "The author previously reported 5.7 FPS while playing the prologue on a Radeon RX 9070 XT, rendering at 720p with FSR upscaling. The measurement applies to the cited revision."}},
     "evidence": "https://github.com/PastiiJay/klbf-lab/blob/f33c46f75b3baa7a5a5bb7a3be774e98abd902cb/README.md#L22-L32"
   },
   {
+    "project": "klbf-lab", "area": "shaders", "kind": "source",
+    "scope": "В новой ветке beta явно указанные ноль рабочих потоков заменяются одним при разборе аргументов трансляции шейдеров. Изменение включает тест разбора аргументов.",
+    "translations": {"en": {"scope": "On the active beta branch, translation modes normalize an explicit zero worker count to one when parsing arguments. The change includes an argument-parsing test."}},
+    "evidence": "https://github.com/PastiiJay/klbf-lab/commit/f9f24199cea1758ed213d3106fb707644e67c586"
+  },
+  {
     "project": "klbf-lab-beta", "area": "gpu-sync", "kind": "reported",
-    "scope": "Автор связывает восстановление физики воды в Lab 39 с копированием текстур на CPU из vx-layer и обработкой XOR-размещения из XTP.",
-    "translations": {"en": {"scope": "The author attributes Lab 39's water physics fix to texture copy-back from vx-layer and XOR tile layout handling from XTP."}},
+    "scope": "В тестовом отчёте из архива автор связывает восстановление физики воды в Lab 39 с копированием текстур на CPU из vx-layer и обработкой XOR-размещения из XTP.",
+    "translations": {"en": {"scope": "In the archived test report, the author attributes Lab 39's water physics fix to texture copy-back from vx-layer and XOR tile layout handling from XTP."}},
     "evidence": "https://github.com/PastiiJay/klbf-lab-beta/blob/1be1d38a705122001fe7ffb89ba961131c5eb0a9/README.md#L55-L57"
   },
   {
