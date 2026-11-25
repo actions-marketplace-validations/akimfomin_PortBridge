@@ -45,7 +45,7 @@ class LabTest(CatalogFixture):
         self.assertEqual(native_fma["report_cases"], ["positive-down", "positive-up", "negative", "exact-tie"])
         rewrite = tasks["portbridge-subgroup-wave64"]
         self.assertEqual((rewrite["equipment"], rewrite["status"], rewrite["report_profile"]),
-                         (["amd"], "needs_run", "vulkan"))
+                         (["amd"], "needs_run", "vulkan-wave64"))
         self.assertEqual(rewrite["report_cases"], ["cross-half", "partial-workgroup"])
         self.assertEqual(rewrite["result_url"], "https://github.com/akimfomin/PortBridge/issues/63")
         self.assertIn(rewrite["revisions"][0]["sha"], rewrite["procedure_url"])

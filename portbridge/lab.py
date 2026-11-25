@@ -49,7 +49,7 @@ FRAMELAB_HANDOFF = f"{FRAMELAB}/pull/12"
 FRAMELAB_RESULTS = FRAMELAB_DISCUSSION
 XCL_SCRATCH = f"{XCL}/pull/2126"
 XCL_SCRATCH_SHA = "3283da481077c1962f13f1b4078841662f7a4ccb"
-SUBGROUP_REWRITE_SHA = "65ff651b189c2eca91492256e5d84b5c572b0104"
+SUBGROUP_REWRITE_SHA = "d74c531b8ce51bc2d57e8f3a49466c46e9096097"
 SUBGROUP_FIXTURES_SHA = "1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e"
 SUBGROUP_REQUEST = f"{PORTBRIDGE}/issues/63"
 SUBGROUP_REPORT = f"{PORTBRIDGE}/blob/{SUBGROUP_REWRITE_SHA}/research/subgroup-validator"
@@ -564,7 +564,7 @@ TASKS = (
         "steps": [
             "Use the two listed commits and build the pinned Continued Vulkan compute runner.",
             "Run the synthesis replay with your exact adapter name and --subgroup-width 64.",
-            "Compare the complete output for cross-half and partial-workgroup before and after the default rewrite.",
+            "Compare the complete output before and after the default rewrite. Report bpermute as cross-half and partial as partial-workgroup.",
         ],
         "expected": "All 256 words for each synthetic case match the baseline. Report a skip if the adapter does not run Wave64.",
         "report": ["Both revisions, GPU, driver, OS, SPIRV-Tools and observed subgroup width",
@@ -577,7 +577,7 @@ TASKS = (
             "steps": [
                 "Откройте две указанные версии и соберите закреплённый стенд Vulkan из Continued.",
                 "Запустите проверку с точным названием видеокарты и --subgroup-width 64.",
-                "Сравните все выходные данные двух тестов до и после оптимизации по умолчанию.",
+                "Сравните весь вывод до и после оптимизации. В отчёте назовите bpermute как cross-half, а partial как partial-workgroup.",
             ],
             "expected": "Все 256 слов для каждого теста совпадут. Если Wave64 недоступен, укажите пропуск.",
             "report": ["Оба коммита, модель видеокарты, драйвер, ОС, SPIRV-Tools и наблюдаемая ширина группы",

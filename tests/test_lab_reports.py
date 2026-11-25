@@ -8,6 +8,7 @@ from portbridge.catalog import ReadOnlyCatalog
 from portbridge.export import export
 from portbridge.github import API, RepositoryNotPublic, Unavailable
 from portbridge.lab import FRAMELAB_HANDOFF_HEAD, FRAMELAB_RESULTS, TASKS, build_lab
+from portbridge.lab_report_formats import structured_result
 from portbridge.lab_reports import (FRAMELAB_TASK, FRAMELAB_TESTER_ID, coverage_cells, normalize_report,
                                     refresh_reports, report_source, report_sources, scan_reports)
 from portbridge.mcp import PortBridgeMCP
@@ -48,6 +49,22 @@ def comment(ident, *, device="1114", revision=FRAMELAB_HANDOFF_HEAD, actor=FRAME
 
 
 class LabReportsTest(CatalogFixture):
+    def test_wave64_pass_requires_a_matching_observed_subgroup_width(self):
+        task = next(task for task in TASKS if task["id"] == "portbridge-subgroup-wave64")
+        pins = " ".join(item["sha"] for item in task["revisions"])
+        body = (
+            "PortBridge test report v1\nTask: portbridge-subgroup-wave64\n"
+            f"Revisions: {pins}\nEquipment: amd\nHardware: AMD Radeon RX 6800 XT\nPCI: 1002:73bf\n"
+            "Driver: 7.1\nOS: Linux 6.15\nToolchain: SPIRV-Tools 2026.5\n"
+            "Case: cross-half = pass\nCase: partial-workgroup = pass"
+        )
+        self.assertIsNone(structured_result(body, task))
+        self.assertIsNone(structured_result(body + "\nSubgroup-width: 32", task))
+        result = structured_result(body + "\nSubgroup-width: 64", task)
+        self.assertEqual((result["outcome"], result["subgroup_width"]), ("pass", 64))
+        skipped = structured_result(body.replace(" = pass", " = skip") + "\nSubgroup-width: 32", task)
+        self.assertEqual((skipped["outcome"], skipped["subgroup_width"]), ("partial", 32))
+
     def refresh(self, *responses, private=False):
         def request_page(url, resource, etag):
             if url.startswith(ISSUE + "/comments?"):

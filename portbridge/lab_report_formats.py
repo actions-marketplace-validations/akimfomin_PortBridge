@@ -24,10 +24,10 @@ REPORT_POLICIES = {
     "anyxboxx-147-native-wave64-gather": ("hip-wave64", ("lane-exec-controls", "both-addresses")),
     FRAMELAB_TASK: ("vulkan", ("same-binary", "same-timeline", "cross-binary", "cross-timeline")),
     "xcl-2126-scratch-coverage": ("d3d12-wave32", ("skip-middle-piece", "overlapping-edges")),
-    "portbridge-subgroup-wave64": ("vulkan", ("cross-half", "partial-workgroup")),
+    "portbridge-subgroup-wave64": ("vulkan-wave64", ("cross-half", "partial-workgroup")),
 }
 REPORT_HEADER = "portbridge test report v1"
-FIELD_LINE = re.compile(r"(task|revisions|equipment|hardware|pci|os|driver|toolchain|opt-in):\s*(.+)", re.I)
+FIELD_LINE = re.compile(r"(task|revisions|equipment|hardware|pci|os|driver|toolchain|subgroup-width|opt-in):\s*(.+)", re.I)
 CASE_LINE = re.compile(r"case:\s*([a-z0-9-]{1,50})\s*=\s*(pass|fail|skip)", re.I)
 SAFE_VALUE = re.compile(r"[\w][\w .,+()/_-]{0,99}")
 PCI_ID = re.compile(r"([0-9a-f]{4}):([0-9a-f]{4})")
@@ -101,6 +101,15 @@ def structured_result(body, task):
     outcome = case_outcome(cases, task["report_cases"])
     if outcome is None:
         return None
-    return {"revision": revisions[0], "revisions": revisions, "equipment": equipment, "hardware": hardware,
-            "device_id": pci[0] if pci else hardware.casefold(), "os": platform, "os_family": os_name,
-            "driver": driver or None, "toolchain": toolchain, "cases": cases, "outcome": outcome, "opt_in": opt_in == "yes"}
+    subgroup = fields.get("subgroup-width")
+    if task["report_profile"] == "vulkan-wave64":
+        if subgroup != "64" and (subgroup != "32" or any(value != "skip" for value in cases.values())):
+            return None
+    elif subgroup is not None:
+        return None
+    result = {"revision": revisions[0], "revisions": revisions, "equipment": equipment, "hardware": hardware,
+              "device_id": pci[0] if pci else hardware.casefold(), "os": platform, "os_family": os_name,
+              "driver": driver or None, "toolchain": toolchain, "cases": cases, "outcome": outcome, "opt_in": opt_in == "yes"}
+    if subgroup is not None:
+        result["subgroup_width"] = int(subgroup)
+    return result
