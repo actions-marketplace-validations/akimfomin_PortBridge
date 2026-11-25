@@ -38,7 +38,8 @@ python -m portbridge.preflight --url https://github.com/LooperSalty/AnyXboxX/pul
 
 ## Исследования PortBridge
 
-- [Проверка обмена данными между потоками шейдера](research/subgroup-validator) анализирует результат компиляции и показывает конкретный вход, на котором меняется результат.
+- [Устранение повторяющихся вычислений в шейдерах](research/shader-tail-factoring) сокращает код до компиляции и сравнивает результат с оптимизаторами DXC и SPIRV-Tools.
+- [Проверка и оптимизация обмена между потоками шейдера](research/subgroup-validator) анализирует вывод компилятора и может выбрать более компактную реализацию для поддерживаемой формы SPIR-V.
 - [Buffer Transfer Planner на RTX 4070 Ti SUPER](research/transfer-planner/physical) содержит замеры через D3D12 и Vulkan и объясняет, почему планировщик остался эталоном для сравнений.
 
 ## Работа идёт

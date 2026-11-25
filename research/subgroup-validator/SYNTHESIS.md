@@ -1,0 +1,35 @@
+# Model-guided SPIR-V subgroup lowering
+
+The optimizer selects a smaller lowering for a recognized Continued half-wave read. The default replaces seven integer mask operations with two scalar selects. It leaves the subgroup-ballot predicate, self fallback, shuffle inputs and local register load/store intact. It confirms both the original and the candidate against the existing lane contract and checks that eliminated instructions have no outside users. With correct source-lane selection, the first select returns the shuffle only for an eligible source and the second preserves the old destination when its guest lane is inactive.
+
+This is a local transformation within a compute block. It keeps the ballot and shuffle at their original program points and rejects participation-changing instructions between them. Validation assumes the lane mapping and shared dynamic participation already required by the original Continued lowering and declared coverage of logically active source lanes by host participants. The proof treats the bound address, input data, old destination and guest execution snapshot as stable, defined operands and models poison from a physical lookup that cannot return a source value. The rewrite preserves those bindings and the original lane formula. Under independent host participation, it leaves these modules unchanged and reports a counterexample to the original contract.
+
+Two experimental options let callers supply additional facts. `defined_exec` permits balloting the defined guest execution predicate and removing input data zeroing. This requires the predicate to dominate the original ballot in the same block and the old ballot and membership bit to have no other observers. `allow_masked_poison` permits dropping the fallback when the resulting inactive-source shuffle can only reach an unselected arm of `OpSelect`. The SPIR-V specification permits that poison isolation. The optimizer leaves this option disabled by default. Candidate ranking uses emitted instruction count. [SPIR-V ballot](https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpGroupNonUniformBallot) · [SPIR-V shuffle](https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpGroupNonUniformShuffle) · [SPIR-V select](https://registry.khronos.org/SPIR-V/specs/unified1/SPIRV.html#OpSelect)
+
+Removing the fallback alone fails when an inactive physical source yields poison. The model returns a failing lane, selector and masks for this control. Replacing the result mask with a select changes that value-flow property. A separate test blocks the previously known wrong-half formula on Wave64 even though it passes on Wave32.
+
+## Results
+
+The public Continued workloads are synthetic. The two modules include a half-wave read with multiple offsets and a 40-invocation partial workgroup with a partial guest execution mask. The default removes five instructions at each of five recognized sites. One other shuffle in the second module uses a different source-selection pattern and stays as it was.
+
+| Continued module | Eligible reads | Raw SPIR-V bytes | After `spirv-opt -O` | After `spirv-opt -Os` |
+| --- | ---: | ---: | ---: | ---: |
+| `cs_w64x_bpermute` | 3 | 21,280 → 20,992 | 8,232 → 8,056 | 8,076 → 7,900 |
+| `cs_w64x_partial` | 2 | 24,752 → 24,560 | 8,296 → 8,216 | 8,140 → 8,060 |
+
+The original and all variants validated for Vulkan 1.3. The upstream interpreter matched expected results at Wave32 and Wave64. On an RTX 4070 Ti SUPER with driver 617.14 and observed Wave32, the original, three synthesized variants, and `-O` versions of the original and default produced identical full 256-word readbacks for each fixture. This establishes a local code-size improvement beyond the tested SPIRV-Tools passes. The scope is two fixtures and one GPU. This study measures neither driver machine code nor time saved. [Machine-readable result](synthesis-results.json) · [Half-wave fixture](https://github.com/ubiquitarianism/leonida/blob/1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e/tests/semantic/test_wave64_cross_half.py) · [Partial-wave fixture](https://github.com/ubiquitarianism/leonida/blob/1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e/tests/semantic/test_wave64_subgroup_ops.py)
+
+PortBridge preflight surfaced the shared comparison in Continued #770 and XCL #772. XCL's pinned Direct DXIL fixture already uses scalar selects for source and destination guards, so this pass targets the arithmetic-heavy SPIR-V sequence. The existing DXIL replay remains a useful comparison for the shared lane semantics. [Continued #770](https://github.com/ubiquitarianism/leonida/pull/770) · [XCL #772](https://github.com/xcl-dev/xcl/issues/772) · [Direct DXIL replay](DXIL.md)
+
+## Reproduce
+
+Run from this directory. Use Python 3.11+, a clean checkout of Continued at `1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e`, and SPIRV-Tools containing `spirv-as`, `spirv-val`, and `spirv-opt`. The measured build identifies itself as `SPIRV-Tools v2026.5 v2026.4-121-g340b4c41`. The Windows bundle SHA-256 is `07f1466330427d3e0780b33fc337e3ccfe931d6c72f6df29dfa070fed404595e`. [Khronos build distribution](https://github.com/KhronosGroup/SPIRV-Tools/blob/main/docs/downloads.md) · [Exact Windows tool bundle](https://storage.googleapis.com/spirv-tools/artifacts/prod/graphics_shader_compiler/spirv_tools/windows-vs2022-amd64-release/continuous/304/20261124-071623/install.zip)
+
+```text
+python -B -m unittest discover -s . -v
+python -B replay_continued_synthesis.py --checkout /path/to/continued --spirv-tools /path/to/spirv-tools/bin --output ./synthesis-replay
+```
+
+For the optional hardware portion, build the upstream `vk_compute_test` target or compile [the standalone harness](https://github.com/ubiquitarianism/leonida/blob/1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e/runtime/test/vk_compute_test.cpp) from the same clean checkout with C++20 and Vulkan headers. The observed Windows build used llvm-mingw Clang 23.1.6, Vulkan-Headers `6802bb4733b63ed5efd3adb308a6c885ef180ea1` and `-O2 -static -DWIN32_LEAN_AND_MEAN -DNOMINMAX`. Add `--vulkan-runner /path/to/vk_compute_test --device "RTX 4070 Ti SUPER" --subgroup-width 32` to the replay. A missing device, subgroup mismatch or output difference fails the replay.
+
+For integration, call `spirv_synthesis.optimize(assembly, participation=Participation.SUPERSET)` on structurally validated assembly under the declared layout and execution assumptions. It returns the modified assembly and a per-site decision report. Validate the output before using it as a compiler artifact. The optimizer has no external dependencies. The fixture replay requires local tools and uses only the synthetic fixtures in the pinned public source.

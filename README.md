@@ -32,7 +32,8 @@ The exact AnyXboxX search links the earlier RDNA2 evidence and the new CPU corre
 
 ## PortBridge research
 
-- [Shader lane-exchange validator](research/subgroup-validator) checks compiler-emitted SPIR-V and Direct DXIL against a bounded model and returns a failing lane and mask when it finds a mismatch.
+- [Shader tail factoring](research/shader-tail-factoring) reduces repeated arithmetic before shader compilation and compares the result with optimized DXC and SPIRV-Tools output.
+- [Shader lane-exchange verifier and optimizer](research/subgroup-validator) checks SPIR-V and Direct DXIL. The shared model can also select and emit a smaller lowering for a supported SPIR-V pattern.
 - [Buffer Transfer Planner on RTX 4070 Ti SUPER](research/transfer-planner/physical) records the D3D12 and Vulkan measurements and why we kept the planner as a reference.
 
 ## Recent cross-project work
