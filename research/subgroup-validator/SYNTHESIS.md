@@ -27,6 +27,8 @@ The original and all variants validated for Vulkan 1.3. The upstream interpreter
 
 A second replay on the same physical adapter observed Wave32 in all 15 dispatches. All 256 output words matched the original for each dispatch, including the raw and `spirv-opt -O` full-group specialization. The partial-group shader kept its guards. The fixture-level check covers correctness of the outputs. GPU timing and physical Wave64 remain open. [Second replay](full-subgroup-rtx-results.json) · [Open AMD verification](https://github.com/akimfomin/PortBridge/issues/63)
 
+The later timestamp study measured the warm, optimized fixtures. The full specialization saved a paired median 33 ns per dispatch in the 32-dispatch batch on RTX Wave32. Single-dispatch gains were inconsistent and the measured effect fell below the practical threshold. [Timing study and raw data](timing/README.md)
+
 The full-subgroup replay removes 27 original instructions at three joined control-flow sites in `cs_w64x_bpermute`. Relative to the previous PortBridge lowering, it drops one ballot and three accompanying instructions per site. The `-O` output still contains all three shuffles and none of those ballots or membership extracts. The original `-O` output contains all three of each. The 40-invocation module selects the existing fallback at both previously recognized sites. Both module pairs match the upstream interpreter at both widths. [Full-subgroup result](full-subgroup-results.json)
 
 | Continued module | Full proofs | Raw bytes, default → specialized | `-O`, original → default → specialized | `-Os`, original → default → specialized |

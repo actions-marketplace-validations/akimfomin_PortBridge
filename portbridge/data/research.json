@@ -1,5 +1,29 @@
 [
   {
+    "at": "2026-11-25T15:29:00Z",
+    "title": "Переносимая генерация уровней текстуры в Vulkan",
+    "summary": "В открытом быстром шейдере NVIDIA нашли зависимость от порядка потоков, который Vulkan не гарантирует. Исправление PortBridge использует нумерацию по подгруппам. На RTX совпали все 28 180 468 выходных байтов. Выигрыш над исходным быстрым шейдером не установлен.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/mipmap-contract",
+    "translations": {
+      "en": {
+        "title": "Portable Vulkan mipmap generation",
+        "summary": "The NVIDIA fast shader assumes an invocation order Vulkan does not guarantee. The PortBridge correction uses subgroup-derived numbering. All 28,180,468 output bytes matched on RTX. A speedup over the stock fast shader remains unproven."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T15:23:00Z",
+    "title": "Стоимость оптимизации обмена между потоками Continued",
+    "summary": "Замеры GPU на открытых тестах показали экономию 33 нс на вызов в серии из 32. Одиночные вызовы оказались нестабильны. Проход оставлен экспериментальным.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/main/research/subgroup-validator/timing/README.md",
+    "translations": {
+      "en": {
+        "title": "Measure the cost of the Continued lane lowering",
+        "summary": "Device timestamps on public fixtures showed a 33 ns median paired saving per dispatch in a batch of 32. Single-dispatch results varied. The lowering remains experimental."
+      }
+    }
+  },
+  {
     "at": "2026-11-25T14:57:00Z",
     "title": "Разбиение больших ветвлений при генерации шейдеров",
     "summary": "В синтетическом шейдере с 2 048 ветвями полный цикл сборки сократился с 3 247 до 1 920 мс относительно плоского ветвления. Дерево с фиксированными группами по 32 ветви показало 1 835 мс. Все 86 576 сравнений результатов на CPU совпали. Производственные шейдеры и время GPU ещё не проверены.",
