@@ -1,5 +1,17 @@
 [
   {
+    "at": "2026-11-25T16:23:44Z",
+    "title": "Выборочный возврат изменившихся GPU-данных",
+    "summary": "На RTX 4070 Ti SUPER в синтетической цепочке со стабильными чтениями возврат сократился на 83,3% по объёму. Относительно точных асинхронных диапазонов полный цикл занял на 69,4% меньше времени с учётом отдельно измеренного планирования. При полной перезаписи точные диапазоны предпочтительнее. Измерение в движке ещё открыто.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/readback-epochs",
+    "translations": {
+      "en": {
+        "title": "Observation-scoped GPU readback",
+        "summary": "On the stable synthetic RTX replay, the planner transferred 83.3% fewer bytes than exact asynchronous ranges. The full sequence took 69.4% less time after charging the separately measured planning. Exact ranges remained preferable with full rewrites. Engine-level performance remains unmeasured."
+      }
+    }
+  },
+  {
     "at": "2026-11-25T15:29:00Z",
     "title": "Переносимая генерация уровней текстуры в Vulkan",
     "summary": "В открытом быстром шейдере NVIDIA нашли зависимость от порядка потоков, который Vulkan не гарантирует. Исправление PortBridge использует нумерацию по подгруппам. На трёх открытых текстурах Khronos исходный и исправленный шейдеры дали 8 388 604 совпадающих байта. При искусственной перестановке потоков исходный шейдер исказил 14 194 байта. Проверена штатная загрузка текстур в Blender 5.3. Ускорение в Blender пока не установлено.",

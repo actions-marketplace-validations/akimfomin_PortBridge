@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: MIT
+#version 450
+
+layout(local_size_x = 256) in;
+
+layout(set = 0, binding = 0, std430) buffer Terrain {
+    uint heights[];
+};
+
+layout(push_constant) uniform Update {
+    uint firstWord;
+    uint wordCount;
+    uint epoch;
+} update;
+
+void main()
+{
+    uint position = gl_GlobalInvocationID.x;
+    if (position >= update.wordCount) {
+        return;
+    }
+    uint p = update.firstWord + position;
+    heights[p] = ((p * 1664525u + 1013904223u) ^ ((update.epoch + 1u) * 747796405u))
+                 + ((p >> 10u) ^ 0x9e3779b9u);
+}

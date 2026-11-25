@@ -1,0 +1,146 @@
+[
+  {
+    "path": "height256-0.25.tsv",
+    "frames": 48,
+    "state_bytes": 262144,
+    "written_bytes": 12582912,
+    "full_bytes": 12582912,
+    "requested_bytes": 3145728,
+    "epoch_bytes": 3145728,
+    "epoch_no_copy_frames": 0,
+    "mirror_payload_bytes": 65536,
+    "staging_peak_payload_bytes": {
+      "full": 786432,
+      "ranges": 196608,
+      "epochs": 196608
+    },
+    "planner_median_cpu_us": 7.75,
+    "planner_total_cpu_us": 423.7
+  },
+  {
+    "path": "small-8.tsv",
+    "frames": 48,
+    "state_bytes": 8388608,
+    "written_bytes": 40263680,
+    "full_bytes": 402653184,
+    "requested_bytes": 100663296,
+    "epoch_bytes": 8998912,
+    "epoch_no_copy_frames": 25,
+    "mirror_payload_bytes": 2097152,
+    "staging_peak_payload_bytes": {
+      "full": 25165824,
+      "ranges": 6291456,
+      "epochs": 3063808
+    },
+    "planner_median_cpu_us": 11.55,
+    "planner_total_cpu_us": 598.4
+  },
+  {
+    "path": "stable-32.tsv",
+    "frames": 48,
+    "state_bytes": 33554432,
+    "written_bytes": 296140800,
+    "full_bytes": 1610612736,
+    "requested_bytes": 402653184,
+    "epoch_bytes": 67366912,
+    "epoch_no_copy_frames": 19,
+    "mirror_payload_bytes": 8388608,
+    "staging_peak_payload_bytes": {
+      "full": 100663296,
+      "ranges": 25165824,
+      "epochs": 13975552
+    },
+    "planner_median_cpu_us": 17.95,
+    "planner_total_cpu_us": 863.6
+  },
+  {
+    "path": "rolling-32.tsv",
+    "frames": 48,
+    "state_bytes": 33554432,
+    "written_bytes": 296140800,
+    "full_bytes": 1610612736,
+    "requested_bytes": 201326592,
+    "epoch_bytes": 39378944,
+    "epoch_no_copy_frames": 0,
+    "mirror_payload_bytes": 7077888,
+    "staging_peak_payload_bytes": {
+      "full": 100663296,
+      "ranges": 12582912,
+      "epochs": 6156288
+    },
+    "planner_median_cpu_us": 105.1,
+    "planner_total_cpu_us": 5818.0
+  },
+  {
+    "path": "global-writes-32.tsv",
+    "frames": 48,
+    "state_bytes": 33554432,
+    "written_bytes": 1610612736,
+    "full_bytes": 1610612736,
+    "requested_bytes": 402653184,
+    "epoch_bytes": 402653184,
+    "epoch_no_copy_frames": 0,
+    "mirror_payload_bytes": 8388608,
+    "staging_peak_payload_bytes": {
+      "full": 100663296,
+      "ranges": 25165824,
+      "epochs": 25165824
+    },
+    "planner_median_cpu_us": 18.7,
+    "planner_total_cpu_us": 901.0
+  },
+  {
+    "path": "opaque-32.tsv",
+    "frames": 48,
+    "state_bytes": 33554432,
+    "written_bytes": 1610612736,
+    "full_bytes": 1610612736,
+    "requested_bytes": 1610612736,
+    "epoch_bytes": 1610612736,
+    "epoch_no_copy_frames": 0,
+    "mirror_payload_bytes": 33554432,
+    "staging_peak_payload_bytes": {
+      "full": 100663296,
+      "ranges": 100663296,
+      "epochs": 100663296
+    },
+    "planner_median_cpu_us": 25.6,
+    "planner_total_cpu_us": 1327.7
+  },
+  {
+    "path": "medium-16.tsv",
+    "frames": 48,
+    "state_bytes": 16777216,
+    "written_bytes": 140824576,
+    "full_bytes": 805306368,
+    "requested_bytes": 100663296,
+    "epoch_bytes": 16130048,
+    "epoch_no_copy_frames": 0,
+    "mirror_payload_bytes": 2867200,
+    "staging_peak_payload_bytes": {
+      "full": 50331648,
+      "ranges": 6291456,
+      "epochs": 5009408
+    },
+    "planner_median_cpu_us": 16.3,
+    "planner_total_cpu_us": 1106.2
+  },
+  {
+    "path": "mostly-dirty-16.tsv",
+    "frames": 48,
+    "state_bytes": 16777216,
+    "written_bytes": 238551040,
+    "full_bytes": 805306368,
+    "requested_bytes": 201326592,
+    "epoch_bytes": 176685056,
+    "epoch_no_copy_frames": 0,
+    "mirror_payload_bytes": 4194304,
+    "staging_peak_payload_bytes": {
+      "full": 50331648,
+      "ranges": 12582912,
+      "epochs": 11534336
+    },
+    "planner_median_cpu_us": 13.25,
+    "planner_total_cpu_us": 797.7
+  }
+]
