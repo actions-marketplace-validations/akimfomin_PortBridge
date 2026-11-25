@@ -228,6 +228,186 @@
           "stack": "Python, VIctory frame-time monitoring"
         }
       }
+    },
+    {
+      "slug": "klbf-lab",
+      "name": "KLBF Lab",
+      "repo": "PastiiJay/klbf-lab",
+      "url": "https://github.com/PastiiJay/klbf-lab",
+      "stack": "Ветка VIctory, Rust и D3D12, стабильные сборки для AMD",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "VIctory derivative, Rust and D3D12, stable AMD builds"}}
+    },
+    {
+      "slug": "klbf-lab-beta",
+      "name": "KLBF Lab Beta",
+      "repo": "PastiiJay/klbf-lab-beta",
+      "url": "https://github.com/PastiiJay/klbf-lab-beta",
+      "stack": "Тестовый репозиторий KLBF Lab, Rust, AMD Radeon и D3D12",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "KLBF Lab testing repository, Rust, AMD Radeon and D3D12"}}
+    },
+    {
+      "slug": "xbvk",
+      "name": "XBVK",
+      "repo": "0x0007b/XBVK",
+      "url": "https://github.com/0x0007b/XBVK",
+      "stack": "Ветка VIctory, Rust, D3D12 и DXIL, трансляция Wave64",
+      "license": "GPL-3.0-or-later / GPL-2.0-only",
+      "translations": {"en": {"stack": "VIctory derivative, Rust, D3D12 and DXIL, Wave64 translation"}}
+    },
+    {
+      "slug": "victory-perf",
+      "name": "victory-perf",
+      "repo": "vitutu1/victory-perf",
+      "url": "https://github.com/vitutu1/victory-perf",
+      "stack": "Ветка victory-fork, Rust и D3D12, синхронизация и барьеры",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "victory-fork derivative, Rust and D3D12, synchronization and barriers"}}
+    },
+    {
+      "slug": "vx-layer",
+      "name": "vx-layer",
+      "repo": "Geckomacabre/vx-layer",
+      "url": "https://github.com/Geckomacabre/vx-layer",
+      "stack": "Ветка victory-fork, Rust, D3D12 и обратное копирование текстур",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "victory-fork derivative, Rust, D3D12 and texture copy-back"}}
+    },
+    {
+      "slug": "xtp",
+      "name": "XTP",
+      "repo": "MiamiGame/XTP",
+      "url": "https://github.com/MiamiGame/XTP",
+      "stack": "Ветка VIctory, Rust, D3D12 и синтетические тесты декодера GFX10",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "VIctory derivative, Rust, D3D12 and synthetic GFX10 decoder tests"}}
+    },
+    {
+      "slug": "scarlight",
+      "name": "Scarlight",
+      "repo": "pablogonz12/Scarlight",
+      "url": "https://github.com/pablogonz12/Scarlight",
+      "stack": "Ветка VIctory, Rust, Linux, Proton и Mesa",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "VIctory derivative, Rust, Linux, Proton and Mesa"}}
+    },
+    {
+      "slug": "metalvi",
+      "name": "MetalVI",
+      "repo": "Aoody743/MetalVI",
+      "url": "https://github.com/Aoody743/MetalVI",
+      "stack": "Ветка VIctory, Rust, Apple Silicon, Rosetta и D3DMetal",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "VIctory derivative, Rust, Apple Silicon, Rosetta and D3DMetal"}}
+    },
+    {
+      "slug": "ztrx",
+      "name": "ztrx",
+      "repo": "Zettrox/ztrx",
+      "url": "https://github.com/Zettrox/ztrx",
+      "stack": "Ветка victory-fork, Rust, Windows D3D12 и средства запуска",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "victory-fork derivative, Rust, Windows D3D12 and launcher tooling"}}
+    },
+    {
+      "slug": "victory-amd",
+      "name": "victory-amd",
+      "repo": "myokex/victory-amd",
+      "url": "https://github.com/myokex/victory-amd",
+      "stack": "Ветка victory-fork, Rust, Radeon и согласованность представлений текстур",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "victory-fork derivative, Rust, Radeon and texture view coherency"}}
+    },
+    {
+      "slug": "project-flamingo",
+      "name": "Project Flamingo",
+      "repo": "JMAN730/project-flamingo",
+      "url": "https://github.com/JMAN730/project-flamingo",
+      "stack": "Ветка VIctory, Rust, D3D12, тесты шейдеров и запуск через Proton",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "VIctory fork, Rust, D3D12, shader tests and Proton tooling"}}
+    },
+    {
+      "slug": "vitoriabr",
+      "name": "VItoriaBr",
+      "repo": "uiliannn/VItoriaBr",
+      "url": "https://github.com/uiliannn/VItoriaBr",
+      "stack": "Ветка VIctory, Rust, D3D12 и управление дескрипторами",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "VIctory derivative, Rust, D3D12 and descriptor management"}}
+    },
+    {
+      "slug": "anybox",
+      "name": "AnyBox",
+      "repo": "boykopovar/AnyBox",
+      "url": "https://github.com/boykopovar/AnyBox",
+      "stack": "C++, Windows, D3D12, Vulkan и синтетические тесты памяти GPU",
+      "license": "GPL-2.0-only",
+      "translations": {"en": {"stack": "C++, Windows, D3D12, Vulkan and synthetic GPU memory tests"}}
+    },
+    {
+      "slug": "neonbridge",
+      "name": "Neonbridge",
+      "repo": "DesignWithTommy/Neonbridge",
+      "url": "https://github.com/DesignWithTommy/Neonbridge",
+      "stack": "Rust, запуск и сравнение нескольких сред исполнения, собственные и сторонние компоненты",
+      "license": "GPL-3.0-or-later / component licenses",
+      "translations": {"en": {"stack": "Rust, multi-runtime launcher and comparisons, original and third-party components"}}
+    },
+    {
+      "slug": "mangrove",
+      "name": "mangrove",
+      "repo": "Joaco9020/mangrove",
+      "url": "https://github.com/Joaco9020/mangrove",
+      "stack": "Ветка victory-fork, Rust, D3D12 и исследования NVIDIA с 8 ГБ VRAM",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "victory-fork derivative, Rust, D3D12 and experiments on 8 GiB NVIDIA hardware"}}
+    },
+    {
+      "slug": "r4y",
+      "name": "R4Y",
+      "repo": "cmyk-ux/r4y",
+      "url": "https://github.com/cmyk-ux/r4y",
+      "stack": "Ветка VIctory, Rust, D3D12 и исследования DPP, LDS и Wave64",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "VIctory derivative, Rust, D3D12 and DPP, LDS and Wave64 research"}}
+    },
+    {
+      "slug": "xseries-wine",
+      "name": "xseries-wine",
+      "repo": "ReverendOzmund/xseries-wine",
+      "url": "https://github.com/ReverendOzmund/xseries-wine",
+      "stack": "C, диагностический стенд запуска Wine и Proton",
+      "license": "MIT",
+      "translations": {"en": {"stack": "C, Wine and Proton boot diagnostics"}}
+    },
+    {
+      "slug": "scarlettport",
+      "name": "ScarlettPort",
+      "repo": "ZigZagBoi1/ScarlettPort",
+      "url": "https://github.com/ZigZagBoi1/ScarlettPort",
+      "stack": "Rust, лаунчер и раздельные среды исполнения XCL и VIctory",
+      "license": "GPL-3.0-or-later / GPL-2.0-only",
+      "translations": {"en": {"stack": "Rust, launcher and separate XCL and VIctory runtimes"}}
+    },
+    {
+      "slug": "victory-belobug-amd",
+      "name": "VIctory Belobug AMD",
+      "repo": "Belobug/VIctory-Belobug-AMD",
+      "url": "https://github.com/Belobug/VIctory-Belobug-AMD",
+      "stack": "Ветка VIctory, Rust, Radeon, разреженные ресурсы и синхронизация копирования",
+      "license": "GPL-3.0-or-later",
+      "translations": {"en": {"stack": "VIctory derivative, Rust, Radeon, sparse resources and copy synchronization"}}
+    },
+    {
+      "slug": "xbox-hle-lab",
+      "name": "Xbox HLE Lab",
+      "repo": "sub-north/xbox-hle-lab",
+      "url": "https://github.com/sub-north/xbox-hle-lab",
+      "stack": "Синтетические пробы и анализ конвейеров, инструменты и патчи XCL",
+      "license": "MIT / GPL-2.0 / CC-BY-4.0",
+      "translations": {"en": {"stack": "Synthetic probes and pipeline analysis, tools and XCL patches"}}
     }
   ],
   "coordination": {
@@ -2581,7 +2761,7 @@
       "id": "PB-0025",
       "recorded_at": "2026-11-25T13:36:47Z",
       "title": "Уменьшение временного буфера в XCL",
-      "summary": "ettehn независимо проверил патч PortBridge поверх работы Kalmarv. При компиляции одной записи размер временного буфера снизился с 47 712 до 20 064 DWORD на группу. На стенде с RTX 5070 Ti Laptop прошли все восемь проверок. XCL влил базовую правку Kalmarv. Для отдельного патча ещё нужны замеры GPU на трёх программах.",
+      "summary": "ettehn подтвердил снижение временной памяти с 47 712 до 20 064 DWORD на группу на одной записи. В отдельном черновике PortBridge #2322 nnonno91 проверил точный коммит на Radeon и RTX 5090: по 10 тестов без пропусков. Базовая работа Kalmarv влита. Для нашего патча ещё нужны замеры GPU на трёх программах и обязательные прогоны XCL.",
       "status": "verified",
       "tags": [
         "Wave32",
@@ -2590,13 +2770,13 @@
         "liveness"
       ],
       "platforms": [
-        "Windows CPU and DXV", "RTX 5070 Ti Laptop"
+        "Windows CPU and DXV", "RTX 5070 Ti Laptop", "Radeon Graphics", "RTX 5090"
       ],
       "dependency_ids": [],
       "translations": {
         "en": {
           "title": "Smaller scratch buffers in XCL",
-          "summary": "ettehn independently checked the PortBridge patch on top of Kalmarv's work. The scratch size returned by compilation for one record dropped from 47,712 to 20,064 DWORDs per workgroup. All eight checks passed on a setup with an RTX 5070 Ti Laptop GPU. XCL merged Kalmarv's base change. GPU measurements on three workloads remain open for the separate patch.",
+          "summary": "ettehn confirmed that scratch for one record fell from 47,712 to 20,064 DWORDs per workgroup. In separate PortBridge draft #2322, nnonno91 tested the exact commit on Radeon and RTX 5090, with ten passes and zero skips on each. Kalmarv's base work merged. Three GPU workload measurements and XCL's required regression runs remain open for our patch.",
           "tags": [
             "Wave32",
             "DXIL",
@@ -2609,7 +2789,7 @@
         {
           "project": "xcl",
           "status": "verified",
-          "summary": "PortBridge разработал повторное использование слотов. ettehn подтвердил снижение с 47 712 до 20 064 DWORD на группу на одной записи и восемь успешных проверок. Kalmarv запросил измерения памяти и времени GPU на трёх программах перед отдельным рассмотрением.",
+          "summary": "PortBridge разработал повторное использование слотов. ettehn подтвердил снижение с 47 712 до 20 064 DWORD на группу на одной записи и восемь успешных проверок. Черновик #2322 независимо проверен на Radeon и RTX 5090. Kalmarv запросил измерения памяти и времени GPU на трёх программах.",
           "source_refs": [
             {
               "title": "Базовый PR Kalmarv",
@@ -2643,6 +2823,16 @@
               "title": "Готовая ветка PortBridge поверх слитой базы",
               "url": "https://github.com/akimfomin/xcl/commit/b3f7ab5574c4489761141e2de0ce31d2eb216412",
               "translations": {"en": {"title": "PortBridge review branch on the merged base"}}
+            },
+            {
+              "title": "Черновик PortBridge в XCL",
+              "url": "https://github.com/xcl-dev/xcl/pull/2322",
+              "translations": {"en": {"title": "PortBridge draft in XCL"}}
+            },
+            {
+              "title": "Проверка luckyteagirl на Radeon RX 6800M",
+              "url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165844270",
+              "translations": {"en": {"title": "luckyteagirl's check on Radeon RX 6800M"}}
             }
           ],
           "evidence": [
@@ -2693,11 +2883,33 @@
               "reported_at": "2026-11-25T12:15:28Z",
               "platforms": ["Windows 11", "NVIDIA RTX 5070 Ti Laptop", "DXC/DXIL 1.8.2502.11"],
               "translations": {"en": {"title": "ettehn independently checked the PortBridge allocator", "observed": "The PortBridge patch at 8988421 applied over XCL f6fa8a9. Both versions emitted 12 valid pieces of the same record. Modeled scratch decreased from 47,712 to 20,064 DWORDs per workgroup. Eight focused tests passed on an RTX 5070 Ti Laptop setup with zero skips. No GPU or driver timing was collected for the record."}}
+            },
+            {
+              "kind": "independent",
+              "outcome": "passed",
+              "title": "nnonno91 проверил точный черновик на Radeon и RTX 5090",
+              "observed": "На коммите b3f7ab5 прошло по 10 целевых тестов без пропусков на каждом из двух GPU. В синтетическом Wave32-шейдере буфер занял 256 DWORD на группу, результаты полной и разбитой программы совпали. Время GPU и сторонние программы не проверялись.",
+              "url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165250326",
+              "revision": "b3f7ab5574c4489761141e2de0ce31d2eb216412",
+              "reported_at": "2026-11-25T14:25:15Z",
+              "platforms": ["Windows 11", "AMD Radeon Graphics", "NVIDIA RTX 5090", "DXC/DXIL 1.8.2502.11"],
+              "translations": {"en": {"title": "nnonno91 verified the exact draft on Radeon and RTX 5090", "observed": "Ten targeted tests ran without skips on each physical GPU at b3f7ab5. The synthetic Wave32 shader used 256 DWORDs per workgroup and its whole and split outputs agreed. This did not measure GPU time or exercise third-party programs."}}
+            },
+            {
+              "kind": "independent",
+              "outcome": "passed",
+              "title": "luckyteagirl проверил точный черновик на Radeon RX 6800M",
+              "observed": "Десять целевых тестов на b3f7ab5 прошли без пропусков. Синтетический Wave32-шейдер использовал 256 DWORD на группу. Проверка гостевой Wave64 использовала аппаратные половины Wave32.",
+              "url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165844270",
+              "revision": "b3f7ab5574c4489761141e2de0ce31d2eb216412",
+              "reported_at": "2026-11-25T14:48:26Z",
+              "platforms": ["Windows 11", "AMD Radeon RX 6800M", "DXC/DXIL 1.9.2609.5"],
+              "translations": {"en": {"title": "luckyteagirl verified the exact draft on Radeon RX 6800M", "observed": "All ten targeted tests passed without skips at b3f7ab5. The synthetic Wave32 shader used 256 DWORDs per workgroup. The guest Wave64 check used hardware Wave32 halves."}}
             }
           ],
           "translations": {
             "en": {
-              "summary": "PortBridge developed the scratch-slot reuse. ettehn confirmed 47,712 to 20,064 DWORDs per group on one record and eight passing checks. Kalmarv requested scratch size and GPU time on three programs before separate review."
+              "summary": "PortBridge developed the scratch-slot reuse. ettehn confirmed 47,712 to 20,064 DWORDs per group on one record and eight passing checks. Draft #2322 was independently checked on Radeon and RTX 5090. Kalmarv requested scratch size and GPU time on three programs."
             }
           }
         }
@@ -2920,7 +3132,7 @@
       "id": "PB-0028",
       "recorded_at": "2026-11-25T08:19:16Z",
       "title": "Объединение диапазонов графических барьеров Continued",
-      "summary": "На свежей основной ветке число записей сократилось с 12 до 3, а в трёх последовательных операциях с 14 до 5. Порядок и откат проверены. Смешанные диапазоны могут давать дополнительную нагрузку.",
+      "summary": "В контролируемом опыте число записей сократилось с 12 до 3 и с 14 до 5. potatoe0100 проверил открытую правку #1713 на RTX 4060 с включённой проверкой синхронизации. Отдельный fork Leonida Ultimate включил правку с указанием авторства. В Continued PR остаётся открытым.",
       "status": "verified",
       "tags": [
         "Vulkan",
@@ -2935,7 +3147,7 @@
       "translations": {
         "en": {
           "title": "Coalescing Vulkan image barriers in Continued",
-          "summary": "On current main the recorded barriers went from 12 to 3 and from 14 to 5 across three ordered commands. Ordering and rollback passed. Mixed ranges can add CPU cost.",
+          "summary": "In a controlled replay, barrier counts fell from 12 to 3 and from 14 to 5. potatoe0100 tested open PR #1713 on an RTX 4060 with synchronization validation. The separate Leonida Ultimate fork adopted the patch with attribution. Continued's PR remains open.",
           "tags": [
             "Vulkan",
             "image layout",
@@ -2948,7 +3160,7 @@
         {
           "project": "continued",
           "status": "verified",
-          "summary": "На свежей основной ветке число записей сократилось с 12 до 3, а в трёх последовательных операциях с 14 до 5. Порядок и откат проверены. Смешанные диапазоны могут давать дополнительную нагрузку.",
+          "summary": "В открытой правке #1713 сохраняются порядок операций и области синхронизации. У potatoe0100 на RTX 4060 прошли три целевые проверки и весь набор из 409 ctest. Продолжительность кадра этот прогон не измерял.",
           "source_refs": [
             {
               "title": "continued #1284",
@@ -2967,6 +3179,16 @@
                   "title": "PortBridge report"
                 }
               }
+            },
+            {
+              "title": "Принятие в отдельном форке Leonida Ultimate",
+              "url": "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b",
+              "translations": {"en": {"title": "Adoption by the separate Leonida Ultimate fork"}}
+            },
+            {
+              "title": "Открытая правка Continued",
+              "url": "https://github.com/ubiquitarianism/leonida/pull/1713",
+              "translations": {"en": {"title": "Open Continued patch"}}
             }
           ],
           "evidence": [
@@ -2987,13 +3209,67 @@
                   "observed": "On current main the recorded barriers went from 12 to 3 and from 14 to 5 across three ordered commands. Ordering and rollback passed. Mixed ranges can add CPU cost."
                 }
               }
+            },
+            {
+              "kind": "independent",
+              "outcome": "passed",
+              "title": "Независимая проверка синхронизации на RTX 4060",
+              "observed": "potatoe0100 применил ef9ae1fd поверх bcaa13dad. Три целевых теста прошли без диагностик Vulkan. Отрицательный контроль выдал ожидаемое предупреждение. Все 409 ctest прошли, аппаратная матрица дала те же 209 из 263, что и база.",
+              "url": "https://github.com/ubiquitarianism/leonida/pull/1713#issuecomment-7161475134",
+              "revision": "ef9ae1fd54d5c452eb31236c1ca86debe0a5fda9",
+              "reported_at": "2026-11-25T11:46:10Z",
+              "platforms": ["Windows 11", "NVIDIA RTX 4060", "Vulkan 1.4.363.0"],
+              "translations": {"en": {"title": "Independent RTX 4060 synchronization check", "observed": "potatoe0100 applied ef9ae1fd on bcaa13dad. Three focused tests passed with no Vulkan diagnostics. The negative control reported its deliberate hazard. All 409 ctest entries passed and the GPU matrix matched the base at 209 of 263."}}
             }
           ],
           "translations": {
             "en": {
-              "summary": "On current main the recorded barriers went from 12 to 3 and from 14 to 5 across three ordered commands. Ordering and rollback passed. Mixed ranges can add CPU cost."
+              "summary": "Open PR #1713 preserves command order and synchronization scopes. On potatoe0100's RTX 4060, three targeted checks and all 409 ctest entries passed. This run did not measure frame time."
             }
           }
+        }
+      ],
+      "showcase": true
+    },
+    {
+      "id": "PB-0029",
+      "recorded_at": "2026-11-25T11:43:53Z",
+      "title": "Оптимизация декодера BC7 принята в AnyXboxX",
+      "summary": "PortBridge убрал выделение памяти для опорных индексов каждого блока и заменил копирование отдельных пикселей копированием видимых строк. Независимое ревью подтвердило сохранение формата и обрезки краёв. AnyXboxX влил #202 в основную ветку.",
+      "status": "verified",
+      "tags": ["BC7", "texture decode", "CPU"],
+      "platforms": ["Windows 11", "Rust 1.100"],
+      "dependency_ids": [],
+      "translations": {
+        "en": {
+          "title": "AnyXboxX adopts the BC7 decoder optimization",
+          "summary": "PortBridge removed per-block anchor allocations and copied visible rows instead of individual pixels. Independent review confirmed the decode and edge cropping behavior. AnyXboxX merged #202 into main.",
+          "tags": ["BC7", "texture decode", "CPU"]
+        }
+      },
+      "solutions": [
+        {
+          "project": "anyxboxx",
+          "status": "verified",
+          "summary": "В самостоятельном PR PortBridge #202 шесть тестов текстур прошли на Windows. Проверка через bcdec сравнила все байты на синтетических данных. Принятие относится к декодеру BC7.",
+          "source_refs": [
+            {"title": "Влитая правка PortBridge", "url": "https://github.com/LooperSalty/AnyXboxX/pull/202", "translations": {"en": {"title": "Merged PortBridge patch"}}},
+            {"title": "Ревью Exorion1er", "url": "https://github.com/LooperSalty/AnyXboxX/pull/202#pullrequestreview-6056983166", "translations": {"en": {"title": "Review by Exorion1er"}}}
+          ],
+          "evidence": [
+            {
+              "kind": "automated_test",
+              "outcome": "passed",
+              "title": "Проверка декодирования BC7",
+              "observed": "Шесть тестов Rust прошли на Windows. bcdec использовался как отдельный эталон декодирования синтетических блоков.",
+              "url": "https://github.com/LooperSalty/AnyXboxX/pull/202",
+              "revision": "c499ce137f6dc7120be49a43270715681f936386",
+              "reported_at": "2026-11-25T09:18:51Z",
+              "platforms": ["Windows 11", "Rust 1.100"],
+              "translations": {"en": {"title": "BC7 decode verification", "observed": "Six Rust tests passed on Windows. bcdec served as a separate decode reference for synthetic blocks."}}
+            }
+          ],
+          "translations": {"en": {"summary": "All six Windows texture tests passed on PortBridge's separate #202. A bcdec comparison checked the output bytes on synthetic data. The merged change is the BC7 decoder."}}
         }
       ],
       "showcase": true

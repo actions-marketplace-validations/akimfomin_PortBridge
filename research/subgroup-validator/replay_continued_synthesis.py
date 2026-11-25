@@ -12,14 +12,16 @@ import subprocess
 
 from check_continued import run as capture
 from lane_contract import Domain, Lowering, Participation
-from spirv_synthesis import UNSAFE_CONTROL, optimize, prove_plan
+from spirv_synthesis import FULL_SUBGROUP, UNSAFE_CONTROL, optimize, prove_plan
 
 
 CONTINUED = "1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e"
+SUBGROUP_OPS = {339: "ballots", 341: "ballot_bit_extracts", 345: "indexed_shuffles"}
 VARIANTS = {
     "default": {},
     "defined-exec": {"defined_exec": True},
     "select-masks-poison": {"defined_exec": True, "allow_masked_poison": True},
+    "full-subgroup": {"full_subgroups_at_launch": True},
 }
 
 
@@ -38,13 +40,17 @@ def stats(path: Path) -> dict:
         raise ValueError("expected a SPIR-V module")
     index = 5
     count = 0
+    subgroup_ops = dict.fromkeys(SUBGROUP_OPS.values(), 0)
     while index < len(words):
         length = words[index] >> 16
         if length == 0 or index + length > len(words):
             raise ValueError("invalid SPIR-V instruction length")
+        if name := SUBGROUP_OPS.get(words[index] & 0xffff):
+            subgroup_ops[name] += 1
         index += length
         count += 1
-    return {"bytes": len(binary), "instructions": count, "sha256": hashlib.sha256(binary).hexdigest()}
+    return {"bytes": len(binary), "instructions": count, "subgroup_ops": subgroup_ops,
+            "sha256": hashlib.sha256(binary).hexdigest()}
 
 
 def measure(tools: Path, source: Path) -> dict:
@@ -61,14 +67,14 @@ def measure(tools: Path, source: Path) -> dict:
     return results
 
 
-def interpret(name: str, assembly: str) -> dict:
+def interpret(name: str, assembly: str, widths=(32, 64)) -> dict:
     # These modules are already loaded by capture from the clean, pinned checkout.
     import spirv_mini_interp
     import test_wave64_cross_half as cross
     import test_wave64_subgroup_ops as partial
 
     results = {}
-    for width in (32, 64):
+    for width in widths:
         if name == "bpermute":
             values = cross.run(assembly, width)
         else:
@@ -81,6 +87,31 @@ def interpret(name: str, assembly: str) -> dict:
     return results
 
 
+def reject_partial_direct(assembly: str, output: Path, tools: Path) -> dict:
+    """Validate the same removal with its launch proof deliberately falsified."""
+    import spirv_mini_interp
+
+    partial = "OpExecutionMode %main LocalSize 40 1 1"
+    full = "OpExecutionMode %main LocalSize 64 1 1"
+    if assembly.count(partial) != 1:
+        raise ValueError("unexpected local size in the partial control")
+    revised, decision = optimize(assembly.replace(partial, full), participation=Participation.SUPERSET,
+                                 full_subgroups_at_launch=True)
+    if sum(row["plan"] == FULL_SUBGROUP.name for row in decision["reads"]) != 2:
+        raise ValueError("the negative control did not remove the two safeguarded ballots")
+    revised = revised.replace(full, partial)
+    control = output / "partial-unsafe-direct.spvasm"
+    control.write_text(revised, encoding="utf-8", newline="\n")
+    modules = measure(tools, control)
+    try:
+        interpret("partial", revised, widths=(64,))
+    except spirv_mini_interp.UnsupportedConstruct as exc:
+        if "undefined value" in str(exc):
+            return {"modules": modules, "wave64_interpreter_error": str(exc)}
+        raise
+    raise ValueError("the unsafe partial shader unexpectedly produced defined output")
+
+
 def observed_subgroup_width(log: str) -> int | None:
     match = re.search(
         r"(?m)^compute subgroup size: (\d+)(?: \(observed: all \d+ invocations of a "
@@ -90,8 +121,11 @@ def observed_subgroup_width(log: str) -> int | None:
     return int(match[1]) if match else None
 
 
-def dispatch(runner, device, width, binary, expected) -> dict:
+def dispatch(runner, device, width, binary, expected, *, full=False) -> dict:
+    if full and struct.unpack_from("<I", binary.read_bytes(), 4)[0] < 0x00010600:
+        raise ValueError("the full subgroup replay requires SPIR-V 1.6")
     output = binary.with_suffix(".bin")
+    output.unlink(missing_ok=True)
     env = {name: value for name, value in os.environ.items() if not name.startswith("VKC_")}
     env.update(LEONIDA_VK_DEVICE=device, VKC_SUBGROUP_SIZE=str(width), VKC_OUT_WORDS="256", VKC_DUMP=str(output))
     output_log = subprocess.check_output(
@@ -127,6 +161,7 @@ def replay(args) -> dict:
             result = {}
             fixture["variants"][label] = result
             revised = assembly
+            full_count = 0
             if options is not None:
                 revised, decision = optimize(assembly, participation=Participation.SUPERSET, **options)
                 selected = [row for row in decision["reads"] if row["plan"]]
@@ -134,6 +169,10 @@ def replay(args) -> dict:
                     raise ValueError(f"rewrite/interpreter mismatch for {name} {label}")
                 result["plans"] = [row["plan"] for row in selected]
                 result["removed_operations"] = sum(row["removed_operations"] for row in selected)
+                full_count = result["plans"].count(FULL_SUBGROUP.name)
+                expected_full = count if name == "bpermute" and label == "full-subgroup" else 0
+                if full_count != expected_full:
+                    raise ValueError(f"unexpected full-subgroup proof at {name} {label}")
             source = args.output / f"{name}-{label}.spvasm"
             source.write_text(revised, encoding="utf-8", newline="\n")
             result["modules"] = measure(args.spirv_tools, source)
@@ -142,14 +181,16 @@ def replay(args) -> dict:
                 if before - result["modules"]["raw"]["instructions"] != result["removed_operations"]:
                     raise ValueError("emitted instruction count differs from the proved plan")
             if args.vulkan_runner:
-                for mode in (("", "-O") if label in {"baseline", "default"} else ("",)):
+                for mode in (("", "-O") if label in {"baseline", "default"} or full_count else ("",)):
                     binary = source.with_name(source.stem + mode + ".spv")
                     readback = dispatch(args.vulkan_runner, args.device, args.subgroup_width, binary,
-                                        outputs[str(args.subgroup_width)])
+                                        outputs[str(args.subgroup_width)], full=bool(full_count))
                     expected = fixture["variants"]["baseline"].get("vulkan", {}).get("raw", readback)
                     if expected != readback:
                         raise ValueError(f"full Vulkan readback differs for {binary.name}")
                     result.setdefault("vulkan", {})[mode or "raw"] = readback
+        if name == "partial":
+            fixture["unsafe_full_subgroup_control"] = reject_partial_direct(assembly, args.output, args.spirv_tools)
 
     report["unsafe_control"] = prove_plan(
         UNSAFE_CONTROL, Lowering(32), Domain(64, 32, Participation.SUPERSET)).record()
@@ -177,8 +218,10 @@ def main() -> None:
     for name, fixture in report["fixtures"].items():
         original = fixture["variants"]["baseline"]["modules"]
         revised = fixture["variants"]["default"]["modules"]
+        specialized = fixture["variants"]["full-subgroup"]["modules"]
         print(f"{name}: {original['raw']['instructions'] - revised['raw']['instructions']} instructions removed, "
-              f"spirv-opt -O {original['-O']['bytes']} -> {revised['-O']['bytes']} bytes")
+              f"spirv-opt -O {original['-O']['bytes']} -> {revised['-O']['bytes']} bytes "
+              f"({specialized['-O']['bytes']} with full-subgroup specialization)")
 
 
 if __name__ == "__main__":

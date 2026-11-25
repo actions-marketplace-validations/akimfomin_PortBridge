@@ -9,6 +9,7 @@ from lane_contract import (
     Domain, Guest, Lowering, Mismatch, Participation, Probe, Value, active, compare_values, guest_value, project,
     target_source, validate,
 )
+from spirv_participation import converged_prefix, covers_full_launch
 from spirv_transport import Module, Transport, UnsupportedPattern, compute_entry, recognize, require
 
 
@@ -19,14 +20,18 @@ class Plan:
     fallback: bool = True
     mask_input: bool = True
     scalar_selects: bool = True
+    host_membership: bool = True
 
     @property
     def operations(self) -> int:
         # Ballot, bit lookup and shuffle, plus optional input/index preparation and result/write merging.
+        if not self.host_membership:
+            return 3  # Masked source, shuffle, conditional destination write.
         return 3 + self.fallback + self.mask_input + (2 if self.scalar_selects else 7)
 
 
 REFERENCE = Plan("reference", scalar_selects=False)
+FULL_SUBGROUP = Plan("full-subgroup-direct", fallback=False, host_membership=False)
 CANDIDATES = (
     Plan("exec-ballot-select", ballot_exec=True, fallback=False, mask_input=False),
     Plan("exec-ballot-self-fallback", ballot_exec=True, mask_input=False),
@@ -53,7 +58,8 @@ def plan_value(plan: Plan, lower: Lowering, domain: Domain, probe: Probe) -> tup
     if not active(probe.host_mask, lane):
         return Value.OLD, lane
     desired = target_source(lower, domain, lane, probe.selector)
-    present = active(probe.host_mask, desired) and desired // domain.physical == lane // domain.physical
+    physically_present = active(probe.host_mask, desired) and desired // domain.physical == lane // domain.physical
+    present = physically_present or not plan.host_membership
     if plan.ballot_exec:
         present = present and active(probe.exec_mask, desired)
     carrier = lane if plan.fallback and not present else desired
@@ -117,6 +123,15 @@ def edits_for(module: Module, read: Transport, plan: Plan) -> dict[int, str]:
         change[ballot.line] = f"{read.ballot} = OpGroupNonUniformBallot {ballot.args[0]} {scope} {active_id}"
 
     remove = [read.result_mask, *read.write_masks]
+    if not plan.host_membership:
+        require(all(insn.ident in (read.present, read.safe_index)
+                    or insn.opcode in ("OpLine", "OpNoLine")
+                    for insn in module.instructions if ballot.line < insn.line < read.shuffle.line),
+                "cannot remove a ballot across an unrelated operation")
+        remove.extend((read.ballot, read.present, read.received))
+        change[defs[read.merge].line] = (
+            f"{read.merge} = OpSelect {uint} {active_id} {read.shuffle.ident} {read.bindings['old_value']}"
+        )
     if not plan.fallback:
         remove.append(read.safe_index)
     if not plan.mask_input:
@@ -129,15 +144,23 @@ def edits_for(module: Module, read: Transport, plan: Plan) -> dict[int, str]:
 
 
 def optimize(assembly: str, *, participation: Participation, defined_exec: bool = False,
-             allow_masked_poison: bool = False) -> tuple[str, dict]:
+             allow_masked_poison: bool = False, full_subgroups_at_launch: bool = False) -> tuple[str, dict]:
     """Rewrite matched reads in structurally valid compute SPIR-V assembly.
 
     Caller declares the existing participation, layout and binding assumptions. The default
     does not create an inactive-lane shuffle or place guest EXEC in a subgroup collective.
+    Only set full_subgroups_at_launch for a Vulkan pipeline guaranteeing full physical
+    subgroups with allowed widths restricted to 32 and 64. The pass independently verifies
+    literal workgroup alignment and a converged control-flow prefix at each rewritten site.
     """
     module = Module(assembly)
     entry = compute_entry(module)
-    domains = [Domain(64, width, Participation(participation)) for width in (32, 64)]
+    widths = (32, 64)
+    domains = [Domain(64, width, Participation(participation)) for width in widths]
+    full_domains = [Domain(64, width, Participation.FULL) for width in widths]
+    full_prefix = {}
+    if full_subgroups_at_launch and covers_full_launch(module, entry, widths):
+        full_prefix = converged_prefix(module, entry)
     changes = {}
     reports = []
     for insn in module.instructions:
@@ -148,14 +171,19 @@ def optimize(assembly: str, *, participation: Participation, defined_exec: bool 
         try:
             require(module.block_functions.get(insn.block) == entry, "shuffle outside the compute entry")
             read = recognize(module, insn)
-            reference_checks = {str(d.physical): prove_plan(REFERENCE, read.lowering, d).record() for d in domains}
+            full_site = insn.line < full_prefix.get(insn.block, 0)
+            site_domains = full_domains if full_site else domains
+            reference_checks = {str(d.physical): prove_plan(REFERENCE, read.lowering, d).record()
+                                for d in site_domains}
             if any(case["failures"] for case in reference_checks.values()):
                 row.update({"reason": "original lowering is refuted under the declared contract",
                             "proof": reference_checks})
                 continue
             rejected = []
-            for plan in CANDIDATES:  # Ascending size, with safe fallback preferred on ties.
-                if (plan.ballot_exec and not defined_exec) or (not plan.fallback and not allow_masked_poison):
+            candidates = (FULL_SUBGROUP, *CANDIDATES) if full_site else CANDIDATES
+            for plan in candidates:  # Ascending size, with safe fallback preferred on ties.
+                if ((plan.ballot_exec and not defined_exec)
+                        or (plan.host_membership and not plan.fallback and not allow_masked_poison)):
                     continue
                 try:
                     proposed = edits_for(module, read, plan)
@@ -163,13 +191,13 @@ def optimize(assembly: str, *, participation: Participation, defined_exec: bool 
                 except UnsupportedPattern as exc:
                     rejected.append(str(exc))
                     continue
-                proof = {str(d.physical): prove_plan(plan, read.lowering, d).record() for d in domains}
+                proof = {str(d.physical): prove_plan(plan, read.lowering, d).record() for d in site_domains}
                 if any(case["failures"] for case in proof.values()):
                     rejected.extend(case["witness"] for case in proof.values() if case["failures"])
                     continue
                 changes.update(proposed)
                 row.update({"plan": plan.name, "removed_operations": REFERENCE.operations - plan.operations,
-                            "proof": proof})
+                            "proof": proof, "fully_participating": full_site})
                 break
             else:
                 row["reason"] = rejected or ["no supported cheaper lowering"]
@@ -185,4 +213,5 @@ def optimize(assembly: str, *, participation: Participation, defined_exec: bool 
             suffix = original[len(original.rstrip("\r\n")):]
             lines.append(indent + replacement + suffix)
     return "".join(lines), {"participation": Participation(participation), "defined_exec": defined_exec,
-                            "allow_masked_poison": allow_masked_poison, "reads": reports}
+                            "allow_masked_poison": allow_masked_poison,
+                            "full_subgroups_at_launch": full_subgroups_at_launch, "reads": reports}

@@ -5,7 +5,7 @@ import unittest
 
 from lane_contract import Domain, Lowering, Participation
 from replay_continued_synthesis import observed_subgroup_width
-from spirv_synthesis import UNSAFE_CONTROL, optimize, prove_plan
+from spirv_synthesis import FULL_SUBGROUP, UNSAFE_CONTROL, optimize, prove_plan
 from test_spirv_transport import MODULE
 
 
@@ -50,6 +50,79 @@ class SpirvSynthesisTest(unittest.TestCase):
                 self.assertEqual("%ballot = OpGroupNonUniformBallot %v4 %scope %active" in result, defined)
                 self.assertEqual("%safe_index =" in result, not masked_poison)
                 self.assertEqual("%input_value =" in result, not defined)
+
+    def test_full_launch_and_closed_selection_remove_a_collective(self):
+        closed = MODULE.replace("%self =", """%branch_lane = OpLoad %word %lane_input
+%branch_active = OpIEqual %bool %branch_lane %high_mask
+OpSelectionMerge %join None
+OpBranchConditional %branch_active %arm %join
+%arm = OpLabel
+OpStore %slot %branch_lane
+OpBranch %join
+%join = OpLabel
+%self =""")
+        result, report = optimize(closed, participation=Participation.SUPERSET, full_subgroups_at_launch=True)
+        row, = report["reads"]
+        self.assertTrue(row["fully_participating"])
+        self.assertEqual(row["plan"], FULL_SUBGROUP.name)
+        self.assertEqual(row["removed_operations"], 9)
+        self.assertEqual({p["projected_probes"] for p in row["proof"].values()}, {16128})
+        self.assertNotIn("OpGroupNonUniformBallot ", result)
+        self.assertNotIn("OpGroupNonUniformBallotBitExtract ", result)
+        self.assertIn("%read = OpGroupNonUniformShuffle %word %scope %input_value %desired", result)
+        self.assertIn("%merge = OpSelect %word %active %read %old", result)
+
+    def test_full_launch_does_not_establish_full_participation_everywhere(self):
+        group_size_override = MODULE.replace(
+            "OpDecorate %lane_input BuiltIn SubgroupLocalInvocationId",
+            "OpDecorate %lane_input BuiltIn SubgroupLocalInvocationId\nOpDecorate %size BuiltIn WorkgroupSize",
+        ).replace("%main = OpFunction", "%v3 = OpTypeVector %word 3\n"
+                  "%size = OpConstantComposite %v3 %shift %shift %shift\n%main = OpFunction")
+        escaping_arm = MODULE.replace("%self =", """%branch_lane = OpLoad %word %lane_input
+%branch_active = OpIEqual %bool %branch_lane %high_mask
+OpSelectionMerge %join None
+OpBranchConditional %branch_active %return_early %join
+%return_early = OpLabel
+OpReturn
+%join = OpLabel
+%self =""")
+        loop_header = MODULE.replace("%self =", """OpBranch %header
+%header = OpLabel
+%self =""").replace("OpReturn\nOpFunctionEnd", """OpLoopMerge %exit %continue None
+OpBranchConditional %active %continue %exit
+%continue = OpLabel
+OpBranch %header
+%exit = OpLabel
+OpReturn
+OpFunctionEnd""")
+        for name, assembly in (
+            ("partial_x", MODULE.replace("LocalSize 64", "LocalSize 40")),
+            ("size_override", group_size_override),
+            ("early_return", escaping_arm),
+            ("multiple_loop_instances", loop_header),
+        ):
+            with self.subTest(name=name):
+                result, report = optimize(assembly, participation=Participation.SUPERSET,
+                                          full_subgroups_at_launch=True)
+                row, = report["reads"]
+                self.assertFalse(row["fully_participating"])
+                self.assertEqual(row["plan"], "host-ballot-self-fallback")
+                self.assertIn("%safe_index =", result)
+
+    def test_do_not_delete_ballot_with_a_shared_observer_or_intervening_store(self):
+        for insert in ("%observer = OpCopyObject %v4 %ballot", "OpStore %slot %data"):
+            with self.subTest(insert=insert):
+                assembly = MODULE.replace("%present =", insert + "\n%present =")
+                result, report = optimize(assembly, participation=Participation.SUPERSET,
+                                          full_subgroups_at_launch=True)
+                self.assertEqual(report["reads"][0]["plan"], "host-ballot-self-fallback")
+                self.assertIn(insert, result)
+                self.assertIn("%ballot =", result)
+
+    def test_full_plan_refutes_guest_coverage_without_full_participation(self):
+        proof = prove_plan(FULL_SUBGROUP, Lowering(32), Domain(64, 64, Participation.SUPERSET))
+        self.assertGreater(proof.failures, 0)
+        self.assertEqual(proof.witness.reason, "target returns undefined for a defined guest result")
 
     def test_bitwise_mask_does_not_isolate_poison(self):
         proof = prove_plan(UNSAFE_CONTROL, Lowering(32), Domain(64, 32, Participation.SUPERSET))

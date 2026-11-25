@@ -1,0 +1,606 @@
+{
+  "continued_commit": "1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e",
+  "spirv_tools": "SPIRV-Tools v2026.5 v2026.4-121-g340b4c41",
+  "fixtures": {
+    "bpermute": {
+      "interpreter": {
+        "32": [
+          36,
+          316,
+          253,
+          218,
+          435,
+          225,
+          0,
+          442
+        ],
+        "64": [
+          36,
+          316,
+          253,
+          218,
+          435,
+          225,
+          0,
+          442
+        ]
+      },
+      "variants": {
+        "baseline": {
+          "modules": {
+            "raw": {
+              "bytes": 21280,
+              "instructions": 1186,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "ffb5cb6b5b82d94878c9ca62f65b91af0e4244b41bc626d96d7959e2fe133031"
+            },
+            "-O": {
+              "bytes": 8232,
+              "instructions": 442,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "ed8e97bda5ccc6a0dff0bf3f840eaaeb6232f8733e1c45a1a3ccc7cba9f08a7e"
+            },
+            "-Os": {
+              "bytes": 8076,
+              "instructions": 434,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "2010dda42329b55a08cc035ddf53c22e5e20a0ce2643fffc7873353d9bd7ef14"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "3e8a90e69a3cbf619eca402c45f71cb75b01fe88ec1b32eeb48c3029cbf14c44"
+            },
+            "-O": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "3e8a90e69a3cbf619eca402c45f71cb75b01fe88ec1b32eeb48c3029cbf14c44"
+            }
+          }
+        },
+        "default": {
+          "plans": [
+            "host-ballot-self-fallback",
+            "host-ballot-self-fallback",
+            "host-ballot-self-fallback"
+          ],
+          "removed_operations": 15,
+          "modules": {
+            "raw": {
+              "bytes": 20992,
+              "instructions": 1171,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "2369d8502af75d3d61e180719b8b1a1fe3f46963280959f046b943fb501e44e9"
+            },
+            "-O": {
+              "bytes": 8056,
+              "instructions": 433,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "e7dd3eb9a7cba03665d22bbd3a15cc53da4b763335707d582688304b15bb39bf"
+            },
+            "-Os": {
+              "bytes": 7900,
+              "instructions": 425,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "f678058e32fc007f4cd5e4b210dcfb326e117aab1a4c98a4e8dfa394d658821f"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "3e8a90e69a3cbf619eca402c45f71cb75b01fe88ec1b32eeb48c3029cbf14c44"
+            },
+            "-O": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "3e8a90e69a3cbf619eca402c45f71cb75b01fe88ec1b32eeb48c3029cbf14c44"
+            }
+          }
+        },
+        "defined-exec": {
+          "plans": [
+            "exec-ballot-self-fallback",
+            "exec-ballot-self-fallback",
+            "exec-ballot-self-fallback"
+          ],
+          "removed_operations": 18,
+          "modules": {
+            "raw": {
+              "bytes": 20920,
+              "instructions": 1168,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "1a7ba5086629f0215ee200041c1c829a5829ae3ab97bdf1fb8cdbdea0a8da871"
+            },
+            "-O": {
+              "bytes": 8032,
+              "instructions": 432,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "843304159628bb6d58a9fa8a183ec3746d6f057b271f7a3ec0d7fdf477027776"
+            },
+            "-Os": {
+              "bytes": 7876,
+              "instructions": 424,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "a23f634b148f74b5346ca7e4d617eb613d296fa5c7caa90a0a0b92ad8b8ba470"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "3e8a90e69a3cbf619eca402c45f71cb75b01fe88ec1b32eeb48c3029cbf14c44"
+            }
+          }
+        },
+        "select-masks-poison": {
+          "plans": [
+            "exec-ballot-select",
+            "exec-ballot-select",
+            "exec-ballot-select"
+          ],
+          "removed_operations": 21,
+          "modules": {
+            "raw": {
+              "bytes": 20848,
+              "instructions": 1165,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "353a6d3edd9544a1ad8e931b4e4927d982a320b040c219c412d768715e4c26a9"
+            },
+            "-O": {
+              "bytes": 7960,
+              "instructions": 429,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "c176f2a4cba0836cae0472501754a98d9687e26f589279062ffe23fc19858c51"
+            },
+            "-Os": {
+              "bytes": 7804,
+              "instructions": 421,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 3,
+                "indexed_shuffles": 3
+              },
+              "sha256": "e12e827128c7d07ee98826952c3d378933b54705394dad5f0c86dec8fd12b7fe"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "3e8a90e69a3cbf619eca402c45f71cb75b01fe88ec1b32eeb48c3029cbf14c44"
+            }
+          }
+        },
+        "full-subgroup": {
+          "plans": [
+            "full-subgroup-direct",
+            "full-subgroup-direct",
+            "full-subgroup-direct"
+          ],
+          "removed_operations": 27,
+          "modules": {
+            "raw": {
+              "bytes": 20716,
+              "instructions": 1159,
+              "subgroup_ops": {
+                "ballots": 0,
+                "ballot_bit_extracts": 0,
+                "indexed_shuffles": 3
+              },
+              "sha256": "2a306dba8f42d4eba31f55401db1f0df76248140d75ff581ca2e84996cb8c34f"
+            },
+            "-O": {
+              "bytes": 7764,
+              "instructions": 420,
+              "subgroup_ops": {
+                "ballots": 0,
+                "ballot_bit_extracts": 0,
+                "indexed_shuffles": 3
+              },
+              "sha256": "9a22567453033534831f0c3b968a04d13c07bb0001ce8941a8c1bd0af9797630"
+            },
+            "-Os": {
+              "bytes": 7608,
+              "instructions": 412,
+              "subgroup_ops": {
+                "ballots": 0,
+                "ballot_bit_extracts": 0,
+                "indexed_shuffles": 3
+              },
+              "sha256": "cb45fffe609a0f18f84f8ea48594c96b51701cf552b45de5a8210ddefd77a870"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "3e8a90e69a3cbf619eca402c45f71cb75b01fe88ec1b32eeb48c3029cbf14c44"
+            },
+            "-O": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "3e8a90e69a3cbf619eca402c45f71cb75b01fe88ec1b32eeb48c3029cbf14c44"
+            }
+          }
+        }
+      }
+    },
+    "partial": {
+      "interpreter": {
+        "32": [
+          32,
+          8,
+          528,
+          0,
+          0,
+          532,
+          539,
+          500
+        ],
+        "64": [
+          40,
+          40,
+          528,
+          0,
+          0,
+          532,
+          539,
+          524820
+        ]
+      },
+      "variants": {
+        "baseline": {
+          "modules": {
+            "raw": {
+              "bytes": 24752,
+              "instructions": 1363,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "51692f6b586aaab17682229eb18a8c0cbd2477c8526840f47f567fb0fdffe263"
+            },
+            "-O": {
+              "bytes": 8296,
+              "instructions": 445,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "133e18d5aa8ff1522a7e86e1b2175f568a42dee27adfbc2752e9f253f18fc7bf"
+            },
+            "-Os": {
+              "bytes": 8140,
+              "instructions": 437,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "39bff5cd221c2479068a3c10c6ea7e6618d4486a5bdd8181f92be83ef5e78245"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "64bcc28fd6290135004c8e45e01b89d6f4f2df462c0c3334b1e6b9a7b43853ca"
+            },
+            "-O": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "64bcc28fd6290135004c8e45e01b89d6f4f2df462c0c3334b1e6b9a7b43853ca"
+            }
+          }
+        },
+        "default": {
+          "plans": [
+            "host-ballot-self-fallback",
+            "host-ballot-self-fallback"
+          ],
+          "removed_operations": 10,
+          "modules": {
+            "raw": {
+              "bytes": 24560,
+              "instructions": 1353,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "cac93a04f4d533bb2ce85b1c616ac28908d7b802974b0f82ebb503d811d2ab16"
+            },
+            "-O": {
+              "bytes": 8216,
+              "instructions": 441,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "19e1d695f5120a262d90cf0284f62c1893e987cd0d57ed01705be0b1aee78556"
+            },
+            "-Os": {
+              "bytes": 8060,
+              "instructions": 433,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "42a149ab9f7252df02140f331a2ed4311b92cfd54b2d0acdfac88fb6a0512847"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "64bcc28fd6290135004c8e45e01b89d6f4f2df462c0c3334b1e6b9a7b43853ca"
+            },
+            "-O": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "64bcc28fd6290135004c8e45e01b89d6f4f2df462c0c3334b1e6b9a7b43853ca"
+            }
+          }
+        },
+        "defined-exec": {
+          "plans": [
+            "exec-ballot-self-fallback",
+            "exec-ballot-self-fallback"
+          ],
+          "removed_operations": 12,
+          "modules": {
+            "raw": {
+              "bytes": 24512,
+              "instructions": 1351,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "706854611cac12d129b126fc3882c0b98b486b0eee3633faec07a04ec4da18b1"
+            },
+            "-O": {
+              "bytes": 8216,
+              "instructions": 441,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "944aa7259869455cfdb2b61cc80a1b3e49f1bd80c23b1dd635ceb9e413d3a3a2"
+            },
+            "-Os": {
+              "bytes": 8060,
+              "instructions": 433,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "05a4fc55d9eaadea09a7aeee61bc7674c5a0fbc125a6e87df1cd95748895c533"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "64bcc28fd6290135004c8e45e01b89d6f4f2df462c0c3334b1e6b9a7b43853ca"
+            }
+          }
+        },
+        "select-masks-poison": {
+          "plans": [
+            "exec-ballot-select",
+            "exec-ballot-select"
+          ],
+          "removed_operations": 14,
+          "modules": {
+            "raw": {
+              "bytes": 24464,
+              "instructions": 1349,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "34ceeaeb520460110f4623e630ae23818ccecb6ede48be826d20901accb91ac3"
+            },
+            "-O": {
+              "bytes": 8168,
+              "instructions": 439,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "0044a05aa4780c67dcc616fce0f484d5cae5e57795cc4a0206d3244680cdb358"
+            },
+            "-Os": {
+              "bytes": 8012,
+              "instructions": 431,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "99cd72d7e022ba42a1f52e0eeb935c576e906b5a06338445424fc6b3488abde3"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "64bcc28fd6290135004c8e45e01b89d6f4f2df462c0c3334b1e6b9a7b43853ca"
+            }
+          }
+        },
+        "full-subgroup": {
+          "plans": [
+            "host-ballot-self-fallback",
+            "host-ballot-self-fallback"
+          ],
+          "removed_operations": 10,
+          "modules": {
+            "raw": {
+              "bytes": 24560,
+              "instructions": 1353,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "cac93a04f4d533bb2ce85b1c616ac28908d7b802974b0f82ebb503d811d2ab16"
+            },
+            "-O": {
+              "bytes": 8216,
+              "instructions": 441,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "19e1d695f5120a262d90cf0284f62c1893e987cd0d57ed01705be0b1aee78556"
+            },
+            "-Os": {
+              "bytes": 8060,
+              "instructions": 433,
+              "subgroup_ops": {
+                "ballots": 3,
+                "ballot_bit_extracts": 2,
+                "indexed_shuffles": 3
+              },
+              "sha256": "42a149ab9f7252df02140f331a2ed4311b92cfd54b2d0acdfac88fb6a0512847"
+            }
+          },
+          "vulkan": {
+            "raw": {
+              "adapter": "NVIDIA GeForce RTX 4070 Ti SUPER",
+              "subgroup_width": 32,
+              "bytes": 1024,
+              "readback_sha256": "64bcc28fd6290135004c8e45e01b89d6f4f2df462c0c3334b1e6b9a7b43853ca"
+            }
+          }
+        }
+      },
+      "unsafe_full_subgroup_control": {
+        "modules": {
+          "raw": {
+            "bytes": 24376,
+            "instructions": 1345,
+            "subgroup_ops": {
+              "ballots": 1,
+              "ballot_bit_extracts": 0,
+              "indexed_shuffles": 3
+            },
+            "sha256": "a4444758c73eb3db10636f20c546ee2bdaac5d3cade93d2757094d11bf15435a"
+          },
+          "-O": {
+            "bytes": 8020,
+            "instructions": 432,
+            "subgroup_ops": {
+              "ballots": 1,
+              "ballot_bit_extracts": 0,
+              "indexed_shuffles": 3
+            },
+            "sha256": "e715cc76e7b95fa7608f3db7bb1bfda213634f53859a15e5bab3efcbb9f18e92"
+          },
+          "-Os": {
+            "bytes": 7864,
+            "instructions": 424,
+            "subgroup_ops": {
+              "ballots": 1,
+              "ballot_bit_extracts": 0,
+              "indexed_shuffles": 3
+            },
+            "sha256": "d72a37eb75d17a1d93f1755af711905650b0d8da598a9418466b2852e0355bd0"
+          }
+        },
+        "wave64_interpreter_error": "OpStore uses an undefined value: OpStore %reg_v4 %t138"
+      }
+    }
+  },
+  "unsafe_control": {
+    "projected_probes": 24064,
+    "failures": 7936,
+    "witness": {
+      "destination": 0,
+      "selector": 1,
+      "exec": "0x0",
+      "host": "0x1",
+      "expected": [
+        "destination",
+        0
+      ],
+      "actual": [
+        "undefined",
+        -1
+      ],
+      "reason": "target returns undefined for a defined guest result"
+    }
+  }
+}

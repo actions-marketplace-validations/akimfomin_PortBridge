@@ -32,9 +32,13 @@ The exact AnyXboxX search links the earlier RDNA2 evidence and the new CPU corre
 
 ## PortBridge research
 
-- [Shader tail factoring](research/shader-tail-factoring) reduces repeated arithmetic before shader compilation and compares the result with optimized DXC and SPIRV-Tools output.
-- [Shader lane-exchange verifier and optimizer](research/subgroup-validator) checks SPIR-V and Direct DXIL. The shared model can also select and emit a smaller lowering for a supported SPIR-V pattern.
+- [Adaptive shader dispatch](research/adaptive-switch-dispatch) partitions large sparse switches. The study compares a flat switch, a fixed-size range tree, and a table where the case bodies allow one.
+- [Shader tail factoring](research/shader-tail-factoring) shares repeated arithmetic before shader compilation. The [open-corpus audit](research/shader-tail-factoring/CORPUS.md) records where the exact pass found no eligible region.
+- [Shader lane-exchange optimizer](research/subgroup-validator) can omit subgroup ballots when full participation is proven. The replay records a physical RTX check with a guarded control.
+- [Cross-queue transient slot cover](research/transient-slot-cover) computes reusable memory slots without adding dependencies to its input graph.
 - [Buffer Transfer Planner on RTX 4070 Ti SUPER](research/transfer-planner/physical) records the D3D12 and Vulkan measurements and why we kept the planner as a reference.
+
+[Current research and adoption report](docs/RD-2026-11-25.md) · [Ecosystem audit](docs/ECOSYSTEM-AUDIT-2026-11-25.md)
 
 ## Recent cross-project work
 

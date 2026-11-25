@@ -97,9 +97,9 @@
   {
     "problem_id": "PB-0025",
     "project": "xcl",
-    "revision": "89884212b8a5718f44b16b66e8df0cf5f263306b",
-    "delivered_url": "https://github.com/xcl-dev/xcl/pull/2126",
-    "independent_url": "https://github.com/xcl-dev/xcl/pull/2126#issuecomment-7162128623"
+    "revision": "b3f7ab5574c4489761141e2de0ce31d2eb216412",
+    "delivered_url": "https://github.com/xcl-dev/xcl/pull/2322",
+    "independent_url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165250326"
   },
   {
     "problem_id": "PB-0026",
@@ -108,5 +108,21 @@
     "delivered_url": "https://github.com/LooperSalty/AnyXboxX/pull/188",
     "independent_url": "https://github.com/LooperSalty/AnyXboxX/pull/188#issuecomment-7164567766",
     "branch_implementation_url": "https://github.com/LooperSalty/AnyXboxX/commit/c5ca937c371d8b21e56feb36f3d009ecffe5765a"
+  },
+  {
+    "problem_id": "PB-0028",
+    "project": "continued",
+    "revision": "ef9ae1fd54d5c452eb31236c1ca86debe0a5fda9",
+    "delivered_url": "https://github.com/ubiquitarianism/leonida/pull/1713",
+    "independent_url": "https://github.com/ubiquitarianism/leonida/pull/1713#issuecomment-7161475134",
+    "review_url": "https://github.com/ubiquitarianism/leonida/pull/1713#pullrequestreview-6055209960"
+  },
+  {
+    "problem_id": "PB-0029",
+    "project": "anyxboxx",
+    "revision": "c499ce137f6dc7120be49a43270715681f936386",
+    "delivered_url": "https://github.com/LooperSalty/AnyXboxX/pull/202",
+    "review_url": "https://github.com/LooperSalty/AnyXboxX/pull/202#pullrequestreview-6056983166",
+    "adopted_url": "https://github.com/LooperSalty/AnyXboxX/commit/0539d7f8ad7734e30396e7c913edeb0755d0f9ce"
   }
 ]

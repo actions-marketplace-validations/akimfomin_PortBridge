@@ -1,5 +1,53 @@
 [
   {
+    "at": "2026-11-25T14:57:00Z",
+    "title": "Разбиение больших ветвлений при генерации шейдеров",
+    "summary": "В синтетическом шейдере с 2 048 ветвями полный цикл сборки сократился с 3 247 до 1 920 мс относительно плоского ветвления. Дерево с фиксированными группами по 32 ветви показало 1 835 мс. Все 86 576 сравнений результатов на CPU совпали. Производственные шейдеры и время GPU ещё не проверены.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/adaptive-switch-dispatch",
+    "translations": {
+      "en": {
+        "title": "Partitioning large switches during shader generation",
+        "summary": "On a synthetic 2,048-arm shader the full compile path took 1,920 ms versus 3,247 ms for a flat switch. A fixed 32-arm range tree took 1,835 ms. All 86,576 CPU equivalence comparisons matched. Production applicability and GPU time remain open."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T14:51:00Z",
+    "title": "Проверка применимости Shader Tail Factoring",
+    "summary": "В 373 проверенных образцах из MiniEngine, FSR 2 и Naga точной формы, которую умеет преобразовывать проход, не обнаружено. Синтетический контроль подтвердил, что сканер находит заложенное повторение. Общая интеграция отложена.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/main/research/shader-tail-factoring/CORPUS.md",
+    "translations": {
+      "en": {
+        "title": "Where Shader Tail Factoring applies",
+        "summary": "None of the 373 validated MiniEngine, FSR 2 and Naga observations contained the exact form this pass can rewrite. A synthetic positive control showed the scanner finds that pattern. General integration is deferred."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T14:49:00Z",
+    "title": "Оптимизация обмена в гарантированно полной подгруппе",
+    "summary": "Для подгруппы, чья полнота и сходимость доказаны, PortBridge удалил три лишние операции голосования. После оптимизатора SPIR-V сократился с 8 232 до 7 764 байт в одном шейдере Continued. Неполная группа сохранила защиту. Все 15 запусков на RTX Wave32 совпали.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/main/research/subgroup-validator/SYNTHESIS.md",
+    "translations": {
+      "en": {
+        "title": "Avoid unnecessary ballots in proven full subgroups",
+        "summary": "PortBridge removed three ballots when fullness and convergence were proven. In one Continued shader, optimized SPIR-V went from 8,232 to 7,764 bytes. The partial group kept its guards. All 15 RTX Wave32 replays matched."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T14:44:00Z",
+    "title": "Планировщик повторного использования памяти между очередями",
+    "summary": "Планировщик находит минимум одинаковых слотов при заданных зависимостях. На 64 синтетических графах экономия относительно безопасного первого подходящего слота составила 2,26% суммарно. Модель цепочки Granite осталась без выигрыша. Замеры выделенной VRAM и времени кадра ещё открыты.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/transient-slot-cover",
+    "translations": {
+      "en": {
+        "title": "Plan safe cross-queue reuse of temporary memory",
+        "summary": "The planner minimizes exact-class slots under given dependencies. It reduced modeled storage by 2.26% against safe first-fit across 64 seeded graphs; the Granite projection was unchanged. Allocated VRAM and frame time remain unmeasured."
+      }
+    }
+  },
+  {
     "at": "2026-11-25T13:54:00Z",
     "title": "Объединение повторяющихся вычислений в шейдерах",
     "summary": "Проход PortBridge объединяет одинаковые части ветвей до компиляции. В синтетической нагрузке с 64 ветвями DXC сократился со 165 до 23 мс, создание конвейера на RTX — с 17,6 до 2,3 мс. Все выходы совпали. Стенд Xbox2Windows с выборкой текстур остался вне области прохода.",

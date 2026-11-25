@@ -1,0 +1,1284 @@
+{
+  "dxc": "dxcompiler.dll: 1.9(5512-01b62ad4)(1.9.2609.5) - 1.9.2609.5 (01b62ad47)",
+  "spirv_opt": "SPIRV-Tools v2026.5 v2026.4-121-g340b4c41",
+  "target": "vulkan1.2",
+  "rounds": 5,
+  "workloads": {
+    "small": {
+      "flat": {
+        "generate_ms": [
+          0.424,
+          0.425,
+          0.404,
+          0.262,
+          0.263
+        ],
+        "dxc_ms": [
+          44.141,
+          43.576,
+          45.598,
+          31.399,
+          26.125
+        ],
+        "spirv_opt_ms": [
+          34.41,
+          20.284,
+          35.948,
+          26.48,
+          20.354
+        ],
+        "layout": null,
+        "arm_count": 24,
+        "source_bytes": 2783,
+        "dxc_cfg": {
+          "bytes": 5076,
+          "switches": 1,
+          "max_switch_edges": 25,
+          "switch_square_sum": 625,
+          "basic_blocks": 27,
+          "max_phi_inputs": 25
+        },
+        "optimized_cfg": {
+          "bytes": 5076,
+          "switches": 1,
+          "max_switch_edges": 25,
+          "switch_square_sum": 625,
+          "basic_blocks": 27,
+          "max_phi_inputs": 25
+        },
+        "median_dxc_ms": 43.576,
+        "median_end_to_end_ms": 64.285
+      },
+      "fixed_low_6_10": {
+        "generate_ms": [
+          0.49,
+          0.408,
+          0.293,
+          0.481,
+          0.288
+        ],
+        "dxc_ms": [
+          44.797,
+          44.787,
+          36.25,
+          52.59,
+          43.015
+        ],
+        "spirv_opt_ms": [
+          34.156,
+          33.078,
+          26.224,
+          41.104,
+          31.839
+        ],
+        "layout": [
+          6,
+          10
+        ],
+        "arm_count": 24,
+        "source_bytes": 3352,
+        "dxc_cfg": {
+          "bytes": 5612,
+          "switches": 5,
+          "max_switch_edges": 10,
+          "switch_square_sum": 265,
+          "basic_blocks": 39,
+          "max_phi_inputs": 10
+        },
+        "optimized_cfg": {
+          "bytes": 5612,
+          "switches": 5,
+          "max_switch_edges": 10,
+          "switch_square_sum": 265,
+          "basic_blocks": 39,
+          "max_phi_inputs": 10
+        },
+        "median_dxc_ms": 44.787,
+        "median_end_to_end_ms": 78.273
+      },
+      "fixed_high_24_8": {
+        "generate_ms": [
+          0.452,
+          0.298,
+          0.318,
+          0.459,
+          0.259
+        ],
+        "dxc_ms": [
+          44.026,
+          35.637,
+          37.447,
+          44.034,
+          40.956
+        ],
+        "spirv_opt_ms": [
+          33.483,
+          21.688,
+          29.047,
+          33.691,
+          34.482
+        ],
+        "layout": [
+          24,
+          8
+        ],
+        "arm_count": 24,
+        "source_bytes": 3010,
+        "dxc_cfg": {
+          "bytes": 5268,
+          "switches": 2,
+          "max_switch_edges": 25,
+          "switch_square_sum": 629,
+          "basic_blocks": 30,
+          "max_phi_inputs": 25
+        },
+        "optimized_cfg": {
+          "bytes": 5268,
+          "switches": 2,
+          "max_switch_edges": 25,
+          "switch_square_sum": 629,
+          "basic_blocks": 30,
+          "max_phi_inputs": 25
+        },
+        "median_dxc_ms": 40.956,
+        "median_end_to_end_ms": 75.697
+      },
+      "adaptive": {
+        "generate_ms": [
+          0.939,
+          0.397,
+          0.233,
+          0.255,
+          0.389
+        ],
+        "dxc_ms": [
+          46.571,
+          46.293,
+          45.468,
+          35.237,
+          44.634
+        ],
+        "spirv_opt_ms": [
+          35.237,
+          33.343,
+          29.0,
+          40.148,
+          25.039
+        ],
+        "layout": null,
+        "arm_count": 24,
+        "source_bytes": 2783,
+        "dxc_cfg": {
+          "bytes": 5076,
+          "switches": 1,
+          "max_switch_edges": 25,
+          "switch_square_sum": 625,
+          "basic_blocks": 27,
+          "max_phi_inputs": 25
+        },
+        "optimized_cfg": {
+          "bytes": 5076,
+          "switches": 1,
+          "max_switch_edges": 25,
+          "switch_square_sum": 625,
+          "basic_blocks": 27,
+          "max_phi_inputs": 25
+        },
+        "median_dxc_ms": 45.468,
+        "median_end_to_end_ms": 75.64
+      },
+      "radix_without_size_gate": {
+        "generate_ms": [
+          1.4,
+          0.757,
+          1.388,
+          0.766,
+          0.775
+        ],
+        "dxc_ms": [
+          43.882,
+          44.074,
+          44.666,
+          26.271,
+          26.003
+        ],
+        "spirv_opt_ms": [
+          34.008,
+          29.323,
+          19.881,
+          30.476,
+          21.694
+        ],
+        "layout": null,
+        "arm_count": 24,
+        "source_bytes": 2783,
+        "dxc_cfg": {
+          "bytes": 5076,
+          "switches": 1,
+          "max_switch_edges": 25,
+          "switch_square_sum": 625,
+          "basic_blocks": 27,
+          "max_phi_inputs": 25
+        },
+        "optimized_cfg": {
+          "bytes": 5076,
+          "switches": 1,
+          "max_switch_edges": 25,
+          "switch_square_sum": 625,
+          "basic_blocks": 27,
+          "max_phi_inputs": 25
+        },
+        "median_dxc_ms": 43.882,
+        "median_end_to_end_ms": 65.935
+      },
+      "sorted_ranges_32": {
+        "generate_ms": [
+          0.44,
+          0.259,
+          0.403,
+          0.41,
+          0.303
+        ],
+        "dxc_ms": [
+          43.143,
+          28.203,
+          44.855,
+          46.4,
+          37.531
+        ],
+        "spirv_opt_ms": [
+          33.602,
+          30.058,
+          33.34,
+          33.613,
+          32.809
+        ],
+        "layout": null,
+        "arm_count": 24,
+        "source_bytes": 2783,
+        "dxc_cfg": {
+          "bytes": 5076,
+          "switches": 1,
+          "max_switch_edges": 25,
+          "switch_square_sum": 625,
+          "basic_blocks": 27,
+          "max_phi_inputs": 25
+        },
+        "optimized_cfg": {
+          "bytes": 5076,
+          "switches": 1,
+          "max_switch_edges": 25,
+          "switch_square_sum": 625,
+          "basic_blocks": 27,
+          "max_phi_inputs": 25
+        },
+        "median_dxc_ms": 43.143,
+        "median_end_to_end_ms": 77.185
+      },
+      "table": {
+        "generate_ms": [
+          0.653,
+          0.189,
+          0.206,
+          0.212,
+          0.376
+        ],
+        "dxc_ms": [
+          40.086,
+          24.992,
+          23.998,
+          36.135,
+          34.793
+        ],
+        "spirv_opt_ms": [
+          32.246,
+          31.657,
+          18.346,
+          32.896,
+          24.104
+        ],
+        "layout": null,
+        "arm_count": 24,
+        "source_bytes": 1130,
+        "dxc_cfg": {
+          "bytes": 2368,
+          "switches": 1,
+          "max_switch_edges": 4,
+          "switch_square_sum": 16,
+          "basic_blocks": 17,
+          "max_phi_inputs": 4
+        },
+        "optimized_cfg": {
+          "bytes": 2368,
+          "switches": 1,
+          "max_switch_edges": 4,
+          "switch_square_sum": 16,
+          "basic_blocks": 17,
+          "max_phi_inputs": 4
+        },
+        "median_dxc_ms": 34.793,
+        "median_end_to_end_ms": 59.273
+      }
+    },
+    "dense": {
+      "flat": {
+        "generate_ms": [
+          0.967,
+          1.31,
+          1.305,
+          1.301,
+          1.346
+        ],
+        "dxc_ms": [
+          258.123,
+          286.674,
+          274.941,
+          273.1,
+          271.508
+        ],
+        "spirv_opt_ms": [
+          173.627,
+          171.504,
+          142.119,
+          185.675,
+          160.391
+        ],
+        "layout": null,
+        "arm_count": 512,
+        "source_bytes": 51629,
+        "dxc_cfg": {
+          "bytes": 87532,
+          "switches": 1,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263169,
+          "basic_blocks": 515,
+          "max_phi_inputs": 513
+        },
+        "optimized_cfg": {
+          "bytes": 87532,
+          "switches": 1,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263169,
+          "basic_blocks": 515,
+          "max_phi_inputs": 513
+        },
+        "median_dxc_ms": 273.1,
+        "median_end_to_end_ms": 433.245
+      },
+      "fixed_low_6_10": {
+        "generate_ms": [
+          2.226,
+          0.883,
+          1.077,
+          1.509,
+          3.788
+        ],
+        "dxc_ms": [
+          240.537,
+          208.987,
+          233.944,
+          250.483,
+          256.906
+        ],
+        "spirv_opt_ms": [
+          128.163,
+          90.746,
+          139.039,
+          130.714,
+          138.46
+        ],
+        "layout": [
+          6,
+          10
+        ],
+        "arm_count": 512,
+        "source_bytes": 54618,
+        "dxc_cfg": {
+          "bytes": 88548,
+          "switches": 9,
+          "max_switch_edges": 65,
+          "switch_square_sum": 33881,
+          "basic_blocks": 539,
+          "max_phi_inputs": 65
+        },
+        "optimized_cfg": {
+          "bytes": 88548,
+          "switches": 9,
+          "max_switch_edges": 65,
+          "switch_square_sum": 33881,
+          "basic_blocks": 539,
+          "max_phi_inputs": 65
+        },
+        "median_dxc_ms": 240.537,
+        "median_end_to_end_ms": 374.06
+      },
+      "fixed_high_24_8": {
+        "generate_ms": [
+          1.451,
+          1.456,
+          0.835,
+          1.392,
+          1.423
+        ],
+        "dxc_ms": [
+          246.384,
+          261.021,
+          269.123,
+          261.204,
+          271.697
+        ],
+        "spirv_opt_ms": [
+          150.81,
+          141.87,
+          146.879,
+          155.532,
+          123.217
+        ],
+        "layout": [
+          24,
+          8
+        ],
+        "arm_count": 512,
+        "source_bytes": 53924,
+        "dxc_cfg": {
+          "bytes": 87812,
+          "switches": 3,
+          "max_switch_edges": 257,
+          "switch_square_sum": 132107,
+          "basic_blocks": 521,
+          "max_phi_inputs": 257
+        },
+        "optimized_cfg": {
+          "bytes": 87812,
+          "switches": 3,
+          "max_switch_edges": 257,
+          "switch_square_sum": 132107,
+          "basic_blocks": 521,
+          "max_phi_inputs": 257
+        },
+        "median_dxc_ms": 261.204,
+        "median_end_to_end_ms": 404.347
+      },
+      "adaptive": {
+        "generate_ms": [
+          0.895,
+          1.445,
+          0.794,
+          1.35,
+          0.959
+        ],
+        "dxc_ms": [
+          254.985,
+          277.819,
+          220.817,
+          279.246,
+          287.543
+        ],
+        "spirv_opt_ms": [
+          152.205,
+          165.835,
+          178.202,
+          175.365,
+          176.46
+        ],
+        "layout": null,
+        "arm_count": 512,
+        "source_bytes": 51629,
+        "dxc_cfg": {
+          "bytes": 87532,
+          "switches": 1,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263169,
+          "basic_blocks": 515,
+          "max_phi_inputs": 513
+        },
+        "optimized_cfg": {
+          "bytes": 87532,
+          "switches": 1,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263169,
+          "basic_blocks": 515,
+          "max_phi_inputs": 513
+        },
+        "median_dxc_ms": 277.819,
+        "median_end_to_end_ms": 445.099
+      },
+      "radix_without_size_gate": {
+        "generate_ms": [
+          8.051,
+          8.73,
+          17.937,
+          20.874,
+          15.669
+        ],
+        "dxc_ms": [
+          245.588,
+          240.482,
+          269.39,
+          291.378,
+          295.593
+        ],
+        "spirv_opt_ms": [
+          153.166,
+          86.029,
+          130.983,
+          147.376,
+          153.117
+        ],
+        "layout": [
+          0,
+          6
+        ],
+        "arm_count": 512,
+        "source_bytes": 61043,
+        "dxc_cfg": {
+          "bytes": 95232,
+          "switches": 65,
+          "max_switch_edges": 65,
+          "switch_square_sum": 9409,
+          "basic_blocks": 707,
+          "max_phi_inputs": 65
+        },
+        "optimized_cfg": {
+          "bytes": 95232,
+          "switches": 65,
+          "max_switch_edges": 65,
+          "switch_square_sum": 9409,
+          "basic_blocks": 707,
+          "max_phi_inputs": 65
+        },
+        "median_dxc_ms": 269.39,
+        "median_end_to_end_ms": 418.31
+      },
+      "sorted_ranges_32": {
+        "generate_ms": [
+          1.563,
+          1.593,
+          0.989,
+          1.562,
+          1.487
+        ],
+        "dxc_ms": [
+          248.845,
+          259.661,
+          253.075,
+          249.332,
+          255.995
+        ],
+        "spirv_opt_ms": [
+          125.026,
+          133.096,
+          142.572,
+          140.145,
+          146.926
+        ],
+        "layout": null,
+        "arm_count": 512,
+        "source_bytes": 53294,
+        "dxc_cfg": {
+          "bytes": 90712,
+          "switches": 16,
+          "max_switch_edges": 33,
+          "switch_square_sum": 17424,
+          "basic_blocks": 590,
+          "max_phi_inputs": 33
+        },
+        "optimized_cfg": {
+          "bytes": 90712,
+          "switches": 16,
+          "max_switch_edges": 33,
+          "switch_square_sum": 17424,
+          "basic_blocks": 590,
+          "max_phi_inputs": 33
+        },
+        "median_dxc_ms": 253.075,
+        "median_end_to_end_ms": 394.35
+      },
+      "table": {
+        "generate_ms": [
+          0.193,
+          0.274,
+          0.331,
+          0.372,
+          0.327
+        ],
+        "dxc_ms": [
+          31.7,
+          34.141,
+          42.75,
+          40.344,
+          39.706
+        ],
+        "spirv_opt_ms": [
+          32.51,
+          30.924,
+          31.413,
+          31.291,
+          31.603
+        ],
+        "layout": null,
+        "arm_count": 512,
+        "source_bytes": 1132,
+        "dxc_cfg": {
+          "bytes": 2368,
+          "switches": 1,
+          "max_switch_edges": 4,
+          "switch_square_sum": 16,
+          "basic_blocks": 17,
+          "max_phi_inputs": 4
+        },
+        "optimized_cfg": {
+          "bytes": 2368,
+          "switches": 1,
+          "max_switch_edges": 4,
+          "switch_square_sum": 16,
+          "basic_blocks": 17,
+          "max_phi_inputs": 4
+        },
+        "median_dxc_ms": 39.706,
+        "median_end_to_end_ms": 71.636
+      }
+    },
+    "strided": {
+      "flat": {
+        "generate_ms": [
+          1.935,
+          1.38,
+          1.787,
+          1.429,
+          1.492
+        ],
+        "dxc_ms": [
+          272.27,
+          261.791,
+          288.99,
+          286.04,
+          279.774
+        ],
+        "spirv_opt_ms": [
+          172.104,
+          158.462,
+          172.081,
+          171.186,
+          155.029
+        ],
+        "layout": null,
+        "arm_count": 512,
+        "source_bytes": 51629,
+        "dxc_cfg": {
+          "bytes": 87532,
+          "switches": 1,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263169,
+          "basic_blocks": 515,
+          "max_phi_inputs": 513
+        },
+        "optimized_cfg": {
+          "bytes": 87532,
+          "switches": 1,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263169,
+          "basic_blocks": 515,
+          "max_phi_inputs": 513
+        },
+        "median_dxc_ms": 279.774,
+        "median_end_to_end_ms": 446.309
+      },
+      "fixed_low_6_10": {
+        "generate_ms": [
+          1.557,
+          1.551,
+          1.56,
+          1.56,
+          0.868
+        ],
+        "dxc_ms": [
+          298.539,
+          277.208,
+          279.565,
+          290.428,
+          263.217
+        ],
+        "spirv_opt_ms": [
+          171.476,
+          172.919,
+          169.692,
+          186.322,
+          171.896
+        ],
+        "layout": [
+          6,
+          10
+        ],
+        "arm_count": 512,
+        "source_bytes": 53810,
+        "dxc_cfg": {
+          "bytes": 87708,
+          "switches": 2,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263173,
+          "basic_blocks": 518,
+          "max_phi_inputs": 513
+        },
+        "optimized_cfg": {
+          "bytes": 87708,
+          "switches": 2,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263173,
+          "basic_blocks": 518,
+          "max_phi_inputs": 513
+        },
+        "median_dxc_ms": 279.565,
+        "median_end_to_end_ms": 451.678
+      },
+      "fixed_high_24_8": {
+        "generate_ms": [
+          2.272,
+          1.816,
+          1.64,
+          1.522,
+          1.661
+        ],
+        "dxc_ms": [
+          256.894,
+          251.03,
+          253.16,
+          251.02,
+          256.077
+        ],
+        "spirv_opt_ms": [
+          135.326,
+          143.107,
+          142.421,
+          140.365,
+          139.166
+        ],
+        "layout": [
+          24,
+          8
+        ],
+        "arm_count": 512,
+        "source_bytes": 57364,
+        "dxc_cfg": {
+          "bytes": 91412,
+          "switches": 33,
+          "max_switch_edges": 33,
+          "switch_square_sum": 10337,
+          "basic_blocks": 611,
+          "max_phi_inputs": 33
+        },
+        "optimized_cfg": {
+          "bytes": 91412,
+          "switches": 33,
+          "max_switch_edges": 33,
+          "switch_square_sum": 10337,
+          "basic_blocks": 611,
+          "max_phi_inputs": 33
+        },
+        "median_dxc_ms": 253.16,
+        "median_end_to_end_ms": 395.953
+      },
+      "adaptive": {
+        "generate_ms": [
+          1.385,
+          1.419,
+          1.469,
+          1.616,
+          1.576
+        ],
+        "dxc_ms": [
+          287.665,
+          284.833,
+          249.431,
+          276.188,
+          255.778
+        ],
+        "spirv_opt_ms": [
+          170.663,
+          168.074,
+          183.898,
+          172.678,
+          173.402
+        ],
+        "layout": null,
+        "arm_count": 512,
+        "source_bytes": 51629,
+        "dxc_cfg": {
+          "bytes": 87532,
+          "switches": 1,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263169,
+          "basic_blocks": 515,
+          "max_phi_inputs": 513
+        },
+        "optimized_cfg": {
+          "bytes": 87532,
+          "switches": 1,
+          "max_switch_edges": 513,
+          "switch_square_sum": 263169,
+          "basic_blocks": 515,
+          "max_phi_inputs": 513
+        },
+        "median_dxc_ms": 276.188,
+        "median_end_to_end_ms": 450.482
+      },
+      "radix_without_size_gate": {
+        "generate_ms": [
+          15.419,
+          17.248,
+          8.553,
+          14.072,
+          8.365
+        ],
+        "dxc_ms": [
+          267.53,
+          272.762,
+          263.882,
+          258.277,
+          254.729
+        ],
+        "spirv_opt_ms": [
+          160.049,
+          168.716,
+          149.731,
+          150.597,
+          157.21
+        ],
+        "layout": [
+          20,
+          6
+        ],
+        "arm_count": 512,
+        "source_bytes": 61044,
+        "dxc_cfg": {
+          "bytes": 95252,
+          "switches": 65,
+          "max_switch_edges": 65,
+          "switch_square_sum": 9409,
+          "basic_blocks": 707,
+          "max_phi_inputs": 65
+        },
+        "optimized_cfg": {
+          "bytes": 95252,
+          "switches": 65,
+          "max_switch_edges": 65,
+          "switch_square_sum": 9409,
+          "basic_blocks": 707,
+          "max_phi_inputs": 65
+        },
+        "median_dxc_ms": 263.882,
+        "median_end_to_end_ms": 422.946
+      },
+      "sorted_ranges_32": {
+        "generate_ms": [
+          1.213,
+          1.535,
+          1.546,
+          1.511,
+          1.553
+        ],
+        "dxc_ms": [
+          232.04,
+          253.832,
+          245.427,
+          251.241,
+          266.755
+        ],
+        "spirv_opt_ms": [
+          141.378,
+          138.589,
+          151.422,
+          140.062,
+          127.643
+        ],
+        "layout": null,
+        "arm_count": 512,
+        "source_bytes": 53294,
+        "dxc_cfg": {
+          "bytes": 90840,
+          "switches": 16,
+          "max_switch_edges": 33,
+          "switch_square_sum": 17424,
+          "basic_blocks": 590,
+          "max_phi_inputs": 33
+        },
+        "optimized_cfg": {
+          "bytes": 90840,
+          "switches": 16,
+          "max_switch_edges": 33,
+          "switch_square_sum": 17424,
+          "basic_blocks": 590,
+          "max_phi_inputs": 33
+        },
+        "median_dxc_ms": 251.241,
+        "median_end_to_end_ms": 393.956
+      },
+      "table": {
+        "generate_ms": [
+          0.357,
+          0.369,
+          0.342,
+          0.35,
+          0.348
+        ],
+        "dxc_ms": [
+          43.244,
+          40.527,
+          38.524,
+          40.21,
+          39.127
+        ],
+        "spirv_opt_ms": [
+          31.562,
+          33.042,
+          31.001,
+          31.192,
+          31.141
+        ],
+        "layout": null,
+        "arm_count": 512,
+        "source_bytes": 1132,
+        "dxc_cfg": {
+          "bytes": 2368,
+          "switches": 1,
+          "max_switch_edges": 4,
+          "switch_square_sum": 16,
+          "basic_blocks": 17,
+          "max_phi_inputs": 4
+        },
+        "optimized_cfg": {
+          "bytes": 2368,
+          "switches": 1,
+          "max_switch_edges": 4,
+          "switch_square_sum": 16,
+          "basic_blocks": 17,
+          "max_phi_inputs": 4
+        },
+        "median_dxc_ms": 40.21,
+        "median_end_to_end_ms": 71.752
+      }
+    },
+    "sparse": {
+      "flat": {
+        "generate_ms": [
+          3.828,
+          5.233,
+          2.971,
+          5.647,
+          5.594
+        ],
+        "dxc_ms": [
+          1886.284,
+          1885.045,
+          781.911,
+          1850.735,
+          1840.969
+        ],
+        "spirv_opt_ms": [
+          1400.76,
+          1443.019,
+          522.655,
+          1390.367,
+          1327.942
+        ],
+        "layout": null,
+        "arm_count": 2048,
+        "source_bytes": 206661,
+        "dxc_cfg": {
+          "bytes": 347116,
+          "switches": 1,
+          "max_switch_edges": 2049,
+          "switch_square_sum": 4198401,
+          "basic_blocks": 2051,
+          "max_phi_inputs": 2049
+        },
+        "optimized_cfg": {
+          "bytes": 347116,
+          "switches": 1,
+          "max_switch_edges": 2049,
+          "switch_square_sum": 4198401,
+          "basic_blocks": 2051,
+          "max_phi_inputs": 2049
+        },
+        "median_dxc_ms": 1850.735,
+        "median_end_to_end_ms": 3246.749
+      },
+      "fixed_low_6_10": {
+        "generate_ms": [
+          7.765,
+          4.318,
+          4.298,
+          7.387,
+          4.429
+        ],
+        "dxc_ms": [
+          1989.449,
+          1993.836,
+          1000.108,
+          1985.434,
+          1980.384
+        ],
+        "spirv_opt_ms": [
+          1123.701,
+          1136.81,
+          524.81,
+          1167.623,
+          1134.953
+        ],
+        "layout": [
+          6,
+          10
+        ],
+        "arm_count": 2048,
+        "source_bytes": 318380,
+        "dxc_cfg": {
+          "bytes": 454316,
+          "switches": 894,
+          "max_switch_edges": 894,
+          "switch_square_sum": 810371,
+          "basic_blocks": 4730,
+          "max_phi_inputs": 894
+        },
+        "optimized_cfg": {
+          "bytes": 454316,
+          "switches": 894,
+          "max_switch_edges": 894,
+          "switch_square_sum": 810371,
+          "basic_blocks": 4730,
+          "max_phi_inputs": 894
+        },
+        "median_dxc_ms": 1985.434,
+        "median_end_to_end_ms": 3120.915
+      },
+      "fixed_high_24_8": {
+        "generate_ms": [
+          15.892,
+          3.396,
+          3.608,
+          3.715,
+          7.062
+        ],
+        "dxc_ms": [
+          1377.054,
+          1348.221,
+          719.002,
+          1111.089,
+          1377.655
+        ],
+        "spirv_opt_ms": [
+          606.939,
+          726.662,
+          302.304,
+          705.912,
+          682.801
+        ],
+        "layout": [
+          24,
+          8
+        ],
+        "arm_count": 2048,
+        "source_bytes": 244456,
+        "dxc_cfg": {
+          "bytes": 377876,
+          "switches": 257,
+          "max_switch_edges": 257,
+          "switch_square_sum": 88757,
+          "basic_blocks": 2819,
+          "max_phi_inputs": 257
+        },
+        "optimized_cfg": {
+          "bytes": 377876,
+          "switches": 257,
+          "max_switch_edges": 257,
+          "switch_square_sum": 88757,
+          "basic_blocks": 2819,
+          "max_phi_inputs": 257
+        },
+        "median_dxc_ms": 1348.221,
+        "median_end_to_end_ms": 1999.885
+      },
+      "adaptive": {
+        "generate_ms": [
+          58.714,
+          86.157,
+          50.169,
+          64.287,
+          33.137
+        ],
+        "dxc_ms": [
+          1240.358,
+          1266.458,
+          831.994,
+          1233.365,
+          1280.359
+        ],
+        "spirv_opt_ms": [
+          594.151,
+          625.877,
+          316.613,
+          622.096,
+          606.242
+        ],
+        "layout": [
+          13,
+          7
+        ],
+        "arm_count": 2048,
+        "source_bytes": 229608,
+        "dxc_cfg": {
+          "bytes": 362516,
+          "switches": 129,
+          "max_switch_edges": 129,
+          "switch_square_sum": 55307,
+          "basic_blocks": 2435,
+          "max_phi_inputs": 129
+        },
+        "optimized_cfg": {
+          "bytes": 362516,
+          "switches": 129,
+          "max_switch_edges": 129,
+          "switch_square_sum": 55307,
+          "basic_blocks": 2435,
+          "max_phi_inputs": 129
+        },
+        "median_dxc_ms": 1240.358,
+        "median_end_to_end_ms": 1919.738
+      },
+      "radix_without_size_gate": {
+        "generate_ms": [
+          32.633,
+          49.266,
+          32.254,
+          46.614,
+          33.518
+        ],
+        "dxc_ms": [
+          1230.402,
+          1239.265,
+          641.748,
+          1199.505,
+          1254.587
+        ],
+        "spirv_opt_ms": [
+          519.047,
+          635.571,
+          290.622,
+          589.507,
+          510.704
+        ],
+        "layout": [
+          13,
+          7
+        ],
+        "arm_count": 2048,
+        "source_bytes": 229608,
+        "dxc_cfg": {
+          "bytes": 362516,
+          "switches": 129,
+          "max_switch_edges": 129,
+          "switch_square_sum": 55307,
+          "basic_blocks": 2435,
+          "max_phi_inputs": 129
+        },
+        "optimized_cfg": {
+          "bytes": 362516,
+          "switches": 129,
+          "max_switch_edges": 129,
+          "switch_square_sum": 55307,
+          "basic_blocks": 2435,
+          "max_phi_inputs": 129
+        },
+        "median_dxc_ms": 1230.402,
+        "median_end_to_end_ms": 1798.809
+      },
+      "sorted_ranges_32": {
+        "generate_ms": [
+          5.564,
+          5.537,
+          3.466,
+          6.064,
+          5.606
+        ],
+        "dxc_ms": [
+          1247.746,
+          1194.239,
+          620.653,
+          1215.327,
+          1223.571
+        ],
+        "spirv_opt_ms": [
+          628.962,
+          622.274,
+          280.119,
+          665.735,
+          605.969
+        ],
+        "layout": null,
+        "arm_count": 2048,
+        "source_bytes": 213654,
+        "dxc_cfg": {
+          "bytes": 360984,
+          "switches": 64,
+          "max_switch_edges": 33,
+          "switch_square_sum": 69696,
+          "basic_blocks": 2366,
+          "max_phi_inputs": 33
+        },
+        "optimized_cfg": {
+          "bytes": 360984,
+          "switches": 64,
+          "max_switch_edges": 33,
+          "switch_square_sum": 69696,
+          "basic_blocks": 2366,
+          "max_phi_inputs": 33
+        },
+        "median_dxc_ms": 1215.327,
+        "median_end_to_end_ms": 1835.146
+      },
+      "table": {
+        "generate_ms": [
+          0.557,
+          0.411,
+          0.623,
+          0.535,
+          0.223
+        ],
+        "dxc_ms": [
+          38.933,
+          43.08,
+          42.331,
+          40.66,
+          41.754
+        ],
+        "spirv_opt_ms": [
+          32.775,
+          32.906,
+          35.915,
+          31.903,
+          18.446
+        ],
+        "layout": null,
+        "arm_count": 2048,
+        "source_bytes": 1134,
+        "dxc_cfg": {
+          "bytes": 2352,
+          "switches": 1,
+          "max_switch_edges": 4,
+          "switch_square_sum": 16,
+          "basic_blocks": 17,
+          "max_phi_inputs": 4
+        },
+        "optimized_cfg": {
+          "bytes": 2352,
+          "switches": 1,
+          "max_switch_edges": 4,
+          "switch_square_sum": 16,
+          "basic_blocks": 17,
+          "max_phi_inputs": 4
+        },
+        "median_dxc_ms": 41.754,
+        "median_end_to_end_ms": 73.098
+      }
+    }
+  }
+}
