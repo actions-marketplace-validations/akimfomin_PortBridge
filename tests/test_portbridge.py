@@ -16,8 +16,9 @@ from portbridge.backup import backup_database
 from portbridge.case_pages import case_languages, case_path
 from portbridge.catalog import Catalog
 from portbridge.coordination import knowledge_graph, recommendations
-from portbridge.export import EXPORT_FILES, export
+from portbridge.export import EXPORT_FILES, VERSIONED_ASSET, VERSIONED_SNAPSHOTS, export
 from portbridge.preflight_index import SHARD
+from portbridge.public_browse import BROWSE_INDEX, BROWSE_PAGE, BROWSE_POSTING, BROWSE_TERMS
 
 
 class CatalogFixture(unittest.TestCase):
@@ -229,7 +230,7 @@ class CatalogTest(CatalogFixture):
         self.assertEqual([p["id"] for p in self.catalog.problems(q="ПРЯМОУГОЛЬНИКОВ", project="continued")],
                          ["PB-0001", "PB-0007"])
         self.assertEqual([p["id"] for p in self.catalog.problems(project="xcl")],
-                         ["PB-0004", "PB-0005", "PB-0006", "PB-0012", "PB-0014", "PB-0017", "PB-0018", "PB-0022"])
+                         ["PB-0004", "PB-0005", "PB-0006", "PB-0012", "PB-0014", "PB-0017", "PB-0018", "PB-0022", "PB-0025"])
         self.assertEqual([p["id"] for p in self.catalog.problems(status="investigating")], ["PB-0004", "PB-0016"])
         opportunities = {p["id"] for p in self.catalog.problems(partial=True)}
         self.assertTrue({"PB-0001", "PB-0002"} <= opportunities)
@@ -386,6 +387,7 @@ class LocalAPITest(CatalogFixture):
             "urn:portbridge:PB-0010", "urn:portbridge:PB-0011", "urn:portbridge:PB-0012", "urn:portbridge:PB-0013", "urn:portbridge:PB-0014",
             "urn:portbridge:PB-0018", "urn:portbridge:PB-0019", "urn:portbridge:PB-0020", "urn:portbridge:PB-0021",
             "urn:portbridge:PB-0022", "urn:portbridge:PB-0023", "urn:portbridge:PB-0024",
+            "urn:portbridge:PB-0025", "urn:portbridge:PB-0026", "urn:portbridge:PB-0027", "urn:portbridge:PB-0028",
             "urn:portbridge:PB-044801754884724660835754613454516035131",
         })
         _, _, body = self.request("GET", "/api/v1/outreach")
@@ -402,11 +404,20 @@ class SnapshotTest(CatalogFixture):
         files = {path.relative_to(destination).as_posix() for path in destination.rglob("*") if path.is_file()}
         cases = {case_path(card, language) for card in self.catalog.problems() for language in case_languages(card)}
         shards = {name for name in files if name.startswith("data/") and SHARD.fullmatch(Path(name).name)}
-        self.assertEqual(files, EXPORT_FILES | cases | shards)
+        site = json.loads((destination / "data/site.json").read_text(encoding="utf-8"))
+        snapshots = {f"data/{name}" for name in site["snapshots"].values()}
+        self.assertEqual(set(site["snapshots"]), set(VERSIONED_SNAPSHOTS))
+        assets = {name for name in files if name.startswith("static/") and VERSIONED_ASSET.fullmatch(Path(name).name)}
+        browse_patterns = (BROWSE_INDEX, BROWSE_PAGE, BROWSE_POSTING, BROWSE_TERMS)
+        browse = {name for name in files if name.startswith("data/")
+                  and any(pattern.fullmatch(Path(name).name) for pattern in browse_patterns)}
+        self.assertEqual(files, EXPORT_FILES | cases | shards | snapshots | assets | browse)
+        self.assertEqual(len(assets), 2)
+        for name in assets:
+            self.assertIn(f"./{name}", (destination / "index.html").read_text(encoding="utf-8"))
         for name in files:
             with self.subTest(file=name):
                 self.assertNotIn(sentinel.encode(), (destination / name).read_bytes())
-        site = json.loads((destination / "data/site.json").read_text(encoding="utf-8"))
         self.assertEqual(site["repository"], "example/PortBridge")
         self.assertEqual(site["mode"], "snapshot")
         index = json.loads((destination / "data/preflight-index.json").read_bytes())
