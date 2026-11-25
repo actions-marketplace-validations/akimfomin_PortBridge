@@ -4,11 +4,23 @@
 import unittest
 
 from lane_contract import Domain, Lowering, Participation
+from replay_continued_synthesis import observed_subgroup_width
 from spirv_synthesis import UNSAFE_CONTROL, optimize, prove_plan
 from test_spirv_transport import MODULE
 
 
 class SpirvSynthesisTest(unittest.TestCase):
+    def test_width_requires_an_actual_supported_layout(self):
+        for line, expected in (
+            ("compute subgroup size: 32\n", 32),
+            ("compute subgroup size: 64 (observed: all 40 invocations of a 40x1x1 group)\r\n", 64),
+            ("compute subgroup size: 64 (observed: all 64 invocations of a 64x1x1 group, full subgroups)\n", 64),
+            ("compute subgroup size: 64 not available\n", None),
+            ("compute subgroup size: 64 observed wrong in 1 of 40 invocations\n", None),
+        ):
+            with self.subTest(line=line):
+                self.assertEqual(observed_subgroup_width(line), expected)
+
     def test_defaults_keep_host_ballot_and_defined_index(self):
         result, report = optimize(MODULE, participation=Participation.SUPERSET)
         row, = report["reads"]

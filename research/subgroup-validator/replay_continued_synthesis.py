@@ -81,6 +81,15 @@ def interpret(name: str, assembly: str) -> dict:
     return results
 
 
+def observed_subgroup_width(log: str) -> int | None:
+    match = re.search(
+        r"(?m)^compute subgroup size: (\d+)(?: \(observed: all \d+ invocations of a "
+        r"\d+x\d+x\d+ group(?:, full subgroups)?\))?[ \t]*\r?$",
+        log,
+    )
+    return int(match[1]) if match else None
+
+
 def dispatch(runner, device, width, binary, expected) -> dict:
     output = binary.with_suffix(".bin")
     env = {name: value for name, value in os.environ.items() if not name.startswith("VKC_")}
@@ -88,8 +97,8 @@ def dispatch(runner, device, width, binary, expected) -> dict:
     output_log = subprocess.check_output(
         (runner, binary, "1", "dump"), text=True, encoding="utf-8", env=env, timeout=30, stderr=subprocess.STDOUT)
     actual_device = re.search(r"(?m)^device: (.+?) \(subgroup ", output_log)
-    subgroup = re.search(r"(?m)^compute subgroup size: (\d+)\s*$", output_log)
-    if not actual_device or device.casefold() not in actual_device[1].casefold() or not subgroup or int(subgroup[1]) != width:
+    subgroup = observed_subgroup_width(output_log)
+    if not actual_device or device.casefold() not in actual_device[1].casefold() or subgroup != width:
         raise ValueError("runner did not observe the requested device and subgroup width")
     words = output.read_bytes()
     if len(words) != 256 * 4:
@@ -97,7 +106,7 @@ def dispatch(runner, device, width, binary, expected) -> dict:
     values = struct.unpack_from(f"<{len(expected)}I", words)
     if tuple(expected) != values:
         raise ValueError(f"unexpected readback prefix for {binary.name}: {values}")
-    return {"adapter": actual_device[1], "subgroup_width": int(subgroup[1]), "bytes": len(words),
+    return {"adapter": actual_device[1], "subgroup_width": subgroup, "bytes": len(words),
             "readback_sha256": hashlib.sha256(words).hexdigest()}
 
 
