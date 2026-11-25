@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 #include <vulkan/vulkan.h>
 
+#include "online_readback.hpp"
+
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -10,6 +12,9 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <memory>
+#include <optional>
+#include <utility>
 #include <span>
 #include <stdexcept>
 #include <string>
@@ -45,10 +50,7 @@ static T vk_structure(VkStructureType type)
     return result;
 }
 
-struct Range {
-    uint32_t first_page;
-    uint32_t page_count;
-};
+using pb_readback::Range;
 
 struct Frame {
     uint32_t epoch;
@@ -611,6 +613,117 @@ static Result trial(const Replay &replay, const Trace &trace, Mode mode, const P
     return {std::chrono::duration<double, std::micro>(elapsed).count(), copied_bytes, observed_pages};
 }
 
+struct OnlineResult {
+    Result measurement{};
+    uint64_t seed_frames{};
+    uint64_t reuse_frames{};
+    uint64_t rebinds{};
+    uint64_t extra_drains{};
+    uint64_t mirror_bytes{};
+};
+
+static OnlineResult online_trial(const Replay &replay, const Trace &trace, std::string_view mode,
+                                uint32_t slot_pages, bool consume_all_words)
+{
+    using pb_readback::Decision;
+    using pb_readback::OnlinePlanner;
+    using pb_readback::Policy;
+    using pb_readback::Route;
+
+    const auto &initial = replay.slots[0];
+    replay.begin(initial);
+    vkCmdFillBuffer(initial.command, replay.source.handle, 0, VK_WHOLE_SIZE, 0);
+    replay.submit(initial);
+    replay.wait(initial);
+
+    constexpr uint32_t minimum_saved_bytes = 64 * 1024;
+    const uint32_t minimum_saved_pages =
+        minimum_saved_bytes / trace.page_bytes + (minimum_saved_bytes % trace.page_bytes != 0);
+    const bool adaptive = mode == "adaptive-online";
+    std::optional<OnlinePlanner> planner;
+    if (mode == "retain-online" || (adaptive && slot_pages >= minimum_saved_pages)) {
+        planner.emplace(trace.total_pages, slot_pages, adaptive ? Policy::adaptive : Policy::retain,
+                        minimum_saved_pages);
+    }
+    const size_t page_words = trace.page_words();
+    std::unique_ptr<uint32_t[]> mirror;
+    size_t mirror_words = 0;
+    std::array<Decision, ring_size> pending{};
+    std::vector<VkBufferCopy> copy_commands;
+    size_t oldest = 0;
+    OnlineResult result{};
+    const PackedLayout unused{};
+
+    const auto drain = [&](size_t index) {
+        const auto &slot = replay.slots[index % ring_size];
+        const auto &frame = trace.frames[index];
+        const auto &decision = pending[index % ring_size];
+        replay.wait(slot);
+        const uint32_t *data = slot.mapped;
+        if (decision.route != Route::exact) {
+            size_t offset = 0;
+            for (size_t i = 0; i < decision.copies.size(); ++i) {
+                const size_t words = decision.copies[i].page_count * page_words;
+                const size_t target = decision.mirror_pages[i] * page_words;
+                require(target <= mirror_words && words <= mirror_words - target, "copy outside the online mirror");
+                std::memcpy(mirror.get() + target, slot.mapped + offset, words * sizeof(uint32_t));
+                offset += words;
+            }
+            data = mirror.get();
+        }
+
+        const auto observed_pages = packed_bytes(frame.observes, 1);
+        uint64_t signature = 0;
+        if (consume_all_words) {
+            for (size_t word = 0; word < observed_pages * page_words; ++word) {
+                signature += uint64_t(data[word]) * (word + 1);
+            }
+        } else {
+            signature = observed_hash(data, frame, page_words, Mode::ranges, unused);
+        }
+        if (signature != frame.expected_hash) {
+            throw std::runtime_error("online frame " + std::to_string(index) + " expected " +
+                                     std::to_string(frame.expected_hash) + " got " + std::to_string(signature));
+        }
+        result.measurement.observed_pages += observed_pages;
+    };
+
+    const auto begin = std::chrono::steady_clock::now();
+    for (size_t index = 0; index < trace.frames.size(); ++index) {
+        if (index - oldest == ring_size) drain(oldest++);
+        const auto &frame = trace.frames[index];
+        const auto pages = packed_bytes(frame.observes, 1);
+        require(pages <= slot_pages, "observation exceeds the declared staging capacity");
+        auto &decision = pending[index % ring_size];
+        if (planner) {
+            decision = planner->plan(frame.writes, frame.observes);
+            if (decision.rebind) {
+                ++result.rebinds;
+                // Old slots consume the old mirror before a new layout can write it.
+                while (oldest < index) {
+                    drain(oldest++);
+                    ++result.extra_drains;
+                }
+            }
+            if (decision.route == Route::seed && pages * page_words > mirror_words) {
+                mirror.reset();
+                mirror_words = pages * page_words;
+                mirror = std::make_unique<uint32_t[]>(mirror_words);
+                result.mirror_bytes = mirror_words * sizeof(uint32_t);
+            }
+            result.seed_frames += decision.route == Route::seed;
+            result.reuse_frames += decision.route == Route::reuse;
+        }
+        const std::span<const Range> copies = planner ? std::span<const Range>(decision.copies) : frame.observes;
+        result.measurement.copied_bytes += record_frame(replay, replay.slots[index % ring_size], frame,
+                                                       copies, trace, copy_commands);
+    }
+    while (oldest < trace.frames.size()) drain(oldest++);
+    result.measurement.wall_us = std::chrono::duration<double, std::micro>(
+        std::chrono::steady_clock::now() - begin).count();
+    return result;
+}
+
 static std::string csv_string(std::string_view value)
 {
     std::string escaped = "\"";
@@ -623,21 +736,39 @@ static std::string csv_string(std::string_view value)
 
 int main(int argc, char **argv)
 {
-    if (argc != 6) {
-        std::cerr << "usage: replay_vulkan producer.spv trace.tsv full|ranges|epochs|guarded repeats device_substring\n";
+    if (argc != 6 && argc != 8) {
+        std::cerr << "usage: replay_vulkan producer.spv trace.tsv full|ranges|epochs|guarded repeats device_substring\n"
+                     "   or: replay_vulkan producer.spv trace.tsv exact-online|retain-online|adaptive-online repeats"
+                     " device_substring staging_page_capacity sample|sum\n";
         return 2;
     }
     try {
         const auto trace = read_trace(argv[2]);
         const std::string_view requested(argv[3]);
-        const Mode mode = select_mode(requested, trace);
-        const auto layout = pack_layout(trace, mode);
-
         size_t consumed = 0;
         const std::string repeats_text(argv[4]);
         const auto repeats = std::stoul(repeats_text, &consumed);
         require(consumed == repeats_text.size() && repeats > 0 && repeats <= 256, "invalid repeat count");
         require(argv[5][0] != '\0', "an explicit Vulkan device selector is required");
+        const bool online = argc == 8;
+        if (online) {
+            require(requested == "exact-online" || requested == "retain-online" || requested == "adaptive-online",
+                    "invalid online readback mode");
+        }
+        const auto verify = online ? std::string_view(argv[7]) : "sample";
+        require(verify == "sample" || verify == "sum", "use sample or sum verification");
+        uint32_t slot_pages = 0;
+        if (online) {
+            const std::string capacity(argv[6]);
+            const auto pages = std::stoull(capacity, &consumed);
+            require(consumed == capacity.size() && pages > 0 && pages <= trace.total_pages,
+                    "invalid declared staging page capacity");
+            slot_pages = static_cast<uint32_t>(pages);
+        }
+        const Mode mode = online ? Mode::ranges : select_mode(requested, trace);
+        auto layout = online ? PackedLayout{} : pack_layout(trace, mode);
+        if (online) layout.staging_bytes.fill(VkDeviceSize(slot_pages) * trace.page_bytes);
+
         Replay replay;
         replay.initialize(argv[1], trace.bytes(), layout.staging_bytes, argv[5]);
         VkDeviceSize staging_allocation_bytes = 0;
@@ -647,6 +778,23 @@ int main(int argc, char **argv)
         std::cerr << replay.properties.deviceName << " Vulkan " << VK_VERSION_MAJOR(version) << '.'
                   << VK_VERSION_MINOR(version) << '.' << VK_VERSION_PATCH(version) << " driver " << replay.properties.driverVersion
                   << " staging host-visible/coherent/cached ring=" << ring_size << '\n';
+        if (online) {
+            online_trial(replay, trace, requested, slot_pages, verify == "sum");
+            std::cout << "device,mode,repeat,wall_us,copied_bytes,observed_pages,frame_count,"
+                         "staging_allocation_bytes,mirror_bytes,seed_frames,reuse_frames,rebinds,extra_drains\n"
+                      << std::fixed << std::setprecision(3);
+            for (uint32_t repeat = 0; repeat < repeats; ++repeat) {
+                const auto result = online_trial(replay, trace, requested, slot_pages, verify == "sum");
+                const auto &metrics = result.measurement;
+                std::cout << csv_string(replay.properties.deviceName) << ',' << requested << ',' << repeat << ','
+                          << metrics.wall_us << ',' << metrics.copied_bytes << ',' << metrics.observed_pages << ','
+                          << trace.frames.size() << ',' << staging_allocation_bytes << ',' << result.mirror_bytes << ','
+                          << result.seed_frames << ',' << result.reuse_frames << ',' << result.rebinds << ','
+                          << result.extra_drains << '\n';
+            }
+            return 0;
+        }
+
         trial(replay, trace, mode, layout);
         std::cout << "device,mode,repeat,wall_us,copied_bytes,observed_pages,frame_count,"
                      "staging_allocation_bytes,mirror_bytes,effective_mode\n" << std::fixed << std::setprecision(3);

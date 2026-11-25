@@ -1,0 +1,602 @@
+{
+  "heat-classroom": {
+    "frames": 48,
+    "page_bytes": 4096,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 2767.15,
+          "min": 2219.75,
+          "max": 3939.45
+        },
+        "copied_bytes": 786432,
+        "staging_allocation_bytes": 196608,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 3652.525,
+          "min": 3383.3,
+          "max": 3839.75
+        },
+        "copied_bytes": 786432,
+        "staging_allocation_bytes": 196608,
+        "mirror_bytes": 65536,
+        "seed_frames": 1,
+        "reuse_frames": 11,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 32.2209,
+          "min": -7.7422,
+          "max": 55.6303
+        },
+        "faster_blocks": 1
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 2473.225,
+          "min": 2103.45,
+          "max": 3491.2
+        },
+        "copied_bytes": 786432,
+        "staging_allocation_bytes": 196608,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": -7.872,
+          "min": -30.0016,
+          "max": 32.2249
+        },
+        "faster_blocks": 5
+      }
+    }
+  },
+  "heat-extreme": {
+    "frames": 48,
+    "page_bytes": 4096,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 35729.575,
+          "min": 33259.3,
+          "max": 46820.65
+        },
+        "copied_bytes": 201326592,
+        "staging_allocation_bytes": 50331648,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 52936.65,
+          "min": 48927.45,
+          "max": 57531.4
+        },
+        "copied_bytes": 201326592,
+        "staging_allocation_bytes": 50331648,
+        "mirror_bytes": 16777216,
+        "seed_frames": 1,
+        "reuse_frames": 11,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 45.3459,
+          "min": 15.0492,
+          "max": 50.6399
+        },
+        "faster_blocks": 0
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 35738.95,
+          "min": 34897.8,
+          "max": 46811.15
+        },
+        "copied_bytes": 201326592,
+        "staging_allocation_bytes": 50331648,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 0.3394,
+          "min": -16.4294,
+          "max": 7.9957
+        },
+        "faster_blocks": 3
+      }
+    }
+  },
+  "heat-extreme-busy": {
+    "frames": 48,
+    "page_bytes": 4096,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 21314.925,
+          "min": 20449.8,
+          "max": 23370.55
+        },
+        "copied_bytes": 100663296,
+        "staging_allocation_bytes": 50331648,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 29824.325,
+          "min": 28463.0,
+          "max": 31239.35
+        },
+        "copied_bytes": 100663296,
+        "staging_allocation_bytes": 50331648,
+        "mirror_bytes": 16777216,
+        "seed_frames": 1,
+        "reuse_frames": 5,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 36.5854,
+          "min": 30.6792,
+          "max": 52.7612
+        },
+        "faster_blocks": 0
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 20718.65,
+          "min": 19231.55,
+          "max": 22326.45
+        },
+        "copied_bytes": 100663296,
+        "staging_allocation_bytes": 50331648,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": -4.4026,
+          "min": -9.8057,
+          "max": 5.2668
+        },
+        "faster_blocks": 4
+      }
+    }
+  },
+  "snowflow-grounding": {
+    "frames": 240,
+    "page_bytes": 4096,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 13941.175,
+          "min": 10622.8,
+          "max": 17975.9
+        },
+        "copied_bytes": 9863168,
+        "staging_allocation_bytes": 1572864,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 14679.0,
+          "min": 11317.05,
+          "max": 20698.7
+        },
+        "copied_bytes": 1384448,
+        "staging_allocation_bytes": 1572864,
+        "mirror_bytes": 57344,
+        "seed_frames": 38,
+        "reuse_frames": 202,
+        "rebinds": 37,
+        "extra_drains": 62,
+        "paired_change_vs_exact_percent": {
+          "median": 2.8062,
+          "min": -26.7575,
+          "max": 52.2762
+        },
+        "faster_blocks": 3
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 16152.925,
+          "min": 13228.5,
+          "max": 19837.65
+        },
+        "copied_bytes": 9863168,
+        "staging_allocation_bytes": 1572864,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 17.8912,
+          "min": -6.7362,
+          "max": 49.6488
+        },
+        "faster_blocks": 3
+      }
+    }
+  },
+  "snowflow-grounding-exact-word": {
+    "frames": 240,
+    "page_bytes": 4,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 11251.9,
+          "min": 8672.25,
+          "max": 13196.7
+        },
+        "copied_bytes": 31104,
+        "staging_allocation_bytes": 1536,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 12154.575,
+          "min": 10994.55,
+          "max": 14880.8
+        },
+        "copied_bytes": 6144,
+        "staging_allocation_bytes": 1536,
+        "mirror_bytes": 152,
+        "seed_frames": 45,
+        "reuse_frames": 195,
+        "rebinds": 44,
+        "extra_drains": 71,
+        "paired_change_vs_exact_percent": {
+          "median": 17.0317,
+          "min": -16.6871,
+          "max": 49.7394
+        },
+        "faster_blocks": 2
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 10047.9,
+          "min": 7229.25,
+          "max": 14168.1
+        },
+        "copied_bytes": 31104,
+        "staging_allocation_bytes": 1536,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": -13.195,
+          "min": -42.9285,
+          "max": 23.118
+        },
+        "faster_blocks": 4
+      }
+    }
+  },
+  "snowflow-grounding-holdout": {
+    "frames": 240,
+    "page_bytes": 4096,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 15383.975,
+          "min": 12754.05,
+          "max": 17795.7
+        },
+        "copied_bytes": 5906432,
+        "staging_allocation_bytes": 1572864,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 12547.35,
+          "min": 9302.2,
+          "max": 15441.9
+        },
+        "copied_bytes": 229376,
+        "staging_allocation_bytes": 1572864,
+        "mirror_bytes": 28672,
+        "seed_frames": 9,
+        "reuse_frames": 231,
+        "rebinds": 8,
+        "extra_drains": 14,
+        "paired_change_vs_exact_percent": {
+          "median": -22.6274,
+          "min": -35.9941,
+          "max": 7.3102
+        },
+        "faster_blocks": 5
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 13160.025,
+          "min": 10389.25,
+          "max": 13814.65
+        },
+        "copied_bytes": 5906432,
+        "staging_allocation_bytes": 1572864,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": -15.0601,
+          "min": -26.4696,
+          "max": -9.0465
+        },
+        "faster_blocks": 6
+      }
+    }
+  },
+  "snowflow-grounding-holdout-exact-word": {
+    "frames": 240,
+    "page_bytes": 4,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 11729.35,
+          "min": 8947.25,
+          "max": 14584.6
+        },
+        "copied_bytes": 31056,
+        "staging_allocation_bytes": 1536,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 16100.25,
+          "min": 12385.5,
+          "max": 19479.45
+        },
+        "copied_bytes": 5840,
+        "staging_allocation_bytes": 1536,
+        "mirror_bytes": 152,
+        "seed_frames": 43,
+        "reuse_frames": 197,
+        "rebinds": 42,
+        "extra_drains": 68,
+        "paired_change_vs_exact_percent": {
+          "median": 40.2068,
+          "min": 2.9158,
+          "max": 81.3071
+        },
+        "faster_blocks": 0
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 11459.1,
+          "min": 8683.1,
+          "max": 14681.5
+        },
+        "copied_bytes": 31056,
+        "staging_allocation_bytes": 1536,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 3.7712,
+          "min": -22.3973,
+          "max": 29.1374
+        },
+        "faster_blocks": 3
+      }
+    }
+  },
+  "snowflow-stock-bake": {
+    "frames": 1,
+    "page_bytes": 4096,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 23921.85,
+          "min": 23298.05,
+          "max": 24898.8
+        },
+        "copied_bytes": 134217728,
+        "staging_allocation_bytes": 402653184,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 51385.925,
+          "min": 50153.05,
+          "max": 53084.4
+        },
+        "copied_bytes": 134217728,
+        "staging_allocation_bytes": 402653184,
+        "mirror_bytes": 134217728,
+        "seed_frames": 1,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 114.3907,
+          "min": 101.4276,
+          "max": 127.8491
+        },
+        "faster_blocks": 0
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 24826.25,
+          "min": 22785.55,
+          "max": 25570.7
+        },
+        "copied_bytes": 134217728,
+        "staging_allocation_bytes": 402653184,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 2.7622,
+          "min": -5.3968,
+          "max": 7.7814
+        },
+        "faster_blocks": 1
+      }
+    }
+  },
+  "water-shape-control": {
+    "frames": 48,
+    "page_bytes": 4,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 3603.15,
+          "min": 3023.75,
+          "max": 4007.8
+        },
+        "copied_bytes": 2359296,
+        "staging_allocation_bytes": 147456,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 4065.425,
+          "min": 2476.5,
+          "max": 5133.85
+        },
+        "copied_bytes": 2359296,
+        "staging_allocation_bytes": 147456,
+        "mirror_bytes": 49152,
+        "seed_frames": 1,
+        "reuse_frames": 47,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 11.7725,
+          "min": -19.7939,
+          "max": 49.2852
+        },
+        "faster_blocks": 2
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 3711.475,
+          "min": 2563.75,
+          "max": 3942.4
+        },
+        "copied_bytes": 2359296,
+        "staging_allocation_bytes": 147456,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0,
+        "paired_change_vs_exact_percent": {
+          "median": 3.4894,
+          "min": -33.6298,
+          "max": 12.581
+        },
+        "faster_blocks": 3
+      }
+    }
+  },
+  "switch-16": {
+    "frames": 56,
+    "page_bytes": 4096,
+    "modes": {
+      "exact-online": {
+        "wall_us": {
+          "median": 27399.975,
+          "min": 25478.85,
+          "max": 28551.5
+        },
+        "copied_bytes": 234881024,
+        "staging_allocation_bytes": 12582912,
+        "mirror_bytes": 0,
+        "seed_frames": 0,
+        "reuse_frames": 0,
+        "rebinds": 0,
+        "extra_drains": 0
+      },
+      "retain-online": {
+        "wall_us": {
+          "median": 24591.025,
+          "min": 23971.15,
+          "max": 24873.55
+        },
+        "copied_bytes": 69398528,
+        "staging_allocation_bytes": 12582912,
+        "mirror_bytes": 4194304,
+        "seed_frames": 2,
+        "reuse_frames": 54,
+        "rebinds": 1,
+        "extra_drains": 2,
+        "paired_change_vs_exact_percent": {
+          "median": -10.9514,
+          "min": -14.6761,
+          "max": -2.3757
+        },
+        "faster_blocks": 6
+      },
+      "adaptive-online": {
+        "wall_us": {
+          "median": 22560.225,
+          "min": 21800.55,
+          "max": 23485.85
+        },
+        "copied_bytes": 81195008,
+        "staging_allocation_bytes": 12582912,
+        "mirror_bytes": 4194304,
+        "seed_frames": 3,
+        "reuse_frames": 39,
+        "rebinds": 1,
+        "extra_drains": 2,
+        "paired_change_vs_exact_percent": {
+          "median": -16.9439,
+          "min": -21.8011,
+          "max": -10.5715
+        },
+        "faster_blocks": 6
+      }
+    }
+  }
+}
