@@ -24,6 +24,7 @@ REPORT_POLICIES = {
     "anyxboxx-147-native-wave64-gather": ("hip-wave64", ("lane-exec-controls", "both-addresses")),
     FRAMELAB_TASK: ("vulkan", ("same-binary", "same-timeline", "cross-binary", "cross-timeline")),
     "xcl-2126-scratch-coverage": ("d3d12-wave32", ("skip-middle-piece", "overlapping-edges")),
+    "portbridge-subgroup-wave64": ("vulkan", ("cross-half", "partial-workgroup")),
 }
 REPORT_HEADER = "portbridge test report v1"
 FIELD_LINE = re.compile(r"(task|revisions|equipment|hardware|pci|os|driver|toolchain|opt-in):\s*(.+)", re.I)

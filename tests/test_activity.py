@@ -86,7 +86,7 @@ class ActivityTest(CatalogFixture):
         summary = build_activity(self.catalog, now=NOW)
         handoffs = summary["handoffs"]
         self.assertEqual(summary["counts"]["merged"], 1)
-        self.assertEqual(handoffs["counts"], {"delivered": 15, "independently_reproduced": 9,
+        self.assertEqual(handoffs["counts"], {"delivered": 15, "independently_reproduced": 10,
                                              "formally_reviewed": 4, "adopted": 5})
         (continued, xcl, anyxboxx, rounding, division, warp, texture, paired_lds, lds_wait,
          frame_pacer, xcl_compact, monitor, framelab, scratch_candidate, gfx10) = handoffs["items"]
@@ -103,6 +103,7 @@ class ActivityTest(CatalogFixture):
         self.assertTrue(scratch_candidate["independent_url"].endswith("issuecomment-7162128623"))
         self.assertNotIn("adopted_url", scratch_candidate)
         self.assertTrue(gfx10["branch_implementation_url"].endswith("c5ca937c371d8b21e56feb36f3d009ecffe5765a"))
+        self.assertTrue(gfx10["independent_url"].endswith("issuecomment-7164567766"))
         self.assertNotIn("adopted_url", gfx10)
         self.assertTrue(warp["delivered_url"].endswith("/pull/144"))
         self.assertTrue(texture["delivered_url"].endswith("/issues/145"))
