@@ -2,6 +2,8 @@
 
 Large generated shaders can repeat the same computation inside many switch arms. This PortBridge pass finds compatible straight-line tails and moves one shared body after the branch. The original arms still compute and choose their own inputs. A typed parameter column captures each different value across incoming edges, like a PHI node. The pass ships as a small Python component with HLSL and C emitters independent of the benchmark.
 
+An applicability census found no eligible regions in 373 validated outputs from MiniEngine, AMD FSR 2 and Naga. The existing synthetic cases still support use in a generator that routinely emits this exact structure. [Open corpus and limits](CORPUS.md)
+
 ## Where the time went
 
 PortBridge MCP surfaced an open mixed-sampler workload with repeatable compiler pressure. On its 2,048 sampling branches, DXC took 1.294 s median and 101.6 MiB of peak working set. Those branches contain different stores and a sampling operation, so they are a rejection control for this pure arithmetic pass. The public XCL compiler report motivated scaling both branch count and body size. It establishes a separate case of compiler pressure, with different inputs and without a measured link to our repeated-tail mechanism. [Xbox2Windows #801](https://github.com/R0Y00/Xbox2Windows/pull/801) · [Pinned control source](https://github.com/R0Y00/Xbox2Windows/blob/721dc1d97f02207ab4a6d74f8d3394f942b303c4/tools/dxc_compile_time.py) · [XCL #1269](https://github.com/xcl-dev/xcl/issues/1269)

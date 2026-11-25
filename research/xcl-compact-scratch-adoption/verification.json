@@ -40,10 +40,39 @@
     "inputs": "injected protocol controls only",
     "gpu_timing_measured": false
   },
+  "workspace_open_suite": {
+    "pr_url": "https://github.com/xcl-dev/xcl/pull/2322",
+    "build": "cargo build --offline --locked --workspace -j 2",
+    "test": "cargo test --offline --locked --workspace -j 2 --no-fail-fast -- --test-threads=4",
+    "passed": 1265,
+    "failed": 0,
+    "ignored": 46,
+    "runtime_skip_lines_in_cargo_counts": {
+      "no_wave64": 21, "instruction_refused": 3, "no_debug_layer": 2, "no_heap_windows": 1
+    },
+    "background_gpu_utilization_percent_before_after": [52, 55],
+    "retail_inputs_used": false
+  },
+  "independent_exact_candidate": {
+    "report_url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165250326",
+    "reporter": "nnonno91",
+    "adapters": ["AMD Radeon Graphics", "NVIDIA GeForce RTX 5090"],
+    "passes_per_adapter": 10,
+    "skips_per_adapter": 0,
+    "wave32_open_fixture_scratch_dwords_per_group": 256
+  },
+  "independent_rx6800m_candidate": {
+    "report_url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165844270",
+    "reporter": "luckyteagirl",
+    "adapter": "AMD Radeon RX 6800M",
+    "passed": 10,
+    "runtime_skips": 0,
+    "wave32_open_fixture_scratch_dwords_per_group": 256,
+    "split_guest_wave64_uses_hardware_wave32_halves": true
+  },
   "pending": [
     "Per-workload scratch and matched full-chain GPU timings for three named workloads",
-    "Full workspace suite on GPU for upstream review",
     "Baseline and candidate upstream smoke blocks from the receiving team's authorized environment",
-    "Human review and opening the upstream PR"
+    "Maintainer review and acceptance of the draft"
   ]
 }

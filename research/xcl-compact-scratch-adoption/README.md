@@ -21,7 +21,7 @@ cargo test --locked -p xcl --lib gpu::dxil::module::split::tests -- --test-threa
 
 The 10 tests passed on a physical RTX 4070 Ti SUPER without skips. They cover the 256-DWORD open Wave32 fixture, the allocator boundary, oversized loops, and output readbacks. Replaying the same assertion with the merged base's original fixed allocator observed 288 DWORDs and failed as expected. [Verification details](verification.json)
 
-Use [the PR draft](PR-READY.md) after completing the receiving repository's requirements. A person opens the PR and is responsible for reviewing the diff. The full GPU workspace run and both real-title `xcl-smoke` blocks remain with the receiving team's authorized setup. [XCL contribution rules](https://github.com/xcl-dev/xcl/blob/afc5ee86ae3a9521c9f15d96505cd73fe72f2191/CONTRIBUTING.md)
+The owner opened [draft XCL #2322](https://github.com/xcl-dev/xcl/pull/2322). nnonno91 independently passed 10 targeted tests on each of Radeon Graphics and RTX 5090 at the exact public SHA, with zero skips. The local open workspace on RTX 4070 Ti SUPER reported 1,265 passed, 0 failed, and 46 ignored with 27 runtime skip lines. The paired retail `xcl-smoke` blocks remain pending. [Independent report](https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165250326) · [Current evidence](PR-READY.md) · [XCL contribution rules](https://github.com/xcl-dev/xcl/blob/06c9f5505f63f10c5ec49ef932d75b2c28177324/CONTRIBUTING.md)
 
 ## Pending aggregate comparison
 

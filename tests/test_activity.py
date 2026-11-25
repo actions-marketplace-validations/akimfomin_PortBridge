@@ -86,10 +86,11 @@ class ActivityTest(CatalogFixture):
         summary = build_activity(self.catalog, now=NOW)
         handoffs = summary["handoffs"]
         self.assertEqual(summary["counts"]["merged"], 1)
-        self.assertEqual(handoffs["counts"], {"delivered": 15, "independently_reproduced": 10,
-                                             "formally_reviewed": 4, "adopted": 5})
+        self.assertEqual(handoffs["counts"], {"delivered": 17, "independently_reproduced": 11,
+                                             "formally_reviewed": 6, "adopted": 6})
         (continued, xcl, anyxboxx, rounding, division, warp, texture, paired_lds, lds_wait,
-         frame_pacer, xcl_compact, monitor, framelab, scratch_candidate, gfx10) = handoffs["items"]
+         frame_pacer, xcl_compact, monitor, framelab, scratch_candidate, gfx10,
+         coalescing, bc7) = handoffs["items"]
         self.assertEqual(continued["problem_id"], "PB-044801754884724660835754613454516035131")
         self.assertTrue(continued["review_url"].endswith("#pullrequestreview-6039203797"))
         self.assertTrue(xcl["independent_url"].endswith("#issuecomment-7133929789"))
@@ -100,8 +101,12 @@ class ActivityTest(CatalogFixture):
         self.assertTrue(all("adopted_url" not in item for item in
                             (continued, xcl, division, texture, paired_lds, lds_wait, frame_pacer)))
         self.assertTrue(rounding["adopted_url"].endswith("71d4c615c6981280b95c11290fd48ef015b5d4cb"))
-        self.assertTrue(scratch_candidate["independent_url"].endswith("issuecomment-7162128623"))
+        self.assertTrue(scratch_candidate["independent_url"].endswith("issuecomment-7165250326"))
         self.assertNotIn("adopted_url", scratch_candidate)
+        self.assertTrue(coalescing["independent_url"].endswith("issuecomment-7161475134"))
+        self.assertNotIn("adopted_url", coalescing)
+        self.assertTrue(bc7["adopted_url"].endswith("0539d7f8ad7734e30396e7c913edeb0755d0f9ce"))
+        self.assertNotIn("independent_url", bc7)
         self.assertTrue(gfx10["branch_implementation_url"].endswith("c5ca937c371d8b21e56feb36f3d009ecffe5765a"))
         self.assertTrue(gfx10["independent_url"].endswith("issuecomment-7164567766"))
         self.assertNotIn("adopted_url", gfx10)
@@ -133,7 +138,7 @@ class ActivityTest(CatalogFixture):
         self.save_pr("continued", 701, at=date, status="merged", merged_at=date, revision=fix)
         self.save_pr("xcl", 1100, at=date, status="merged", merged_at=date, revision="a" * 40)
         handoffs = build_activity(self.catalog, now=NOW)["handoffs"]
-        self.assertEqual(handoffs["counts"]["adopted"], 6)
+        self.assertEqual(handoffs["counts"]["adopted"], 7)
         continued, xcl, *_ = handoffs["items"]
         self.assertEqual(continued["adopted_url"], continued["delivered_url"])
         self.assertNotIn("adopted_url", xcl)
@@ -167,7 +172,7 @@ class ActivityTest(CatalogFixture):
         self.catalog.record_sync({"items": [{**row, "status": "merged", "updated_at": "2026-11-25T09:00:00Z"}]})
         after = next(item for item in build_activity(self.catalog)["research"] if item["problem_id"] == before["problem_id"])
         self.assertEqual(after["source_state"], "merged")
-        self.assertTrue(after["independent_url"].endswith("issuecomment-7162128623"))
+        self.assertTrue(after["independent_url"].endswith("issuecomment-7165250326"))
         self.assertNotIn("adopted_url", after)
         self.assertEqual(before["delivered_url"], after["delivered_url"])
 

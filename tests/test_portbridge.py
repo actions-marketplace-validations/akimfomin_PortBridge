@@ -202,7 +202,11 @@ class CatalogTest(CatalogFixture):
                                     "leonida-ce", "kestrelx", "xportpc", "rebox", "scarlett-layer", "anyxboxx",
                                     "xbox2windows", "scenegate-vi", "palmwave", "tuxbox", "openscarlett",
                                     "openscarlett-ce", "percyscarlett", "victory-macos", "xvalkyrie", "holy-interoperability",
-                                    "scarlett-commons", "five-star-recomp", "framelab", "victory-gta6", "victory-monitor"})
+                                    "scarlett-commons", "five-star-recomp", "framelab", "victory-gta6", "victory-monitor",
+                                    "klbf-lab", "klbf-lab-beta", "xbvk", "victory-perf", "vx-layer", "xtp", "scarlight",
+                                    "metalvi", "ztrx", "victory-amd", "project-flamingo", "vitoriabr", "anybox",
+                                    "neonbridge", "mangrove", "r4y", "xseries-wine", "scarlettport",
+                                    "victory-belobug-amd", "xbox-hle-lab"})
         cards = self.catalog.problems()
         ids = [card["id"] for card in cards]
         self.assertGreaterEqual(len(ids), 3)
@@ -388,6 +392,7 @@ class LocalAPITest(CatalogFixture):
             "urn:portbridge:PB-0016", "urn:portbridge:PB-0018", "urn:portbridge:PB-0019", "urn:portbridge:PB-0020", "urn:portbridge:PB-0021",
             "urn:portbridge:PB-0022", "urn:portbridge:PB-0023", "urn:portbridge:PB-0024",
             "urn:portbridge:PB-0025", "urn:portbridge:PB-0026", "urn:portbridge:PB-0027", "urn:portbridge:PB-0028",
+            "urn:portbridge:PB-0029",
             "urn:portbridge:PB-044801754884724660835754613454516035131",
         })
         _, _, body = self.request("GET", "/api/v1/outreach")
