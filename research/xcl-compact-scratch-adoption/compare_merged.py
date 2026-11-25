@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-"""Summarize aggregate-only A/B measurements on the merged XCL #2126 base."""
+"""Summarize aggregate-only A/B measurements on explicit XCL revisions."""
 
 import argparse
 import itertools
@@ -10,7 +10,6 @@ import re
 from statistics import median
 
 
-BASE = "afc5ee86ae3a9521c9f15d96505cd73fe72f2191"
 PATCH_SHA256 = "18e20d785ad6788f0fb30e823de0e14c3b49b3fae40f3d4a42b043f2a108d99f"
 CASES = (
     ("ef008c0f", "early-exit"),
@@ -111,10 +110,14 @@ def summarize(measurements):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("measurements", type=Path, help="local JSON Lines with numerical A/B measurements")
+    parser.add_argument("--baseline-revision", required=True, help="full Git commit of the measured baseline")
     parser.add_argument("--candidate-revision", required=True, help="full Git commit of the measured candidate")
     arguments = parser.parse_args()
-    if not re.fullmatch(r"[0-9a-f]{40}", arguments.candidate_revision) or arguments.candidate_revision == BASE:
-        parser.error("--candidate-revision must be a full Git SHA-1 distinct from the baseline")
+    for role, revision in (("baseline", arguments.baseline_revision), ("candidate", arguments.candidate_revision)):
+        if not re.fullmatch(r"[0-9a-f]{40}", revision):
+            parser.error(f"--{role}-revision must be a full Git SHA-1")
+    if arguments.baseline_revision == arguments.candidate_revision:
+        parser.error("baseline and candidate revisions must be distinct")
     try:
         measurements = load_measurements(arguments.measurements)
         rows = summarize(measurements)
@@ -123,7 +126,7 @@ def main():
     output_ok = all(row["baseline_different_words"] == row["candidate_different_words"] == 0 for row in rows)
     scratch_ok = all(row["candidate_scratch_dwords_per_group"] <= row["baseline_scratch_dwords_per_group"] for row in rows)
     print(json.dumps({
-        "baseline_xcl_revision": BASE,
+        "baseline_xcl_revision": arguments.baseline_revision,
         "candidate_xcl_revision": arguments.candidate_revision,
         "candidate_patch_sha256": PATCH_SHA256,
         "rounds": 4,
