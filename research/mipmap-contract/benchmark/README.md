@@ -20,6 +20,8 @@ The existing general and automatic schedules produced different bytes on hashed 
 
 The independent NumPy oracle uses a separable area filter and standard sRGB transfer functions. Odd axes give each output pixel an equal-size interval in source space. The oracle evaluates both rounding at each intermediate mip and carrying linear values between levels. In the smaller hashed cases, the maximum absolute observed channel difference from either reference was two for square 256 and one for non-power-of-two 257×193. Both references matched constant controls exactly. GPU tests covered one device and one format, with opaque input. Validation layers, hardware Wave64, Blender runtime integration, layered formats and partial updates were outside this run. [All paired samples and image digests](measurements.json) · [Blender's GPU correctness cases](https://github.com/blender/blender/blob/82f4325bf96ddf50b449cee63518d184eafbb469/source/blender/gpu/tests/mipmap_test.cc#L184-L240)
 
+The [open-texture Vulkan replay](OPEN-TEXTURES.md) extends the comparison to three pinned Khronos assets and measures the output changes when the stock shader's workgroup numbering is deliberately permuted. The [stock Blender replay](blender/README.md) measures production CPU scope and end-to-end acquisition separately from stand-alone GPU timings.
+
 ## Reproduce
 
 Get the Apache-2.0 NVIDIA sources and a C++20 toolchain, Vulkan headers and loader, `glslang`, `spirv-val`, and Python with NumPy. The package refers to external source at its pin. NVIDIA sources, binaries and large generated images are not included. [NVIDIA source and license](https://github.com/nvpro-samples/vk_compute_mipmaps/tree/6c248f554e91329875e9860f2258019a32b44ee9/nvpro_pyramid)

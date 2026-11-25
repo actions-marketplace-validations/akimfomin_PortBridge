@@ -84,7 +84,15 @@ static VkPipeline make_pipeline(VkDevice device, VkPipelineLayout layout, const 
 
 static Bytes pixels(uint32_t width, uint32_t height, std::string_view pattern)
 {
-    require(pattern == "hashed" || pattern == "constant", "use pattern hashed or constant");
+    if (pattern != "hashed" && pattern != "constant") {
+        const auto size = size_t(width) * height * 4;
+        std::ifstream input(std::filesystem::path(pattern), std::ios::ate | std::ios::binary);
+        require(input.tellg() == static_cast<std::streamoff>(size), "RGBA8 file must be exactly width * height * 4 bytes");
+        Bytes out(size);
+        input.seekg(0);
+        require(bool(input.read(reinterpret_cast<char *>(out.data()), out.size())), "cannot read RGBA8 input");
+        return out;
+    }
     Bytes out(size_t(width) * height * 4);
     uint32_t random = 0x23af940bu;
     for (size_t offset = 0; offset < out.size(); offset += 4) {
@@ -426,7 +434,15 @@ static void run(const std::filesystem::path &dir, uint32_t width, uint32_t heigh
 
     const auto readback = [&](NvproPyramidPipelines pipelines) {
         begin();
-        prepare_dispatch();
+        // Keep a missing write in this variant visible instead of inheriting a prior result.
+        const VkImageSubresourceRange generated{VK_IMAGE_ASPECT_COLOR_BIT, 1, levels - 1, 0, 1};
+        const VkClearColorValue missing{{1.0f, 0.0f, 1.0f, 0.0f}};
+        barrier(VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT | VK_ACCESS_TRANSFER_READ_BIT,
+                VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT,
+                VK_PIPELINE_STAGE_TRANSFER_BIT);
+        vkCmdClearColorImage(commands, image, VK_IMAGE_LAYOUT_GENERAL, &missing, 1, &generated);
+        barrier(VK_ACCESS_TRANSFER_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT,
+                VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
         bind();
         dispatch(pipelines);
         barrier(VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_TRANSFER_READ_BIT,
@@ -472,7 +488,7 @@ static void run(const std::filesystem::path &dir, uint32_t width, uint32_t heigh
 int main(int argc, char **argv)
 {
     if (argc != 8 && argc != 9) {
-        std::cerr << "usage: mipmap SPV_DIR WIDTH HEIGHT DEVICE_SUBSTRING hashed|constant REPEATS OUTPUT_DIR [REWRITE_SPV]\n";
+        std::cerr << "usage: mipmap SPV_DIR WIDTH HEIGHT DEVICE_SUBSTRING hashed|constant|RGBA8_FILE REPEATS OUTPUT_DIR [REWRITE_SPV]\n";
         return 2;
     }
     try {

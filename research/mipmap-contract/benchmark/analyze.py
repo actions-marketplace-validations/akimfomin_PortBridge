@@ -10,7 +10,7 @@ from statistics import median
 import numpy as np
 
 
-DIMS = re.compile(r"(result|fixed)-(\d+)-(\d+)-(hashed|constant)")
+DIMS = re.compile(r"(result|fixed)-(\d+)-(\d+)-([a-z][a-z0-9-]*)")
 
 
 def reduce_axis(image, axis):
