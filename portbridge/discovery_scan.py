@@ -13,6 +13,7 @@ from .catalog import Catalog, public_url
 from .community_sources import DATA, SCHEMA as PEOPLE_SCHEMA, actor, remember_discovery
 from .consoles import console_families
 from .discovery_search import SOURCE_FOUND, discover, discovery_index, key
+from .discovery_history import STAMP, prior_lookup
 from .discovery_terms import MAX_CUES, cues, stored_cue
 from .github import (API, INSTRUCTION_LIMIT, PR_URL, SIGNATURE_LIMIT, TECHNICAL_TERM, URL, Unavailable,
                      _Sync, _text, refresh_references)
@@ -51,6 +52,9 @@ CREATE TABLE IF NOT EXISTS discovery_lease (
 
 
 def subject(observation):
+    history = prior_lookup(observation) if PR_URL.fullmatch(observation.get("url", "")) else None
+    if history:
+        return history[0]
     title = URL.sub(" ", _text(observation["title"]))
     metadata = observation.get("metadata", {}).get("technical") or {}
     options = cues(title)
@@ -85,11 +89,20 @@ def source_repo(url):
     return "/".join(urlsplit(url).path.lower().split("/")[1:3])
 
 
-def source_results(rows):
+def source_results(rows, *, repository=None, before=None):
     seen = set()
     for raw in rows[:PAGE_SIZE]:
         row = result_entry(raw)
-        if not row or (repo := source_repo(row["url"])) not in EXTERNAL_NAMES:
+        if not row:
+            continue
+        repo = source_repo(row["url"])
+        if repository:
+            pr = raw.get("pull_request")
+            merged = pr.get("merged_at") if isinstance(pr, dict) else None
+            if (repo != repository or row["kind"] != "pr" or row["state"] != "closed" or not isinstance(merged, str)
+                    or not STAMP.fullmatch(merged) or merged >= before):
+                continue
+        elif repo not in EXTERNAL_NAMES:
             continue
         url = key(row["url"])
         if url in seen:
@@ -99,7 +112,7 @@ def source_results(rows):
                "id": url, "source": row["url"], "repository": repo, "evidence_status": SOURCE_FOUND,
                "match_level": "research", "consoles": console_families(row["url"],
                    default=("xbox-series",) if repo in XBOX_PEERS else ()),
-               "author": actor(raw.get("user"))}
+               **({"route": "repository_history", "merged_at": merged} if repository else {"author": actor(raw.get("user"))})}
 
 
 def cached_index(catalog):
@@ -119,8 +132,9 @@ def cached_index(catalog):
     for url, revision, query, retrieved, state, items, title, metadata, updated in rows:
         term = query.split(":", 2)[-1]
         status, _, reason = (state or "no_subject").partition(":")
+        scope = "receiver_merged_before_pr" if query.startswith("m53-history:") else "external"
         if title is not None:
-            row = {"title": title, "metadata": json.loads(metadata)}
+            row = {"url": url, "title": title, "metadata": json.loads(metadata)}
             current_term = subject(row)
             if current_term != term or revision != (source_revision(row) or updated):
                 automatic[key(url)] = {"subject": current_term, "status": "not_scanned" if current_term else "no_subject",
@@ -132,7 +146,7 @@ def cached_index(catalog):
         if retrieved + TTL <= now and status in {"available", "partial"}:
             status = "stale"
         checked_on = datetime.fromtimestamp(retrieved, timezone.utc).date().isoformat()
-        automatic[key(url)] = {"status": status, "reason": reason or None, "subject": term, "matches": [
+        automatic[key(url)] = {"status": status, "reason": reason or None, "subject": term, "scope": scope, "matches": [
             {**item, "retrieved_on": checked_on, "retrieval_status": status} for item in json.loads(items)
             if key(item["url"]) != key(url)
         ]}
@@ -149,15 +163,16 @@ def acquire(db, lease):
     return True
 
 
-def fetch(client, term, *, family="xbox-series"):
+def fetch(client, term, *, family="xbox-series", repository=None, before=None):
     targets = XBOX_PEERS if family=="ps5" else PS5_PEERS
     qualifier = " ".join(f"repo:{repo}" for repo in (*EXTERNAL,*targets))
     literal = f'"{term}"' if term not in {"dxgi budget", "adapter performance", "compute subobject"} else term
-    query = f"{literal} is:public {qualifier}"
+    query = (f'"{term}" is:public is:pr is:merged repo:{repository} merged:<{before}' if repository else
+             f"{literal} is:public {qualifier}")
     data, _ = client._request(f"{API}/search/issues?{urlencode({'q': query, 'per_page': PAGE_SIZE})}", "search", None)
     if not isinstance(data, dict) or not isinstance(data.get("items"), list):
         raise Unavailable("Invalid Discovery search response", reason="invalid_payload")
-    return ("partial" if data.get("incomplete_results") else "available"), list(source_results(data["items"]))
+    return ("partial" if data.get("incomplete_results") else "available"), list(source_results(data["items"], repository=repository, before=before))
 
 
 def lookup_plan(observations, known, *, requested_url=None):
@@ -170,7 +185,8 @@ def lookup_plan(observations, known, *, requested_url=None):
             continue
         term = subject(observation)
         if term or explicit:
-            plan.setdefault(url.lower(), (source_revision(observation) or observation.get("updated_at"), term))
+            scoped = prior_lookup(observation) if PR_URL.fullmatch(url) else None
+            plan.setdefault(url.lower(), (source_revision(observation) or observation.get("updated_at"), term, scoped))
     return plan
 
 
@@ -178,8 +194,9 @@ def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS, reques
     if type(max_lookups) is not int or not 1 <= max_lookups <= MAX_LOOKUPS:
         raise ValueError(f"Use 1 to {MAX_LOOKUPS} Discovery lookups per batch")
     known = {row["repo"].lower() for row in catalog.projects()}
-    plan = lookup_plan(observations[:MAX_ORIGINS], known, requested_url=requested_url)
-    report = {"status": "offline" if not online else "complete", "eligible": sum(bool(term) for _, term in plan.values()),
+    observations = observations[:MAX_ORIGINS]
+    plan = lookup_plan(observations, known, requested_url=requested_url)
+    report = {"status": "offline" if not online else "complete", "eligible": sum(bool(term) for _, term, _ in plan.values()),
               "lookups": 0, "cache_hits": 0, "origins": []}
     if not online:
         return report
@@ -192,9 +209,11 @@ def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS, reques
         try:
             client = _Sync(db, False, anonymous=True, time_budget=BATCH_SECONDS)
             policy = json.loads((DATA / "people_policy.json").read_bytes())
-            for url, (revision, term) in plan.items():
+            for url, (revision, term, scoped) in plan.items():
                 family = "ps5" if "ps5" in console_families(url) else "xbox-series"
-                query = f"{QUERY_VERSION}:{family}:{term}"
+                repo = source_repo(url) if scoped else None
+                query = (f"m53-history:{repo}@{scoped[1].replace(':', '')}:{term}" if scoped else
+                         f"{QUERY_VERSION}:{family}:{term}")
                 prior = db.execute("SELECT retrieved,retry_at,status,items FROM discovery_query WHERE query=?",
                                    (query,)).fetchone()
                 now = time.time()
@@ -211,7 +230,7 @@ def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS, reques
                 else:
                     report["lookups"] += 1
                     try:
-                        status, items = fetch(client, term, family=family)
+                        status, items = fetch(client, term, family=family, repository=repo, before=scoped[1] if scoped else None)
                     except Unavailable as error:
                         if not error.attempted:
                             report["lookups"] -= 1
@@ -231,7 +250,7 @@ def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS, reques
                         WHERE revision IS NOT excluded.revision OR query != excluded.query
                     """, (url, revision, query, now))
                     items = [item for item in items if key(item["url"]) != key(url)]
-                    if status in {"available", "partial"}:
+                    if not scoped and status in {"available", "partial"}:
                         remember_discovery(db, url, items, now, policy)
                 report["origins"].append({"url": url, "revision": revision, "query": term, "status": status,
                                           "reason": reason or None, "matches": [item["url"] for item in items]})
@@ -263,7 +282,7 @@ def link_result(catalog, observation):
     for row in report["matches"]:
         target = primary if row["match"]["exact"] or row in report["technical_recommendations"] else lexical
         target.append((row, "catalog"))
-    external = [(row, "github") for row in report["automatic_matches"]]
+    external = [(row, row.get("route", "github")) for row in report["automatic_matches"]]
     found = {}
     for row, route in primary + external + lexical:
         source = row["source"]
@@ -274,6 +293,9 @@ def link_result(catalog, observation):
     issue = origin.get("reason") if origin else status
     if status == "no_subject":
         explanation = "No supported technical subject was found in the PR title or stored metadata. No external search ran."
+    elif status == "available" and prior_lookup(observation):
+        explanation = ("Inspect the earlier merged PR for an implementation or regression test matching this decision." if external else
+                       "No earlier merged PR for this identifier was returned by the bounded repository search.")
     elif status == "available":
         explanation = ("Open each source to compare the mechanism and revision." if found else
                        "The indexed corpus and first bounded GitHub page yielded no other source for this subject.")
@@ -282,6 +304,7 @@ def link_result(catalog, observation):
     else:
         explanation = f"The external search is {issue or status}. Any retained results need a freshness check."
     return {"url": url, "revision": source_revision(observation), "subject": term, "status": status,
+            "search_scope": "receiver_merged_before_pr" if prior_lookup(observation) else "external" if term else "none",
             "search_issue": issue, "lookups": batch["lookups"], "cache_hits": batch["cache_hits"],
             "top5": list(found.values())[:PAGE_SIZE], "explanation": explanation}
 
