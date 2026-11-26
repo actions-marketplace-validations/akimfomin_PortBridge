@@ -1,0 +1,1557 @@
+{
+  "environment": {
+    "os_build": "28000.3501",
+    "glslang": "16.6.0",
+    "spirv_tools": "v2026.5 (g340b4c41)",
+    "clang": "23.1.6 (5b10d2d74929eae78912771222c9855af97496f4)",
+    "vulkan_headers": "6802bb4733b63ed5efd3adb308a6c885ef180ea1",
+    "gpu_driver": "617.14",
+    "gpu_telemetry_before_between_and_after": [
+      "NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 49 %, 1524 MiB, 58, P0",
+      "NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 51 %, 1483 MiB, 57, P0",
+      "NVIDIA GeForce RTX 4070 Ti SUPER, 617.14, 48 %, 1523 MiB, 57, P0"
+    ],
+    "validation_layer": "not used"
+  },
+  "source": {
+    "nvpro_mipmaps": "6c248f554e91329875e9860f2258019a32b44ee9",
+    "glsl_compile_target": "vulkan1.1",
+    "runner_source_sha256": "bbe47cbe72a6c2bdc035decc3b9620f1ba730df696b301fd4ace99522406bd58",
+    "stock_fast_spirv_sha256": "980bd2b479145da3d2832baffb65e42449d436779fc02780631a3afc31956416",
+    "stock_general_spirv_sha256": "6ab7d06e30e445bbb4cb33d820c0db24e230b5da99096ec5e62da5e67916ef3f",
+    "rewrite_fast_spirv_sha256": "87cd7e39918dfec37733dc91596c4235ef52306783dd93c4d8234275b0a8b650"
+  },
+  "protocol": {
+    "timing_scope": "device timestamps TOP_OF_PIPE to BOTTOM_OF_PIPE, full generated mip chain",
+    "readback_scope": "all generated mip bytes, not the upload level",
+    "timing_order": "AB, BA, alternating within one command buffer",
+    "excluded": [
+      "upload",
+      "host setup",
+      "pipeline creation",
+      "readback",
+      "display and file I/O"
+    ],
+    "fixed_cases": "Vulkan 1.3, VkPhysicalDeviceVulkan13Features computeFullSubgroups and subgroupSizeControl, requiredSubgroupSize=32 and REQUIRE_FULL_SUBGROUPS_BIT for both variants",
+    "result_cases": "Vulkan 1.2, default device subgroup settings, original general then automatic scheduling",
+    "cpu_oracle": "separable area box with sRGB decode/encode, compare rounded-at-each-level and linear-space cascade, dimensions no larger than 512"
+  },
+  "cases": {
+    "fixed-2048-2048-hashed": {
+      "width": 2048,
+      "height": 2048,
+      "input": "hashed",
+      "fixed_full_wave32": true,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=2048x2048 fixed_full_wave32=1",
+      "mip_bytes_per_variant": 5592404,
+      "base_sha256": "88096ef8f1d0d9b1536e4c865c23b2062b1d71a63b4dd37308563fd7c4781cb5",
+      "readback_sha256": {
+        "automatic": "407cd71af25e4cb2d10c14437f7b9c3b4cb23dd6d586b58f9924cda1def46fa2",
+        "rewritten": "407cd71af25e4cb2d10c14437f7b9c3b4cb23dd6d586b58f9924cda1def46fa2"
+      },
+      "readback_difference": {
+        "different_bytes": 0,
+        "max_abs_difference": 0
+      },
+      "median_microseconds": {
+        "automatic": 14.336,
+        "rewritten": 16.384
+      },
+      "paired_second_minus_first_median_microseconds": 2.048,
+      "timing_pairs_microseconds": [
+        [
+          16.704,
+          16.384
+        ],
+        [
+          14.336,
+          17.408
+        ],
+        [
+          14.336,
+          17.408
+        ],
+        [
+          14.336,
+          16.384
+        ],
+        [
+          15.36,
+          17.408
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          14.336,
+          17.408
+        ],
+        [
+          14.336,
+          16.384
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          14.336,
+          17.408
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          15.36,
+          17.408
+        ],
+        [
+          14.336,
+          16.384
+        ],
+        [
+          15.36,
+          17.408
+        ],
+        [
+          14.336,
+          17.408
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          14.336,
+          16.384
+        ],
+        [
+          14.336,
+          17.408
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          15.36,
+          17.408
+        ],
+        [
+          14.336,
+          16.384
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          14.336,
+          22.528
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          14.336,
+          17.408
+        ],
+        [
+          14.336,
+          952.32
+        ],
+        [
+          15.36,
+          26.624
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          14.336,
+          16.384
+        ],
+        [
+          14.336,
+          16.384
+        ],
+        [
+          14.336,
+          17.408
+        ],
+        [
+          15.36,
+          16.384
+        ],
+        [
+          14.336,
+          16.384
+        ],
+        [
+          14.336,
+          16.384
+        ]
+      ]
+    },
+    "fixed-256-256-hashed": {
+      "width": 256,
+      "height": 256,
+      "input": "hashed",
+      "fixed_full_wave32": true,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=256x256 fixed_full_wave32=1",
+      "mip_bytes_per_variant": 87380,
+      "base_sha256": "c72ad2ba81a4f6b73b80c1797df5a49a1834de572eb8cacafd9477419e72f9ba",
+      "readback_sha256": {
+        "automatic": "d54a9b6867ed09df011d9199b24e9d6fa8133b423635e145fbccfc93342e600e",
+        "rewritten": "d54a9b6867ed09df011d9199b24e9d6fa8133b423635e145fbccfc93342e600e"
+      },
+      "readback_difference": {
+        "different_bytes": 0,
+        "max_abs_difference": 0
+      },
+      "median_microseconds": {
+        "automatic": 4.096,
+        "rewritten": 3.072
+      },
+      "paired_second_minus_first_median_microseconds": -1.024,
+      "timing_pairs_microseconds": [
+        [
+          5.248,
+          3.072
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          4.096,
+          4.096
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          4.096,
+          4.096
+        ],
+        [
+          3.072,
+          4.096
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          4.096,
+          4.096
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          4.096,
+          4.096
+        ],
+        [
+          4.096,
+          4.096
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          4.096,
+          4.096
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          4.096,
+          3.072
+        ],
+        [
+          3.072,
+          3.072
+        ],
+        [
+          4.096,
+          4.096
+        ],
+        [
+          3.072,
+          4.096
+        ],
+        [
+          4.096,
+          3.072
+        ]
+      ],
+      "cpu_area_reference": {
+        "unrounded_until_storage": {
+          "automatic": {
+            "different_bytes": 13301,
+            "max_abs_difference": 2
+          },
+          "rewritten": {
+            "different_bytes": 13301,
+            "max_abs_difference": 2
+          }
+        },
+        "round_each_level": {
+          "automatic": {
+            "different_bytes": 13661,
+            "max_abs_difference": 2
+          },
+          "rewritten": {
+            "different_bytes": 13661,
+            "max_abs_difference": 2
+          }
+        }
+      }
+    },
+    "fixed-257-193-constant": {
+      "width": 257,
+      "height": 193,
+      "input": "constant",
+      "fixed_full_wave32": true,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=257x193 fixed_full_wave32=1",
+      "mip_bytes_per_variant": 65532,
+      "base_sha256": "d350a6c4fb9e65ad41e67e08e13d7555dfe9a3836170a0a1b11ac6f5775243f3",
+      "readback_sha256": {
+        "automatic": "24c2eb3587da8045e60e8776a17ceec6dc4cfd6aee87f3ef5f12b7ee806ee251",
+        "rewritten": "24c2eb3587da8045e60e8776a17ceec6dc4cfd6aee87f3ef5f12b7ee806ee251"
+      },
+      "readback_difference": {
+        "different_bytes": 0,
+        "max_abs_difference": 0
+      },
+      "median_microseconds": {
+        "automatic": 6.144,
+        "rewritten": 6.144
+      },
+      "paired_second_minus_first_median_microseconds": 0.0,
+      "timing_pairs_microseconds": [
+        [
+          8.544,
+          6.144
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          5.12,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ]
+      ],
+      "cpu_area_reference": {
+        "unrounded_until_storage": {
+          "automatic": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          },
+          "rewritten": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          }
+        },
+        "round_each_level": {
+          "automatic": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          },
+          "rewritten": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          }
+        }
+      }
+    },
+    "fixed-257-193-hashed": {
+      "width": 257,
+      "height": 193,
+      "input": "hashed",
+      "fixed_full_wave32": true,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=257x193 fixed_full_wave32=1",
+      "mip_bytes_per_variant": 65532,
+      "base_sha256": "06522a509161a806e0658f1e0ad824c0e1f1c10f6e9440bbf07e43d86f006eba",
+      "readback_sha256": {
+        "automatic": "d5fccf7d44657a48b6b4632918ffe7d561beaf1b0ddaf9597be9ea190ab8c7d3",
+        "rewritten": "d5fccf7d44657a48b6b4632918ffe7d561beaf1b0ddaf9597be9ea190ab8c7d3"
+      },
+      "readback_difference": {
+        "different_bytes": 0,
+        "max_abs_difference": 0
+      },
+      "median_microseconds": {
+        "automatic": 6.144,
+        "rewritten": 6.144
+      },
+      "paired_second_minus_first_median_microseconds": 0.0,
+      "timing_pairs_microseconds": [
+        [
+          8.48,
+          6.144
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          7.168,
+          6.144
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          6.144,
+          7.168
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ],
+        [
+          6.144,
+          6.144
+        ]
+      ],
+      "cpu_area_reference": {
+        "unrounded_until_storage": {
+          "automatic": {
+            "different_bytes": 2612,
+            "max_abs_difference": 1
+          },
+          "rewritten": {
+            "different_bytes": 2612,
+            "max_abs_difference": 1
+          }
+        },
+        "round_each_level": {
+          "automatic": {
+            "different_bytes": 3610,
+            "max_abs_difference": 1
+          },
+          "rewritten": {
+            "different_bytes": 3610,
+            "max_abs_difference": 1
+          }
+        }
+      }
+    },
+    "fixed-4096-4096-hashed": {
+      "width": 4096,
+      "height": 4096,
+      "input": "hashed",
+      "fixed_full_wave32": true,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=4096x4096 fixed_full_wave32=1",
+      "mip_bytes_per_variant": 22369620,
+      "base_sha256": "9ed7775d73ad64f59d97961469160759fb8bc335199cb2f3b7edc5e628300827",
+      "readback_sha256": {
+        "automatic": "19e4ad9c5853489d8f33c0500a1cdd27073dc806cf675eaf8c2ee402dbeab6e8",
+        "rewritten": "19e4ad9c5853489d8f33c0500a1cdd27073dc806cf675eaf8c2ee402dbeab6e8"
+      },
+      "readback_difference": {
+        "different_bytes": 0,
+        "max_abs_difference": 0
+      },
+      "median_microseconds": {
+        "automatic": 148.64,
+        "rewritten": 160.768
+      },
+      "paired_second_minus_first_median_microseconds": 2.048,
+      "timing_pairs_microseconds": [
+        [
+          148.64,
+          143.36
+        ],
+        [
+          147.456,
+          741.376
+        ],
+        [
+          145.408,
+          746.496
+        ],
+        [
+          777.216,
+          169.984
+        ],
+        [
+          151.552,
+          148.48
+        ],
+        [
+          147.456,
+          730.112
+        ],
+        [
+          145.408,
+          742.4
+        ],
+        [
+          145.408,
+          147.456
+        ],
+        [
+          749.568,
+          172.032
+        ],
+        [
+          151.552,
+          629.76
+        ],
+        [
+          148.48,
+          571.392
+        ],
+        [
+          148.48,
+          151.552
+        ],
+        [
+          953.344,
+          146.432
+        ],
+        [
+          738.304,
+          145.408
+        ],
+        [
+          150.528,
+          143.36
+        ],
+        [
+          146.432,
+          1119.23
+        ],
+        [
+          444.416,
+          152.576
+        ],
+        [
+          723.968,
+          149.504
+        ],
+        [
+          145.408,
+          145.408
+        ],
+        [
+          147.456,
+          741.376
+        ],
+        [
+          144.384,
+          736.256
+        ],
+        [
+          149.504,
+          160.768
+        ],
+        [
+          931.84,
+          156.672
+        ],
+        [
+          144.384,
+          731.136
+        ],
+        [
+          144.384,
+          741.376
+        ],
+        [
+          146.432,
+          145.408
+        ],
+        [
+          1111.04,
+          150.528
+        ],
+        [
+          435.2,
+          147.456
+        ],
+        [
+          151.552,
+          146.432
+        ],
+        [
+          146.432,
+          728.064
+        ],
+        [
+          144.384,
+          740.352
+        ],
+        [
+          1062.91,
+          148.48
+        ],
+        [
+          164.864,
+          148.48
+        ],
+        [
+          152.576,
+          672.768
+        ],
+        [
+          147.456,
+          729.088
+        ]
+      ]
+    },
+    "result-2048-2048-hashed": {
+      "width": 2048,
+      "height": 2048,
+      "input": "hashed",
+      "fixed_full_wave32": false,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=2048x2048 fixed_full_wave32=0",
+      "mip_bytes_per_variant": 5592404,
+      "base_sha256": "88096ef8f1d0d9b1536e4c865c23b2062b1d71a63b4dd37308563fd7c4781cb5",
+      "readback_sha256": {
+        "general": "5a584a351e943f8605973c35f3d76d489249f6355f96ac4d44eb9df9ab875509",
+        "automatic": "407cd71af25e4cb2d10c14437f7b9c3b4cb23dd6d586b58f9924cda1def46fa2"
+      },
+      "readback_difference": {
+        "different_bytes": 883889,
+        "max_abs_difference": 2
+      },
+      "median_microseconds": {
+        "general": 30.72,
+        "automatic": 15.36
+      },
+      "paired_second_minus_first_median_microseconds": -16.384,
+      "timing_pairs_microseconds": [
+        [
+          645.664,
+          18.432
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          30.72,
+          15.36
+        ],
+        [
+          30.72,
+          15.36
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          31.744,
+          14.336
+        ],
+        [
+          30.72,
+          15.36
+        ],
+        [
+          607.232,
+          45.056
+        ],
+        [
+          31.744,
+          15.36
+        ],
+        [
+          30.72,
+          15.36
+        ],
+        [
+          31.744,
+          14.336
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          31.744,
+          14.336
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          33.792,
+          15.36
+        ],
+        [
+          30.72,
+          311.296
+        ],
+        [
+          32.768,
+          38.912
+        ],
+        [
+          31.744,
+          15.36
+        ],
+        [
+          29.696,
+          15.36
+        ],
+        [
+          31.744,
+          14.336
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          31.744,
+          15.36
+        ],
+        [
+          29.696,
+          15.36
+        ],
+        [
+          570.368,
+          14.336
+        ],
+        [
+          33.792,
+          15.36
+        ],
+        [
+          31.744,
+          14.336
+        ],
+        [
+          30.72,
+          15.36
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          30.72,
+          15.36
+        ],
+        [
+          30.72,
+          14.336
+        ],
+        [
+          30.72,
+          15.36
+        ],
+        [
+          30.72,
+          15.36
+        ],
+        [
+          623.616,
+          25.6
+        ]
+      ]
+    },
+    "result-256-256-constant": {
+      "width": 256,
+      "height": 256,
+      "input": "constant",
+      "fixed_full_wave32": false,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=256x256 fixed_full_wave32=0",
+      "mip_bytes_per_variant": 87380,
+      "base_sha256": "088045b924dd7ed92b6798832e0f8a748a31e0003d63831c6a947619ddada48d",
+      "readback_sha256": {
+        "general": "e7c7b4adf4495310b578af04317068f51dbc69b6c3dded94c1656cc87af49ef1",
+        "automatic": "e7c7b4adf4495310b578af04317068f51dbc69b6c3dded94c1656cc87af49ef1"
+      },
+      "readback_difference": {
+        "different_bytes": 0,
+        "max_abs_difference": 0
+      },
+      "median_microseconds": {
+        "general": 9.216,
+        "automatic": 4.096
+      },
+      "paired_second_minus_first_median_microseconds": -5.12,
+      "timing_pairs_microseconds": [
+        [
+          10.56,
+          3.072
+        ],
+        [
+          9.216,
+          4.096
+        ],
+        [
+          8.192,
+          4.096
+        ],
+        [
+          9.216,
+          4.096
+        ],
+        [
+          8.192,
+          4.096
+        ],
+        [
+          8.192,
+          3.072
+        ],
+        [
+          9.216,
+          3.072
+        ],
+        [
+          9.216,
+          3.072
+        ],
+        [
+          8.192,
+          4.096
+        ],
+        [
+          9.216,
+          4.096
+        ],
+        [
+          8.192,
+          3.072
+        ],
+        [
+          8.192,
+          3.072
+        ],
+        [
+          9.216,
+          4.096
+        ],
+        [
+          8.192,
+          3.072
+        ],
+        [
+          9.216,
+          4.096
+        ],
+        [
+          9.216,
+          4.096
+        ],
+        [
+          8.192,
+          3.072
+        ],
+        [
+          9.216,
+          4.096
+        ],
+        [
+          8.192,
+          4.096
+        ],
+        [
+          8.192,
+          4.096
+        ],
+        [
+          9.216,
+          3.072
+        ]
+      ],
+      "cpu_area_reference": {
+        "unrounded_until_storage": {
+          "general": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          },
+          "automatic": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          }
+        },
+        "round_each_level": {
+          "general": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          },
+          "automatic": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          }
+        }
+      }
+    },
+    "result-257-193-constant": {
+      "width": 257,
+      "height": 193,
+      "input": "constant",
+      "fixed_full_wave32": false,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=257x193 fixed_full_wave32=0",
+      "mip_bytes_per_variant": 65532,
+      "base_sha256": "d350a6c4fb9e65ad41e67e08e13d7555dfe9a3836170a0a1b11ac6f5775243f3",
+      "readback_sha256": {
+        "general": "24c2eb3587da8045e60e8776a17ceec6dc4cfd6aee87f3ef5f12b7ee806ee251",
+        "automatic": "24c2eb3587da8045e60e8776a17ceec6dc4cfd6aee87f3ef5f12b7ee806ee251"
+      },
+      "readback_difference": {
+        "different_bytes": 0,
+        "max_abs_difference": 0
+      },
+      "median_microseconds": {
+        "general": 9.216,
+        "automatic": 6.144
+      },
+      "paired_second_minus_first_median_microseconds": -3.072,
+      "timing_pairs_microseconds": [
+        [
+          10.08,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          9.216,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ]
+      ],
+      "cpu_area_reference": {
+        "unrounded_until_storage": {
+          "general": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          },
+          "automatic": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          }
+        },
+        "round_each_level": {
+          "general": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          },
+          "automatic": {
+            "different_bytes": 0,
+            "max_abs_difference": 0
+          }
+        }
+      }
+    },
+    "result-257-193-hashed": {
+      "width": 257,
+      "height": 193,
+      "input": "hashed",
+      "fixed_full_wave32": false,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=257x193 fixed_full_wave32=0",
+      "mip_bytes_per_variant": 65532,
+      "base_sha256": "06522a509161a806e0658f1e0ad824c0e1f1c10f6e9440bbf07e43d86f006eba",
+      "readback_sha256": {
+        "general": "96e2120f1557dbdb2d620cb5296a7f76b9ccc931ae994a7fc24cff6fe99fff1c",
+        "automatic": "d5fccf7d44657a48b6b4632918ffe7d561beaf1b0ddaf9597be9ea190ab8c7d3"
+      },
+      "readback_difference": {
+        "different_bytes": 86,
+        "max_abs_difference": 1
+      },
+      "median_microseconds": {
+        "general": 9.216,
+        "automatic": 6.144
+      },
+      "paired_second_minus_first_median_microseconds": -2.048,
+      "timing_pairs_microseconds": [
+        [
+          10.816,
+          6.144
+        ],
+        [
+          8.192,
+          7.168
+        ],
+        [
+          8.192,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          7.168
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          7.168
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          576.512
+        ],
+        [
+          9.216,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          8.192,
+          7.168
+        ],
+        [
+          9.216,
+          6.144
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          8.192,
+          6.144
+        ],
+        [
+          8.192,
+          6.144
+        ]
+      ],
+      "cpu_area_reference": {
+        "unrounded_until_storage": {
+          "general": {
+            "different_bytes": 2616,
+            "max_abs_difference": 1
+          },
+          "automatic": {
+            "different_bytes": 2612,
+            "max_abs_difference": 1
+          }
+        },
+        "round_each_level": {
+          "general": {
+            "different_bytes": 3594,
+            "max_abs_difference": 1
+          },
+          "automatic": {
+            "different_bytes": 3610,
+            "max_abs_difference": 1
+          }
+        }
+      }
+    },
+    "result-4096-4096-hashed": {
+      "width": 4096,
+      "height": 4096,
+      "input": "hashed",
+      "fixed_full_wave32": false,
+      "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=4096x4096 fixed_full_wave32=0",
+      "mip_bytes_per_variant": 22369620,
+      "base_sha256": "9ed7775d73ad64f59d97961469160759fb8bc335199cb2f3b7edc5e628300827",
+      "readback_sha256": {
+        "general": "e295d164f99b57866f14fc8965eb4a57501fffb26c7092e095c271fa49ba6974",
+        "automatic": "19e4ad9c5853489d8f33c0500a1cdd27073dc806cf675eaf8c2ee402dbeab6e8"
+      },
+      "readback_difference": {
+        "different_bytes": 3539592,
+        "max_abs_difference": 2
+      },
+      "median_microseconds": {
+        "general": 164.864,
+        "automatic": 151.552
+      },
+      "paired_second_minus_first_median_microseconds": -18.432,
+      "timing_pairs_microseconds": [
+        [
+          164.736,
+          729.088
+        ],
+        [
+          159.744,
+          144.384
+        ],
+        [
+          753.664,
+          143.36
+        ],
+        [
+          753.664,
+          147.456
+        ],
+        [
+          163.84,
+          549.888
+        ],
+        [
+          162.816,
+          155.648
+        ],
+        [
+          164.864,
+          142.336
+        ],
+        [
+          744.448,
+          145.408
+        ],
+        [
+          158.72,
+          733.184
+        ],
+        [
+          162.816,
+          144.384
+        ],
+        [
+          743.424,
+          186.368
+        ],
+        [
+          1026.05,
+          149.504
+        ],
+        [
+          160.768,
+          732.16
+        ],
+        [
+          161.792,
+          143.36
+        ],
+        [
+          753.664,
+          144.384
+        ],
+        [
+          757.76,
+          145.408
+        ],
+        [
+          171.008,
+          800.768
+        ],
+        [
+          164.864,
+          152.576
+        ],
+        [
+          736.256,
+          144.384
+        ],
+        [
+          757.76,
+          144.384
+        ],
+        [
+          159.744,
+          722.944
+        ],
+        [
+          177.152,
+          190.464
+        ],
+        [
+          781.312,
+          145.408
+        ],
+        [
+          160.768,
+          979.968
+        ],
+        [
+          157.696,
+          738.304
+        ],
+        [
+          161.792,
+          145.408
+        ],
+        [
+          743.424,
+          158.72
+        ],
+        [
+          1057.79,
+          147.456
+        ],
+        [
+          160.768,
+          733.184
+        ],
+        [
+          160.768,
+          153.6
+        ],
+        [
+          730.112,
+          146.432
+        ],
+        [
+          738.304,
+          142.336
+        ],
+        [
+          158.72,
+          1228.8
+        ],
+        [
+          163.84,
+          151.552
+        ],
+        [
+          399.36,
+          159.744
+        ]
+      ]
+    }
+  }
+}

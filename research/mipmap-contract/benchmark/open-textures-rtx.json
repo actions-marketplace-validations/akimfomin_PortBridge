@@ -1,0 +1,590 @@
+{
+  "glTF_sample_assets_revision": "e124e8d8d7330a5372bc2b4d00d39a4a9d7997ea",
+  "textures": {
+    "fox-atlas": {
+      "asset": "Fox/glTF/Texture.png",
+      "asset_sha256": "61c8b109ee7f8bf262791933380fafb1465f7b51cbe6472c2d21eff0b31f83a1",
+      "input_alpha_counts": {
+        "transparent": 0,
+        "translucent": 0,
+        "opaque": 1048576
+      },
+      "baseline": {
+        "width": 1024,
+        "height": 1024,
+        "input": "fox-atlas",
+        "fixed_full_wave32": true,
+        "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=1024x1024 fixed_full_wave32=1",
+        "mip_bytes_per_variant": 1398100,
+        "base_sha256": "5c57af2a041383fb32b9d6d81397400078107d0249ff91e65bc0eb38849782a2",
+        "readback_sha256": {
+          "automatic": "03c25620f924286c11e13e47fde69437d6667512e785519d4709b13efdd3b253",
+          "rewritten": "03c25620f924286c11e13e47fde69437d6667512e785519d4709b13efdd3b253"
+        },
+        "readback_difference": {
+          "different_bytes": 0,
+          "max_abs_difference": 0
+        },
+        "median_microseconds": {
+          "automatic": 6.144,
+          "rewritten": 7.168
+        },
+        "paired_second_minus_first_median_microseconds": 1.024,
+        "timing_pairs_microseconds": [
+          [
+            8.608,
+            6.144
+          ],
+          [
+            7.168,
+            6.144
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            8.192
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            8.192
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            6.144
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ]
+        ]
+      },
+      "permuted_stock": {
+        "width": 1024,
+        "height": 1024,
+        "input": "fox-atlas",
+        "fixed_full_wave32": true,
+        "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=1024x1024 fixed_full_wave32=1",
+        "mip_bytes_per_variant": 1398100,
+        "base_sha256": "5c57af2a041383fb32b9d6d81397400078107d0249ff91e65bc0eb38849782a2",
+        "readback_sha256": {
+          "automatic": "7c99bd5fac848f79632db69da8acd3ed0279734603f90f171829bde9791cfe22",
+          "rewritten": "03c25620f924286c11e13e47fde69437d6667512e785519d4709b13efdd3b253"
+        },
+        "readback_difference": {
+          "different_bytes": 2414,
+          "max_abs_difference": 255
+        }
+      },
+      "permutation_effect": {
+        "different_bytes": 2414,
+        "max_abs_difference": 255
+      },
+      "permutation_changed_alpha": 597
+    },
+    "alpha-labels": {
+      "asset": "AlphaBlendModeTest/glTF/AlphaBlendLabels.png",
+      "asset_sha256": "19c705f7e207384ca1ab01e0665601c051ca33c5848c03ce4fffad625b416b53",
+      "input_alpha_counts": {
+        "transparent": 509663,
+        "translucent": 306037,
+        "opaque": 232876
+      },
+      "baseline": {
+        "width": 1024,
+        "height": 1024,
+        "input": "alpha-labels",
+        "fixed_full_wave32": true,
+        "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=1024x1024 fixed_full_wave32=1",
+        "mip_bytes_per_variant": 1398100,
+        "base_sha256": "f472d6ed8de13d4b9b6a147aadcb0e218b7077169397da773eece5ed6fb56758",
+        "readback_sha256": {
+          "automatic": "2c0cf704db393cceb3dab116b78d67a8a49009b9c64666232ca275c68ca96488",
+          "rewritten": "2c0cf704db393cceb3dab116b78d67a8a49009b9c64666232ca275c68ca96488"
+        },
+        "readback_difference": {
+          "different_bytes": 0,
+          "max_abs_difference": 0
+        },
+        "median_microseconds": {
+          "automatic": 6.144,
+          "rewritten": 7.168
+        },
+        "paired_second_minus_first_median_microseconds": 1.024,
+        "timing_pairs_microseconds": [
+          [
+            8.608,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            8.192
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            11.264,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            6.144
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            7.168,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ],
+          [
+            6.144,
+            7.168
+          ]
+        ]
+      },
+      "permuted_stock": {
+        "width": 1024,
+        "height": 1024,
+        "input": "alpha-labels",
+        "fixed_full_wave32": true,
+        "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=1024x1024 fixed_full_wave32=1",
+        "mip_bytes_per_variant": 1398100,
+        "base_sha256": "f472d6ed8de13d4b9b6a147aadcb0e218b7077169397da773eece5ed6fb56758",
+        "readback_sha256": {
+          "automatic": "35a1b8389a0b8c39f11a6711279081835fad606048d3eb61d1d61e0c2236dcac",
+          "rewritten": "2c0cf704db393cceb3dab116b78d67a8a49009b9c64666232ca275c68ca96488"
+        },
+        "readback_difference": {
+          "different_bytes": 1685,
+          "max_abs_difference": 255
+        }
+      },
+      "permutation_effect": {
+        "different_bytes": 1685,
+        "max_abs_difference": 255
+      },
+      "permutation_changed_alpha": 367
+    },
+    "stained-glass": {
+      "asset": "StainedGlassLamp/glTF/StainedGlassLamp_grill_basecolor-alpha.png",
+      "asset_sha256": "34ebdd2045586dae22edce1f5947414785a93cb3c7ac3e475435a6b8f4b2a0dc",
+      "input_alpha_counts": {
+        "transparent": 296268,
+        "translucent": 2209783,
+        "opaque": 1688253
+      },
+      "baseline": {
+        "width": 2048,
+        "height": 2048,
+        "input": "stained-glass",
+        "fixed_full_wave32": true,
+        "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=2048x2048 fixed_full_wave32=1",
+        "mip_bytes_per_variant": 5592404,
+        "base_sha256": "6732cfce6019662302c55ab09e84924f95d7a1223f858897b23bedd4d565748b",
+        "readback_sha256": {
+          "automatic": "4338c81f1ca17b565cbf4e7da42d5c38632be3666c59e6a3ae26e6b863247be1",
+          "rewritten": "4338c81f1ca17b565cbf4e7da42d5c38632be3666c59e6a3ae26e6b863247be1"
+        },
+        "readback_difference": {
+          "different_bytes": 0,
+          "max_abs_difference": 0
+        },
+        "median_microseconds": {
+          "automatic": 15.36,
+          "rewritten": 17.408
+        },
+        "paired_second_minus_first_median_microseconds": 2.048,
+        "timing_pairs_microseconds": [
+          [
+            425.472,
+            45.056
+          ],
+          [
+            15.36,
+            18.432
+          ],
+          [
+            16.384,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            18.432
+          ],
+          [
+            15.36,
+            16.384
+          ],
+          [
+            14.336,
+            17.408
+          ],
+          [
+            14.336,
+            17.408
+          ],
+          [
+            14.336,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            14.336,
+            16.384
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            765.952,
+            44.032
+          ],
+          [
+            16.384,
+            18.432
+          ],
+          [
+            17.408,
+            16.384
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            16.384,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            14.336,
+            16.384
+          ],
+          [
+            16.384,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            606.208,
+            17.408
+          ],
+          [
+            39.936,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            16.384
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            16.384
+          ],
+          [
+            15.36,
+            17.408
+          ],
+          [
+            15.36,
+            17.408
+          ]
+        ]
+      },
+      "permuted_stock": {
+        "width": 2048,
+        "height": 2048,
+        "input": "stained-glass",
+        "fixed_full_wave32": true,
+        "adapter_line": "NVIDIA GeForce RTX 4070 Ti SUPER subgroup_property=32 driver_raw=2588114944 timestamp_ns=1 size=2048x2048 fixed_full_wave32=1",
+        "mip_bytes_per_variant": 5592404,
+        "base_sha256": "6732cfce6019662302c55ab09e84924f95d7a1223f858897b23bedd4d565748b",
+        "readback_sha256": {
+          "automatic": "bfdf81a3c8a6f9ddcb1c2c97d82e9ee74a13465caea1b0174d0ce65cf9095643",
+          "rewritten": "4338c81f1ca17b565cbf4e7da42d5c38632be3666c59e6a3ae26e6b863247be1"
+        },
+        "readback_difference": {
+          "different_bytes": 10095,
+          "max_abs_difference": 255
+        }
+      },
+      "permutation_effect": {
+        "different_bytes": 10095,
+        "max_abs_difference": 255
+      },
+      "permutation_changed_alpha": 2695
+    }
+  }
+}

@@ -291,13 +291,14 @@ def _query(project, kind, page, *, since=None):
 
 
 class _Sync:
-    def __init__(self, db, refresh, projects=()):
+    def __init__(self, db, refresh, projects=(), *, anonymous=False, time_budget=45):
         self.db = db
         self.refresh = refresh
-        self.token = os.environ.get("PORTBRIDGE_GITHUB_TOKEN") or os.environ.get("GITHUB_TOKEN")
+        self.token = None if anonymous else (
+            os.environ.get("PORTBRIDGE_GITHUB_TOKEN") or os.environ.get("GITHUB_TOKEN"))
         self.context = "authenticated" if self.token else "anonymous"
         self.opener = build_opener(NoRedirect())
-        self.deadline = time.monotonic() + 45
+        self.deadline = time.monotonic() + time_budget
         self.public_checks = {}
         self.repositories = {project["repo"].lower(): project["repo"] for project in projects}
         self.db.executescript("""
@@ -400,12 +401,12 @@ class _Sync:
             time.sleep(0.25)
         raise Unavailable("GitHub request failed")
 
-    def _require_public(self, repo):
-        # Anonymous requests already cannot read private repositories. For a token
-        # that can see private repositories, check visibility before listing metadata.
-        if not self.token:
+    def _require_public(self, repo, *, verify_anonymous=False, recheck=False):
+        # Authenticated reads check visibility before listing metadata. Anonymous
+        # callers may also need an explicit repository check for retained evidence.
+        if not self.token and not verify_anonymous:
             return
-        if repo not in self.public_checks:
+        if recheck or repo not in self.public_checks:
             try:
                 data, _ = self._request(f"{API}/repos/{repo}", "core", None)
                 private = _object(data).get("private")
@@ -535,7 +536,8 @@ def collect(projects: list[dict], db_path: Path, *, refresh=False, pages=1) -> d
     db = sqlite3.connect(db_path, timeout=8)
     result = {"items": [], "warnings": [], "projects": []}
     try:
-        sync = _Sync(db, refresh, checked)
+        # A recent sweep requests four endpoint kinds per repository.
+        sync = _Sync(db, refresh, checked, time_budget=90)
         # With a shared time limit, fixed seed order can starve the same repositories on every sweep.
         for project in sorted(checked, key=lambda entry: _timestamp(entry.get("last_success"))):
             source_data = {}

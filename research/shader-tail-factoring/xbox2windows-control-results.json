@@ -1,0 +1,231 @@
+{
+  "recorded_utc": "2026-11-25T13:50:25+00:00",
+  "dxc_version": "dxcompiler.dll: 1.9(5512-01b62ad4)(1.9.2609.5) - 1.9.2609.5 (01b62ad47)",
+  "target": "cs_6_6",
+  "entry": "main",
+  "flags": [
+    "-T",
+    "cs_6_6",
+    "-E",
+    "main",
+    "-enable-16bit-types",
+    "-ftime-report"
+  ],
+  "repeat": 3,
+  "timeout_s": 20.0,
+  "ftime_report": true,
+  "variants": [
+    {
+      "variant": "control",
+      "family": "control",
+      "size": 0,
+      "hlsl_bytes": 685,
+      "dxil_bytes": 4004,
+      "reps": 3,
+      "wall_median_s": 0.02,
+      "wall_min_s": 0.019,
+      "wall_max_s": 0.021,
+      "peak_median_mib": 18.7,
+      "peak_max_mib": 18.7,
+      "outcome": "dxil",
+      "exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "first_diagnostic": "",
+      "pass_total_s": null,
+      "passes": [],
+      "runs": [
+        {
+          "wall_s": 0.021,
+          "peak_mib": 18.7,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 0.02,
+          "peak_mib": 18.7,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 0.019,
+          "peak_mib": 18.7,
+          "exit_code": 0,
+          "outcome": "dxil"
+        }
+      ]
+    },
+    {
+      "variant": "samples_256",
+      "family": "samples",
+      "size": 256,
+      "hlsl_bytes": 27109,
+      "dxil_bytes": 31476,
+      "reps": 3,
+      "wall_median_s": 0.061,
+      "wall_min_s": 0.06,
+      "wall_max_s": 0.064,
+      "peak_median_mib": 23.7,
+      "peak_max_mib": 23.7,
+      "outcome": "dxil",
+      "exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "first_diagnostic": "",
+      "pass_total_s": null,
+      "passes": [],
+      "runs": [
+        {
+          "wall_s": 0.06,
+          "peak_mib": 23.7,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 0.061,
+          "peak_mib": 23.6,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 0.064,
+          "peak_mib": 23.7,
+          "exit_code": 0,
+          "outcome": "dxil"
+        }
+      ]
+    },
+    {
+      "variant": "branches_256",
+      "family": "branches",
+      "size": 256,
+      "hlsl_bytes": 37476,
+      "dxil_bytes": 26680,
+      "reps": 3,
+      "wall_median_s": 0.067,
+      "wall_min_s": 0.064,
+      "wall_max_s": 0.067,
+      "peak_median_mib": 24.9,
+      "peak_max_mib": 24.9,
+      "outcome": "dxil",
+      "exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "first_diagnostic": "",
+      "pass_total_s": null,
+      "passes": [],
+      "runs": [
+        {
+          "wall_s": 0.067,
+          "peak_mib": 24.8,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 0.067,
+          "peak_mib": 24.9,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 0.064,
+          "peak_mib": 24.9,
+          "exit_code": 0,
+          "outcome": "dxil"
+        }
+      ]
+    },
+    {
+      "variant": "samplebranch_512",
+      "family": "samplebranch",
+      "size": 512,
+      "hlsl_bytes": 120705,
+      "dxil_bytes": 100992,
+      "reps": 3,
+      "wall_median_s": 0.211,
+      "wall_min_s": 0.208,
+      "wall_max_s": 0.213,
+      "peak_median_mib": 40.0,
+      "peak_max_mib": 40.1,
+      "outcome": "dxil",
+      "exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "first_diagnostic": "",
+      "pass_total_s": null,
+      "passes": [],
+      "runs": [
+        {
+          "wall_s": 0.208,
+          "peak_mib": 39.9,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 0.211,
+          "peak_mib": 40.1,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 0.213,
+          "peak_mib": 40.0,
+          "exit_code": 0,
+          "outcome": "dxil"
+        }
+      ]
+    },
+    {
+      "variant": "samplebranch_2048",
+      "family": "samplebranch",
+      "size": 2048,
+      "hlsl_bytes": 483521,
+      "dxil_bytes": 397824,
+      "reps": 3,
+      "wall_median_s": 1.294,
+      "wall_min_s": 1.234,
+      "wall_max_s": 1.386,
+      "peak_median_mib": 101.6,
+      "peak_max_mib": 101.8,
+      "outcome": "dxil",
+      "exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "first_diagnostic": "",
+      "pass_total_s": null,
+      "passes": [],
+      "runs": [
+        {
+          "wall_s": 1.234,
+          "peak_mib": 101.8,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 1.294,
+          "peak_mib": 101.6,
+          "exit_code": 0,
+          "outcome": "dxil"
+        },
+        {
+          "wall_s": 1.386,
+          "peak_mib": 101.4,
+          "exit_code": 0,
+          "outcome": "dxil"
+        }
+      ]
+    }
+  ],
+  "source": "https://github.com/R0Y00/Xbox2Windows/blob/721dc1d97f02207ab4a6d74f8d3394f942b303c4/tools/dxc_compile_time.py",
+  "source_sha256": "09327aa31cd1c5eef51e48384e81c2f594978e1811e27f8ac0176a1442c9382e"
+}

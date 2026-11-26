@@ -10,8 +10,9 @@ from urllib.parse import urlencode
 from urllib.request import Request, build_opener
 
 from .activity import source_time
-from .github import API, NoRedirect
+from .github import API, NoRedirect, Unavailable
 from .lab import EQUIPMENT, PORTBRIDGE, build_lab
+from .lab_reports import has_passing_coverage, monitored, report_source, scan_reports
 from .matching import canonical_url, current_repository
 
 
@@ -40,7 +41,8 @@ GPU_MODEL = re.compile(
     re.I,
 )
 TASK_ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
-MARKER = re.compile(rf"<!-- portbridge:test-invite:v1:([1-9][0-9]*):({GITHUB_LOGIN}) -->")
+MARKER = re.compile(rf"<!-- portbridge:test-invite:v[12]:([1-9][0-9]*):({GITHUB_LOGIN})"
+                    rf"(?::([a-z0-9-]{{1,80}}:[0-9a-f]{{40}}:(?:amd|cpu|intel|nvidia)))? -->")
 FIELDS = re.compile(
     r"### Lab task\n+(?P<task>[^\n]*)\n+"
     r"### Equipment\n+(?P<equipment>[^\n]+)\n+"
@@ -58,6 +60,7 @@ CAPABILITIES = {
 TASK_CAPABILITIES = {
     "anyxboxx-147-native-wave64-gather": "amd-rdna2-native-isa-hip",
     "anyxboxx-133-native-carry": "amd-rdna2-native-isa-hip",
+    "anyxboxx-133-native-fma": "amd-rdna2-native-isa-hip",
     "pb-5-xcl-wave64": "d3d12-native-wave64",
     "pb-9-reforge-present": "win32-vulkan-1.3",
     "scarlett-commons-continued-add-basic": "python-cpu",
@@ -96,8 +99,12 @@ def parse_request(body):
 
 def normalized_model(equipment, model):
     model = " ".join(model.casefold().split())
-    prefixes = {"amd": r"^(?:amd )?(?:radeon )?", "nvidia": r"^(?:nvidia )?(?:geforce )?"}
-    match = GPU_MODEL.fullmatch(re.sub(prefixes.get(equipment, r"^$"), "", model))
+    prefixes = {"amd": r"^(?:amd )?(?:radeon )?", "nvidia": r"^(?:nvidia )?(?:geforce )?",
+                "intel": r"^(?:intel )?"}
+    model = re.sub(prefixes.get(equipment, r"^$"), "", model)
+    if equipment == "intel":
+        return model if re.fullmatch(r"arc [ab][0-9]{3}m?", model) else ""
+    match = GPU_MODEL.fullmatch(model)
     if match and ((equipment == "amd" and match[1] == "rx")
                   or (equipment == "nvidia" and match[1] in {"rtx", "gtx"})):
         return " ".join(part for part in match.groups() if part)
@@ -116,14 +123,30 @@ def validate_scope(fields, github):
         if (task is None or not task["revisions"]
                 or canonical_url(task["revisions"][0]["url"]) != canonical_url(fields["revision"])):
             raise ValueError("Lab task, equipment or revision does not match the open test")
-        return TASK_CAPABILITIES.get(task["id"]), task["result_url"]
+        return TASK_CAPABILITIES.get(task["id"]), task["result_url"], task
     owner, repo, sha = commit_parts(fields["revision"])
     path = f"/repos/{current_repository(f'{owner}/{repo}')}"
     if github.get(path, public=True).get("private") is not False:
         raise ValueError("custom check needs a public repository")
     if github.get(f"{path}/commits/{sha}", public=True).get("sha", "").casefold() != sha.casefold():
         raise ValueError("custom check needs a pinned public commit")
-    return None, None
+    return None, None, None
+
+
+def report_invitation_hold(task, github, equipment):
+    if not task or not monitored(task):
+        return ""
+    _, issue = report_source(task)
+    try:
+        thread = github.get(issue.removeprefix(API), public=True)
+        if not isinstance(thread, dict) or thread.get("state") != "open":
+            return "The linked Test Lab report thread is closed or unavailable."
+        reports = scan_reports(task, lambda url: github.request(url.removeprefix(API), public=True))
+    except (OSError, Unavailable, ValueError):
+        return "The linked Test Lab results could not be verified. No tester was invited."
+    if has_passing_coverage(task, reports, equipment=equipment):
+        return "The requested Test Lab coverage is already reported and ready for review."
+    return ""
 
 
 def load_testers(path=TESTERS_FILE):
@@ -194,7 +217,8 @@ def dispatch(event, testers, github, *, event_name="issues", now=None, discover=
     if permissions.get("permission") not in {"write", "admin"}:
         raise ValueError("the approving account needs repository write access")
     fields = parse_request(issue.get("body"))
-    capability, original = validate_scope(fields, github)
+    capability, original, task = validate_scope(fields, github)
+    cell_scope = (f"{task['id']}:{task['revisions'][0]['sha']}:{fields['equipment']}" if task else None)
     now = now or datetime.now(timezone.utc)
     since = now - COOLDOWN
     excluded = {actor.casefold(), issue["user"]["login"].casefold()}
@@ -203,6 +227,8 @@ def dispatch(event, testers, github, *, event_name="issues", now=None, discover=
         marker = trusted_marker(comment)
         created = source_time(comment.get("created_at"))
         if marker and created and created >= since:
+            if cell_scope and marker[3] == cell_scope:
+                return "This Test Lab revision and hardware cell already has a recent invitation."
             excluded.add(marker[2].casefold())
     requested_capabilities = (capability,) if capability else ()
     discovered = validate_testers(discover(fields["equipment"], requested_capabilities)) if discover else []
@@ -214,7 +240,8 @@ def dispatch(event, testers, github, *, event_name="issues", now=None, discover=
     if not candidates:
         return "No matching tester outside the recent invitation window."
     selected = max(candidates, key=lambda row: (source_time(row["reported_at"]), row["login"].casefold()))
-    receiving = PULL.fullmatch(original or "")
+    receiving_url = (task or {}).get("receiving_url", original)
+    receiving = PULL.fullmatch(receiving_url or "")
     if receiving:
         owner, repo, pull = receiving.groups()
         receiving_repo = current_repository(f"{owner}/{repo}")
@@ -223,23 +250,26 @@ def dispatch(event, testers, github, *, event_name="issues", now=None, discover=
         head = (source.get("head") or {}).get("sha") or ""
         if source.get("state") != "open" or head.casefold() != revision.casefold():
             return "The receiving pull request changed or closed. Review the current revision before inviting a tester."
+    if hold := report_invitation_hold(task, github, fields["equipment"]):
+        return hold
     current = github.get(path)
     if not approved_issue(current):
         return "The request is no longer open and approved."
     if parse_request(current.get("body")) != fields:
         return "The request changed after approval. Review and apply the label again."
-    github.comment(f"{path}/comments", invitation(number, selected, capability, original))
+    github.comment(f"{path}/comments", invitation(number, selected, capability, original, cell_scope=cell_scope))
     return "Posted one PortBridge Test Lab invitation."
 
 
-def invitation(number, tester, capability, original=None):
+def invitation(number, tester, capability, original=None, *, cell_scope=None):
     login = tester["login"]
     hardware = tester["hardware"]
     evidence = tester["evidence_url"]
     relevant = f" and the recorded support for {CAPABILITIES[capability]}" if capability else ""
     original_link = f" · [Original test discussion]({original})" if original else ""
+    marker = (f"v2:{number}:{login}:{cell_scope}" if cell_scope else f"v1:{number}:{login}")
     return (
-        f"<!-- portbridge:test-invite:v1:{number}:{login} -->\n"
+        f"<!-- portbridge:test-invite:{marker} -->\n"
         f"@{login}, PortBridge matched this test request to your [public {hardware} report]({evidence})"
         f"{relevant}. If you have time, you can take the check or decline here in this issue.\n\n"
         f"[Open the request]({PORTBRIDGE}/issues/{number}){original_link} · "

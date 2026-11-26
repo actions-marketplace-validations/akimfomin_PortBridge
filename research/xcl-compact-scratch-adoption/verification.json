@@ -1,0 +1,78 @@
+{
+  "baseline_xcl_revision": "afc5ee86ae3a9521c9f15d96505cd73fe72f2191",
+  "local_candidate_xcl_revision": "0d002f1941d1bed0102c19f60ede150f1cfac668",
+  "public_candidate_xcl_revision": "b3f7ab5574c4489761141e2de0ce31d2eb216412",
+  "candidate_git_tree": "0e3b7fd2c023d3935f7d4e0b5725751409062e62",
+  "patch_sha256": "18e20d785ad6788f0fb30e823de0e14c3b49b3fae40f3d4a42b043f2a108d99f",
+  "patch_applies_to_clean_baseline": true,
+  "later_apply_check_revision": "06c9f5505f63f10c5ec49ef932d75b2c28177324",
+  "patch_applies_to_later_revision": true,
+  "optional_aggregate_probe_applies_to_both_builds": true,
+  "build": {
+    "os": "Windows 11 Pro build 28000",
+    "cpu": "Intel Core i5-13600KF",
+    "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+    "nvidia_driver": "617.14",
+    "rustc": "1.100.0 (0ef1bc386), x86_64-pc-windows-gnullvm",
+    "dxc_dxil": "1.9.2609.5",
+    "profile": "debug"
+  },
+  "candidate_split_suite": {
+    "command": "cargo test --offline --locked -j 2 -p xcl --lib gpu::dxil::module::split::tests -- --test-threads=1 --nocapture",
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "runtime_skips": 0,
+    "wave32_open_fixture_scratch_dwords_per_group": 256,
+    "wave32_open_fixture_words_matched_with_whole_shader_and_cpu": 96,
+    "background_gpu_utilization_percent_before_after": [46, 45]
+  },
+  "fixed_layout_negative_control": {
+    "command": "cargo test --offline --locked -j 2 -p xcl --lib gpu::dxil::module::split::tests::dispatch_chain_wave32_reuses_scratch_before_gpu_run -- --exact --test-threads=1 --nocapture",
+    "original_runtime_allocator_unchanged": true,
+    "gpu_dispatched": false,
+    "expected_assertion_failure_observed": true,
+    "scratch_dwords_per_group": 288,
+    "candidate_assertion_dwords_per_group": 256
+  },
+  "aggregate_comparator": {
+    "protocol_checks_passed": 7,
+    "inputs": "injected protocol controls only",
+    "gpu_timing_measured": false
+  },
+  "workspace_open_suite": {
+    "pr_url": "https://github.com/xcl-dev/xcl/pull/2322",
+    "build": "cargo build --offline --locked --workspace -j 2",
+    "test": "cargo test --offline --locked --workspace -j 2 --no-fail-fast -- --test-threads=4",
+    "passed": 1265,
+    "failed": 0,
+    "ignored": 46,
+    "runtime_skip_lines_in_cargo_counts": {
+      "no_wave64": 21, "instruction_refused": 3, "no_debug_layer": 2, "no_heap_windows": 1
+    },
+    "background_gpu_utilization_percent_before_after": [52, 55],
+    "retail_inputs_used": false
+  },
+  "independent_exact_candidate": {
+    "report_url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165250326",
+    "reporter": "nnonno91",
+    "adapters": ["AMD Radeon Graphics", "NVIDIA GeForce RTX 5090"],
+    "passes_per_adapter": 10,
+    "skips_per_adapter": 0,
+    "wave32_open_fixture_scratch_dwords_per_group": 256
+  },
+  "independent_rx6800m_candidate": {
+    "report_url": "https://github.com/xcl-dev/xcl/pull/2322#issuecomment-7165844270",
+    "reporter": "luckyteagirl",
+    "adapter": "AMD Radeon RX 6800M",
+    "passed": 10,
+    "runtime_skips": 0,
+    "wave32_open_fixture_scratch_dwords_per_group": 256,
+    "split_guest_wave64_uses_hardware_wave32_halves": true
+  },
+  "pending": [
+    "Per-workload scratch and matched full-chain GPU timings for three named workloads",
+    "Baseline and candidate upstream smoke blocks from the receiving team's authorized environment",
+    "Maintainer review and acceptance of the draft"
+  ]
+}

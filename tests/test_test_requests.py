@@ -4,7 +4,8 @@ from io import BytesIO
 from unittest import TestCase
 from unittest.mock import Mock, patch
 
-from portbridge.lab import build_lab
+from portbridge.lab import TASKS, build_lab
+from portbridge.lab_reports import FRAMELAB_TASK
 from portbridge.test_requests import APPROVAL, BOT, REPO_PATH, GitHub, dispatch, load_testers, parse_request
 
 
@@ -27,6 +28,12 @@ def tester(login, *capabilities, equipment="amd", rate="2026-11-24T10:00:00Z"):
 
 class TestRequestTests(TestCase):
     def setUp(self):
+        # Exercise the original monitored request while the real legacy card awaits a new pin.
+        active = tuple({**task, "status": "needs_run", "receiving_url": None} if task["id"] == TASK else task
+                       for task in TASKS)
+        patcher = patch("portbridge.lab.TASKS", active)
+        self.addCleanup(patcher.stop)
+        patcher.start()
         self.issue = {"number": 42, "body": issue_body(), "state": "open", "labels": [{"name": APPROVAL}],
                       "user": {"login": "requester"}}
         self.event = {"repository": {"full_name": "akimfomin/PortBridge"}, "issue": self.issue,
@@ -34,6 +41,7 @@ class TestRequestTests(TestCase):
         self.github = Mock()
         self.github.get.side_effect = self.github_get
         self.github.comments.side_effect = self.github_comments
+        self.github.request.return_value = ([], False)
         self.current = deepcopy(self.issue)
         self.request_comments = []
         self.recent_comments = []
@@ -44,6 +52,9 @@ class TestRequestTests(TestCase):
             return self.current
         if path.endswith("/permission"):
             return {"permission": self.permission}
+        if public and path in {"/repos/akimfomin/PortBridge/issues/5", "/repos/xcl-dev/xcl/issues/1100",
+                                "/repos/LooperSalty/AnyXboxX/issues/133"}:
+            return {"state": "open"}
         if public and path == "/repos/example/public":
             return {"private": False}
         if public and path == "/repos/example/public/commits/" + "a" * 40:
@@ -120,6 +131,20 @@ class TestRequestTests(TestCase):
         self.assertIn("already", self.run_dispatch(roster))
         self.github.comment.assert_called_once()
 
+    def test_duplicate_scope_from_another_request_avoids_a_second_invitation(self):
+        sha = REVISION.rsplit("/", 1)[1]
+        self.recent_comments = [{
+            "user": {"login": BOT},
+            "body": f"<!-- portbridge:test-invite:v2:12:Another:{TASK}:{sha}:amd -->" + chr(10),
+            "created_at": "2026-11-23T10:00:00Z",
+        }]
+        with self.subTest("same cell"):
+            self.assertIn("hardware cell already", self.run_dispatch([tester("Different", "d3d12-native-wave64")]))
+            self.github.comment.assert_not_called()
+        self.recent_comments[0]["body"] = self.recent_comments[0]["body"].replace(":amd -->", ":intel -->")
+        with self.subTest("different cell"):
+            self.assertIn("Posted one", self.run_dispatch([tester("Different", "d3d12-native-wave64")]))
+
     def test_rejects_known_task_with_wrong_pin_and_checks_custom_public_revision(self):
         custom = "https://github.com/example/public/commit/" + "a" * 40
         self.issue["body"] = issue_body(revision=custom)
@@ -130,6 +155,28 @@ class TestRequestTests(TestCase):
         self.assertIn("Posted one", self.run_dispatch([tester("Volunteer")]))
         self.github.get.assert_any_call("/repos/example/public", public=True)
         self.github.get.assert_any_call("/repos/example/public/commits/" + "a" * 40, public=True)
+
+    @patch("portbridge.test_requests.scan_reports")
+    def test_monitored_task_checks_coverage_before_rechecking_approval(self, scan):
+        task = build_lab(task=FRAMELAB_TASK)["tasks"][0]
+        request = issue_body(task=task["id"], revision=task["revisions"][0]["url"])
+        self.issue["body"] = self.current["body"] = request
+        base_get = self.github_get
+        self.github.get.side_effect = lambda path, public=False: (
+            {"state": "open"} if public and path.endswith("/issues/15") else base_get(path, public=public))
+        scan.return_value = [{"hardware": "AMD Radeon 860M", "outcome": "pass",
+                              "equipment": "amd", "authority": "approved"}]
+        candidate = tester("Volunteer")
+        self.assertIn("already reported", self.run_dispatch([candidate]))
+        self.github.comment.assert_not_called()
+
+        def revoked(*args):
+            self.current["labels"] = []
+            return []
+
+        scan.side_effect = revoked
+        self.assertIn("no longer", self.run_dispatch([candidate]))
+        self.github.comment.assert_not_called()
 
     def test_control_revision_is_not_an_actionable_lab_pin(self):
         task = next(row for row in build_lab()["tasks"] if row["id"] == "scarlett-commons-continued-add-basic")

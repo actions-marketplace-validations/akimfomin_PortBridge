@@ -3,9 +3,14 @@
 from copy import deepcopy
 import re
 
+from .github import WORK_URL
+from .matching import canonical_url
+from .lab_report_formats import FRAMELAB_DISCUSSION, FRAMELAB_REVISION, FRAMELAB_TESTER_ID, REPORT_POLICIES
+from .lab_reports import coverage_cells, has_passing_coverage, read_report_states
+
 
 CHECKED_AT = "2026-11-24T21:00:10Z"
-EQUIPMENT = ("amd", "cpu", "nvidia")
+EQUIPMENT = ("amd", "cpu", "intel", "nvidia")
 STATUSES = ("needs_run", "needs_revision", "awaiting_review", "blocked")
 TASK_ID_PATTERN = r"^[a-z0-9-]{1,80}$"
 PORTBRIDGE = "https://github.com/akimfomin/PortBridge"
@@ -28,6 +33,10 @@ CARRY_PROBE = f"{PORTBRIDGE}/blob/main/contrib/rdna2-carry-mask/README.md"
 CARRY_PROBE_REVISION = "9923c3bba74f4a7f3249e0c820f2e6821327c1f4"
 CARRY_REPORT = f"{PORTBRIDGE}/issues/19#issuecomment-7136020663"
 CARRY_REPLY = f"{CARRY}#issuecomment-7136721736"
+NATIVE_FMA_HEAD = "c4e76abac687e55c00cb005ad3de9132a7cbacf3"
+NATIVE_FMA_REQUEST = f"{PORTBRIDGE}/issues/58"
+NATIVE_FMA_PROBE = f"{NATIVE_FMA_REQUEST}#issuecomment-7157139688"
+NATIVE_FMA_EVIDENCE = f"{CARRY}#issuecomment-7156830326"
 DRAW_SEQUENCE = f"{CONTINUED}/pull/511"
 DRAW_HEAD = "88658f1b3fcdca2231358c18d09253a213dc8533"
 DRAW_GUIDE = f"{PORTBRIDGE}/tree/main/contrib/continued-repeated-draw"
@@ -37,7 +46,14 @@ WAVE64_CASE = "https://github.com/LooperSalty/AnyXboxX/pull/147"
 WAVE64_GUIDE = f"{PORTBRIDGE}/tree/main/contrib/rdna2-wave64-bpermute"
 FRAMELAB = "https://github.com/5headsmartbtw/leonida-framelab"
 FRAMELAB_HANDOFF = f"{FRAMELAB}/pull/12"
-FRAMELAB_HANDOFF_HEAD = "82f069e82197e61b97f60bbcbcb7a3af7d3f8e77"
+FRAMELAB_RESULTS = FRAMELAB_DISCUSSION
+XCL_SCRATCH = f"{XCL}/pull/2126"
+XCL_SCRATCH_SHA = "3283da481077c1962f13f1b4078841662f7a4ccb"
+SUBGROUP_REWRITE_SHA = "d74c531b8ce51bc2d57e8f3a49466c46e9096097"
+SUBGROUP_FIXTURES_SHA = "1bedab24c39d0b3ae325f6f0f6c43e47bbb6430e"
+SUBGROUP_REQUEST = f"{PORTBRIDGE}/issues/63"
+SUBGROUP_REPORT = f"{PORTBRIDGE}/blob/{SUBGROUP_REWRITE_SHA}/research/subgroup-validator"
+FRAMELAB_HANDOFF_HEAD = FRAMELAB_REVISION
 
 
 def revision(label, label_ru, repository, sha):
@@ -96,12 +112,13 @@ TASKS = (
         "equipment": ["amd"],
         "os": ["Windows"],
         "requirements": ["AMD D3D12 adapter with native Wave64", "Rust", "DXC"],
-        "status": "needs_run", "evidence_stage": "author_gpu", "adoption": "pending",
+        "status": "needs_revision", "evidence_stage": "author_gpu", "adoption": "pending",
         "source_url": f"{PORTBRIDGE}/issues/5", "procedure_url": f"{PORTBRIDGE}/issues/5",
         "evidence_url": BYTE_CARRY, "result_url": f"{PORTBRIDGE}/issues/5",
+        "receiving_url": f"{XCL}/pull/925",
         "revisions": [revision("Test PR", "PR с тестом", "akimfomin/xcl", "3858abc46e4c9c3b9db5e4ae648d6636c37bfb51")],
         "why": "A native Wave64 run checks byte carry within each 32-lane half on AMD hardware.",
-        "evidence": "Both cases passed on NVIDIA at the listed revision. The original receiving PR closed. Record an AMD result in PortBridge #5 and agree on a current XCL baseline before proposing a new PR.",
+        "evidence": "Both cases passed on NVIDIA at the listed revision. The receiving PR #925 closed unmerged. A separate draft still exists. Reconfirm a receiving branch and an exact current pin before asking for hardware.",
         "steps": [
             "Check out the pinned test PR. Select the AMD adapter and set XCL_REQUIRE_GPU=wave64.",
             "Run gpu_wave32_program_in_wave64_hardware to confirm native Wave64 is available.",
@@ -113,7 +130,7 @@ TASKS = (
             "title": "Проверить перенос байта в XCL на аппаратном Wave64",
             "requirements": ["Видеокарта AMD с D3D12 и аппаратным Wave64", "Rust", "DXC"],
             "why": "Проверка на AMD покажет, работает ли перенос байта внутри каждой половины аппаратной волны.",
-            "evidence": "На указанной версии оба теста прошли на NVIDIA. Исходный PR закрыли. Результат AMD можно оставить в PortBridge #5, а перед новым PR нужно согласовать актуальную версию XCL.",
+            "evidence": "На указанной версии оба теста прошли на NVIDIA. Принимающий PR #925 закрыли без слияния. Отдельный черновик сохранился. Перед приглашением нужно согласовать принимающую ветку и точную текущую версию.",
             "steps": [
                 "Перейдите на указанную версию PR, выберите AMD и задайте XCL_REQUIRE_GPU=wave64.",
                 "Убедитесь, что доступен аппаратный Wave64, тестом gpu_wave32_program_in_wave64_hardware.",
@@ -402,17 +419,18 @@ TASKS = (
         "status": "needs_run", "evidence_stage": "reviewed_gpu", "adoption": "pending",
         "source_url": FRAMELAB_HANDOFF,
         "procedure_url": f"{FRAMELAB}/blob/{FRAMELAB_HANDOFF_HEAD}/tests/vulkan-handoff/README.md",
-        "evidence_url": f"{FRAMELAB_HANDOFF}#issuecomment-7142089405", "result_url": FRAMELAB_HANDOFF,
+        "evidence_url": f"{FRAMELAB_HANDOFF}#issuecomment-7142089405", "result_url": FRAMELAB_RESULTS, "receiving_url": FRAMELAB_RESULTS,
+        "approved_testers": [FRAMELAB_TESTER_ID],
         "revisions": [revision("FrameLab #12 standalone Vulkan test", "Отдельный тест Vulkan FrameLab #12",
                                "5headsmartbtw/leonida-framelab", FRAMELAB_HANDOFF_HEAD)],
         "why": "An independent AMD run checks the same synthetic image and synchronization across another GPU vendor.",
         "evidence": ("The author's RTX 2050 and PortBridge's RTX 4070 Ti SUPER passed all four standalone cases. "
                      "The AMD check covers this fixture only."),
         "steps": [
-            "Check FrameLab #12 for existing AMD evidence and use the pinned revision in a separate checkout.",
+            "Check FrameLab #15 for existing AMD evidence and use the pinned revision in a separate checkout.",
             "Build and run the unchanged tests/vulkan-handoff fixture with the pinned README and verbose CTest output.",
             "Confirm that the Adapter line associated with the results identifies a physical AMD GPU.",
-            "Report the four case outcomes in #12. Record unsupported queue configurations or timeline semaphores as skips.",
+            "Report the four case outcomes in #15. Record unsupported queue configurations or timeline semaphores as skips.",
         ],
         "expected": ("Binary and timeline waits pass for each supported same-family and cross-family queue setup, "
                      "with 64 matching pixels, a completed consumer fence and no validation diagnostics. "
@@ -427,10 +445,10 @@ TASKS = (
             "evidence": ("У автора на RTX 2050 и у PortBridge на RTX 4070 Ti SUPER прошли все четыре сценария. "
                          "Задача AMD охватывает этот отдельный тест."),
             "steps": [
-                "Проверьте, есть ли уже результат AMD в FrameLab #12, и откройте указанную версию в отдельной копии.",
+                "Проверьте, есть ли уже результат AMD в FrameLab #15, и откройте указанную версию в отдельной копии.",
                 "Соберите и запустите tests/vulkan-handoff без изменений по инструкции с подробным выводом CTest.",
                 "Убедитесь, что строка Adapter, к которой относятся результаты, указывает на физическую видеокарту AMD.",
-                "Оставьте результаты четырёх сценариев в #12. Недоступные сочетания очередей и виды семафоров отметьте как пропуски.",
+                "Оставьте результаты четырёх сценариев в #15. Недоступные сочетания очередей и виды семафоров отметьте как пропуски.",
             ],
             "expected": ("Оба вида семафоров проходят для каждого поддерживаемого сочетания очередей внутри одного семейства и между разными. "
                          "Все 64 пикселя совпадают, очередь-получатель завершает работу, проверка синхронизации не выдаёт сообщений. "
@@ -439,7 +457,163 @@ TASKS = (
                        "Номера семейств очередей, итоги четырёх сценариев или причины пропуска, пиксели и диагностика"],
         }},
     },
+    {
+        "id": "xcl-2126-scratch-coverage", "priority": 11,
+        "title": "Repeat the XCL scratch checks on Radeon and Intel Arc",
+        "projects": ["xcl"],
+        "equipment": ["amd", "intel"], "os": ["Windows"], "coverage_policy": "all",
+        "requirements": ["Physical Radeon or Intel Arc adapter with native Wave32", "D3D12, Rust and DXC"],
+        "status": "needs_run", "evidence_stage": "author_gpu", "adoption": "pending",
+        "source_url": XCL_SCRATCH, "receiving_url": XCL_SCRATCH,
+        "reviewed_reports": {
+            f"{XCL_SCRATCH}#issuecomment-7154962703": {
+                "actor_id": 341226708,
+                "body_sha256": "a3eccfe7190503c996ecacf6d58a0023ff350ce454f08608199f453d1bbbae71",
+                "revisions": [XCL_SCRATCH_SHA], "equipment": "amd", "hardware": "AMD Radeon RX 9070 XT",
+                "os": "Windows 11", "os_family": "Windows", "driver": "32.0.32029.2010",
+                "cases": {"skip-middle-piece": "pass", "overlapping-edges": "pass"},
+            },
+            f"{XCL_SCRATCH}#issuecomment-7155613896": {
+                "actor_id": 360899813,
+                "body_sha256": "ac448243beb87373aa2f38f4117948bd2a90ac7f8e13f2e2797c27309af3b91a",
+                "revisions": [XCL_SCRATCH_SHA], "equipment": "intel", "hardware": "Intel Arc A770",
+                "os": "Windows 11 25H2 x64 build 26200.9974", "os_family": "Windows", "driver": "32.0.101.9175",
+                "cases": {"skip-middle-piece": "pass", "overlapping-edges": "skip"},
+            },
+        },
+        "procedure_url": f"{XCL}/blob/{XCL_SCRATCH_SHA}/README.md#tests",
+        "evidence_url": XCL_SCRATCH, "result_url": f"{PORTBRIDGE}/issues/54",
+        "revisions": [revision("XCL scratch test revision", "Версия тестов памяти XCL", "xcl-dev/xcl",
+                               XCL_SCRATCH_SHA)],
+        "why": "The author reported the two checks on NVIDIA. Radeon and Intel Arc are separate coverage cells.",
+        "evidence": "Radeon passed both tests. Intel Arc A770 passed skip-middle-piece. The overlapping-edges stress test still needs an Intel run.",
+        "steps": [
+            "Check PortBridge #54 before taking a run. Use the exact revision in a clean checkout.",
+            "Run the two dispatch_chain_payload_ tests following the linked setup and confirm the selected adapter.",
+            "Report the outcomes in #54, including explicit skips. State if the device cannot run native Wave32.",
+        ],
+        "expected": "Both tests match the synthetic reference on the selected physical adapter with no skips.",
+        "report": ["Pinned revision, physical GPU, Windows build, driver and DXC",
+                   "The skip-middle-piece and overlapping-edges outcomes with the observed output"],
+        "translations": {"ru": {
+            "title": "Повторить проверки памяти XCL на Radeon и Intel Arc",
+            "requirements": ["Физический Radeon или Intel Arc с аппаратным Wave32", "D3D12, Rust и DXC"],
+            "why": "Автор сообщил о двух проверках на NVIDIA. Для сравнения собираются независимые результаты на Radeon и Intel Arc.",
+            "evidence": "На Radeon прошли оба теста, на Intel Arc A770 прошёл skip-middle-piece. На Intel ещё нужен стресс-тест overlapping-edges.",
+            "steps": [
+                "Сверьте статус в PortBridge #54 и откройте указанную версию в отдельной чистой копии.",
+                "По инструкции запустите два теста dispatch_chain_payload_ и убедитесь, какая видеокарта выбрана.",
+                "Оставьте результаты в #54. Укажите пропуски и возможность запуска аппаратного Wave32.",
+            ],
+            "expected": "Оба теста совпадают с эталоном на выбранной физической видеокарте и проходят без пропусков.",
+            "report": ["Точная версия, модель видеокарты, сборка Windows, драйвер и DXC",
+                       "Фактические результаты skip-middle-piece и overlapping-edges"],
+        }},
+    },
+    {
+        "id": "anyxboxx-133-native-fma", "priority": 12,
+        "title": "Verify AnyXboxX FMA rounding on native AMD RDNA2",
+        "projects": ["anyxboxx"], "equipment": ["amd"], "os": ["Windows", "Linux"],
+        "requirements": ["Physical AMD RDNA2 with Wave32", "HIP or an equivalent native AMDGPU code-object harness"],
+        "status": "needs_run", "evidence_stage": "author_cpu", "adoption": "pending",
+        "source_url": CARRY, "procedure_url": NATIVE_FMA_PROBE,
+        "evidence_url": NATIVE_FMA_EVIDENCE, "result_url": NATIVE_FMA_REQUEST,
+        "revisions": [revision("AnyXboxX #133 FMA base", "Версия AnyXboxX #133 для FMA",
+                               "LooperSalty/AnyXboxX", NATIVE_FMA_HEAD)],
+        "why": "Separate native hardware evidence is needed for the rounding cases in the CPU correction.",
+        "evidence": "The CPU patch matched 3,072 directed tests and 114,976 UCRT comparisons. All eight instructions assemble for gfx1036 Wave32.",
+        "steps": [
+            "Use the four inputs in the linked test request and the pinned revision as the reference.",
+            "Run the regular and legacy FMA instructions on the physical GPU in Wave32 with round-to-nearest-even.",
+            "Read back v4 through v11 and report each case in PortBridge #58. Include mismatches and unsupported cases.",
+        ],
+        "expected": "The two forms agree per case. Expected words in order: 3fc00001, 3fc00005, bfc00001, and 3fc00002.",
+        "report": ["Pinned revision, physical device, PCI ID, driver, OS, and assembler or runtime version",
+                   "Initial EXEC, all eight observed words, and separate outcomes for positive-down, positive-up, negative, and exact-tie"],
+        "translations": {"ru": {
+            "title": "Проверить округление FMA AnyXboxX на AMD RDNA2",
+            "requirements": ["Физическая AMD RDNA2 с Wave32", "HIP или другой стенд с запуском нативного кода AMDGPU"],
+            "why": "Исправление проверено на процессоре. Округление нужно отдельно проверить на реальной видеокарте.",
+            "evidence": "Правка прошла 3 072 целевых теста и 114 976 сравнений с UCRT. Восемь инструкций собираются для gfx1036 Wave32.",
+            "steps": [
+                "Возьмите четыре входа из запроса и используйте указанную версию для сверки.",
+                "Запустите обе формы FMA на физической видеокарте в Wave32 с округлением к ближайшему чётному.",
+                "Считайте регистры от v4 до v11 и укажите исход каждого случая в PortBridge #58. Включите расхождения и пропуски.",
+            ],
+            "expected": "Обе формы дают одинаковый результат для каждого входа. По порядку: 3fc00001, 3fc00005, bfc00001 и 3fc00002.",
+            "report": ["Коммит, физическая видеокарта, PCI ID, драйвер, ОС и версия ассемблера или среды исполнения",
+                       "Начальная EXEC, восемь значений и отдельные результаты positive-down, positive-up, negative и exact-tie"],
+        }},
+    },
+    {
+        "id": "portbridge-subgroup-wave64", "priority": 13,
+        "title": "Check the PortBridge shader rewrite on Vulkan Wave64",
+        "projects": ["continued"], "equipment": ["amd"], "os": ["Windows", "Linux"],
+        "requirements": ["Physical AMD Vulkan GPU with observed subgroup width 64", "Python, SPIRV-Tools and C++20"],
+        "status": "needs_run", "evidence_stage": "author_gpu", "adoption": "pending",
+        "source_url": SUBGROUP_REQUEST, "result_url": SUBGROUP_REQUEST,
+        "procedure_url": f"{SUBGROUP_REPORT}/SYNTHESIS.md",
+        "evidence_url": f"{SUBGROUP_REPORT}/synthesis-results.json",
+        "revisions": [
+            revision("PortBridge shader rewrite", "Оптимизация PortBridge", "akimfomin/PortBridge", SUBGROUP_REWRITE_SHA),
+            revision("Continued public synthetic fixtures", "Открытые синтетические тесты Continued",
+                     "ubiquitarianism/leonida", SUBGROUP_FIXTURES_SHA),
+        ],
+        "why": "The model and CPU replay cover both widths. The physical proof so far is on RTX Wave32.",
+        "evidence": "On RTX 4070 Ti SUPER all 256 words matched in each of the 12 Vulkan runs.",
+        "steps": [
+            "Use the two listed commits and build the pinned Continued Vulkan compute runner.",
+            "Run the synthesis replay with your exact adapter name and --subgroup-width 64.",
+            "Compare the complete output before and after the default rewrite. Report bpermute as cross-half and partial as partial-workgroup.",
+        ],
+        "expected": "All 256 words for each synthetic case match the baseline. Report a skip if the adapter does not run Wave64.",
+        "report": ["Both revisions, GPU, driver, OS, SPIRV-Tools and observed subgroup width",
+                   "The two case outcomes and any output mismatch"],
+        "translations": {"ru": {
+            "title": "Проверить оптимизацию PortBridge через Vulkan в Wave64",
+            "requirements": ["Физическая AMD с Vulkan и подтверждённой шириной группы 64", "Python, SPIRV-Tools и C++20"],
+            "why": "Модель и проверка на CPU охватывают обе ширины. Физический прогон пока сделан на RTX в Wave32.",
+            "evidence": "На RTX 4070 Ti SUPER совпали все 256 слов в каждом из 12 запусков Vulkan.",
+            "steps": [
+                "Откройте две указанные версии и соберите закреплённый стенд Vulkan из Continued.",
+                "Запустите проверку с точным названием видеокарты и --subgroup-width 64.",
+                "Сравните весь вывод до и после оптимизации. В отчёте назовите bpermute как cross-half, а partial как partial-workgroup.",
+            ],
+            "expected": "Все 256 слов для каждого теста совпадут. Если Wave64 недоступен, укажите пропуск.",
+            "report": ["Оба коммита, модель видеокарты, драйвер, ОС, SPIRV-Tools и наблюдаемая ширина группы",
+                       "Исход обоих тестов и возможное расхождение"],
+        }},
+    },
 )
+
+TASKS = tuple({**entry, "report_profile": REPORT_POLICIES[entry["id"]][0],
+               "report_cases": list(REPORT_POLICIES[entry["id"]][1])} for entry in TASKS)
+
+
+def receiving_source(entry):
+    if receiving := entry.get("receiving_url"):
+        return receiving.split("#", 1)[0]
+    report = entry["result_url"].split("#", 1)[0]
+    source = entry["source_url"].split("#", 1)[0]
+    return report if "/pull/" in report else source
+
+
+def annotate_task_sources(tasks, catalog):
+    if catalog is None:
+        return
+    sources = {receiving_source(task) for task in tasks}
+    indexed = catalog.observed_sources(url for url in sources if WORK_URL.fullmatch(url))
+    for task in tasks:
+        url = receiving_source(task)
+        observed = indexed.get(canonical_url(url))
+        if observed is None:
+            continue
+        task["source_check"] = {"url": url, **observed}
+        if task["status"] == "needs_run" and observed["kind"] == "pr":
+            pins = {entry["sha"] for entry in task["revisions"]}
+            if observed["status"] != "open" or observed["draft"] or (observed["revision"]
+                                                                      and observed["revision"] not in pins):
+                task["status"] = "needs_revision"
 
 
 def filter_lab(payload, *, equipment="", status="", task=""):
@@ -453,10 +627,23 @@ def filter_lab(payload, *, equipment="", status="", task=""):
         entry for entry in payload["tasks"]
         if (not equipment or equipment in entry["equipment"]) and (not status or status == entry["status"])
         and (not task or task == entry["id"])
+        and (not equipment or status != "needs_run" or not any(
+            cell["equipment"] == equipment and cell["state"] == "covered" for cell in entry.get("coverage", ())))
     ]}
 
 
-def build_lab(*, equipment="", status="", task=""):
+def build_lab(catalog=None, *, equipment="", status="", task=""):
+    tasks = deepcopy(TASKS)
+    annotate_task_sources(tasks, catalog)
+    states = read_report_states(catalog, tasks)
+    for entry in tasks:
+        if entry["id"] not in states:
+            continue
+        report_sync = states[entry["id"]]
+        entry["report_sync"] = report_sync
+        entry["coverage"] = coverage_cells(entry, report_sync["reports"])
+        if entry["status"] == "needs_run" and has_passing_coverage(entry, report_sync["reports"]):
+            entry["status"] = "awaiting_review"
     payload = {"checked_at": CHECKED_AT, "filters": {"equipment": list(EQUIPMENT), "status": list(STATUSES)},
-               "tasks": deepcopy(TASKS)}
+               "tasks": tasks}
     return filter_lab(payload, equipment=equipment, status=status, task=task)

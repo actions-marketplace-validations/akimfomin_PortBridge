@@ -1,0 +1,25 @@
+{
+  "compiler": "clang version 23.1.6 (https://github.com/llvm/llvm-project.git 5b10d2d74929eae78912771222c9855af97496f4)",
+  "cases": {
+    "small": {
+      "probes": 1100,
+      "variants": 7,
+      "matched": 7700
+    },
+    "dense": {
+      "probes": 1540,
+      "variants": 7,
+      "matched": 10780
+    },
+    "strided": {
+      "probes": 2564,
+      "variants": 7,
+      "matched": 17948
+    },
+    "sparse": {
+      "probes": 7164,
+      "variants": 7,
+      "matched": 50148
+    }
+  }
+}

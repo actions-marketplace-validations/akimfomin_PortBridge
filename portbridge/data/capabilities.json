@@ -166,5 +166,137 @@
     "scope": "Стенд шейдеров сверяет адаптер фактически созданного D3D12-устройства и отдельно отмечает программный адаптер для тестов, требующих видеокарту.",
     "translations": {"en": {"scope": "The shader harness identifies the adapter of the actual D3D12 device and distinguishes software adapters for tests that require a GPU."}},
     "evidence": "https://github.com/fxceless/victory-fork/commit/7b0f736d0b29c2c512a9506e38df92f1f8d50986"
+  },
+  {
+    "project": "victory-monitor", "area": "performance", "kind": "tested",
+    "scope": "После исправления график показал 50 мс для синтетического кадра 50 мс и 828,1 мс для кадра при холодном запуске. Ожидание отправки показано отдельным контуром.",
+    "translations": {"en": {"scope": "After the fix, the chart plotted 50 ms for a synthetic 50 ms frame and 828.1 ms for a cold-start frame. Submit wait is shown as a separate outline."}},
+    "evidence": "https://github.com/KretliJ/victory-monitor/issues/1#issuecomment-7153070742"
+  },
+  {
+    "project": "klbf-lab", "area": "performance", "kind": "reported",
+    "scope": "В прежнем отчёте автор указал 5,7 FPS в движении в прологе на Radeon RX 9070 XT при рендеринге в 720p и масштабировании FSR. Это результат указанной версии.",
+    "translations": {"en": {"scope": "The author previously reported 5.7 FPS while playing the prologue on a Radeon RX 9070 XT, rendering at 720p with FSR upscaling. The measurement applies to the cited revision."}},
+    "evidence": "https://github.com/PastiiJay/klbf-lab/blob/f33c46f75b3baa7a5a5bb7a3be774e98abd902cb/README.md#L22-L32"
+  },
+  {
+    "project": "klbf-lab", "area": "shaders", "kind": "source",
+    "scope": "В новой ветке beta явно указанные ноль рабочих потоков заменяются одним при разборе аргументов трансляции шейдеров. Изменение включает тест разбора аргументов.",
+    "translations": {"en": {"scope": "On the active beta branch, translation modes normalize an explicit zero worker count to one when parsing arguments. The change includes an argument-parsing test."}},
+    "evidence": "https://github.com/PastiiJay/klbf-lab/commit/f9f24199cea1758ed213d3106fb707644e67c586"
+  },
+  {
+    "project": "klbf-lab-beta", "area": "gpu-sync", "kind": "reported",
+    "scope": "В тестовом отчёте из архива автор связывает восстановление физики воды в Lab 39 с копированием текстур на CPU из vx-layer и обработкой XOR-размещения из XTP.",
+    "translations": {"en": {"scope": "In the archived test report, the author attributes Lab 39's water physics fix to texture copy-back from vx-layer and XOR tile layout handling from XTP."}},
+    "evidence": "https://github.com/PastiiJay/klbf-lab-beta/blob/1be1d38a705122001fe7ffb89ba961131c5eb0a9/README.md#L55-L57"
+  },
+  {
+    "project": "xbvk", "area": "shaders", "kind": "source",
+    "scope": "Документ алгоритма вычисления живых значений с рабочей очередью и описанием проверок.",
+    "translations": {"en": {"scope": "Design for a worklist liveness calculation, with its checks documented."}},
+    "evidence": "https://github.com/0x0007b/XBVK/blob/858cd6abf750af0616a29a1d3f62c564ef1f408c/docs/virex-worklist-liveness.md"
+  },
+  {
+    "project": "victory-perf", "area": "gpu-sync", "kind": "source",
+    "scope": "Точечное устранение повторных UAV-барьеров сохранено при откате политики размещения в VRAM.",
+    "translations": {"en": {"scope": "Scoped removal of duplicate UAV barriers remains after reverting a VRAM placement policy."}},
+    "evidence": "https://github.com/vitutu1/victory-perf/commit/ffed22db45d43ba0a24cd8a2d9b3270523791283"
+  },
+  {
+    "project": "vx-layer", "area": "gpu-sync", "kind": "source",
+    "scope": "Копирование текстур, которые пишет GPU и затем читает CPU, до проверки CPU-стороной.",
+    "translations": {"en": {"scope": "Copies textures written on the GPU and later read by the CPU before the CPU-side observation."}},
+    "evidence": "https://github.com/Geckomacabre/vx-layer/commit/eee5667d7119bc4a378214621e1b18a814ebe80f"
+  },
+  {
+    "project": "xtp", "area": "graphics", "kind": "source",
+    "scope": "Синтетические тесты проверяют обратимость размещения текстур и адреса XOR-плиток по AMD addrlib.",
+    "translations": {"en": {"scope": "Synthetic tests check texture layout round trips and XOR tile addresses against AMD addrlib."}},
+    "evidence": "https://github.com/MiamiGame/XTP/commit/00c60fb197434c4987156779466a2ab41d5be2df"
+  },
+  {
+    "project": "scarlight", "area": "shaders", "kind": "source",
+    "scope": "Тесты обмена между потоками шейдера удерживают общий замок на время GPU-проверки.",
+    "translations": {"en": {"scope": "Shader lane-read tests hold a shared lock during their GPU check."}},
+    "evidence": "https://github.com/pablogonz12/Scarlight/commit/29ac46272b821b6c724927283b8a720b0b8c149c"
+  },
+  {
+    "project": "metalvi", "area": "memory", "kind": "source",
+    "scope": "Копирование изменений кэширует сведения о регионах виртуальной памяти на пути Rosetta.",
+    "translations": {"en": {"scope": "The copy-back path caches virtual memory region information under Rosetta."}},
+    "evidence": "https://github.com/Aoody743/MetalVI/commit/df2a642751d1c0b30f8ad0ce282c542301b8404a"
+  },
+  {
+    "project": "ztrx", "area": "graphics", "kind": "source",
+    "scope": "Лаунчер для производной VIctory, отдельная документация о настройках D3D12 на NVIDIA.",
+    "translations": {"en": {"scope": "Launcher for a VIctory derivative, with separate documentation of D3D12 settings on NVIDIA."}},
+    "evidence": "https://github.com/Zettrox/ztrx/commit/90b529f878a470fec9bf07b7be316bc769a12232"
+  },
+  {
+    "project": "victory-amd", "area": "memory", "kind": "source",
+    "scope": "Запись через одно представление страницы отражается в других представлениях той же страницы.",
+    "translations": {"en": {"scope": "A write through one view of a memory page is reflected in other views of that page."}},
+    "evidence": "https://github.com/myokex/victory-amd/commit/c6dc4d8c9fc80e8d2090f94287827cd3ffc0ac95"
+  },
+  {
+    "project": "project-flamingo", "area": "shaders", "kind": "source",
+    "scope": "Проверка результатов шейдера сравнивает изображение, используя текстуру формата глубины.",
+    "translations": {"en": {"scope": "A shader image comparison check uses a depth-format texture."}},
+    "evidence": "https://github.com/JMAN730/project-flamingo/commit/30e468556981d871d2a042059a1dbd76bf0c4881"
+  },
+  {
+    "project": "vitoriabr", "area": "memory", "kind": "source",
+    "scope": "Поиск свободных дескрипторов проверяет диапазон после перехода через конец кольца.",
+    "translations": {"en": {"scope": "Descriptor allocation searches the free range after wrapping across the end of the ring."}},
+    "evidence": "https://github.com/uiliannn/VItoriaBr/commit/009856f0c950c1ecdddba4f0557f263999b01ef0"
+  },
+  {
+    "project": "anybox", "area": "memory", "kind": "source",
+    "scope": "Тесты Vulkan для управления памятью и выделений.",
+    "translations": {"en": {"scope": "Vulkan tests for memory management and allocations."}},
+    "evidence": "https://github.com/boykopovar/AnyBox/blob/16c01d372f7dd35b5c2c6654462220e409e4d2e0/core/graphics/vulkan/tests/Memory.cpp"
+  },
+  {
+    "project": "neonbridge", "area": "shaders", "kind": "source",
+    "scope": "Лаунчер управляет предварительной компиляцией шейдеров для отдельных сред исполнения.",
+    "translations": {"en": {"scope": "The launcher manages shader precompilation for separate runtimes."}},
+    "evidence": "https://github.com/DesignWithTommy/Neonbridge/commit/c2783e08790aaf97d15f77c9a29962f1d7365db8"
+  },
+  {
+    "project": "mangrove", "area": "graphics", "kind": "source",
+    "scope": "Описано приближение рассеянного освещения вместо исходного трассируемого вклада.",
+    "translations": {"en": {"scope": "Documents an ambient-light approximation in place of the original ray-traced contribution."}},
+    "evidence": "https://github.com/Joaco9020/mangrove/commit/e3c3ae3748a04f41083d0f0f854d57742598e0b4"
+  },
+  {
+    "project": "r4y", "area": "rdna2-wave64", "kind": "reported",
+    "scope": "В отчёте автора отдельно описаны синтетический Wave64-прогон на RTX 3070 и незавершённые проверки других режимов.",
+    "translations": {"en": {"scope": "The author separates a synthetic Wave64 check on an RTX 3070 from unresolved checks of other paths."}},
+    "evidence": "https://github.com/cmyk-ux/r4y/blob/13b7eb3f0d71aa98f0d9fb586c8a4d096806009a/README.md#L140-L149"
+  },
+  {
+    "project": "xseries-wine", "area": "graphics", "kind": "source",
+    "scope": "Диагностические скрипты и инструкции для проверки пути запуска через Wine и Proton.",
+    "translations": {"en": {"scope": "Diagnostic scripts and a guide for investigating the Wine and Proton boot path."}},
+    "evidence": "https://github.com/ReverendOzmund/xseries-wine/commit/89aa2462ce57c96fa3b1584c05e3d5dd6b7d8b84"
+  },
+  {
+    "project": "scarlettport", "area": "graphics", "kind": "source",
+    "scope": "Лаунчер собирает и запускает отдельно выбранную среду исполнения и записывает сбои.",
+    "translations": {"en": {"scope": "The launcher builds and runs the selected standalone runtime and captures failures."}},
+    "evidence": "https://github.com/ZigZagBoi1/ScarlettPort/commit/d8eee74c0dfa3a5905cd2acbceb31ccc87812e07"
+  },
+  {
+    "project": "victory-belobug-amd", "area": "gpu-sync", "kind": "merged",
+    "scope": "В основную ветку вошло распараллеливание снимков и возврата плиток sparse-ресурсов.",
+    "translations": {"en": {"scope": "Parallel sparse tile snapshots and copy-back merged into the main branch."}},
+    "evidence": "https://github.com/Belobug/VIctory-Belobug-AMD/commit/64170dd54df38c6df44ddfed9217f7e96e0867af"
+  },
+  {
+    "project": "xbox-hle-lab", "area": "performance", "kind": "source",
+    "scope": "Исследование различает накопительный счётчик постановки компиляции, текущую очередь и ожидание результата.",
+    "translations": {"en": {"scope": "The analysis distinguishes cumulative compile requests, current backlog and waiting for a result."}},
+    "evidence": "https://github.com/sub-north/xbox-hle-lab/commit/8863028b486dedf660303fcd3c756b05bbbebf91"
   }
 ]

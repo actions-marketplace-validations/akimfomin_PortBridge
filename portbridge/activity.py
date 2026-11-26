@@ -19,6 +19,7 @@ COUNT_FOR = {
     "status_change": "changed", "verified_result": "verified",
 }
 HANDOFFS = Path(__file__).with_name("data") / "handoffs.json"
+ORIGINAL_RESEARCH = HANDOFFS.with_name("research.json")
 HANDOFF_STAGES = {
     "delivered_url": "delivered", "independent_url": "independently_reproduced",
     "review_url": "formally_reviewed", "adopted_url": "adopted",
@@ -175,6 +176,7 @@ def handoff_summary(cards, projects, observations, as_of):
         delivery_urls = "|".join(map(re.escape, source_url_aliases(delivery)))
         proofs = {"independent_url": f"(?:{delivery_urls})" + r"#issuecomment-[1-9][0-9]*",
                   "review_url": f"(?:{delivery_urls})" + r"#pullrequestreview-[1-9][0-9]*",
+                  "branch_implementation_url": prefix + r"commit/[0-9a-f]{40}",
                   "adopted_url": prefix + rf"(?:{subject}(?:#issuecomment-[1-9][0-9]*)?|commit/[0-9a-f]{{40}})"}
         item = {"problem_id": case["id"], "project": row["project"], "delivered_url": delivery, "revision": revision,
                 **public_text(case["title"], english_text(case, "title"))}
@@ -193,7 +195,38 @@ def handoff_summary(cards, projects, observations, as_of):
     return {"counts": counts, "items": items}
 
 
+def showcased_research(cards, observations, handoffs):
+    latest = {canonical_url(row["url"]): row for row in observations}
+    by_case = {row["problem_id"]: row for row in handoffs["items"]}
+    items = []
+    for card in cards:
+        if not card.get("showcase"):
+            continue
+        handoff = by_case.get(card["id"], {})
+        solution = next((row for row in card["solutions"] if row["project"] == handoff.get("project")),
+                        card["solutions"][0])
+        subject = solution["source_refs"][0]["url"]
+        evidence = solution["evidence"][0]
+        source = latest.get(canonical_url(subject))
+        item = {"problem_id": card["id"], "project": solution["project"],
+                "at": card["recorded_at"], "delivered_url": handoff.get("delivered_url", evidence["url"]), "source_url": subject,
+                **public_text(card["title"], english_text(card, "title"), summary=card["summary"],
+                              en_summary=english_text(card, "summary"))}
+        if source:
+            item["source_state"] = "draft" if source["metadata"].get("draft") else source["status"]
+            item["checked_at"] = source["fetched_at"]
+            item["current_revision"] = source_revision(source)
+        for key in ("independent_url", "branch_implementation_url", "adopted_url"):
+            if link := handoff.get(key):
+                item[key] = link
+        items.append(item)
+    return sorted(items, key=lambda row: (row["at"], row["problem_id"]), reverse=True)
+
+
 def build_activity(catalog, *, now=None, projects=None, cards=None, observations=None, health=None, drafts=None):
+    from .lab import build_lab
+    from .radar import build_radar
+
     as_of = (now or datetime.now(timezone.utc)).astimezone(timezone.utc).replace(microsecond=0)
     start = as_of - timedelta(days=WINDOW_DAYS)
     projects = catalog.projects() if projects is None else projects
@@ -234,8 +267,12 @@ def build_activity(catalog, *, now=None, projects=None, cards=None, observations
             displayed[kind] += 1
             events.append(event)
 
+    opportunities = current_opportunities(cards, drafts)
+    radar = build_radar(projects, observations, changes, build_lab(catalog), opportunities, as_of)
+    handoffs = handoff_summary(cards, projects, observations, as_of)
     return {"as_of": as_of.isoformat(), "refreshed_at": health["refresh_at"], "health": health["status"],
             "window_days": WINDOW_DAYS, "window_start": start.isoformat(),
             "counts": {**counts, "projects": len(per_project)}, "projects": list(per_project.values()),
-            "handoffs": handoff_summary(cards, projects, observations, as_of),
-            "events": events, "opportunities": current_opportunities(cards, drafts)}
+            "handoffs": handoffs, "research": showcased_research(cards, observations, handoffs),
+            "original_research": json.loads(ORIGINAL_RESEARCH.read_text(encoding="utf-8")),
+            "events": events, "opportunities": opportunities, "radar": radar}

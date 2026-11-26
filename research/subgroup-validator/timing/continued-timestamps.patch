@@ -1,0 +1,85 @@
+diff --git a/runtime/test/vk_compute_test.cpp b/runtime/test/vk_compute_test.cpp
+--- a/runtime/test/vk_compute_test.cpp
++++ b/runtime/test/vk_compute_test.cpp
+@@ -5,6 +5,7 @@
+ //            "exec64", "wavemask", "bvh": see cs_exec64.asm, cs_wavemask.asm, cs_bvh.asm; anything else prints out[0..7]
+ //   VKC_BENCH=N (env): dispatch N more times after the checked one and print the median / min / max wall time of one
+ //   dispatch (submit to queue idle) as "bench ms: median=.. min=.. max=.. n=..". The buffer is not cleared in between.
++//   VKC_GPU_BENCH=N and VKC_GPU_BATCH=M: time N batches of M one-group dispatches on the GPU.
+ //   VKC_OUT_WORDS=N (env): make the output buffer at least N words (default groups * 64), so a single group can
+ //   write more than one word per thread. VKC_DUMP=<file> (env): write the whole buffer to <file> after the dispatch.
+ //   VKC_HEAP_INIT=<file> (env): copy the file's bytes to the start of the buffer (Xbox VA 0) after the default fill
+@@ -605,6 +606,73 @@
+     si.commandBufferCount = 1; si.pCommandBuffers = &cmd;
+     CHECK(vkQueueSubmit(q, 1, &si, VK_NULL_HANDLE));
+     CHECK(vkQueueWaitIdle(q));
++    if (const char* bench = std::getenv("VKC_GPU_BENCH")) {
++        const char* count_text = bench;
++        const char* batch_text = std::getenv("VKC_GPU_BATCH");
++        if (!batch_text) batch_text = "1";
++        uint32_t count = 0, batch = 0;
++        if (!parse_u32(count_text, count) || *count_text || count < 5 || count > 1000 ||
++            !parse_u32(batch_text, batch) || *batch_text || !batch || batch > 1024 ||
++            groups != 1 || workgroup_yz || tail_block || bytes > 4096 ||
++            !qf[qi].timestampValidBits || !props.limits.timestampComputeAndGraphics) {
++            std::fprintf(stderr, "unsupported timestamp configuration\n");
++            return 2;
++        }
++        const uint32_t bits = qf[qi].timestampValidBits;
++        const uint64_t mask = bits == 64 ? ~uint64_t(0) : (uint64_t(1) << bits) - 1;
++        const auto* begin = static_cast<const unsigned char*>(map);
++        const std::vector<unsigned char> untimed(begin, begin + bytes);
++        LOADD(vkCreateQueryPool); LOADD(vkCmdResetQueryPool); LOADD(vkCmdWriteTimestamp);
++        LOADD(vkGetQueryPoolResults); LOADD(vkDestroyQueryPool);
++        VkQueryPoolCreateInfo qpi{VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO};
++        qpi.queryType = VK_QUERY_TYPE_TIMESTAMP; qpi.queryCount = 2;
++        VkQueryPool timestamps;
++        CHECK(vkCreateQueryPool(dev, &qpi, nullptr, &timestamps));
++
++        VkCommandBuffer timed;
++        CHECK(vkAllocateCommandBuffers(dev, &cai, &timed));
++        CHECK(vkBeginCommandBuffer(timed, &cbi));
++        vkCmdResetQueryPool(timed, timestamps, 0, 2);
++        vkCmdBindPipeline(timed, VK_PIPELINE_BIND_POINT_COMPUTE, pipe);
++        vkCmdPushConstants(timed, pl, VK_SHADER_STAGE_COMPUTE_BIT, 0, pc_bytes, pc);
++        VkMemoryBarrier reuse{VK_STRUCTURE_TYPE_MEMORY_BARRIER};
++        reuse.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
++        reuse.dstAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT;
++        vkCmdWriteTimestamp(timed, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, timestamps, 0);
++        for (uint32_t iteration = 0; iteration < batch; ++iteration) {
++            // Also orders the first timed dispatch against the previous submission's write.
++            vkCmdPipelineBarrier(timed, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
++                                 VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &reuse, 0, nullptr, 0, nullptr);
++            vkCmdDispatch(timed, 1, 1, 1);
++        }
++        vkCmdWriteTimestamp(timed, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, timestamps, 1);
++        vkCmdPipelineBarrier(timed, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_HOST_BIT, 0,
++                             1, &readback, 0, nullptr, 0, nullptr);
++        CHECK(vkEndCommandBuffer(timed));
++
++        VkSubmitInfo timed_submit{VK_STRUCTURE_TYPE_SUBMIT_INFO};
++        timed_submit.commandBufferCount = 1; timed_submit.pCommandBuffers = &timed;
++        std::printf("gpu timestamp ns: batch=%u validBits=%u period=%.6f\n", batch, bits,
++                    double(props.limits.timestampPeriod));
++        for (uint32_t iteration = 0; iteration < count + 8; ++iteration) {
++            const auto start = std::chrono::steady_clock::now();
++            CHECK(vkQueueSubmit(q, 1, &timed_submit, VK_NULL_HANDLE));
++            CHECK(vkQueueWaitIdle(q));
++            const double wall_ns = std::chrono::duration<double, std::nano>(
++                std::chrono::steady_clock::now() - start).count();
++            uint64_t ticks[2];
++            CHECK(vkGetQueryPoolResults(dev, timestamps, 0, 2, sizeof(ticks), ticks, sizeof(uint64_t),
++                                        VK_QUERY_RESULT_64_BIT));
++            const double elapsed = double((ticks[1] - ticks[0]) & mask) * props.limits.timestampPeriod;
++            if (iteration >= 8)
++                std::printf("gpu sample ns: %.3f wall ns: %.3f\n", elapsed, wall_ns);
++        }
++        vkDestroyQueryPool(dev, timestamps, nullptr);
++        if (std::memcmp(map, untimed.data(), untimed.size()) != 0) {
++            std::fprintf(stderr, "timed dispatch batch changed the checked output\n");
++            return 1;
++        }
++    }
+     if (const char* b = std::getenv("VKC_BENCH")) {
+         std::vector<double> ms;
+         for (int i = 0, n = std::atoi(b); i < n; i++) {

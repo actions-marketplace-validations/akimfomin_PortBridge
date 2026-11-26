@@ -15,7 +15,7 @@ class LabTest(CatalogFixture):
     def test_tasks_pin_public_sources_and_track_evidence_separately(self):
         payload = build_lab()
         tasks = {task["id"]: task for task in payload["tasks"]}
-        self.assertEqual([task["priority"] for task in tasks.values()], list(range(1, 11)))
+        self.assertEqual([task["priority"] for task in tasks.values()], list(range(1, 14)))
         combined = tasks["pb-9-continued-first-frame"]
         self.assertEqual((combined["status"], combined["evidence_stage"], combined["adoption"]),
                          ("awaiting_review", "reviewed_gpu", "pending"))
@@ -39,6 +39,16 @@ class LabTest(CatalogFixture):
         self.assertEqual(native["revisions"][1]["sha"], "9923c3bba74f4a7f3249e0c820f2e6821327c1f4")
         self.assertEqual(native["evidence_url"], "https://github.com/akimfomin/PortBridge/issues/19#issuecomment-7136020663")
         self.assertEqual(native["result_url"], "https://github.com/LooperSalty/AnyXboxX/pull/133#issuecomment-7136721736")
+        native_fma = tasks["anyxboxx-133-native-fma"]
+        self.assertEqual(native_fma["status"], "needs_run")
+        self.assertEqual(native_fma["result_url"], "https://github.com/akimfomin/PortBridge/issues/58")
+        self.assertEqual(native_fma["report_cases"], ["positive-down", "positive-up", "negative", "exact-tie"])
+        rewrite = tasks["portbridge-subgroup-wave64"]
+        self.assertEqual((rewrite["equipment"], rewrite["status"], rewrite["report_profile"]),
+                         (["amd"], "needs_run", "vulkan-wave64"))
+        self.assertEqual(rewrite["report_cases"], ["cross-half", "partial-workgroup"])
+        self.assertEqual(rewrite["result_url"], "https://github.com/akimfomin/PortBridge/issues/63")
+        self.assertIn(rewrite["revisions"][0]["sha"], rewrite["procedure_url"])
         addition = tasks["scarlett-commons-continued-add-basic"]
         self.assertEqual((addition["equipment"], addition["status"], addition["evidence_stage"]),
                          (["cpu"], "needs_run", "author_cpu"))
@@ -59,7 +69,7 @@ class LabTest(CatalogFixture):
         repository = "https://github.com/5headsmartbtw/leonida-framelab"
         self.assertEqual(handoff["revisions"][0]["sha"], head)
         self.assertEqual(handoff["procedure_url"], f"{repository}/blob/{head}/tests/vulkan-handoff/README.md")
-        self.assertEqual(handoff["result_url"], f"{repository}/pull/12")
+        self.assertEqual(handoff["result_url"], f"{repository}/issues/15")
         self.assertEqual(handoff["evidence_url"], f"{repository}/pull/12#issuecomment-7142089405")
         for task in tasks.values():
             self.assertEqual(task["adoption"], "pending")
@@ -76,11 +86,14 @@ class LabTest(CatalogFixture):
         payload = build_lab()
         amd = filter_lab(payload, equipment="amd", status="needs_run")
         self.assertEqual([task["id"] for task in amd["tasks"]],
-                         ["pb-5-xcl-wave64", "continued-511-repeated-draw",
-                          "anyxboxx-147-native-wave64-gather", "framelab-12-vulkan-handoff"])
+                         ["continued-511-repeated-draw",
+                          "anyxboxx-147-native-wave64-gather", "framelab-12-vulkan-handoff", "xcl-2126-scratch-coverage",
+                          "anyxboxx-133-native-fma", "portbridge-subgroup-wave64"])
         self.assertEqual(amd, build_lab(equipment="amd", status="needs_run"))
         self.assertEqual([task["id"] for task in build_lab(status="blocked")["tasks"]], ["pb-9-reforge-present"])
-        self.assertEqual(len(payload["tasks"]), 10)
+        self.assertEqual(len(payload["tasks"]), 13)
+        self.assertEqual([task["id"] for task in build_lab(equipment="intel")["tasks"]],
+                         ["xcl-2126-scratch-coverage"])
         self.assertEqual(len(build_lab(equipment="nvidia", status="awaiting_review")["tasks"]), 1)
         self.assertEqual([task["id"] for task in build_lab(equipment="cpu", status="needs_run")["tasks"]],
                          ["scarlett-commons-continued-add-basic"])

@@ -1,0 +1,134 @@
+[
+  {
+    "at": "2026-11-26T00:22:55Z",
+    "title": "Эксперимент: проекция пиксельной маски в XCL",
+    "summary": "В открытой сцене raylib первый проверенный кадр на RTX 4070 Ti SUPER появился на 99–120 мс раньше в трёх парах запусков. На двух ракурсах время отрисовки в Vulkan снизилось на 19%. Фильтр Microsoft показал смешанные результаты. Опция отключена по умолчанию. Прежний вариант Lane-local Masks отозван после ошибки Wave32.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/9c2616998e176806565ee1a0076dc4efb7ae4dc1/research/pipeline-readiness/structural-suite/night/ssa-mask-projection/README.md",
+    "translations": {
+      "en": {
+        "title": "Experimental pixel mask projection in XCL",
+        "summary": "The first verified raylib image arrived 99–120 ms sooner across three paired RTX 4070 Ti SUPER runs. Vulkan draw time fell by 19% in two views. A Microsoft filter showed mixed timings. The option defaults off. The earlier Lane-local Masks experiment was withdrawn after a Wave32 error."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T16:48:14Z",
+    "title": "Выборочный возврат изменившихся GPU-данных",
+    "summary": "Адаптивный выбор без будущей трассы сократил полное время синтетической нагрузки со сменой фаз на 16,9%. На запросах из открытых приложений устойчивый системный выигрыш не подтверждён. Исходники и замеры сохранены, основной фокус перешёл к вычислительным зависимостям.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/main/research/readback-epochs/ONLINE.md",
+    "translations": {
+      "en": {
+        "title": "Observation-scoped GPU readback",
+        "summary": "The online policy reduced end-to-end time by 16.9% on the synthetic phase-switch replay. Open application request shapes did not establish a consistent system benefit. The experiments remain reproducible while work moves to compute dependencies."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T15:29:00Z",
+    "title": "Переносимая генерация уровней текстуры в Vulkan",
+    "summary": "В открытом быстром шейдере NVIDIA нашли зависимость от порядка потоков, который Vulkan не гарантирует. Исправление PortBridge использует нумерацию по подгруппам. На трёх открытых текстурах Khronos исходный и исправленный шейдеры дали 8 388 604 совпадающих байта. При искусственной перестановке потоков исходный шейдер исказил 14 194 байта. Проверена штатная загрузка текстур в Blender 5.3. Ускорение в Blender пока не установлено.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/mipmap-contract",
+    "translations": {
+      "en": {
+        "title": "Portable Vulkan mipmap generation",
+        "summary": "The NVIDIA fast shader assumes an invocation order Vulkan does not guarantee. The PortBridge correction uses subgroup-derived numbering. Across three Khronos textures, the original and rewritten shaders matched all 8,388,604 bytes. A simulated lane permutation changed 14,194 bytes in the original. We verified the stock Blender 5.3 load path. A speedup in Blender remains unproven."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T15:23:00Z",
+    "title": "Стоимость оптимизации обмена между потоками Continued",
+    "summary": "Замеры GPU на открытых тестах показали экономию 33 нс на вызов в серии из 32. Одиночные вызовы оказались нестабильны. Проход оставлен экспериментальным.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/main/research/subgroup-validator/timing/README.md",
+    "translations": {
+      "en": {
+        "title": "Measure the cost of the Continued lane lowering",
+        "summary": "Device timestamps on public fixtures showed a 33 ns median paired saving per dispatch in a batch of 32. Single-dispatch results varied. The lowering remains experimental."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T14:57:00Z",
+    "title": "Разбиение больших ветвлений при генерации шейдеров",
+    "summary": "В синтетическом шейдере с 2 048 ветвями полный цикл сборки сократился с 3 247 до 1 920 мс относительно плоского ветвления. Дерево с фиксированными группами по 32 ветви показало 1 835 мс. Все 86 576 сравнений результатов на CPU совпали. Производственные шейдеры и время GPU ещё не проверены.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/adaptive-switch-dispatch",
+    "translations": {
+      "en": {
+        "title": "Partitioning large switches during shader generation",
+        "summary": "On a synthetic 2,048-arm shader the full compile path took 1,920 ms versus 3,247 ms for a flat switch. A fixed 32-arm range tree took 1,835 ms. All 86,576 CPU equivalence comparisons matched. Production applicability and GPU time remain open."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T14:51:00Z",
+    "title": "Проверка применимости Shader Tail Factoring",
+    "summary": "В 373 проверенных образцах из MiniEngine, FSR 2 и Naga точной формы, которую умеет преобразовывать проход, не обнаружено. Синтетический контроль подтвердил, что сканер находит заложенное повторение. Общая интеграция отложена.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/main/research/shader-tail-factoring/CORPUS.md",
+    "translations": {
+      "en": {
+        "title": "Where Shader Tail Factoring applies",
+        "summary": "None of the 373 validated MiniEngine, FSR 2 and Naga observations contained the exact form this pass can rewrite. A synthetic positive control showed the scanner finds that pattern. General integration is deferred."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T14:49:00Z",
+    "title": "Оптимизация обмена в гарантированно полной подгруппе",
+    "summary": "Для подгруппы, чья полнота и сходимость доказаны, PortBridge удалил три лишние операции голосования. После оптимизатора SPIR-V сократился с 8 232 до 7 764 байт в одном шейдере Continued. Неполная группа сохранила защиту. Все 15 запусков на RTX Wave32 совпали.",
+    "report_url": "https://github.com/akimfomin/PortBridge/blob/main/research/subgroup-validator/SYNTHESIS.md",
+    "translations": {
+      "en": {
+        "title": "Avoid unnecessary ballots in proven full subgroups",
+        "summary": "PortBridge removed three ballots when fullness and convergence were proven. In one Continued shader, optimized SPIR-V went from 8,232 to 7,764 bytes. The partial group kept its guards. All 15 RTX Wave32 replays matched."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T14:44:00Z",
+    "title": "Планировщик повторного использования памяти между очередями",
+    "summary": "Планировщик находит минимум одинаковых слотов при заданных зависимостях. На 64 синтетических графах экономия относительно безопасного первого подходящего слота составила 2,26% суммарно. Модель цепочки Granite осталась без выигрыша. Замеры выделенной VRAM и времени кадра ещё открыты.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/transient-slot-cover",
+    "translations": {
+      "en": {
+        "title": "Plan safe cross-queue reuse of temporary memory",
+        "summary": "The planner minimizes exact-class slots under given dependencies. It reduced modeled storage by 2.26% against safe first-fit across 64 seeded graphs; the Granite projection was unchanged. Allocated VRAM and frame time remain unmeasured."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T13:54:00Z",
+    "title": "Объединение повторяющихся вычислений в шейдерах",
+    "summary": "Проход PortBridge объединяет одинаковые части ветвей до компиляции. В синтетической нагрузке с 64 ветвями DXC сократился со 165 до 23 мс, создание конвейера на RTX — с 17,6 до 2,3 мс. Все выходы совпали. Стенд Xbox2Windows с выборкой текстур остался вне области прохода.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/shader-tail-factoring",
+    "translations": {
+      "en": {
+        "title": "Factor repeated arithmetic before shader compilation",
+        "summary": "The PortBridge pass shares repeated branch tails before compilation. On a generated 64-arm workload, optimized DXC fell from 165 to 23 ms and RTX pipeline creation from 17.6 to 2.3 ms. All outputs matched. The Xbox2Windows mixed-sampling workload was outside the pass's scope."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T13:53:00Z",
+    "title": "Оптимизация обмена между потоками шейдера",
+    "summary": "Модель PortBridge выбрала и записала более короткую реализацию SPIR-V в пяти местах двух шейдеров Continued. После штатного оптимизатора модули стали меньше на 176 и 80 байт. В 12 запусках на RTX 4070 Ti SUPER все выходные данные совпали.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/subgroup-validator",
+    "translations": {
+      "en": {
+        "title": "Model-guided optimization of shader lane exchange",
+        "summary": "The PortBridge model selected and emitted smaller SPIR-V at five sites in two Continued shaders. After the standard optimizer, the modules were 176 and 80 bytes smaller. All output values matched in 12 RTX 4070 Ti SUPER runs."
+      }
+    }
+  },
+  {
+    "at": "2026-11-25T10:26:00Z",
+    "title": "Buffer Transfer Planner на RTX 4070 Ti SUPER",
+    "summary": "Проверили полный цикл обновления буфера и его обработки через D3D12 и Vulkan. Без дополнительного лимита оптимальный план не улучшил расчётную стоимость ни в одном из 596 обновлений исходного масштаба. Устойчивого ускорения полного цикла не обнаружили.",
+    "report_url": "https://github.com/akimfomin/PortBridge/tree/main/research/transfer-planner/physical",
+    "translations": {
+      "en": {
+        "title": "Buffer Transfer Planner on an RTX 4070 Ti SUPER",
+        "summary": "We measured the buffer-update and consumer chain in D3D12 and Vulkan. Without an extra copy-size cap, the optimizer did not improve the modeled cost over greedy in any of 596 open-scale updates with changes. The full chain showed no repeatable gain."
+      }
+    }
+  }
+]

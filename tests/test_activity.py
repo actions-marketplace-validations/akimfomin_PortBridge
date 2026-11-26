@@ -86,9 +86,14 @@ class ActivityTest(CatalogFixture):
         summary = build_activity(self.catalog, now=NOW)
         handoffs = summary["handoffs"]
         self.assertEqual(summary["counts"]["merged"], 1)
-        self.assertEqual(handoffs["counts"], {"delivered": 10, "independently_reproduced": 6,
-                                             "formally_reviewed": 4, "adopted": 2})
-        continued, xcl, anyxboxx, rounding, division, warp, texture, paired_lds, lds_wait, frame_pacer = handoffs["items"]
+        self.assertEqual(handoffs["counts"], {"delivered": 18, "independently_reproduced": 12,
+                                             "formally_reviewed": 6, "adopted": 6})
+        (continued, xcl, anyxboxx, rounding, division, warp, texture, paired_lds, lds_wait,
+         frame_pacer, xcl_compact, monitor, framelab, scratch_candidate, gfx10,
+         coalescing, bc7, wave32) = handoffs["items"]
+        self.assertEqual(wave32["problem_id"], "PB-0030")
+        self.assertEqual(wave32["independent_url"], "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7178879816")
+        self.assertNotIn("adopted_url", wave32)
         self.assertEqual(continued["problem_id"], "PB-044801754884724660835754613454516035131")
         self.assertTrue(continued["review_url"].endswith("#pullrequestreview-6039203797"))
         self.assertTrue(xcl["independent_url"].endswith("#issuecomment-7133929789"))
@@ -97,7 +102,17 @@ class ActivityTest(CatalogFixture):
         self.assertTrue(division["independent_url"].endswith("#issuecomment-7133823866"))
         self.assertNotIn("review_url", xcl)
         self.assertTrue(all("adopted_url" not in item for item in
-                            (continued, xcl, rounding, division, texture, paired_lds, lds_wait, frame_pacer)))
+                            (continued, xcl, division, texture, paired_lds, lds_wait, frame_pacer)))
+        self.assertTrue(rounding["adopted_url"].endswith("71d4c615c6981280b95c11290fd48ef015b5d4cb"))
+        self.assertTrue(scratch_candidate["independent_url"].endswith("issuecomment-7165250326"))
+        self.assertNotIn("adopted_url", scratch_candidate)
+        self.assertTrue(coalescing["independent_url"].endswith("issuecomment-7161475134"))
+        self.assertNotIn("adopted_url", coalescing)
+        self.assertTrue(bc7["adopted_url"].endswith("0539d7f8ad7734e30396e7c913edeb0755d0f9ce"))
+        self.assertNotIn("independent_url", bc7)
+        self.assertTrue(gfx10["branch_implementation_url"].endswith("c5ca937c371d8b21e56feb36f3d009ecffe5765a"))
+        self.assertTrue(gfx10["independent_url"].endswith("issuecomment-7164567766"))
+        self.assertNotIn("adopted_url", gfx10)
         self.assertTrue(warp["delivered_url"].endswith("/pull/144"))
         self.assertTrue(texture["delivered_url"].endswith("/issues/145"))
         self.assertEqual(paired_lds["problem_id"], "PB-0018")
@@ -108,6 +123,16 @@ class ActivityTest(CatalogFixture):
         self.assertNotIn("independent_url", warp)
         self.assertTrue(warp["adopted_url"].endswith("becaf7829d2aa03c293e0b52125fc740c5590ea1"))
         self.assertTrue(anyxboxx["adopted_url"].endswith("b15d8821bffcd8fbc98e56f41daf07fc91118192"))
+        self.assertTrue(xcl_compact["independent_url"].endswith("#issuecomment-7149592580"))
+        self.assertTrue(xcl_compact["adopted_url"].endswith("aaa093657bd96a146c05c0c1a9b61149fe761453"))
+        self.assertTrue(monitor["adopted_url"].endswith("1ac612868fe1392443b6f96ee06bf4341e9b8d60"))
+        self.assertNotIn("independent_url", monitor)
+        self.assertTrue(framelab["independent_url"].endswith("#issuecomment-7147944059"))
+        self.assertNotIn("adopted_url", framelab)
+        self.assertNotIn("review_url", framelab)
+        reports = self.catalog.problem(framelab["problem_id"])["solutions"][0]["evidence"]
+        self.assertEqual({report["url"].split("#")[-1] for report in reports},
+                         {"issuecomment-7147944059", "issuecomment-7153817545"})
         self.assertEqual(build_activity(self.catalog, now=NOW, cards=[])["handoffs"]["items"], [])
 
     def test_handoffs_automatically_count_only_the_reviewed_head_on_merge(self):
@@ -116,7 +141,7 @@ class ActivityTest(CatalogFixture):
         self.save_pr("continued", 701, at=date, status="merged", merged_at=date, revision=fix)
         self.save_pr("xcl", 1100, at=date, status="merged", merged_at=date, revision="a" * 40)
         handoffs = build_activity(self.catalog, now=NOW)["handoffs"]
-        self.assertEqual(handoffs["counts"]["adopted"], 3)
+        self.assertEqual(handoffs["counts"]["adopted"], 7)
         continued, xcl, *_ = handoffs["items"]
         self.assertEqual(continued["adopted_url"], continued["delivered_url"])
         self.assertNotIn("adopted_url", xcl)
@@ -139,10 +164,42 @@ class ActivityTest(CatalogFixture):
         self.save_pr("continued", 207, at=(NOW - timedelta(hours=1)).isoformat(), status="closed")
         self.assertEqual(build_activity(self.catalog, now=NOW)["opportunities"], [])
 
+    def test_showcase_refreshes_source_state_without_inventing_adoption(self):
+        url = "https://github.com/xcl-dev/xcl/pull/2126"
+        revision = "f6fa8a931eaadf925cb42dbac8024af9e3875e1b"
+        row = self.observation("xcl", "pr", 2126, "XCL scratch", url,
+                               {"head_sha": revision, "merged_at": "2026-11-25T13:36:36Z"})
+        self.catalog.record_sync({"items": [row]})
+        before = next(item for item in build_activity(self.catalog)["research"] if item["problem_id"] == "PB-0025")
+        self.assertEqual(before["source_state"], "open")
+        self.catalog.record_sync({"items": [{**row, "status": "merged", "updated_at": "2026-11-25T09:00:00Z"}]})
+        after = next(item for item in build_activity(self.catalog)["research"] if item["problem_id"] == before["problem_id"])
+        self.assertEqual(after["source_state"], "merged")
+        self.assertTrue(after["independent_url"].endswith("issuecomment-7165250326"))
+        self.assertNotIn("adopted_url", after)
+        self.assertEqual(before["delivered_url"], after["delivered_url"])
+
+    def test_showcase_distinguishes_branch_integration_from_merged_contribution(self):
+        items = {item["problem_id"]: item for item in build_activity(self.catalog)["research"]}
+        gfx10 = items["PB-0026"]
+        self.assertIn("branch_implementation_url", gfx10)
+        self.assertNotIn("adopted_url", gfx10)
+        rounding = items["PB-0011"]
+        self.assertEqual(rounding["source_url"], "https://github.com/LooperSalty/AnyXboxX/pull/133")
+        self.assertIn("adopted_url", rounding)
+        self.assertEqual(items["PB-0027"]["source_url"], "https://github.com/akimfomin/PortBridge/issues/58")
+        self.assertNotIn("adopted_url", items["PB-0027"])
+
     def test_local_route_and_static_snapshot_share_the_public_payload(self):
         self.save_pr("xcl", 111, at=(datetime.now(timezone.utc) - timedelta(hours=1)).isoformat())
         directory = export(self.catalog, self.workspace / "activity-site")
         snapshot = json.loads((directory / "data/activity.json").read_bytes())
+        self.assertTrue(snapshot["original_research"])
+        for item in snapshot["original_research"]:
+            self.assertTrue(item["report_url"].startswith("https://github.com/akimfomin/PortBridge/"))
+            self.assertNotIn("adopted_url", item)
+            self.assertNotIn("independent_url", item)
+            self.assertTrue(item["translations"]["en"]["summary"])
         with make_server(self.catalog, 0) as server:
             thread = Thread(target=server.serve_forever, daemon=True)
             thread.start()
