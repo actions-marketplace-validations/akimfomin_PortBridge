@@ -245,12 +245,55 @@ class GitHubSyncTest(unittest.TestCase):
                 patch.object(github.time, "time", return_value=1700000060):
             again = github.collect([self.project], self.db_path, refresh=True)
         self.assertEqual(network.call_count, 4)
-        self.assertEqual(first["items"], again["items"])
+        for before, after in zip(first["items"], again["items"], strict=True):
+            self.assertEqual({k: v for k, v in before.items() if k != "revision_checked_at"},
+                             {k: v for k, v in after.items() if k != "revision_checked_at"})
+            if "revision_checked_at" in before:
+                expected = before["revision_checked_at"] if before["kind"] == "pr" else "2023-11-14T22:14:20+00:00"
+                self.assertEqual(after["revision_checked_at"], expected)
         self.assertEqual(again["projects"][0]["sync_status"], "partial")
         self.assertEqual(again["projects"][0]["sources"]["pr"]["sync_status"], "stale")
         self.assertEqual(again["projects"][0]["sources"]["pr"]["last_success"], "2023-11-14T22:13:20+00:00")
         self.assertEqual(again["projects"][0]["sources"]["issue"]["last_success"], "2023-11-14T22:14:20+00:00")
         self.assertIn("using stale cache", again["warnings"][0])
+
+    def test_exact_pr_304_refreshes_radar_without_promoting_summary_or_stale_cache(self):
+        from portbridge.radar_scan import evidence_source
+        from portbridge.radar_store import recent
+
+        catalog = Catalog(self.db_path, DEFAULT_SEED)
+        project = {"slug": "victory", "repo": "Marvisak/VIctory"}
+        target = "https://github.com/Marvisak/VIctory/pull/200"
+        epoch = 1700000000
+        hours = 3600
+        raw = {"number": 200, "state": "open", "title": "Queue tuning", "head": {"sha": self.sha},
+               "updated_at": "2023-11-01T00:00:00Z"}
+
+        def observe(hour, reply=None, *, error=None):
+            with patch.object(github._Sync, "_request", return_value=(reply, {"ETag": '"pinned"'}), side_effect=error), \
+                    patch.object(github.time, "time", return_value=epoch + hour * hours):
+                batch = github.refresh_references([project], self.db_path, [target], refresh=True)
+            catalog.record_sync(batch)
+            return batch["items"][0]
+
+        def radar():
+            row, = catalog.observations(project="victory")
+            return evidence_source(row, "target", {"victory": project})
+
+        initial = observe(0, raw)
+        self.assertFalse(recent({"sources": [radar()]}, epoch + 7 * hours))
+        refreshed = observe(8, github.NOT_MODIFIED)
+        self.assertEqual(initial["fetched_at"], refreshed["fetched_at"])
+        self.assertTrue(recent({"sources": [radar()]}, epoch + 8 * hours))
+        held = radar()["checked_at"]
+        summary = {**initial, "fetched_at": github._utc(epoch + 12 * hours),
+                   "metadata": {"head_sha": None}, "revision_checked_at": None}
+        catalog.record_sync({"items": [summary]})
+        observe(16, error=github.Unavailable("offline"))
+        self.assertEqual(radar()["checked_at"], held)
+        self.assertFalse(recent({"sources": [radar()]}, epoch + 16 * hours))
+        observe(17, github.NOT_MODIFIED)
+        self.assertTrue(recent({"sources": [radar()]}, epoch + 17 * hours))
 
     def test_private_repositories_cannot_be_listed_with_token(self):
         def check(url, resource, etag):
@@ -307,7 +350,11 @@ class GitHubSyncTest(unittest.TestCase):
                 patch.object(github.time, "time", return_value=1700000120):
             restored = github.collect(pending["projects"], self.db_path)
         self.assertEqual(restored["projects"][0]["sync_status"], "ok")
-        self.assertEqual(restored["items"], original["items"])
+        for before, after in zip(original["items"], restored["items"], strict=True):
+            self.assertEqual({k: v for k, v in before.items() if k != "revision_checked_at"},
+                             {k: v for k, v in after.items() if k != "revision_checked_at"})
+            if "revision_checked_at" in before:
+                self.assertEqual(after["revision_checked_at"], "2023-11-14T22:15:20+00:00")
 
     def test_anonymous_single_endpoint_failure_keeps_repository_visible(self):
         def partial(url, resource, etag):

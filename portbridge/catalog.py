@@ -247,14 +247,24 @@ class Catalog:
                 fetched_at = item.get("fetched_at") or observed_at
                 status, metadata = item["status"], dict(item["metadata"])
                 incoming_revision = source_revision({"metadata": metadata})
+                checked = (item.get("revision_checked_at") or fetched_at) if incoming_revision else None
                 old_metadata = {}
+                old_revision = old_checked = None
                 before = after = None
                 if previous:
+                    old_metadata = json.loads(previous["metadata"])
+                    old_revision = source_revision({"metadata": old_metadata})
+                    old_checked = old_metadata.get("revision_checked_at") or previous["fetched_at"]
                     older_update = utc_sort_key(previous["updated_at"])
                     prev_state = (older_update, utc_sort_key(previous["fetched_at"]))
                     if (updated_at, utc_sort_key(fetched_at)) < prev_state:
+                        # Another endpoint may have fetched a newer body at the same revision.
+                        if (checked and incoming_revision == old_revision and updated_at == older_update
+                                and status == previous["status"] and utc_sort_key(checked) > utc_sort_key(old_checked)):
+                            old_metadata["revision_checked_at"] = checked
+                            db.execute("UPDATE observations SET metadata=? WHERE project=? AND kind=? AND source_id=?",
+                                       (encode(old_metadata), *key))
                         continue
-                    old_metadata = json.loads(previous["metadata"])
                     metadata = {**old_metadata, **metadata}
                     preserve = ("merged_at", "base_branch") if updated_at == older_update else ("merged_at",)
                     for name in preserve:
@@ -269,6 +279,12 @@ class Catalog:
                         after = source_revision({"metadata": old_metadata})
                     metadata["head_sha"] = after
                     metadata["last_known_head_sha"] = after or before
+                effective_revision = source_revision({"metadata": metadata})
+                if effective_revision:
+                    previous_check = old_checked if old_revision == effective_revision else None
+                    metadata["revision_checked_at"] = freshest(checked, previous_check)
+                else:
+                    metadata.pop("revision_checked_at", None)
                 db.execute("""INSERT INTO observations VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(project, kind, source_id) DO UPDATE SET
                     title=excluded.title, url=excluded.url, status=excluded.status,

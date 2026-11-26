@@ -123,6 +123,27 @@ class RadarWorkflowTest(CatalogFixture):
         self.assertNotIn("radar_findings",preflight(self.catalog,url=LEFT))
         self.assertEqual(filter_impact(people(self.catalog,now=NOW)[1],target=LEFT)["stories"],[])
 
+    def test_authors_can_retract_reports_without_reopening_a_withdrawn_task(self):
+        self.act(self.reviewer, "queue", note="Compare pinned sources")
+        self.act(self.first, "claim")
+        first = self.act(self.first, "submit", report=self.payload())
+        self.private_review(first)
+        self.act(self.reviewer, "recheck", note="Check the same result independently")
+        self.act(self.second, "claim")
+        second = self.act(self.second, "submit", report=self.payload())
+        self.act(self.reviewer, "withdraw_task", note="The receiving project ended this check")
+
+        for author, report in ((self.first, first), (self.second, second)):
+            report_id = report["report_id"]
+            result = self.act(author, "withdraw_report", report_id=report_id)
+            self.assertEqual(result["state"], "withdrawn")
+            view = dashboard(self.catalog, self.exchange, author, task_id=self.task, now=NOW)
+            self.assertEqual(next(r["state"] for r in view["reports"] if r["id"] == report_id), "withdrawn")
+            self.assertEqual(build_lab(self.catalog, task=self.task, now=NOW)["tasks"], [])
+            self.assertEqual(radar_view(self.catalog, NOW)["candidates"], [])
+            with self.assertRaises(Conflict):
+                self.act(self.second, "claim")
+
     def test_reproduction_conflicting_outcomes_do_not_close_the_check(self):
         self.act(self.reviewer,"queue",note="Pinned source test")
         self.act(self.first,"claim")

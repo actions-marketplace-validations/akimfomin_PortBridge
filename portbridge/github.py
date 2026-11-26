@@ -306,6 +306,13 @@ def _query(project, kind, page, *, since=None):
     return f"{API}/repos/{repo}/{endpoint}?{urlencode(params)}", "core"
 
 
+def _validated_item(item, page_checked_at):
+    """A successful page check confirms only revisions actually present on that page."""
+    if page_checked_at is None or not source_revision(item):
+        return item
+    return {**item, "revision_checked_at": _utc(page_checked_at)}
+
+
 class _Sync:
     def __init__(self, db, refresh, projects=(), *, anonymous=False, time_budget=45):
         self.db = db
@@ -668,7 +675,7 @@ def collect(projects: list[dict], db_path: Path, *, refresh=False, pages=1) -> d
                             seen.add(key)
                             # Multiple project slugs may refer to the same API repository.
                             results.append({
-                                **item, "project": project["slug"],
+                                **_validated_item(item, stamp), "project": project["slug"],
                                 "fetched_at": item.get("fetched_at") or _utc(stamp),
                             })
                             count += 1
@@ -904,8 +911,9 @@ def refresh_references(projects, db_path, references, *, refresh=False, skip_una
                 continue
             current_schema = cached and _current_signatures(cached_items, kind)
             if current_schema and cached[1] + CACHE_TTL > time.time() and not refresh:
-                result["items"].extend(cached_items)
+                result["items"].extend(_validated_item(item, cached[1]) for item in cached_items)
                 continue
+            checked_at = cached[1] if current_schema else None
             try:
                 sync._require_public(project["repo"])
                 sync.require_reference_feed(project["repo"], kind)
@@ -930,12 +938,13 @@ def refresh_references(projects, db_path, references, *, refresh=False, skip_una
                     db.execute("""INSERT INTO github_cache VALUES (?, ?, ?, ?, 0)
                                   ON CONFLICT(url) DO UPDATE SET etag=excluded.etag, fetched_at=excluded.fetched_at,
                                   items=excluded.items""", (endpoint, etag, now, json.dumps(items, ensure_ascii=True)))
+                checked_at = now
             except Unavailable as error:
                 result["warnings"].append(f"{target}: {error}")
                 result["references"].append({"url": target, "status": "retained" if cached_items else "unavailable",
                                              **source_failure(error)})
                 items = cached_items
-            result["items"].extend(items)
+            result["items"].extend(_validated_item(item, checked_at) for item in items)
     return result
 
 

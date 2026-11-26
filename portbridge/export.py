@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 from tempfile import TemporaryDirectory
+from urllib.parse import quote
 
 from .activity import build_activity
 from .case_pages import CASE_FILE, case_languages, case_page, case_path, sitemap
@@ -37,6 +38,11 @@ VERSIONED_SNAPSHOT = re.compile(rf"(?:{'|'.join(VERSIONED_SNAPSHOTS)})-([0-9a-f]
 VERSIONED_ASSET = re.compile(r"(?:styles-([0-9a-f]{24})\.css|(?:app|discovery)-([0-9a-f]{24})\.js)")
 MATCH_PREVIEW_LIMIT = 200
 RELEASE_FILES = "release-files.json"
+# The existing bridge mark doubles as the icon even on a subpath or an offline copy.
+SITE_ICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">'
+             '<rect width="32" height="32" rx="7" fill="#b8e69e"/>'
+             '<path d="M6 20a10 10 0 0 1 20 0M4 21h24" fill="none" stroke="#132724" stroke-width="2"/></svg>')
+ICON_LINK = ('<link rel="icon" href="data:image/svg+xml,' + quote(SITE_ICON, safe="") + '">').encode("ascii")
 EXPORT_FILES = {*ASSETS, MANIFEST, BROWSE_MANIFEST, RELEASE_FILES, "api.html", "api.ru.html", "feed.xml", "feed.ru.xml", "sitemap.xml", ".nojekyll",
                 *(f"data/{name}.json" for name in SNAPSHOTS)}
 
@@ -123,6 +129,7 @@ def output_path(directory):
 def browser_assets():
     assets = {path: (PACKAGE / "static" / source).read_bytes() for path, source in ASSETS.items()}
     index = assets["index.html"].decode("utf-8")
+    index = index.replace("<head>", '<head>\n  <meta name="portbridge-mode" content="snapshot">', 1)
     index = index.replace('href="/api/docs?lang=en"', 'href="./api.html"')
     for path in ("static/styles.css", "static/discovery.js", "static/app.js"):
         source = Path(path)
@@ -223,6 +230,9 @@ def _export(catalog, directory, repository):
     contents[MANIFEST] = manifest
     contents[BROWSE_MANIFEST] = browse_manifest
     contents["data/site.json"] = json.dumps(site, ensure_ascii=False).encode("utf-8")
+    for name, value in contents.items():
+        if name.endswith(".html"):
+            contents[name] = value.replace(b"</head>", ICON_LINK + b"</head>", 1)
     files = {name: sha256(value).hexdigest() for name, value in contents.items()}
     for path, value in contents.items():
         target = directory / path

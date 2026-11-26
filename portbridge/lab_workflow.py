@@ -273,7 +273,7 @@ def act(db, task, actor, now, action, args):
             if claim and claim["actor"] == actor:
                 release(db, task, claim, now, "submitted")
             state = "investigated"
-        elif previous["generation"] == task["generation"]:
+        elif state != "withdrawn" and previous["generation"] == task["generation"]:
             state = "investigated" if db.execute("""SELECT 1 FROM radar_reports WHERE task=? AND generation=?
                          AND state IN ('valid_format','reviewed','reproduced','incomplete') LIMIT 1""",
                       (task["id"], task["generation"])).fetchone() else "queued"

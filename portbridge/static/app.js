@@ -1,6 +1,7 @@
 'use strict';
 
 const apiRoot = '/api/v1';
+const exportedSite = Boolean(document.querySelector('meta[name="portbridge-mode"][content="snapshot"]'));
 const byId = (id) => document.getElementById(id);
 const content = byId('content');
 const heading = byId('page-title');
@@ -257,6 +258,7 @@ async function checkManifest(signal, force = false) {
 }
 
 async function fetchJSON(path, signal) {
+  if (exportedSite && !snapshotSite) throw new Error('Public snapshot manifest unavailable');
   if (!snapshotSite) return getJSON(`${apiRoot}${path}`, signal, 'no-cache');
   const [endpoint, query] = path.split('?', 2);
   const [, name, id] = endpoint.split('/');
@@ -286,8 +288,10 @@ async function fetchJSON(path, signal) {
 }
 
 async function initializeData() {
-  const health = await getJSON(`${apiRoot}/health`).catch(() => null);
-  if (health) return health;
+  if (!exportedSite) {
+    const health = await getJSON(`${apiRoot}/health`).catch(() => null);
+    if (health) return health;
+  }
   if (!await checkManifest(undefined, true).catch(() => false)) return {};
   const settings = snapshotSite;
   byId('api-link').href = t('./api.html', './api.ru.html');
@@ -364,7 +368,10 @@ function stateScreen(title, explanation, retry = false) {
   if (retry) {
     const button = element('button', 'retry', t('Retry', 'Повторить'));
     button.type = 'button';
-    button.addEventListener('click', () => loadView(route()));
+    button.addEventListener('click', () => {
+      if (exportedSite && !snapshotSite) window.location.reload();
+      else loadView(route());
+    });
     section.append(button);
   }
   content.replaceChildren(section);

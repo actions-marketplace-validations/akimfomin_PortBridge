@@ -8,7 +8,7 @@ import subprocess
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from portbridge.integrations import digest
+from portbridge.integrations import digest, select
 from portbridge.pages_health import public_snapshot, verify_linked_snapshots
 from portbridge.preflight import public_preflight
 
@@ -18,14 +18,14 @@ def read(name):
         return json.load(res)
 
 
-def mcp_partner_page():
+def call_public_mcp(tool, arguments):
     messages = [
         {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
             "protocolVersion": "2025-11-25", "capabilities": {},
             "clientInfo": {"name": "PortBridge-release-check", "version": "1"}}},
         {"jsonrpc": "2.0", "method": "notifications/initialized"},
         {"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {
-            "name": "portbridge_partner", "arguments": {"kind": "task", "limit": 1}}},
+            "name": tool, "arguments": arguments}},
     ]
     wire = "".join(json.dumps(row) + "\n" for row in messages)
     run = subprocess.run([sys.executable, "-B", "-m", "portbridge.mcp"], input=wire,
@@ -34,7 +34,7 @@ def mcp_partner_page():
     init, page = (json.loads(line) for line in run.stdout.splitlines())
     if (init.get("id") != 1 or init.get("result", {}).get("protocolVersion") != "2025-11-25"
             or page.get("id") != 2 or page.get("result", {}).get("isError")):
-        raise ValueError("Public MCP partner call failed")
+        raise ValueError(f"Public MCP call failed for {tool}")
     return page["result"]["structuredContent"]
 
 
@@ -55,9 +55,7 @@ def main():
     canonical_feed = read("partner")
     if feed != canonical_feed:
         raise SystemExit("Stable partner feed differs from the published generation")
-    from portbridge.integrations import select
-
-    page = mcp_partner_page()
+    page = call_public_mcp("portbridge_partner", {"kind": "task", "limit": 1})
     if page != select(feed, kind="task", limit=1):
         raise SystemExit("Public MCP task page differs from the published partner feed")
     first, cursor = digest(feed, {}, kind="task")
@@ -86,6 +84,11 @@ def main():
         raise SystemExit("Reference PR could not be read from the published Discovery snapshot")
     if not discovery.get("matches"):
         raise SystemExit("The reference PR returned no previous work")
+    via_mcp = call_public_mcp("portbridge_preflight", {"url": url, "limit": 5})
+    expected = [row["source"] for row in discovery["matches"]]
+    observed = [row["source"] for row in via_mcp.get("discovery", {}).get("matches", [])]
+    if via_mcp.get("origin_url") != url or observed != expected:
+        raise SystemExit("The MCP preflight and the published URL search returned different sources")
     health = read(site["snapshots"]["health"].removesuffix(".json"))
     print(json.dumps({"site_sha256": checksum, "generated_at": site["generated_at"],
         "health_status": health["status"], "observations": health["observation_count"],
@@ -93,7 +96,7 @@ def main():
         "browse_totals": counts, "partner_counts": feed["counts"], "tasks_in_first_poll": len(first["added_or_changed"]),
         "changed_on_second_poll": 0, "mcp_partner_first_page_items": len(page["items"]),
         "reference_pr": url, "origin_in_source_index": prior.get("indexed"),
-        "discovery_matches": len(discovery["matches"])}, indent=2))
+        "discovery_matches": len(discovery["matches"]), "mcp_and_api_sources": observed}, indent=2))
 
 
 if __name__ == "__main__":
