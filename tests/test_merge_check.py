@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from portbridge.merge_check import compare, report
+from portbridge.merge_check import changed_paths, compare, report
 
 
 URL = "https://github.com/LooperSalty/AnyXboxX/pull/433"
@@ -19,10 +19,17 @@ class MergeCheckTest(unittest.TestCase):
                     compare(url, target)
             resolve.assert_not_called()
 
+    def test_linked_test_survives_the_changed_file_display_limit(self):
+        raw = b"\0".join([f"src/file{n:02}.rs".encode() for n in range(26)] + [b"tests/test_regression.py"])
+        displayed, tests = changed_paths(raw)
+        self.assertEqual(len(displayed), 25)
+        self.assertEqual(tests, ["tests/test_regression.py"])
+
     def test_keeps_conflict_result_if_public_catalog_fails(self):
         outcome = {"status": "conflict", "head": "b" * 40,
                    "receiving_commit_url": "https://github.com/LooperSalty/AnyXboxX/commit/" + TARGET,
-                   "conflicts": ["src/draw.rs"], "changed_files": ["src/draw.rs", "src/cut_tables_tests.rs"]}
+                   "conflicts": ["src/draw.rs"], "changed_files": ["src/draw.rs", "src/cut_tables_tests.rs"],
+                   "changed_tests": ["src/cut_tables_tests.rs"]}
         with patch("portbridge.merge_check.compare", return_value=outcome), \
              patch("portbridge.merge_check.public_preflight", side_effect=OSError):
             result = report(URL, TARGET)

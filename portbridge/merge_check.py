@@ -23,6 +23,12 @@ def paths(raw):
     return [item.decode("utf-8", errors="replace") for item in raw.split(b"\0") if item]
 
 
+def changed_paths(raw):
+    changed = paths(raw)
+    tests = [path for path in changed if re.search(r"(^|/)(tests?(/|[_.-])|[^/]*[_-]tests?\.)", path, re.I)]
+    return changed[:25], tests[:8]
+
+
 def compare(url, target):
     if not isinstance(url, str) or len(url) > 500 or not PR_URL.fullmatch(url):
         raise ValueError("Enter a public GitHub pull request URL")
@@ -32,7 +38,7 @@ def compare(url, target):
     owner, name, _, number = urlsplit(url).path.strip("/").split("/")
     public_repo = f"https://github.com/{current_repository(f'{owner}/{name}')}"
     result = {"url": url, "head": head, "target": target, "status": "unverified",
-              "conflicts": [], "changed_files": []}
+              "conflicts": [], "changed_files": [], "changed_tests": []}
     # Read repository data in a bare repository without local Git configuration, templates or hooks.
     env = {key: val for key, val in os.environ.items() if not key.startswith(("GIT_", "SSH_"))}
     env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull,
@@ -66,7 +72,7 @@ def compare(url, target):
         result["merge_base"] = base
         changed = git("diff", "--no-ext-diff", "--diff-filter=AMR", "--name-only", "-z", base, head)
         if changed.returncode == 0:
-            result["changed_files"] = paths(changed.stdout)[:25]
+            result["changed_files"], result["changed_tests"] = changed_paths(changed.stdout)
         merged = git("merge-tree", "--write-tree", "--name-only", "--no-messages", "-z", target, head)
         output = paths(merged.stdout)
         if merged.returncode not in (0, 1) or not output or not SHA.fullmatch(output[0]):
@@ -96,8 +102,7 @@ def report(url, target):
     if outcome["status"] == "unverified":
         return outcome
 
-    test_paths = [path for path in outcome["changed_files"]
-                  if re.search(r"(^|/)(tests?(/|[_.-])|[^/]*[_-]tests?\.)", path, re.I)]
+    test_paths = outcome.pop("changed_tests")
     head_repo = outcome["receiving_commit_url"].split("/commit/")[0]
     outcome["test_files"] = [f"{head_repo}/blob/{outcome['head']}/{quote(path, safe='/')}" for path in test_paths]
     step = ("Resolve the reported paths on a disposable branch. " if outcome["conflicts"] else "")
