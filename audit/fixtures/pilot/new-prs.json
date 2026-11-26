@@ -1,0 +1,34 @@
+[
+  {
+    "repo": "boykopovar/AnyPS5",
+    "n": 20730,
+    "title": "fix(libSceGnmDriver): pace submissions without hanging on compute queues",
+    "url": "https://github.com/boykopovar/AnyPS5/pull/20730",
+    "head": "fdc542d375e8df9bf9bf4ac1c141ff27fb9866c8",
+    "date": "2026-11-26T16:40:45Z"
+  },
+  {
+    "repo": "KytyPS5/KytyPS5",
+    "n": 2038,
+    "title": "tests: start the Vulkan harness without byte-granular robust buffer access",
+    "url": "https://github.com/KytyPS5/KytyPS5/pull/2038",
+    "head": "3c61f7077246e43a0790887f85b5d6a67abb94b0",
+    "date": "2026-11-25T17:32:28Z"
+  },
+  {
+    "repo": "ubiquitarianism/leonida",
+    "n": 2365,
+    "title": "vulkan: a fence counter of UINT64_MAX no Signal asked for is a loss, without vkDeviceWaitIdle (RT-FENCE-MAX-CONFIRM-NO-STALL)",
+    "url": "https://github.com/ubiquitarianism/leonida/pull/2365",
+    "head": "69b1338f2e97df44fd3e573f8c26888a76c1bcd7",
+    "date": "2026-11-26T16:38:27Z"
+  },
+  {
+    "repo": "xcl-dev/xcl",
+    "n": 2775,
+    "title": "Tests: wait for every quarantine mark before draining sparse tiles",
+    "url": "https://github.com/xcl-dev/xcl/pull/2775",
+    "head": "e5e456cadc3855491621cf4cf9c82db08425a557",
+    "date": "2026-11-26T16:39:33Z"
+  }
+]

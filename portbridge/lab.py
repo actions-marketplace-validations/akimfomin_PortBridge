@@ -7,12 +7,12 @@ import re
 from .github import WORK_URL
 from .matching import canonical_url
 from .lab_report_formats import FRAMELAB_DISCUSSION, FRAMELAB_REVISION, FRAMELAB_TESTER_ID, REPORT_POLICIES
-from .lab_reports import coverage_cells, has_passing_coverage, read_report_states
+from .lab_reports import coverage_cells, coverage_status, read_report_states
 
 
 CHECKED_AT = "2026-11-26T00:58:50Z"
 EQUIPMENT = ("amd", "cpu", "intel", "nvidia")
-STATUSES = ("needs_run", "needs_revision", "awaiting_review", "blocked")
+STATUSES = ("needs_run", "needs_revision", "awaiting_review", "completed", "blocked")
 TASK_ID_PATTERN = r"^[a-z0-9-]{1,80}$"
 PORTBRIDGE = "https://github.com/akimfomin/PortBridge"
 CONTINUED = "https://github.com/ubiquitarianism/leonida"
@@ -758,8 +758,8 @@ def build_lab(catalog=None, *, now=None, **filters):
                                                 for report in report_sync["reports"]]}
         entry["report_sync"] = report_sync
         entry["coverage"] = coverage_cells(entry, report_sync["reports"])
-        if entry["status"] == "needs_run" and has_passing_coverage(entry, report_sync["reports"]):
-            entry["status"] = "awaiting_review"
+        if report_sync["reports"] and entry["status"] in {"needs_run", "awaiting_review"}:
+            entry["status"] = coverage_status(entry, entry["coverage"])
     for entry in tasks:
         entry.setdefault("kind", "source-only" if entry["equipment"] == ["cpu"] else "hardware")
         entry.setdefault("consoles", ["xbox-series"])

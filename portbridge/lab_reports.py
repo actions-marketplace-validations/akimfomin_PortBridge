@@ -342,28 +342,49 @@ def coverage_cells(task, reports):
         findings = sorted((entry for entry in reports if entry.get("equipment") == equipment),
                           key=lambda entry: (entry.get("updated_at") or entry.get("reported_at", ""),
                                              entry.get("reported_at", "")))
-        latest = {(entry.get("author", "").casefold(), entry.get("device_id") or entry["hardware"], entry.get("os_family")):
-                  entry["outcome"] for entry in findings if entry.get("authority") == "approved"}
+        latest = {}
+        pending = {}
+        for entry in findings:
+            key = (entry.get("author", "").casefold(), entry.get("device_id") or entry["hardware"],
+                   entry.get("os_family"))
+            if entry.get("authority") == "approved":
+                latest[key] = entry["outcome"]
+                pending.pop(key, None)
+            elif entry.get("review", {}).get("decision") != "revoke":
+                pending[key] = entry["outcome"]
         if "fail" in latest.values():
             state = "contradicted"
         elif "pass" in latest.values():
             state = "covered"
+        elif "pass" in pending.values():
+            state = "reported"
         elif "partial" in latest.values():
             state = "partial"
         else:
-            state = "reported" if findings else "missing"
+            state = "reported" if pending else "missing"
         cells.append({"equipment": equipment, "state": state})
     return cells
+
+
+def coverage_status(task, cells):
+    """Apply the task's any/all requirement to its current equipment coverage."""
+    states = {cell["state"] for cell in cells}
+    if not states or "contradicted" in states:
+        return "needs_run"
+    if task.get("coverage_policy") == "all":
+        if states == {"covered"}:
+            return "completed"
+        return "awaiting_review" if states <= {"covered", "reported"} else "needs_run"
+    if "covered" in states:
+        return "completed"
+    return "awaiting_review" if "reported" in states else "needs_run"
 
 
 def has_passing_coverage(task, reports, *, equipment=None):
     cells = coverage_cells(task, reports)
     if equipment:
         cells = [cell for cell in cells if cell["equipment"] == equipment]
-    states = {cell["state"] for cell in cells}
-    if equipment or task.get("coverage_policy") == "all":
-        return states == {"covered"}
-    return "covered" in states and "contradicted" not in states
+    return coverage_status(task, cells) == "completed"
 
 
 def report_state(row):

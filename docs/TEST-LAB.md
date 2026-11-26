@@ -27,6 +27,8 @@ Open the individual test card and check the original report and observed results
 
 ## Для участника
 
+Когда подтверждённые отчёты закрывают запрошенное аппаратное покрытие, карточка получает статус `completed`. Если для полного покрытия остаётся только проверка полученного отчёта, статус — `awaiting_review`. После отзыва подтверждения задача снова требует прогона, если её не закрывает другой отчёт. Решение команды о внедрении записывается отдельно.
+
 Откройте очередь и выберите AMD, NVIDIA или CPU. Сначала показаны проверки, которым нужен исполнитель. Включите **Показать все статусы**, чтобы увидеть также результаты на ревью и отложенные проверки.
 
 Нажмите **Открыть эту проверку**, чтобы отправить ссылку на одну задачу. Кнопка **Копировать эту проверку для агента** включает точные версии, шаги и ожидаемый итог. [Пример](https://akimfomin.github.io/PortBridge/?lang=ru#/lab?task=framelab-12-vulkan-handoff)
@@ -48,6 +50,8 @@ Open the individual test card and check the original report and observed results
 В карточке отдельной проверки есть раздел **Для владельца обсуждения**. Проверьте исходный отчёт, выберите подтверждение или отзыв и скопируйте решение в указанное обсуждение. Если автор изменит текст, проверьте отчёт снова. Авторство прогона сохраняется.
 
 ## For integrations
+
+The status of a curated hardware check becomes `completed` when approved passing reports satisfy its coverage policy. If the remaining required coverage could be satisfied by reviewing submissions already on file, the status is `awaiting_review`. A revoked confirmation reopens the requirement unless other reports cover it. The revoked report stays visible. Completion describes the requested test coverage and leaves upstream adoption as a separate decision.
 
 Read `data/lab.json` from the public site, call the local `GET /api/v1/lab` endpoint, or use the read-only `portbridge_lab` MCP tool. Use `task` to filter by a task's exact `id`. To open the same check for a person, link to `#/lab?task=<id>` on the public site. The equipment filter uses a value supplied by the caller. `checked_at` records when the queue was reviewed. Consult the linked discussions for the latest claims, source revisions, and decisions.
 

@@ -98,7 +98,7 @@ class LabReportsTest(CatalogFixture):
         self.assertEqual(initial["state"], "fresh")
         self.assertEqual([r["outcome"] for r in initial["reports"]], ["pass", "pass"])
         self.assertEqual(len({r["hardware"] for r in initial["reports"]}), 2)
-        self.assertEqual(self.card()["status"], "awaiting_review")
+        self.assertEqual(self.card()["status"], "completed")
         self.assertEqual(self.card()["adoption"], "pending")
         self.assertEqual(build_lab(self.catalog, status="needs_run", task=FRAMELAB_TASK)["tasks"], [])
 
@@ -107,7 +107,7 @@ class LabReportsTest(CatalogFixture):
         static = export(self.catalog, self.workspace / "site")
         snapshot = json.loads((static / "data/lab.json").read_bytes())
         tool = PortBridgeMCP(ReadOnlyCatalog(self.catalog.path))
-        response = tool.run_tool({"name": "portbridge_lab", "arguments": {"task": FRAMELAB_TASK}})
+        response = tool.run_tool({"name": "portbridge_lab", "arguments": {"task": FRAMELAB_TASK, "status": "completed"}})
         self.assertIn(self.card(), snapshot["tasks"])
         self.assertEqual(response["structuredContent"]["tasks"], [self.card()])
 
@@ -173,7 +173,7 @@ class LabReportsTest(CatalogFixture):
         self.assertEqual(stale["state"], "stale")
         self.assertEqual(stale["checked_at"], initial["checked_at"])
         self.assertEqual(stale["reports"], initial["reports"])
-        self.assertEqual(self.card()["status"], "awaiting_review")
+        self.assertEqual(self.card()["status"], "completed")
         cleared = self.refresh(([], {}))
         self.assertEqual((cleared["state"], cleared["reports"]), ("fresh", []))
         self.assertEqual(self.card()["status"], "needs_run")
@@ -258,10 +258,10 @@ class StructuredLabReportsTest(CatalogFixture):
             return build_lab(self.catalog, task=task["id"])["tasks"][0]
 
         partial = refresh([amd], [community])
-        self.assertEqual(partial["status"], "needs_run")
+        self.assertEqual(partial["status"], "awaiting_review")
         self.assertEqual([cell["state"] for cell in partial["coverage"]], ["covered", "reported"])
         full = refresh([amd], [community, intel])
-        self.assertEqual(full["status"], "awaiting_review")
+        self.assertEqual(full["status"], "completed")
         self.assertEqual(full["adoption"], "pending")
         self.assertEqual(len(full["report_sync"]["reports"]), 3)
         retained = refresh([], Unavailable("temporarily unavailable", http_status=503))
@@ -347,12 +347,60 @@ class ThreadReviewTest(CatalogFixture):
                 self.assertEqual(coverage_cells(self.task, reports)[1]["state"], "covered")
                 reports = self.read([revoke, older_edited], cached=cached)
                 self.assertEqual(reports[0]["review"]["decision"], "revoke")
-                self.assertEqual(coverage_cells(self.task, reports)[1]["state"], "reported")
+                self.assertEqual(coverage_cells(self.task, reports)[1]["state"], "missing")
         card = build_lab(self.catalog, task=self.task["id"])["tasks"][0]
         self.assertEqual(card["adoption"], "pending")
         enhanced, = card["report_sync"]["reports"]
         self.assertEqual({key: enhanced[key] for key in reports[0]}, reports[0])
         self.assertTrue(enhanced["report_id"].startswith("report:"))
+
+    def test_review_then_revoke_reopens_only_the_affected_hardware_requirement(self):
+        amd = structured_comment(self.task, self.primary, 4, equipment="amd", association="OWNER")
+        revoke = review_comment(self.task, self.primary, self.report, 5, "revoke")
+        for decisions, expected, intel_state in [
+                ([], "awaiting_review", "reported"),
+                ([self.approval], "completed", "covered"),
+                ([self.approval, revoke], "needs_run", "missing")]:
+            with self.subTest(expected=expected):
+                self.read([amd, *decisions], cached=True)
+                card, = build_lab(self.catalog, task=self.task["id"], status=expected)["tasks"]
+                self.assertEqual([c["state"] for c in card["coverage"]], ["covered", intel_state])
+                self.assertEqual(card["adoption"], "pending")
+                snapshot = json.loads((export(self.catalog, self.workspace / "site") / "data/lab.json").read_bytes())
+                self.assertEqual(next(t for t in snapshot["tasks"] if t["id"] == card["id"]), card)
+                mcp = PortBridgeMCP(ReadOnlyCatalog(self.catalog.path))
+                args = {"task": card["id"], "status": expected}
+                response = mcp.run_tool({"name": "portbridge_lab", "arguments": args})
+                self.assertEqual(response["structuredContent"]["tasks"], [card])
+
+    def test_report_decisions_supersede_curated_review_status(self):
+        self.task = next(task for task in TASKS if task["id"] == "pb-9-continued-first-frame")
+        self.primary, self.linked = report_sources(self.task)
+        self.report = structured_comment(self.task, self.linked, 1, equipment="amd")
+        approval = review_comment(self.task, self.primary, self.report, 2)
+        revoke = review_comment(self.task, self.primary, self.report, 3, "revoke")
+        failed = structured_comment(self.task, self.primary, 4, equipment="amd", association="OWNER",
+                                    cases={self.task["report_cases"][0]: "fail"})
+        for decisions, linked, expected in [([], [], "awaiting_review"), ([approval], [self.report], "completed"),
+                                           ([approval, revoke], [self.report], "needs_run"),
+                                           ([failed], [], "needs_run")]:
+            with self.subTest(expected=expected):
+                self.read(decisions, linked, cached=True)
+                card, = build_lab(self.catalog, task=self.task["id"])["tasks"]
+                self.assertEqual(card["status"], expected)
+
+    def test_passing_submission_moves_partial_cell_to_review(self):
+        amd = structured_comment(self.task, self.primary, 4, equipment="amd", association="OWNER")
+        partial = structured_comment(self.task, self.linked, 5, equipment="intel", association="OWNER",
+                                     cases={self.task["report_cases"][0]: "skip"})
+        passing = structured_comment(self.task, self.linked, 6, equipment="intel")
+        for candidate, expected, intel in [(self.report, "needs_run", "partial"),
+                                           (passing, "awaiting_review", "reported")]:
+            with self.subTest(expected=expected):
+                self.read([amd], [partial, candidate], cached=True)
+                card, = build_lab(self.catalog, task=self.task["id"])["tasks"]
+                self.assertEqual([c["state"] for c in card["coverage"]], ["covered", intel])
+                self.assertEqual(card["status"], expected)
 
     def test_source_binding_identity_and_original_body_are_required(self):
         for approval in (

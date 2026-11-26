@@ -1460,6 +1460,7 @@ const labStatus = {
   needs_run: t('A test run is needed', 'Нужен прогон'),
   needs_revision: t('Awaiting combined revision', 'Ждём объединённую версию'),
   awaiting_review: t('Awaiting team review', 'Ждём ответа команды'),
+  completed: t('Requested coverage completed', 'Запрошенная проверка завершена'),
   blocked: t('Source unavailable', 'Источник недоступен'),
 };
 const labEvidence = {
@@ -1665,8 +1666,8 @@ function labReport(task, returnPath, equipment) {
   return section;
 }
 
-function labReportsForReview(task) {
-  return task.status === 'awaiting_review' && list(task.report_sync?.reports).length > 0;
+function labHasResults(task) {
+  return task.status === 'completed' || (task.status === 'awaiting_review' && list(task.report_sync?.reports).length > 0);
 }
 
 function labReviewControls(task, report) {
@@ -1754,7 +1755,7 @@ function labSyncedReports(task, focused) {
 function labTask(task, focused = false, queueEquipment = '', showAll = false) {
   const card = element('article', 'card lab-task');
   const blocked = task.status === 'blocked';
-  const reportsForReview = labReportsForReview(task);
+  const hasResults = labHasResults(task);
   const status = element('div', 'meta-row lab-status');
   if (!task.workflow_state) status.append(badge(task.status, labStatus), badge(task.evidence_stage, labEvidence), badge(task.adoption, labAdoption));
   const projects = element('div', 'meta-row');
@@ -1790,7 +1791,7 @@ function labTask(task, focused = false, queueEquipment = '', showAll = false) {
   }
 
   const details = element('details', 'lab-details');
-  details.open = focused && !reportsForReview;
+  details.open = focused && !hasResults;
   details.append(element('summary', '', t('Versions, steps and what to report', 'Версии, шаги и что указать в отчёте')));
   const versions = element('section', 'lab-checklist');
   const commits = element('ul', 'lab-commits');
@@ -1818,11 +1819,11 @@ function labTask(task, focused = false, queueEquipment = '', showAll = false) {
     open.setAttribute('aria-label', `${open.textContent} · ${editorial(task, 'title')}`);
     links.append(open);
   }
-  if (!blocked) links.append(githubLink(reportsForReview ? t('View test procedure', 'Посмотреть порядок проверки')
+  if (!blocked) links.append(githubLink(hasResults ? t('View test procedure', 'Посмотреть порядок проверки')
     : t('Open instructions', 'Открыть инструкцию'), task.procedure_url));
-  if (blocked || !focused || reportsForReview) {
+  if (blocked || !focused || hasResults) {
     const discussion = blocked ? t('Report a confirmed public source', 'Сообщить публичный адрес')
-      : reportsForReview ? t('Open reporting discussion', 'Открыть обсуждение с отчётами')
+      : hasResults ? t('Open reporting discussion', 'Открыть обсуждение с отчётами')
         : t('Share result in the discussion', 'Оставить результат в обсуждении');
     links.append(githubLink(discussion, task.result_url));
   }
@@ -1849,7 +1850,7 @@ function labTask(task, focused = false, queueEquipment = '', showAll = false) {
   card.append(links, details);
   if (focused) {
     const returnPath = labQueuePath(labCompatibleEquipment(task, queueEquipment), showAll);
-    if (blocked || reportsForReview) links.append(internalLink(t('Find another check', 'Выбрать другую проверку'), returnPath));
+    if (blocked || hasResults) links.append(internalLink(t('Find another check', 'Выбрать другую проверку'), returnPath));
     else if (!task.candidate_id) card.append(labReport(task, returnPath, queueEquipment));
   }
   return card;
@@ -1869,7 +1870,7 @@ function drawLab(data, params) {
     bar.append(back);
     lab.append(bar);
     if (task) {
-      if (task.prompt || (task.status !== 'blocked' && !labReportsForReview(task))) lab.append(labAgentEntry(task));
+      if (task.prompt || (task.status !== 'blocked' && !labHasResults(task))) lab.append(labAgentEntry(task));
       lab.append(labTask(task, true, equipment, showAll));
     } else {
       lab.append(element('p', 'empty', t('This test is unavailable in the current queue.',

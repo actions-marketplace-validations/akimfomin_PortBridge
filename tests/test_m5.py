@@ -78,4 +78,4 @@ class M5Test(CatalogFixture):
         self.assertEqual(audit(site), [])
         (site / "forbidden.sqlite3").touch()
         (site / "data/partner.json").write_text('{"items":[]}', encoding="utf-8")
-        self.assertEqual(set(audit(site)), {"forbidden.sqlite3", "partner contract"})
+        self.assertEqual(set(audit(site)), {"forbidden.sqlite3", "data/partner.json"})

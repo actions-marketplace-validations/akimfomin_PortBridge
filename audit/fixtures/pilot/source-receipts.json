@@ -1,0 +1,205 @@
+{
+  "kind": "exact source only",
+  "test": "Public pinned source identifiers and independently bounded comparison. No runtime event was observed.",
+  "inputs": {
+    "vulkan_docs": "d4e43a045c9aaaaee930bf6d0ca404a3ee389ba8",
+    "anyxboxx": "6539f200fa8c96555a2b4f2060caaafad756a88e"
+  },
+  "checks": {
+    "kyty": [
+      {
+        "source": "https://github.com/Nawid3333/KytyPS5/blob/3c61f7077246e43a0790887f85b5d6a67abb94b0/tests/ShaderRecompilerComputeTests.cpp",
+        "revision": "3c61f7077246e43a0790887f85b5d6a67abb94b0",
+        "sha256": "981c5996ca7de51a67eb0e9d7585f57159fc05f2e7e6e8bf1576a05758f1b10f",
+        "size": 2882920,
+        "anchors": {
+          "robustStorageBufferAccessSizeAlignment": [
+            24885
+          ],
+          "robustBufferAccess2": [
+            24883,
+            25506
+          ],
+          "pipelineRobustness": [
+            24884,
+            25040
+          ],
+          "ComputeDerivativeQuads": [
+            24907
+          ]
+        }
+      },
+      {
+        "source": "https://github.com/KhronosGroup/Vulkan-Docs/blob/d4e43a045c9aaaaee930bf6d0ca404a3ee389ba8/appendices/VK_EXT_pipeline_robustness.adoc",
+        "revision": "d4e43a045c9aaaaee930bf6d0ca404a3ee389ba8",
+        "sha256": "12985a8fd33fe50d849407866b46a8164317076c01630bcfde6528c31bac6618",
+        "size": 1437,
+        "anchors": {
+          "VK_EXT_pipeline_robustness": [
+            5,
+            35
+          ],
+          "robust": [
+            5,
+            12,
+            13,
+            27,
+            30,
+            31,
+            32,
+            35
+          ]
+        }
+      }
+    ],
+    "continued": [
+      {
+        "source": "https://github.com/HasiKe/leonida/blob/69b1338f2e97df44fd3e573f8c26888a76c1bcd7/runtime/src/vulkan_backend.h",
+        "revision": "69b1338f2e97df44fd3e573f8c26888a76c1bcd7",
+        "sha256": "53612f083d446210dc6ec8f0cd11e56b46d16210c84d01ae69c76d785177e413",
+        "size": 266184,
+        "anchors": {
+          "UINT64_MAX": [
+            591,
+            600,
+            976,
+            1316,
+            2006,
+            2483,
+            2489,
+            2492,
+            2494,
+            2502,
+            2504,
+            2511,
+            3280,
+            4321,
+            4324,
+            4343,
+            4353
+          ],
+          "submitted_value": [
+            2464
+          ],
+          "vkDeviceWaitIdle": [
+            108,
+            152,
+            1653,
+            1656,
+            2499,
+            2507,
+            2510,
+            2511
+          ]
+        }
+      },
+      {
+        "source": "https://github.com/Gag21/AnyPS5/blob/fdc542d375e8df9bf9bf4ac1c141ff27fb9866c8/core/libs/prx/libSceGnmDriver/Export.cpp",
+        "revision": "fdc542d375e8df9bf9bf4ac1c141ff27fb9866c8",
+        "sha256": "66cfe959a3cd3c3d635071bec6ccc539e62a41e67fbb846b70a6e97d5a807b1d",
+        "size": 40519,
+        "anchors": {
+          "WaitSubmissionPaced": [
+            382
+          ],
+          "SubmitLocked": [
+            379,
+            635,
+            646
+          ]
+        }
+      }
+    ],
+    "xcl": [
+      {
+        "source": "https://github.com/sage-sage/xcl/blob/e5e456cadc3855491621cf4cf9c82db08425a557/crates/xcl/src/hle/d3d12x/sparse.rs",
+        "revision": "e5e456cadc3855491621cf4cf9c82db08425a557",
+        "sha256": "930acf9778dd59a0c0527e8586125ff84ad5bdfff68a28dec275cde3c1f264b3",
+        "size": 110188,
+        "anchors": {
+          "wait_for_quarantine": [
+            2208,
+            2219,
+            2234,
+            2345
+          ],
+          "drain_quarantined": [
+            609,
+            611,
+            1405,
+            1475,
+            1561,
+            2209,
+            2346,
+            2380,
+            2388
+          ],
+          "known_queues": [
+            1440,
+            1442,
+            1457,
+            2232
+          ]
+        }
+      },
+      {
+        "source": "https://github.com/Vladimir-Human/AnyXboxX/blob/6539f200fa8c96555a2b4f2060caaafad756a88e/third_party/victory/crates/victory-gpu/src/resource.rs",
+        "revision": "6539f200fa8c96555a2b4f2060caaafad756a88e",
+        "sha256": "93195eb698602d8dcfee9697f95da21385409334b7ca57b4454b548391d0e892",
+        "size": 254504,
+        "anchors": {
+          "evict_lru": [
+            1227,
+            1402,
+            1487,
+            1492,
+            1681,
+            1765,
+            2776,
+            2793,
+            2811,
+            2815,
+            2829,
+            3458,
+            5672,
+            5781,
+            5807,
+            5858,
+            5948,
+            5954,
+            6029,
+            6087,
+            6176
+          ],
+          "completed_fence": [
+            1494,
+            1676,
+            2080,
+            2101,
+            2194,
+            2199,
+            2221,
+            2259,
+            2321,
+            2346,
+            2376,
+            2773,
+            2817,
+            2825,
+            2831,
+            2853,
+            2879,
+            3008,
+            5674,
+            5719,
+            5770,
+            5783,
+            5809,
+            5860,
+            5956
+          ]
+        }
+      }
+    ]
+  }
+}

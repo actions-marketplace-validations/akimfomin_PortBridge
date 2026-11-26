@@ -6,6 +6,8 @@ Start with the [owner specification](docs/PORTBRIDGE-SPEC.md), the [Discovery su
 
 Work on the current local milestone branch. Public messages, pushes, merges, deployments and changes to external settings require separate permission under the specification. The public project remains in passive maintenance.
 
+The owner has authorized ordinary fast-forward publication of each completed audit iteration to `akimfomin/PortBridge:audit/review`. The auditor starts at [audit/LATEST.md](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md). Update that file, link reproducible evidence, check the entire outgoing Git range for private material and verify the remote commit after publishing. Keep contact lists, drafts, credentials, databases and identifiable local logs out of the branch and its ancestry. A release, deployment, change to main or message to a team still needs separate approval.
+
 PortBridge coordinates independent Xbox Series compatibility projects. It connects related work, organizes shared checks, and records reviewed results so teams can reuse findings. Each team decides what to adopt. [Project overview](README.md) · [Working office](docs/OFFICE.md) · [Copyable agent prompt](docs/AGENT-PROMPT.md)
 
 ## Maintenance status

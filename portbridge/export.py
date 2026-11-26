@@ -36,7 +36,8 @@ VERSIONED_SNAPSHOTS = ("projects", "ecosystem", "problems", "health", "lab", "ac
 VERSIONED_SNAPSHOT = re.compile(rf"(?:{'|'.join(VERSIONED_SNAPSHOTS)})-([0-9a-f]{{24}})\.json")
 VERSIONED_ASSET = re.compile(r"(?:styles-([0-9a-f]{24})\.css|(?:app|discovery)-([0-9a-f]{24})\.js)")
 MATCH_PREVIEW_LIMIT = 200
-EXPORT_FILES = {*ASSETS, MANIFEST, BROWSE_MANIFEST, "api.html", "api.ru.html", "feed.xml", "feed.ru.xml", "sitemap.xml", ".nojekyll",
+RELEASE_FILES = "release-files.json"
+EXPORT_FILES = {*ASSETS, MANIFEST, BROWSE_MANIFEST, RELEASE_FILES, "api.html", "api.ru.html", "feed.xml", "feed.ru.xml", "sitemap.xml", ".nojekyll",
                 *(f"data/{name}.json" for name in SNAPSHOTS)}
 
 
@@ -57,6 +58,11 @@ def docs_page(language="en"):
 
 def content_id(payload):
     return sha256(payload).hexdigest()[:24]
+
+
+def release_inventory_digest(files):
+    body = json.dumps(files, sort_keys=True, separators=(",", ":")).encode("ascii")
+    return sha256(body).hexdigest()
 
 
 def generated_file(folder, name):
@@ -213,15 +219,18 @@ def _export(catalog, directory, repository):
         for path in (directory / "cases").iterdir():
             if f"cases/{path.name}" not in contents:
                 path.unlink()
+    contents[MANIFEST] = manifest
+    contents[BROWSE_MANIFEST] = browse_manifest
+    contents["data/site.json"] = json.dumps(site, ensure_ascii=False).encode("utf-8")
+    files = {name: sha256(value).hexdigest() for name, value in contents.items()}
     for path, value in contents.items():
         target = directory / path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(value)
-    (directory / MANIFEST).write_bytes(manifest)
-    (directory / BROWSE_MANIFEST).write_bytes(browse_manifest)
-    (directory / "data/site.json").write_bytes(json.dumps(site, ensure_ascii=False).encode("utf-8"))
     for folder in ("data", "static"):
         for path in (directory / folder).iterdir():
             if generated_file(folder, path.name) and f"{folder}/{path.name}" not in contents:
                 path.unlink()
+    inventory = {"version": 1, "files": files, "sha256": release_inventory_digest(files)}
+    (directory / RELEASE_FILES).write_text(json.dumps(inventory, sort_keys=True), encoding="utf-8")
     return directory
