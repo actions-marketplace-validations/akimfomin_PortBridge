@@ -44,8 +44,30 @@
     "e1c3f840df2ab4456b7348f4ce8b5b576ed474db": {"name": "PortBridge M5.2", "committed_at": "2026-11-26T19:11:59Z"},
     "0cb1fe46d14f0930e7e347e3c9980a53c9d94be9": {"name": "PortBridge M5.3", "committed_at": "2026-11-26T19:55:30Z"}
   },
-  "relaunch_teams": {},
+  "relaunch_teams": {"ubiquitarianism/leonida": "ubiquitarianism/leonida"},
   "relaunch_usage": [],
+  "relaunch_advisories": [
+    {
+      "task": "https://github.com/ubiquitarianism/leonida/pull/2392",
+      "offer": "https://github.com/ubiquitarianism/leonida/pull/2392#issuecomment-7202363138",
+      "offered_at": "2026-11-26T20:09:31Z",
+      "portbridge_revision": "0cb1fe46d14f0930e7e347e3c9980a53c9d94be9",
+      "version_link": "https://github.com/akimfomin/PortBridge/blob/0cb1fe46d14f0930e7e347e3c9980a53c9d94be9/audit/evidence/m53/development-search.md",
+      "reviewed": true,
+      "responses": [
+        {
+          "actor": "qhukz13", "at": "2026-11-26T20:37:55Z", "kind": "technical_trial",
+          "proof": "https://github.com/ubiquitarianism/leonida/pull/2392#issuecomment-7202911853",
+          "reviewed": true
+        },
+        {
+          "actor": "lixonik", "at": "2026-11-26T20:43:03Z", "kind": "technical_trial",
+          "proof": "https://github.com/ubiquitarianism/leonida/pull/2392#pullrequestreview-6080300502",
+          "reviewed": true
+        }
+      ]
+    }
+  ],
   "usage": [
     {
       "actor": "KainanP",

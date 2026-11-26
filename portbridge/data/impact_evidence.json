@@ -1215,6 +1215,32 @@
   ],
   "stories": [
     {
+      "id": "impact:continued-m53-cache-control",
+      "title": "Continued checked whether its pipeline stage produces a usable driver cache entry",
+      "title_ru": "Continued проверил попадание в кэш драйвера после этапа предкомпиляции",
+      "state": "reviewed",
+      "type": "hardware_review",
+      "at": "2026-11-26T20:43:03Z",
+      "consoles": ["xbox-series"],
+      "specialty": "testing",
+      "summary": "PortBridge suggested checking the consumer in a fresh process. Continued contributors used their own diagnostic on a GTX 1050 Ti and an RTX 5070. On the RTX 5070 the real stage output and the control both produced a driver cache hit. The empty journal failed.",
+      "summary_ru": "PortBridge предложил проверить чтение журнала в новом процессе. Участники Continued использовали свою диагностику на GTX 1050 Ti и RTX 5070. На RTX 5070 журнал стадии и контрольный журнал дали попадание в кэш драйвера, пустой журнал дал отказ.",
+      "scope": "One synthetic compute pipeline, two participants, one team and one review task. Both implementation and hardware tests belong to Continued. External installation and time saved remain unverified.",
+      "scope_ru": "Один синтетический вычислительный конвейер, два участника одной команды и одна задача. Код и аппаратные проверки принадлежат Continued. Установка PortBridge и экономия времени не подтверждены.",
+      "sources": [
+        {"url": "https://github.com/ubiquitarianism/leonida/pull/2392#issuecomment-7202363138", "label": "Version-linked PortBridge control"},
+        {"url": "https://github.com/ubiquitarianism/leonida/pull/2392#issuecomment-7202911853", "label": "Continued diagnostic on GTX 1050 Ti"},
+        {"url": "https://github.com/ubiquitarianism/leonida/pull/2392#pullrequestreview-6080300502", "label": "Stage output and two controls on RTX 5070"}
+      ],
+      "credits": [
+        {"kind": "coordination", "source": "https://github.com/ubiquitarianism/leonida/pull/2392#issuecomment-7202363138", "team": "PortBridge", "basis": "Proposed checking the receiving process"},
+        {"kind": "independent_test", "source": "https://github.com/ubiquitarianism/leonida/pull/2392#issuecomment-7202911853", "login": "qhukz13", "user_id": 77488913, "basis": "Ran Continued's own diagnostic and required the driver hit bit"},
+        {"kind": "independent_test", "source": "https://github.com/ubiquitarianism/leonida/pull/2392#pullrequestreview-6080300502", "login": "lixonik", "user_id": 71736299, "basis": "Checked the real stage output, an empty journal and a positive control"}
+      ],
+      "measures": [],
+      "related": ["https://github.com/ubiquitarianism/leonida/pull/2392", "https://github.com/ubiquitarianism/leonida/pull/2198"]
+    },
+    {
       "id": "impact:rdna2-carry",
       "title": "RDNA2 carry validation reused in AnyXboxX",
       "state": "accepted",

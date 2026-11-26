@@ -114,6 +114,43 @@ def version_confirmed(event, versions):
     return bool(identifies_version) and epoch(event.get("at")) >= epoch(version["committed_at"]) > 0
 
 
+def advisory_outcomes(advisories, versions, teams, historical, now):
+    """Count independently exercised recommendations separately from version-attested tool use."""
+    verified = defaultdict(set)
+    for offer in advisories:
+        if not isinstance(offer, dict) or offer.get("reviewed") is not True:
+            continue
+        task = task_key(offer.get("task"))
+        source = offer.get("offer")
+        revision = offer.get("portbridge_revision")
+        if (not task or task[0] not in teams or task_key(source) != task
+                or not COMMENT.fullmatch(urlsplit(source).fragment) or not isinstance(revision, str)
+                or revision not in versions):
+            continue
+        version_link = offer.get("version_link")
+        if (not public_url(version_link) or repository(version_link) != "akimfomin/portbridge"
+                or not re.fullmatch(rf"/akimfomin/portbridge/(?:commit/{revision}/?|blob/{revision}/.+)",
+                                    urlsplit(version_link).path, re.I)):
+            continue
+        offered = epoch(offer.get("offered_at"))
+        if not 0 < epoch(versions[revision]["committed_at"]) <= offered <= now:
+            continue
+        for response in offer.get("responses", []):
+            if not isinstance(response, dict):
+                continue
+            entry = receipt({**response, "task": offer["task"]}, now)
+            if not entry:
+                continue
+            key, record = entry
+            if (key[1] == "comment" and key[2] != urlsplit(source).fragment.lower()
+                    and key not in historical and record[1] >= offered):
+                verified[key].add(record)
+    records = list(unambiguous(verified))
+    return {**summary(records, teams), "receipt_count": len(records),
+            "task_count": len({task for task, _, _ in records}),
+            "participant_count": len({actor for _, _, actor in records})}
+
+
 def outcomes(public, local, *, as_of=None):
     now = time.time() if as_of is None else as_of
     historical = collect([*public["usage"], *local.get("usage", [])], now)
@@ -121,5 +158,8 @@ def outcomes(public, local, *, as_of=None):
     current = collect((event for event in new_events if version_confirmed(event, public["relaunch_versions"])), now)
     for proof in historical:
         current.pop(proof, None)
-    return {"historical": summary(unambiguous(historical)),
-            "relaunch": summary(unambiguous(current), reviewed_teams(public, local))}
+    teams = reviewed_teams(public, local)
+    relaunch = summary(unambiguous(current), teams)
+    relaunch["advisory_handoffs"] = advisory_outcomes(public.get("relaunch_advisories", []),
+                                                     public["relaunch_versions"], teams, historical, now)
+    return {"historical": summary(unambiguous(historical)), "relaunch": relaunch}

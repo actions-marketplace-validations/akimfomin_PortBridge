@@ -9,6 +9,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from portbridge.integrations import digest, select
+from portbridge.matching import canonical_url
 from portbridge.pages_health import public_snapshot, verify_linked_snapshots
 from portbridge.preflight import public_preflight
 
@@ -56,7 +57,8 @@ def main():
     if feed != canonical_feed:
         raise SystemExit("Stable partner feed differs from the published generation")
     page = call_public_mcp("portbridge_partner", {"kind": "task", "limit": 1})
-    if page != select(feed, kind="task", limit=1):
+    # MCP adds client guidance to the same public page.
+    if {k: v for k, v in page.items() if k != "guidance"} != select(feed, kind="task", limit=1):
         raise SystemExit("Public MCP task page differs from the published partner feed")
     first, cursor = digest(feed, {}, kind="task")
     if first["state"] != "available":
@@ -79,7 +81,7 @@ def main():
     url = "https://github.com/xcl-dev/xcl/pull/2322"
     prior = public_preflight(url=url, limit=5)
     discovery = prior.get("discovery") or {}
-    if (prior.get("origin_url") != url or prior.get("catalog_status") == "unavailable"
+    if (prior.get("origin_url") != canonical_url(url) or prior.get("catalog_status") == "unavailable"
             or discovery.get("index_source") != "published_snapshot"):
         raise SystemExit("Reference PR could not be read from the published Discovery snapshot")
     if not discovery.get("matches"):
@@ -87,7 +89,7 @@ def main():
     via_mcp = call_public_mcp("portbridge_preflight", {"url": url, "limit": 5})
     expected = [row["source"] for row in discovery["matches"]]
     observed = [row["source"] for row in via_mcp.get("discovery", {}).get("matches", [])]
-    if via_mcp.get("origin_url") != url or observed != expected:
+    if via_mcp.get("origin_url") != prior["origin_url"] or observed != expected:
         raise SystemExit("The MCP preflight and the published URL search returned different sources")
     health = read(site["snapshots"]["health"].removesuffix(".json"))
     print(json.dumps({"site_sha256": checksum, "generated_at": site["generated_at"],

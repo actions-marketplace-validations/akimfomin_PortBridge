@@ -1,0 +1,271 @@
+{
+  "checked_at": "2026-11-26T21:07:34.288Z",
+  "url": "https://akimfomin.github.io/PortBridge/",
+  "commit": "98d1a39be0c2ea161fb3f30fdfb8bb572d55e5cf",
+  "deployment": "https://github.com/akimfomin/PortBridge/actions/runs/45895096163",
+  "browser": "Chrome/158.0.8127.37",
+  "method": "Fresh Chromium tab per viewport with HTTP cache and origin storage cleared. The phone used a touch viewport and Android mobile UA on desktop hardware. Navigation used normal site links and keyboard input for the PR search.",
+  "limits": "One sample on an unthrottled connection per viewport. Timing measures content readiness. Physical phone behavior and external-team use require separate evidence.",
+  "before": {
+    "generated_at": "2026-11-26T15:49:46+00:00",
+    "manifest_sha256": "e8bd1beae2c431a44447914fa7cf4082d421be30b05b7fa71e2266893f3310f4",
+    "versioned_sections": 8,
+    "app": "app-68b6d7419d9deaabe7e65efa.js",
+    "start_html_http": 404,
+    "partner_json_http": 404
+  },
+  "after": {
+    "manifest": {
+      "sha256": "86259ea34dce26a400928990b282f297e26a31c575817e4367f30800bc84e373",
+      "api_version": 1,
+      "schema": 1,
+      "generated_at": "2026-11-26T21:05:46+00:00",
+      "searchGeneration": "63a3258fd4cd99616067fec6",
+      "browseGeneration": "5459c166c04504b95c8eecfe",
+      "snapshots": {
+        "lab": "lab-75607378265be234deb52869.json",
+        "radar": "radar-a4498fa041db959b5e57f682.json",
+        "impact": "impact-cb972e8be686adf3ef41362f.json",
+        "people": "people-301e4450f6ddd923557f73b2.json"
+      },
+      "stable": true
+    },
+    "versioned_sections": 14,
+    "app": {
+      "name": "app-b871ae48127e782396304c1a.js",
+      "sha256": "b871ae48127e782396304c1ae777f6d2e2ccc45b9454fe52a84631c944540772",
+      "bytes": 145267
+    },
+    "asset_matches_git_commit_bytes": true,
+    "versioned_snapshots_checked": {
+      "lab": {
+        "file": "lab-75607378265be234deb52869.json",
+        "bytes": 118469,
+        "sha256": "75607378265be234deb528698b0733b355422a4078957c205f175b382f4834bb",
+        "hashMatches": true
+      },
+      "impact": {
+        "file": "impact-cb972e8be686adf3ef41362f.json",
+        "bytes": 47227,
+        "sha256": "cb972e8be686adf3ef41362ff9e94343c3fa2d42f4d5286de596033fdaa22acd",
+        "hashMatches": true
+      },
+      "radar": {
+        "file": "radar-a4498fa041db959b5e57f682.json",
+        "bytes": 187770,
+        "sha256": "a4498fa041db959b5e57f682cad4c3397886a5258752f84f1e48e107665a773f",
+        "hashMatches": true
+      },
+      "people": {
+        "file": "people-301e4450f6ddd923557f73b2.json",
+        "bytes": 6314893,
+        "sha256": "301e4450f6ddd923557f73b2e32780cf85ff28bacb048ab57cfb19056a8f9fd3",
+        "hashMatches": true
+      }
+    },
+    "start_html_http": 200,
+    "partner_json_http": 200
+  },
+  "checks": {
+    "task": "framelab-12-vulkan-handoff",
+    "labStatus": "completed",
+    "reportCount": 2,
+    "radarCount": 3,
+    "searchCount": 2,
+    "profile": "JoeY54",
+    "impactCount": 2
+  },
+  "xcl_2322": {
+    "input": "https://github.com/xcl-dev/xcl/pull/2322",
+    "card": {
+      "href": "https://akimfomin.github.io/PortBridge/#/problems/PB-0025",
+      "text": "Smaller scratch buffers in XCL"
+    },
+    "previous_work": {
+      "href": "https://github.com/llvm/llvm-project/blob/87f0227cb60147a26a1eeb4fb06e3b505e9c7261/llvm/lib/CodeGen/StackColoring.cpp#L8",
+      "text": "Disjoint lifetime stack colouring in LLVM"
+    },
+    "same_on_desktop_and_phone": true,
+    "line_scope": "The link anchors at the comment divider on line 8. Lines 9–12 describe merging stack slots with disjoint lifetimes. Delivery and adoption require separate evidence."
+  },
+  "routes": [
+    {
+      "view": "Home",
+      "url": "https://akimfomin.github.io/PortBridge/",
+      "required_evidence_links": 0,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 1097,
+      "phone_ready_ms": 368
+    },
+    {
+      "view": "Start",
+      "url": "https://akimfomin.github.io/PortBridge/start.html",
+      "required_evidence_links": 3,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 323,
+      "phone_ready_ms": 133
+    },
+    {
+      "view": "Search entry",
+      "url": "https://akimfomin.github.io/PortBridge/#/problems",
+      "required_evidence_links": 0,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 267,
+      "phone_ready_ms": 104
+    },
+    {
+      "view": "Search by PR",
+      "url": "https://akimfomin.github.io/PortBridge/#/problems?q=https%3A%2F%2Fgithub.com%2F5headsmartbtw%2Fleonida-framelab%2Fpull%2F12",
+      "required_evidence_links": 4,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 407,
+      "phone_ready_ms": 327
+    },
+    {
+      "view": "XCL 2322 search",
+      "url": "https://akimfomin.github.io/PortBridge/#/problems?q=https%3A%2F%2Fgithub.com%2Fxcl-dev%2Fxcl%2Fpull%2F2322",
+      "required_evidence_links": 0,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 245,
+      "phone_ready_ms": 244
+    },
+    {
+      "view": "Lab",
+      "url": "https://akimfomin.github.io/PortBridge/#/lab?task=framelab-12-vulkan-handoff",
+      "required_evidence_links": 4,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 165,
+      "phone_ready_ms": 85
+    },
+    {
+      "view": "Radar",
+      "url": "https://akimfomin.github.io/PortBridge/#/activity",
+      "required_evidence_links": 6,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 6,
+      "phone_ready_ms": 6
+    },
+    {
+      "view": "People",
+      "url": "https://akimfomin.github.io/PortBridge/#/people?profile=github-user%3A71070620",
+      "required_evidence_links": 4,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 425,
+      "phone_ready_ms": 88
+    },
+    {
+      "view": "Impact",
+      "url": "https://akimfomin.github.io/PortBridge/#/impact?target=https%3A%2F%2Fgithub.com%2F5headsmartbtw%2Fleonida-framelab%2Fpull%2F12",
+      "required_evidence_links": 4,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 168,
+      "phone_ready_ms": 84
+    },
+    {
+      "view": "Start RU",
+      "url": "https://akimfomin.github.io/PortBridge/start.ru.html",
+      "required_evidence_links": 0,
+      "missing_either_viewport": 0,
+      "source_content_check": "pass",
+      "desktop_ready_ms": 165,
+      "phone_ready_ms": 58
+    }
+  ],
+  "device_checks": {
+    "desktop": {
+      "css_px": [
+        1440,
+        900
+      ],
+      "routes": 10,
+      "overflows": 0,
+      "console_or_runtime_errors": 0,
+      "failed_http_or_network_requests": 0,
+      "home_requests": 8,
+      "home_wire_bytes": 106642,
+      "home_navigation_ms": {
+        "ttfb": 210,
+        "dom": 408,
+        "load": 411
+      }
+    },
+    "phone": {
+      "css_px": [
+        390,
+        844
+      ],
+      "routes": 10,
+      "overflows": 0,
+      "console_or_runtime_errors": 0,
+      "failed_http_or_network_requests": 0,
+      "home_requests": 8,
+      "home_wire_bytes": 106693,
+      "home_navigation_ms": {
+        "ttfb": 38,
+        "dom": 131,
+        "load": 133
+      }
+    }
+  },
+  "sampled_links": [
+    {
+      "url": "https://akimfomin.github.io/PortBridge/",
+      "status": 200
+    },
+    {
+      "url": "https://akimfomin.github.io/PortBridge/start.ru.html",
+      "status": 200
+    },
+    {
+      "url": "https://akimfomin.github.io/PortBridge/partner.html",
+      "status": 200
+    },
+    {
+      "url": "https://akimfomin.github.io/PortBridge/?lang=ru",
+      "status": 200
+    },
+    {
+      "url": "https://akimfomin.github.io/PortBridge/start.html",
+      "status": 200
+    },
+    {
+      "url": "https://akimfomin.github.io/PortBridge/partner.html?lang=ru",
+      "status": 200
+    },
+    {
+      "url": "https://github.com/akimfomin/PortBridge/blob/main/docs/QUICKSTART.md",
+      "status": 200
+    },
+    {
+      "url": "https://github.com/akimfomin/PortBridge/blob/main/docs/GITHUB-ACTION.md",
+      "status": 200
+    },
+    {
+      "url": "https://github.com/5headsmartbtw/leonida-framelab/pull/12",
+      "status": 200
+    },
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2322",
+      "status": 200
+    },
+    {
+      "url": "https://github.com/llvm/llvm-project/blob/87f0227cb60147a26a1eeb4fb06e3b505e9c7261/llvm/lib/CodeGen/StackColoring.cpp",
+      "status": 200
+    }
+  ],
+  "reproduce": [
+    "Open the listed routes at 1440 × 900 and 390 × 844 after clearing origin storage and the browser HTTP cache. Inspect the console and failed network requests. Compare documentElement.scrollWidth with clientWidth on each route.",
+    "From Start choose Check one issue or PR. Paste the FrameLab or XCL PR URL into the normal search input and submit. Compare actual source links with the table.",
+    "Load data/site.json without cache. Fetch the four named versioned JSON files under data/. Compare their SHA-256 hashes and the approved report links, Radar findings, tester profile evidence and Impact stories filtered by the FrameLab PR.",
+    "Compute the SHA-256 of the Git blob at release commit path portbridge/static/app.js and compare it with the deployed JavaScript asset and its full digest."
+  ]
+}
