@@ -190,7 +190,7 @@ def comment_metadata(comment, source, repo, issue):
                    for key, value in expected.items())):
         return None
     updated = max(reported, updated) if updated else reported
-    return {"url": url, "author": author,
+    return {"url": url, "author": author, "author_id": actor["id"],
             "reported_at": reported.isoformat(timespec="seconds").replace("+00:00", "Z"),
             "updated_at": updated.isoformat(timespec="seconds").replace("+00:00", "Z")}
 
@@ -299,10 +299,47 @@ def resolve_reviews(task, records, checked_sources=None):
             if checked is None or checked < source_time(review["updated_at"]):
                 resolved.append(report)
                 continue
-        evidence = {field: review[field] for field in ("url", "author", "reported_at", "updated_at")}
+        evidence = {field: review[field] for field in ("url", "author", "author_id", "reported_at", "updated_at")
+                    if field in review}
         resolved.append({**report, "authority": "approved" if decision == "approve" else "community",
                          "review": {**evidence, "decision": decision}})
     return resolved
+
+
+def independent_owner_review(report):
+    """The report and its active, body-pinned approval must come from different people."""
+    review = report.get("review", {})
+    if (report.get("authority") != "approved" or review.get("decision") != "approve"
+            or not report.get("author") or not review.get("author")
+            or report["author"].casefold() == review["author"].casefold()):
+        return None
+    # Older cached review records have no numeric identity. Wait for source refresh
+    # instead of conflating different display names with different people.
+    if not (report.get("author_id") and review.get("author_id") and report["author_id"] != review["author_id"]):
+        return None
+    return review
+
+
+def conflicting_public_reports(reports):
+    """Compare observed cases only on matching revisions and fully described setups."""
+    cases = {}
+    for report in reports:
+        if not independent_owner_review(report):
+            continue
+        setup = tuple(str(report.get(key) or "").strip().casefold()
+                      for key in ("equipment", "hardware", "device_id", "os", "driver", "toolchain", "subgroup_width"))
+        equipment, model, device, system, driver, toolchain, _width = setup
+        if not (model and device and system and toolchain and report.get("revisions") and (driver or equipment == "cpu")):
+            continue
+        for case, result in report.get("cases", {}).items():
+            if result in {"pass", "fail"}:
+                key = (tuple(report["revisions"]), setup, case)
+                cases.setdefault(key, {"pass": set(), "fail": set()})[result].add(report["url"])
+    contested = set()
+    for observations in cases.values():
+        if observations["pass"] and observations["fail"]:
+            contested.update(observations["pass"], observations["fail"])
+    return contested
 
 
 def scan_reports(task, request_page):
@@ -342,28 +379,49 @@ def coverage_cells(task, reports):
         findings = sorted((entry for entry in reports if entry.get("equipment") == equipment),
                           key=lambda entry: (entry.get("updated_at") or entry.get("reported_at", ""),
                                              entry.get("reported_at", "")))
-        latest = {(entry.get("author", "").casefold(), entry.get("device_id") or entry["hardware"], entry.get("os_family")):
-                  entry["outcome"] for entry in findings if entry.get("authority") == "approved"}
+        latest = {}
+        pending = {}
+        for entry in findings:
+            key = (entry.get("author", "").casefold(), entry.get("device_id") or entry["hardware"],
+                   entry.get("os_family"))
+            if entry.get("authority") == "approved":
+                latest[key] = entry["outcome"]
+                pending.pop(key, None)
+            elif entry.get("review", {}).get("decision") != "revoke":
+                pending[key] = entry["outcome"]
         if "fail" in latest.values():
             state = "contradicted"
         elif "pass" in latest.values():
             state = "covered"
+        elif "pass" in pending.values():
+            state = "reported"
         elif "partial" in latest.values():
             state = "partial"
         else:
-            state = "reported" if findings else "missing"
+            state = "reported" if pending else "missing"
         cells.append({"equipment": equipment, "state": state})
     return cells
+
+
+def coverage_status(task, cells):
+    """Apply the task's any/all requirement to its current equipment coverage."""
+    states = {cell["state"] for cell in cells}
+    if not states or "contradicted" in states:
+        return "needs_run"
+    if task.get("coverage_policy") == "all":
+        if states == {"covered"}:
+            return "completed"
+        return "awaiting_review" if states <= {"covered", "reported"} else "needs_run"
+    if "covered" in states:
+        return "completed"
+    return "awaiting_review" if "reported" in states else "needs_run"
 
 
 def has_passing_coverage(task, reports, *, equipment=None):
     cells = coverage_cells(task, reports)
     if equipment:
         cells = [cell for cell in cells if cell["equipment"] == equipment]
-    states = {cell["state"] for cell in cells}
-    if equipment or task.get("coverage_policy") == "all":
-        return states == {"covered"}
-    return "covered" in states and "contradicted" not in states
+    return coverage_status(task, cells) == "completed"
 
 
 def report_state(row):
@@ -395,6 +453,45 @@ def read_rows(db):
     if not db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='lab_report_checks'").fetchone():
         return {}
     return {(row["task"], row["scope"]): row for row in db.execute("SELECT * FROM lab_report_checks")}
+
+
+def missing_public_comments(catalog, tasks, urls):
+    """Return cited comments absent from the last complete read of their exact public thread."""
+    targets = {}
+    for url in urls:
+        thread, _, anchor = url.partition("#")
+        if match := re.fullmatch(r"issuecomment-([1-9][0-9]*)", anchor):
+            targets.setdefault(thread.casefold(), {})[int(match[1])] = url
+    if not targets:
+        return set()
+    with catalog.connect() as db:
+        rows = read_rows(db)
+    latest = {}
+    for task in tasks:
+        for url in report_sources(task):
+            thread = url.casefold()
+            if thread not in targets:
+                continue
+            row = rows.get((task["id"], scope(task, url) + ":visible-comments-v1"))
+            if row and row["checked_at"] and (thread not in latest or row["checked_at"] > latest[thread]["checked_at"]):
+                latest[thread] = row
+    missing = set()
+    for thread, row in latest.items():
+        visible = set(json.loads(row["reports"]))
+        missing.update(url for ident, url in targets[thread].items() if ident not in visible)
+    return missing
+
+
+def visible_comment_ids(comments, source, issue):
+    ids = set()
+    for entry in comments:
+        if not isinstance(entry, dict) or entry.get("minimized") is True:
+            continue
+        ident = entry.get("id")
+        if (type(ident) is int and ident > 0 and str(entry.get("issue_url")).casefold() == issue.casefold()
+                and str(entry.get("html_url")).casefold() == f"{source}#issuecomment-{ident}".casefold()):
+            ids.add(ident)
+    return sorted(ids)
 
 
 def read_report_states(catalog, tasks):
@@ -480,10 +577,15 @@ def refresh_reports(catalog, tasks, *, authenticated=False):
                         if clear and source == report_sources(task)[0]:
                             save_scan(db, task, review_scope(report_scope), attempted, state="unavailable",
                                       checked=None, reports=[], replace=True)
+                        if clear:
+                            save_scan(db, task, report_scope + ":visible-comments-v1", attempted, state="unavailable",
+                                      checked=attempted, reports=[], replace=True)
                 if not sync.token and (exc.http_status == 429 or "rate limit" in str(exc).lower()):
                     break
             else:
                 checked = datetime.now(timezone.utc).isoformat()
+                _, issue = report_source(sources[source][0], source)
+                visible = visible_comment_ids(comments, source, issue)
                 with db:
                     for task in sources[source]:
                         records = sorted_records(normalized_records(comments, task, source))
@@ -491,6 +593,8 @@ def refresh_reports(catalog, tasks, *, authenticated=False):
                         reports = [record for record in records if "review_decision" not in record]
                         save_scan(db, task, report_scope, attempted, state="fresh", checked=checked,
                                   reports=reports, replace=True)
+                        save_scan(db, task, report_scope + ":visible-comments-v1", attempted, state="fresh", checked=checked,
+                                  reports=visible, replace=True)
                         if source == report_sources(task)[0]:
                             reviews = [record for record in records if "review_decision" in record]
                             save_scan(db, task, review_scope(report_scope), attempted, state="fresh", checked=checked,

@@ -1,0 +1,390 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-11-26",
+  "protocol": "Freeze judgments before implementing M2 rankers. Open task queries in discovery.json are a separate exploratory set. Shared public source families are intentional; outcome claims concern this bounded corpus. Positive, hard negative and unjudged results are counted separately. No-answer controls have no labeled relevant result in this corpus.",
+  "exact_pb_ids": [
+    "PB-0001",
+    "PB-0002",
+    "PB-0003",
+    "PB-0004",
+    "PB-0005",
+    "PB-0006",
+    "PB-0007",
+    "PB-0008",
+    "PB-0009",
+    "PB-0010",
+    "PB-0011",
+    "PB-0012",
+    "PB-0013",
+    "PB-0014",
+    "PB-0015",
+    "PB-0016",
+    "PB-0017",
+    "PB-0018",
+    "PB-0019",
+    "PB-0020",
+    "PB-0021",
+    "PB-0022",
+    "PB-0023",
+    "PB-0024",
+    "PB-0025",
+    "PB-0026",
+    "PB-0027",
+    "PB-0028",
+    "PB-0029",
+    "PB-0030",
+    "PB-044801754884724660835754613454516035131"
+  ],
+  "baseline_report_links": [
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2034#issuecomment-7149592580",
+      "expected": "PB-0022"
+    },
+    {
+      "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7147944059",
+      "expected": "PB-0024"
+    },
+    {
+      "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7153817545",
+      "expected": "PB-0024"
+    },
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/1100#issuecomment-7144197194",
+      "expected": "PB-0006"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/511#issuecomment-7131186456",
+      "expected": "PB-0007"
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/133#issuecomment-7132864418",
+      "expected": "PB-0011"
+    },
+    {
+      "url": "https://github.com/Marvisak/VIctory/pull/571#issuecomment-7128201680",
+      "expected": "PB-0010"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/1042#issuecomment-7138758788",
+      "expected": "PB-0020"
+    }
+  ],
+  "queries": [
+    {
+      "id": "wave-mask-coverage",
+      "q": "Preserve EXEC coverage for helper invocations during derivatives",
+      "expected": [
+        "llvm-wqm"
+      ],
+      "hard_negatives": [
+        "shadps4-subgroup"
+      ],
+      "github_query": "whole quad mode helper invocations EXEC"
+    },
+    {
+      "id": "stack-lifetimes",
+      "q": "Reuse one stack frame offset for objects with disjoint lifetimes",
+      "expected": [
+        "llvm-stack-coloring"
+      ],
+      "hard_negatives": [
+        "mesa-spill-slots",
+        "vma-virtual"
+      ],
+      "github_query": "stack coloring disjoint lifetime"
+    },
+    {
+      "id": "cache-headers",
+      "q": "VkPipelineCacheHeaderVersionOne cache format and foreign vendor",
+      "expected": [
+        "vulkan-cache-format",
+        "vkd3d-cache-uuid"
+      ],
+      "hard_negatives": [
+        "xenia-pipeline-state"
+      ],
+      "github_query": "VkPipelineCacheHeaderVersionOne cache vendor"
+    },
+    {
+      "id": "host-library-warp",
+      "q": "Separate the WARP and hardware D3D12 pipeline library",
+      "expected": [
+        "vkd3d-cache-uuid"
+      ],
+      "hard_negatives": [
+        "xenia-pipeline-state",
+        "mesa-radv-cache"
+      ],
+      "github_query": "D3D12 pipeline library WARP adapter"
+    },
+    {
+      "id": "aspect-grid",
+      "q": "Adjacent subresources with the same layout transition",
+      "expected": [
+        "dxvk-image-barriers"
+      ],
+      "hard_negatives": [
+        "vvl-waw",
+        "vulkan-queue-transfer"
+      ],
+      "github_query": "Vulkan image barrier subresource range"
+    },
+    {
+      "id": "lost-mode-notify",
+      "q": "Change the mode flag and wake waiting threads without a timeout",
+      "expected": [
+        "glibc-cond-wake"
+      ],
+      "hard_negatives": [
+        "vulkan-queue-transfer"
+      ],
+      "github_query": "condition variable mode switch lost wakeup"
+    },
+    {
+      "id": "stride-oracle",
+      "q": "RWStructuredBuffer metadata for mixed stride descriptors",
+      "expected": [
+        "dxc-structured-layout"
+      ],
+      "hard_negatives": [
+        "spirv-access-chain"
+      ],
+      "github_query": "RWStructuredBuffer StructureByteStride"
+    },
+    {
+      "id": "explicit-subgroups",
+      "q": "Subgroup shuffle cannot cross two physical Wave32 subgroups",
+      "expected": [
+        "shadps4-subgroup"
+      ],
+      "hard_negatives": [
+        "vulkan-local-index",
+        "llvm-wqm"
+      ],
+      "github_query": "Wave32 subgroup shuffle Wave64"
+    },
+    {
+      "id": "legacy-hlsl",
+      "q": "D3DCompile2 does legacy bytecode routing in Wine",
+      "expected": [
+        "wine-legacy-compiler"
+      ],
+      "hard_negatives": [
+        "dxc-structured-layout"
+      ],
+      "github_query": "Wine D3DCompile2 DXBC"
+    },
+    {
+      "id": "waw-control",
+      "q": "SyncVal fixture for a render-pass write-after-write diagnostic",
+      "expected": [
+        "vvl-waw"
+      ],
+      "hard_negatives": [
+        "dxvk-image-barriers"
+      ],
+      "github_query": "Vulkan SyncVal WRITE_AFTER_WRITE render pass"
+    },
+    {
+      "id": "luid-join",
+      "q": "How to join GPU counters using adapter LUID values rather than name",
+      "expected": [
+        "dxvk-adapter-luid"
+      ],
+      "hard_negatives": [
+        "vkd3d-cache-uuid"
+      ],
+      "github_query": "DXGI adapter LUID deviceLUIDValid"
+    },
+    {
+      "id": "group-xyz",
+      "q": "Flattened local invocation in an asymmetric 3D workgroup",
+      "expected": [
+        "vulkan-local-index"
+      ],
+      "hard_negatives": [
+        "shadps4-subgroup"
+      ],
+      "github_query": "Vulkan LocalInvocationIndex 3D workgroup"
+    },
+    {
+      "id": "acquire-gap",
+      "q": "Queue ownership transfer needs paired release/acquire operations",
+      "expected": [
+        "vulkan-queue-transfer",
+        "rpcs3-vk-sync"
+      ],
+      "hard_negatives": [
+        "dxvk-image-barriers"
+      ],
+      "github_query": "Vulkan queue family ownership transfer release acquire"
+    },
+    {
+      "id": "pipeline-variant-key",
+      "q": "Graphics pipeline cache key for host Vulkan variants",
+      "expected": [
+        "xenia-pipeline-state",
+        "mesa-radv-cache"
+      ],
+      "hard_negatives": [
+        "vulkan-cache-format"
+      ]
+    },
+    {
+      "id": "gpu-pressure",
+      "q": "SGPR spill slots and VGPR pressure in AMD GPU compilation",
+      "expected": [
+        "mesa-spill-slots"
+      ],
+      "hard_negatives": [
+        "llvm-stack-coloring"
+      ]
+    },
+    {
+      "id": "host-heap",
+      "q": "Explicit placed resource aliasing in a D3D12 heap",
+      "expected": [
+        "d3d12ma-alias"
+      ],
+      "hard_negatives": [
+        "vma-virtual",
+        "llvm-stack-coloring"
+      ]
+    },
+    {
+      "id": "virtual-offsets",
+      "q": "vmaVirtualAllocate with an alignment check",
+      "expected": [
+        "vma-virtual"
+      ],
+      "hard_negatives": [
+        "d3d12ma-alias"
+      ]
+    },
+    {
+      "id": "spirv-index-type",
+      "q": "ValidateAccessChain scalar integer index in an aggregate",
+      "expected": [
+        "spirv-access-chain"
+      ],
+      "hard_negatives": [
+        "dxc-structured-layout"
+      ]
+    },
+    {
+      "id": "closed-build-scratch",
+      "q": "Reuse acceleration structure build scratch buffer",
+      "expected": [
+        "wgpu-scratch-pr"
+      ],
+      "hard_negatives": [
+        "llvm-stack-coloring",
+        "mesa-spill-slots"
+      ],
+      "github_query": "acceleration structure build scratch buffer reuse"
+    },
+    {
+      "id": "tessellation-reflect",
+      "q": "Tessellation scratch sized from reflected output stride",
+      "expected": [
+        "moltenvk-tessellation-pr"
+      ],
+      "hard_negatives": [
+        "wgpu-scratch-pr",
+        "llvm-stack-coloring"
+      ],
+      "github_query": "tessellation scratch buffers reflected output sizes"
+    },
+    {
+      "id": "audio",
+      "q": "Xbox XMA2 channel audio scheduling",
+      "expected": [],
+      "hard_negatives": [
+        "vulkan-queue-transfer"
+      ]
+    },
+    {
+      "id": "keyboard",
+      "q": "Nintendo JoyCon keyboard input repeat",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "python-wake",
+      "q": "asyncio websocket wake on reconnect",
+      "expected": [],
+      "hard_negatives": [
+        "glibc-cond-wake"
+      ]
+    },
+    {
+      "id": "http-cache",
+      "q": "web HTTP response cache age for reverse proxy",
+      "expected": [],
+      "hard_negatives": [
+        "vkd3d-cache-uuid",
+        "mesa-radv-cache"
+      ]
+    },
+    {
+      "id": "false-64",
+      "q": "FM radio 64 channel ID encoding",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "queue-money",
+      "q": "inventory queue ownership for shipments",
+      "expected": [],
+      "hard_negatives": [
+        "vulkan-queue-transfer"
+      ]
+    },
+    {
+      "id": "telemetry-serial",
+      "q": "match audio devices by friendly name and USB serial",
+      "expected": [],
+      "hard_negatives": [
+        "dxvk-adapter-luid"
+      ]
+    },
+    {
+      "id": "network-pipeline",
+      "q": "Jenkins job pipeline artifact cache with TLS",
+      "expected": [],
+      "hard_negatives": [
+        "xenia-pipeline-state",
+        "vulkan-cache-format"
+      ]
+    },
+    {
+      "id": "type-reflow",
+      "q": "structured PDF text stride and column spacing",
+      "expected": [],
+      "hard_negatives": [
+        "dxc-structured-layout"
+      ]
+    },
+    {
+      "id": "heap-python",
+      "q": "Python list object compacting garbage collector",
+      "expected": [],
+      "hard_negatives": [
+        "vma-virtual",
+        "llvm-stack-coloring"
+      ]
+    },
+    {
+      "id": "misc-negative",
+      "q": "VK_ERROR_MEMORY_MAP_FAILED unrelated popup and DPI font size",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "random-sha",
+      "q": "f1234567890abcdef1234567890abcdef12345678",
+      "expected": [],
+      "hard_negatives": []
+    }
+  ]
+}

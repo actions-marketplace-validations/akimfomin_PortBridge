@@ -13,7 +13,7 @@ from urllib.request import Request, build_opener
 
 from .catalog import public_url
 from .discovery import SEARCH_FOCUS, SEARCH_INTERVAL, mentions, repository
-from .github import NoRedirect, find_public_projects
+from .github import NoRedirect, find_public_forks, find_public_projects
 
 
 SOURCES = {
@@ -21,6 +21,7 @@ SOURCES = {
     "portwatch-vi": ("PortWatch VI", "https://portwatch-vi.xyz/data/tracker.json"),
     "pc-race": ("GTA VI PC Race", "https://vuyp.github.io/gta6-pc-race/"),
     "github-search": ("GitHub Search", "https://github.com/search?type=repositories&q=Xbox+Series+compatibility"),
+    "github-forks": ("GitHub public forks", "https://docs.github.com/en/rest/repos/forks"),
 }
 AREAS = {
     "shaders": ("Shader translation", "Трансляция шейдеров"),
@@ -136,6 +137,13 @@ def refresh_ecosystem(catalog):
                 if found.keys() != queries.keys():
                     raise ValueError("incomplete GitHub search")
                 candidates = sorted({name for repos in found.values() for value in repos if (name := _repo(value))})
+            elif source == "github-forks":
+                found = find_public_forks(catalog, catalog.projects())
+                if found is None:
+                    raise ValueError("GitHub fork listing unavailable")
+                previous = json.loads(names)
+                candidates = list(dict.fromkeys(
+                    [name for value in sorted(found) if (name := _repo(value))] + previous))[:MAX_REPOS_PER_SOURCE]
             else:
                 candidates, etag = _fetch_tracker(source, etag)
             if candidates is not None:
@@ -189,8 +197,12 @@ def build_ecosystem(catalog, *, projects=None, observations=None):
     ranked = sorted(candidates, key=lambda repo: (-len(source_map.get(repo, [])),
                                                   -linked.get(repo, {}).get("project_count", 0), repo))
     evidence = capability_evidence(projects)
+    from .consoles import watch_sources
+    console_sources = list(watch_sources().values())
     return {
         "sources": sources,
+        "console_sources": console_sources,
+        "consoles": sorted({console for project in projects for console in project.get("consoles", [])}),
         "areas": [{"id": key, "name": {"en": title[0], "ru": title[1]}} for key, title in AREAS.items()],
         "capabilities": evidence,
         "leads": [{"repo": name, "url": f"https://github.com/{name}", "sources": source_map.get(name, []),

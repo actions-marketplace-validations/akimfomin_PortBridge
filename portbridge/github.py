@@ -14,6 +14,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from .discovery_terms import API_SYMBOL, cues
 from .matching import (RelatedIndex, canonical_url, current_repository, instruction_names, repository_identity,
                        source_revision)
 
@@ -25,7 +26,7 @@ WORK_URL = re.compile(rf"https://github\.com/{REPO.pattern}/(?:pull|issues)/[1-9
 SHA = re.compile(r"[0-9a-fA-F]{40,64}")
 PAGE_SIZE = 20
 CACHE_TTL = 900
-SIGNATURE_VERSION = 4
+SIGNATURE_VERSION = 5
 PAIR_CHECK_LIMIT = 8
 MAX_RESPONSE = 4 * 1024 * 1024
 NOT_MODIFIED = object()
@@ -38,6 +39,7 @@ PUBLIC_ACCESS_FAILURES = {404, 451}
 URL = re.compile(r"https?://[^\s<>()\[\]\"`]+", re.I)
 REFERENCE = re.compile(r"/([A-Za-z0-9_-]+/[A-Za-z0-9_.-]+)/(issues|pull|commit)/([A-Za-z0-9]+)/?")
 REPOSITORY_PATH = re.compile(rf"/({REPO.pattern})/?")
+TOKEN_PATTERN = re.compile(r"(?i)(?<![a-z0-9])(?:github_pat_|gh[pousr]_)[a-z0-9_]{8,}")
 TECHNICAL_TERM = re.compile(
     r"\b(?:d3d12|direct3d(?: 12)?|directx(?: 12)?|dxgi|vulkan|metal|xenos|xggraphics|"
     r"dxil|dxbc|spir[- ]?v|hlsl|glsl|rectlist|rectangle list|quadlist|shader(?:s)?|"
@@ -54,14 +56,7 @@ TERM_ALIASES = {
     "spir v": "spir-v", "rectangle list": "rectlist", "swap chain": "swapchain",
     "atomics": "atomic", "shaders": "shader", "work graph": "workgraph",
 }
-API_SYMBOL = re.compile(
-    r"\b(?:vk(?:[A-Z][A-Za-z0-9]{1,62})|ID3D12[A-Za-z0-9_]{1,58}|"
-    r"IDXGI[A-Za-z0-9_]{1,59}|(?:VK_ERROR|DXGI_ERROR|D3D12_ERROR|D3D12_MESSAGE_ID|"
-    r"STATUS_ACCESS|SPV_ERROR|XAUDIO2_E)_[A-Z0-9_]{1,43}|VUID-[A-Za-z0-9_-]{1,59}|"
-    r"(?:OpAtomic|OpGroupNonUniform)[A-Z][A-Za-z0-9]{0,46}|"
-    r"ExecuteIndirect|DispatchMesh|DrawIndexedInstanced|CreateGraphicsPipelineState|"
-    r"0[xX](?:887[Aa]00[0-9a-fA-F]{2}|80070057|8007000[Ee]|80004005|[Cc]0000005))\b"
-)
+
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -74,19 +69,28 @@ class NoRedirect(HTTPRedirectHandler):
 class Unavailable(Exception):
     """The page is temporarily unavailable or cannot be read."""
 
-    def __init__(self, message, *, http_status=None):
+    def __init__(self, message, *, http_status=None, reason=None, attempted=True, retry_at=None):
         super().__init__(message)
         self.http_status = http_status
+        self.reason = reason or ({301: "moved", 403: "forbidden", 404: "not_public",
+                                  410: "gone", 429: "rate_limit", 451: "restricted"}.get(http_status)
+                                 or ("github_unavailable" if http_status and http_status >= 500 else "unknown"))
+        self.attempted = attempted
+        self.retry_at = retry_at
 
 
 class RepositoryNotPublic(Unavailable):
     """An authenticated lookup explicitly confirmed nonpublic visibility."""
 
 
+class FeedDisabled(Unavailable):
+    """Repository metadata explicitly disables this feed."""
+
+
 def _text(value, limit=300):
     if not isinstance(value, str):
         return ""
-    return " ".join(value.split())[:limit]
+    return TOKEN_PATTERN.sub("[redacted]", " ".join(value[:4096].split()))[:limit]
 
 
 def _object(value):
@@ -183,6 +187,7 @@ def _technical(entry, label_names, repositories):
     return {
         "version": SIGNATURE_VERSION,
         "terms": _limited(TERM_ALIASES.get(term, term) for term in terms),
+        "discovery_cues": cues(searchable),
         "signals": (instruction_names(searchable)[:INSTRUCTION_LIMIT]
                     + _limited(match[0].casefold() for match in API_SYMBOL.finditer(searchable))),
         "references": references,
@@ -200,7 +205,8 @@ def _current_signatures(items, kind):
 def _item(entry, kind, project, repositories, *, repository_issues=False):
     repo = project["repo"]
     metadata = {"evidence_kind": "reported", "github_endpoint": kind}
-    author = _login(entry.get("user"))
+    actor = _object(entry.get("user"))
+    author = _login(actor)
     status = _text(entry.get("state"), 40) or "unknown"
     title = _text(entry.get("title"))
     updated = _text(entry.get("updated_at"), 40)
@@ -209,7 +215,8 @@ def _item(entry, kind, project, repositories, *, repository_issues=False):
         commit = _object(entry.get("commit"))
         git_author = _object(commit.get("author"))
         git_committer = _object(commit.get("committer"))
-        author = _login(entry.get("author")) or _text(git_author.get("name"), 100)
+        actor = _object(entry.get("author"))
+        author = _login(actor) or _text(git_author.get("name"), 100)
         message = commit.get("message")
         if isinstance(message, str):
             title = _text(message.partition("\n")[0])
@@ -222,7 +229,8 @@ def _item(entry, kind, project, repositories, *, repository_issues=False):
         endpoint = "actions/runs"
         conclusion = _text(entry.get("conclusion"), 40)
         status = conclusion or _text(entry.get("status"), 40) or "unknown"
-        author = _login(entry.get("actor"))
+        actor = _object(entry.get("actor"))
+        author = _login(actor)
         title = _text(entry.get("name")) or _text(entry.get("display_title"))
         metadata.update({
             "evidence_kind": "automated",
@@ -266,6 +274,14 @@ def _item(entry, kind, project, repositories, *, repository_issues=False):
     if not ident:
         return None
     metadata["author"] = author
+    metadata["author_type"] = _text(actor.get("type"), 20)
+    metadata["created_at"] = _text(entry.get("created_at"), 40)
+    if kind == "pr":
+        merger = _object(entry.get("merged_by"))
+        if merger.get("type") == "User" and (login := _login(merger)):
+            metadata["merged_by"] = {"login": login, "user_id": _number(merger.get("id"))}
+    if user_id := _number(actor.get("id")):
+        metadata["github_user_id"] = user_id
     return {
         "project": project["slug"], "kind": kind, "source_id": str(ident),
         "title": title or f"{kind} {ident}", "url": f"https://github.com/{repo}/{endpoint}/{ident}",
@@ -282,12 +298,19 @@ def _query(project, kind, page, *, since=None):
             params["since"] = _utc(since).replace("+00:00", "Z")
         return f"{API}/repos/{repo}/issues?{urlencode(params)}", "core"
     if kind == "issue":
-        params.update(q=f"repo:{repo} is:issue", sort="updated", order="desc")
-        return f"{API}/search/issues?{urlencode(params)}", "search"
+        params.update(state="all", sort="updated", direction="desc")
+        return f"{API}/repos/{repo}/issues?{urlencode(params)}", "core"
     endpoint = {"pr": "pulls", "commit": "commits", "test": "actions/runs"}[kind]
     if kind == "pr":
         params.update(state="all", sort="updated", direction="desc")
     return f"{API}/repos/{repo}/{endpoint}?{urlencode(params)}", "core"
+
+
+def _validated_item(item, page_checked_at):
+    """A successful page check confirms only revisions actually present on that page."""
+    if page_checked_at is None or not source_revision(item):
+        return item
+    return {**item, "revision_checked_at": _utc(page_checked_at)}
 
 
 class _Sync:
@@ -300,6 +323,9 @@ class _Sync:
         self.opener = build_opener(NoRedirect())
         self.deadline = time.monotonic() + time_budget
         self.public_checks = {}
+        self.repository_metadata = {}
+        self.transport_failure = None
+        self.transport_failures = 0
         self.repositories = {project["repo"].lower(): project["repo"] for project in projects}
         self.db.executescript("""
             CREATE TABLE IF NOT EXISTS github_cache (
@@ -353,28 +379,49 @@ class _Sync:
             headers["If-None-Match"] = validator
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
-        for attempt in range(2):
+        redirected_id = None
+        attempt = 0
+        while attempt < 2:
+            if self.transport_failures >= 2:
+                raise Unavailable("GitHub connection paused after repeated failures", reason=self.transport_failure,
+                                  attempted=False)
             http_status = None
             limit = self.db.execute("SELECT resume_at FROM github_rate_limit WHERE context=? AND resource=?",
                                     (self.context, resource)).fetchone()
             if limit and limit[0] > time.time():
-                raise Unavailable(f"GitHub rate limit, retry after {_utc(limit[0])}")
+                raise Unavailable(f"GitHub API paused until {_utc(limit[0])}", reason="rate_limit",
+                                  attempted=False, retry_at=_utc(limit[0]))
             left = self.deadline - time.monotonic()
             if left <= 0:
-                raise Unavailable("GitHub request time budget exhausted")
+                raise Unavailable("GitHub request time budget exhausted", reason="budget", attempted=False)
             try:
                 request = Request(url, headers=headers, method="GET")
                 with self.opener.open(request, timeout=min(8.0, left)) as response:
+                    self.transport_failures = 0
                     self._rate_headers(resource, response.headers, response.status)
                     data = response.read(MAX_RESPONSE + 1)
                     if len(data) > MAX_RESPONSE:
                         raise Unavailable("GitHub metadata exceeds page size budget")
-                    return json.loads(data), response.headers
+                    payload = json.loads(data)
+                    if redirected_id and _number(_object(payload).get("id")) != redirected_id:
+                        raise Unavailable("GitHub repository redirect changed identity", reason="invalid_payload")
+                    return payload, response.headers
             except HTTPError as e:
                 with e:
                     self._rate_headers(resource, e.headers, e.code)
                     if e.code == 304:
+                        self.transport_failures = 0
                         return NOT_MODIFIED, e.headers
+                    # Resolve repository metadata by stable numeric ID after a verified GitHub move.
+                    # Never follow redirects for other requests or attach a token to a new host.
+                    if e.code == 301 and not redirected_id and re.fullmatch(rf"/repos/{REPO.pattern}", parsed.path):
+                        target = re.fullmatch(rf"{re.escape(API)}/repositories/([1-9][0-9]*)",
+                                              e.headers.get("Location", ""))
+                        if target:
+                            redirected_id = int(target[1])
+                            url = target[0]
+                            headers.pop("If-None-Match", None)
+                            continue
                     http_status = e.code
                     failure = f"GitHub HTTP {e.code}"
                     retryable = e.code in (500, 502, 503, 504) and not e.headers.get("Retry-After")
@@ -384,7 +431,10 @@ class _Sync:
                             detail = e.read(4096).lower()
                         except (OSError, HTTPException):
                             pass
-                    if b"rate limit" in detail:
+                    is_limited = (e.code == 429 or (e.code == 403 and (
+                        b"rate limit" in detail or e.headers.get("X-RateLimit-Remaining") == "0"
+                        or bool(e.headers.get("Retry-After")))))
+                    if is_limited:
                         reset = self.db.execute(
                             "SELECT resume_at FROM github_rate_limit WHERE context=? AND resource=?",
                             (self.context, resource),
@@ -392,12 +442,22 @@ class _Sync:
                         if not reset or reset[0] <= time.time():
                             self._pause(resource, time.time() + 60)
                         failure += " (rate limited)"
-            except (TimeoutError, URLError, OSError, HTTPException):
+                        raise Unavailable(failure, http_status=e.code, reason="rate_limit",
+                                          retry_at=_utc(reset[0] if reset and reset[0] > time.time()
+                                                        else time.time() + 60))
+            except (TimeoutError, URLError, OSError, HTTPException) as error:
+                cause = error.reason if isinstance(error, URLError) else error
+                reason = "timeout" if isinstance(cause, TimeoutError) else "connection"
+                if attempt:
+                    self.transport_failure = reason
+                    self.transport_failures += 1
+                    raise Unavailable("GitHub connection failed or timed out", reason=reason) from error
                 failure, retryable = "GitHub connection failed or timed out", True
             except (ValueError, UnicodeError) as e:
-                raise Unavailable("GitHub returned invalid JSON metadata") from e
+                raise Unavailable("GitHub returned invalid JSON metadata", reason="invalid_payload") from e
             if attempt or not retryable:
                 raise Unavailable(failure, http_status=http_status)
+            attempt += 1
             time.sleep(0.25)
         raise Unavailable("GitHub request failed")
 
@@ -412,15 +472,31 @@ class _Sync:
                 private = _object(data).get("private")
                 visibility = _object(data).get("visibility", "public")
                 if private is True or visibility in ("private", "internal"):
-                    raise RepositoryNotPublic("repository is not public")
+                    raise RepositoryNotPublic("repository is not public", reason="not_public")
                 if private is not False or visibility != "public":
                     raise Unavailable("GitHub returned unexpected repository visibility")
             except Unavailable as e:
                 self.public_checks[repo] = e
             else:
                 self.public_checks[repo] = None
+                self.repository_metadata[repo] = data
         if self.public_checks[repo]:
             raise self.public_checks[repo]
+
+    def require_feed(self, repo, kind):
+        metadata = self.repository_metadata.get(repo, {})
+        flag = {"pr": "has_pull_requests", "issue": "has_issues"}.get(kind)
+        if flag and metadata.get(flag) is False:
+            raise FeedDisabled(f"GitHub {kind} feed is disabled by repository settings", reason="feed_disabled")
+
+    def require_reference_feed(self, repo, kind):
+        # An exact historical link is still useful when a repository has disabled new issues.
+        if kind == "pr":
+            self.require_feed(repo, kind)
+
+    def active_repo(self, repo):
+        name = self.repository_metadata.get(repo, {}).get("full_name")
+        return name if isinstance(name, str) and REPO.fullmatch(name) else repo
 
     def public_access(self, repo, first_pages):
         if self.token:
@@ -459,7 +535,11 @@ class _Sync:
                 return cached, has_next, "cached", fetched_at, None
         try:
             self._require_public(project["repo"])
-            raw, headers = self._request(url, resource, row[0] if current_schema else None)
+            self.require_feed(project["repo"], kind)
+            active = self.active_repo(project["repo"])
+            request_url, _ = _query({**project, "repo": active}, kind, number, since=since)
+            same_target = request_url == url
+            raw, headers = self._request(request_url, resource, row[0] if current_schema and same_target else None)
             if raw is NOT_MODIFIED:
                 if not current_schema:
                     raise Unavailable("GitHub returned 304 without a compatible cached page")
@@ -469,14 +549,12 @@ class _Sync:
             else:
                 if kind == "test":
                     records = _object(raw).get("workflow_runs")
-                elif kind == "issue":
-                    if _object(raw).get("incomplete_results") is True:
-                        raise Unavailable("GitHub issue search returned incomplete results")
-                    records = _object(raw).get("items")
                 else:
                     records = raw
                 if not isinstance(records, list):
-                    raise Unavailable("GitHub returned unexpected metadata")
+                    raise Unavailable("GitHub returned unexpected metadata", reason="invalid_payload")
+                if len(records) > PAGE_SIZE or any(not isinstance(record, dict) for record in records):
+                    raise Unavailable("GitHub returned an incomplete or invalid page", reason="incomplete_page")
                 items = []
                 for record in records[:PAGE_SIZE]:
                     if not isinstance(record, dict) or (kind == "issue" and "pull_request" in record):
@@ -501,6 +579,24 @@ class _Sync:
                 """, (url, etag, fetched_at, json.dumps(items, ensure_ascii=False), has_next))
             return items, has_next, "live", fetched_at, None
         except Unavailable as e:
+            if e.http_status == 301 and not self.token and project["repo"] not in self.public_checks:
+                try:
+                    self._require_public(project["repo"], verify_anonymous=True)
+                except Unavailable:
+                    pass
+                else:
+                    if self.active_repo(project["repo"]) != project["repo"]:
+                        return self.page(project, kind, number, since=since)
+            if kind == "pr" and e.http_status == 404 and not self.token:
+                try:
+                    self._require_public(project["repo"], verify_anonymous=True)
+                    self.require_feed(project["repo"], kind)
+                except FeedDisabled as disabled:
+                    e = disabled
+                except Unavailable:
+                    pass
+            if isinstance(e, FeedDisabled):
+                return cached or [], False, "disabled", row[1] if cached is not None else None, e
             if cached is not None:
                 return cached, row[3], "stale", row[1], e
             return [], False, "error", None, e
@@ -508,6 +604,8 @@ class _Sync:
 
 def _status(states):
     states = set(states)
+    if states == {"disabled"}:
+        return "disabled"
     if states <= {"live", "cached"}:
         return "ok"
     if states == {"stale"}:
@@ -515,6 +613,20 @@ def _status(states):
     if states == {"error"}:
         return "error"
     return "partial"
+
+
+def collection_order(project, attempts=None):
+    attempt = attempts.get(project["slug"]) if attempts is not None else project.get("last_attempt")
+    stamp = _timestamp(attempt or project.get("last_success"))
+    priority = project.get("priority", 0)
+    return stamp, -(priority if type(priority) is int else 0), project["slug"]
+
+
+def source_failure(warning):
+    if not warning:
+        return None
+    return {"reason": warning.reason, "http_status": warning.http_status, "message": str(warning),
+            "retry_at": warning.retry_at}
 
 
 def collect(projects: list[dict], db_path: Path, *, refresh=False, pages=1) -> dict:
@@ -539,19 +651,22 @@ def collect(projects: list[dict], db_path: Path, *, refresh=False, pages=1) -> d
         # A recent sweep requests four endpoint kinds per repository.
         sync = _Sync(db, refresh, checked, time_budget=90)
         # With a shared time limit, fixed seed order can starve the same repositories on every sweep.
-        for project in sorted(checked, key=lambda entry: _timestamp(entry.get("last_success"))):
+        for project in sorted(checked, key=collection_order):
             source_data = {}
             first_pages = []
             results = []
             seen = set()
             for kind in ("issue", "pr", "commit", "test"):
-                states, times = [], []
+                states, times, attempts = [], [], []
+                failures = []
                 count = 0
                 for index in range(1, pages + 1):
                     items, has_next, state, stamp, warning = sync.page(project, kind, index)
                     if index == 1 and kind != "issue":
                         first_pages.append((state, warning))
                     states.append(state)
+                    if state == "live" or (warning and warning.attempted):
+                        attempts.append(time.time())
                     if stamp is not None:
                         times.append(stamp)
                     for item in items:
@@ -560,24 +675,31 @@ def collect(projects: list[dict], db_path: Path, *, refresh=False, pages=1) -> d
                             seen.add(key)
                             # Multiple project slugs may refer to the same API repository.
                             results.append({
-                                **item, "project": project["slug"],
+                                **_validated_item(item, stamp), "project": project["slug"],
                                 "fetched_at": item.get("fetched_at") or _utc(stamp),
                             })
                             count += 1
                     if warning:
-                        fallback = " (using stale cache)" if state == "stale" else ""
-                        result["warnings"].append(f"{project['repo']} {kind} page {index}: {warning}{fallback}")
+                        failures.append(source_failure(warning))
+                        if state != "disabled":
+                            fallback = " (using stale cache)" if state == "stale" else ""
+                            result["warnings"].append(f"{project['repo']} {kind} page {index}: {warning}{fallback}")
+                        # Leave the next page and cursor for recovery instead of repeating a failed request.
+                        break
                     if not has_next:
                         break
                 source_data[kind] = {
                     "sync_status": _status(states),
                     "last_success": _utc(max(times, default=None)),
+                    "last_attempt": _utc(max(attempts, default=None)),
                     "item_count": count,
                     "pages_checked": len(states),
+                    "pages_confirmed": sum(state in {"live", "cached"} for state in states),
                     "more_available": bool(has_next),
+                    "errors": failures,
                 }
-            flags = {source["sync_status"] for source in source_data.values()}
-            status = next(iter(flags)) if len(flags) == 1 else "partial"
+            flags = {source["sync_status"] for source in source_data.values()} - {"disabled"}
+            status = next(iter(flags), "ok") if len(flags) <= 1 else "partial"
             access = sync.public_access(project["repo"], first_pages)
             if access is False or (access is None and project.get("sync_status") == "unavailable"):
                 status = "unavailable"
@@ -586,6 +708,14 @@ def collect(projects: list[dict], db_path: Path, *, refresh=False, pages=1) -> d
                 "sync_status": status,
                 "last_success": max((x["last_success"] for x in source_data.values() if x["last_success"]),
                                     default=None),
+                "last_attempt": max((x["last_attempt"] for x in source_data.values() if x["last_attempt"]),
+                                    default=None),
+                "availability": ("unavailable" if status == "unavailable" else
+                                 "archived" if sync.repository_metadata.get(project["repo"], {}).get("archived") is True
+                                 else "public" if access else project.get("availability", "unknown")),
+                "github_id": _number(sync.repository_metadata.get(project["repo"], {}).get("id"))
+                             or project.get("github_id"),
+                "current_repo": sync.active_repo(project["repo"]),
                 "sources": source_data,
             })
             result["items"].extend(results)
@@ -673,6 +803,36 @@ def find_public_projects(db_path, queries):
     return result
 
 
+def find_public_forks(catalog, projects, *, limit=4):
+    """Return bounded candidate links from a rotating slice of tracked parents."""
+    checked = sorted((_project(project) for project in projects
+                      if project.get("availability") == "public"), key=lambda project: project["slug"])
+    if not checked:
+        return None
+    batch = min(limit, len(checked))
+    offset = (int(time.time()) // 3600 * batch) % len(checked)
+    selected = (checked + checked)[offset:offset + batch]
+    candidates = set()
+    with closing(sqlite3.connect(catalog.path, timeout=8)) as db:
+        sync = _Sync(db, False, time_budget=20)
+        for project in selected:
+            repo = project["repo"]
+            try:
+                sync._require_public(repo)
+                raw, _ = sync._request(f"{API}/repos/{repo}/forks?per_page=10&sort=newest", "core", None)
+            except Unavailable:
+                return None
+            if not isinstance(raw, list) or len(raw) > 10:
+                return None
+            for entry in raw:
+                row = _object(entry)
+                name = row.get("full_name")
+                if (row.get("private") is False and row.get("visibility", "public") == "public"
+                        and isinstance(name, str) and REPO.fullmatch(name)):
+                    candidates.add(name)
+    return candidates
+
+
 def public_source_revisions(db_path, sources):
     """Check exact, approved public PR or commit URLs without indexing their contents."""
     from .exchange_fields import REVISION, _source
@@ -707,7 +867,7 @@ def public_source_revisions(db_path, sources):
     return revisions
 
 
-def refresh_references(projects, db_path, references, *, refresh=False):
+def refresh_references(projects, db_path, references, *, refresh=False, skip_unavailable=False, anonymous=False):
     """Recheck exact public Issue, PR and CI links already in reviewed cards."""
     checked = [_project(project) for project in projects]
     by_repo = {project["repo"].lower(): project for project in checked}
@@ -735,18 +895,28 @@ def refresh_references(projects, db_path, references, *, refresh=False):
         target = f"https://github.com/{repo}/{path}"
         watched[target] = (project, kind, f"{API}/repos/{repo}/{endpoint}", run, job)
 
-    result = {"items": [], "warnings": []}
+    result = {"items": [], "warnings": [], "references": []}
     with closing(sqlite3.connect(db_path, timeout=8)) as db:
-        sync = _Sync(db, refresh, checked)
+        sync = _Sync(db, refresh, checked, anonymous=anonymous)
         for target, (project, kind, endpoint, run, job) in watched.items():
             cached = db.execute("SELECT etag, fetched_at, items FROM github_cache WHERE url=?", (endpoint,)).fetchone()
-            cached_items = json.loads(cached[2]) if cached else []
+            try:
+                cached_items = json.loads(cached[2]) if cached else []
+            except (TypeError, ValueError):
+                cached_items, cached = [], None
+            if not isinstance(cached_items, list):
+                cached_items, cached = [], None
+            if skip_unavailable and project.get("sync_status") == "unavailable":
+                result["references"].append({"url": target, "status": "retained", "reason": "repository_unavailable"})
+                continue
             current_schema = cached and _current_signatures(cached_items, kind)
             if current_schema and cached[1] + CACHE_TTL > time.time() and not refresh:
-                result["items"].extend(cached_items)
+                result["items"].extend(_validated_item(item, cached[1]) for item in cached_items)
                 continue
+            checked_at = cached[1] if current_schema else None
             try:
                 sync._require_public(project["repo"])
+                sync.require_reference_feed(project["repo"], kind)
                 raw, headers = sync._request(endpoint, "core", cached[0] if current_schema else None)
                 now = time.time()
                 if raw is NOT_MODIFIED and current_schema:
@@ -768,10 +938,13 @@ def refresh_references(projects, db_path, references, *, refresh=False):
                     db.execute("""INSERT INTO github_cache VALUES (?, ?, ?, ?, 0)
                                   ON CONFLICT(url) DO UPDATE SET etag=excluded.etag, fetched_at=excluded.fetched_at,
                                   items=excluded.items""", (endpoint, etag, now, json.dumps(items, ensure_ascii=True)))
+                checked_at = now
             except Unavailable as error:
                 result["warnings"].append(f"{target}: {error}")
+                result["references"].append({"url": target, "status": "retained" if cached_items else "unavailable",
+                                             **source_failure(error)})
                 items = cached_items
-            result["items"].extend(items)
+            result["items"].extend(_validated_item(item, checked_at) for item in items)
     return result
 
 
@@ -849,7 +1022,11 @@ def _collect_history(projects, db_path, *, mode, pages):
     with closing(_history_db(db_path)) as db:
         sync = _Sync(db, True, checked)
         _history_anchor_table(db)
-        for project in checked:
+        attempts = {}
+        if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='history_sync'").fetchone():
+            attempts = {row["slug"]: json.loads(row["payload"]).get("last_attempt") for row in
+                        db.execute("SELECT slug, payload FROM history_sync WHERE mode=?", (mode,))}
+        for project in sorted(checked, key=lambda project: collection_order(project, attempts)):
             cursor = _history_cursor(db, project, mode, started)
             if cursor["complete"]:
                 result["history"].append({"slug": project["slug"], "status": "complete", "warning": None})
@@ -857,6 +1034,8 @@ def _collect_history(projects, db_path, *, mode, pages):
                                            "sources": {}})
                 continue
             states, times, records = [], [], {}
+            last_attempt = None
+            last_error = None
             failure = None
             checkpoint_changed = False
             for _ in range(pages):
@@ -865,6 +1044,8 @@ def _collect_history(projects, db_path, *, mode, pages):
                     project, "repository_issues", number, since=cursor["since"],
                 )
                 states.append(state)
+                if state == "live" or (warning and warning.attempted):
+                    last_attempt = _utc(time.time())
                 if stamp is not None:
                     times.append(stamp)
                 for item in items:
@@ -876,6 +1057,7 @@ def _collect_history(projects, db_path, *, mode, pages):
                 if warning:
                     result["warnings"].append(f"{project['repo']} {mode} page {number}: {warning}")
                     failure = str(warning)
+                    last_error = source_failure(warning)
                     break
                 if number > 1:
                     prior, _, _, _, boundary_error = sync.page(
@@ -888,6 +1070,7 @@ def _collect_history(projects, db_path, *, mode, pages):
                         reason = str(boundary_error) if boundary_error else "page boundary changed; will replay the current window"
                         result["warnings"].append(f"{project['repo']} {mode} page {number}: {reason}")
                         failure = reason
+                        last_error = source_failure(boundary_error) or {"reason": "changing_page", "message": reason}
                         states[-1] = "partial"
                         has_next = True
                         break
@@ -905,7 +1088,8 @@ def _collect_history(projects, db_path, *, mode, pages):
             history_status = ("unavailable" if failure and source_status in {"error", "stale"}
                               else "partial" if failure or has_next else "complete")
             result["history"].append({"slug": project["slug"], "status": history_status,
-                                      "next_page": cursor["next_page"], "warning": failure})
+                                      "next_page": cursor["next_page"], "warning": failure,
+                                      "last_attempt": last_attempt, "last_success": success, "error": last_error})
             source = {
                 "sync_status": source_status, "last_success": success, "pages_checked": len(states),
                 "more_available": not cursor["complete"] if mode == "backfill" else bool(has_next),

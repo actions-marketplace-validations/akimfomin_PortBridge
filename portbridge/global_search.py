@@ -76,7 +76,8 @@ def result_entry(entry):
         return None
     return {"url": url, "title": " ".join(title.split())[:300], "state": entry["state"],
             "observed_at": entry.get("updated_at") if isinstance(entry.get("updated_at"), str) else None,
-            "kind": "pr" if "/pull/" in urlsplit(url).path else "issue", "match_level": "candidate"}
+            "kind": "pr" if "/pull/" in urlsplit(url).path else "issue", "match_level": "candidate",
+            "evidence_status": "source_found"}
 
 
 def external_search(query, *, excluded=()):

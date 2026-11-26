@@ -14,6 +14,7 @@ from .ecosystem import build_ecosystem
 from .exchange_client import ExchangeClient, ExchangeClientError
 from .lab import EQUIPMENT, STATUSES, TASK_ID_PATTERN, build_lab, filter_lab
 from .preflight import preflight, public_preflight, public_problem, snapshot
+from .source_health import health_freshness
 
 
 MODERN_VERSION = "2026-07-28"
@@ -49,14 +50,35 @@ def tool(name, description, properties, *, read_only=True, **schema_rules):
 TOOLS = [
     tool("portbridge_activity", "Read recent cross-project progress, reviewed results, and open opportunities "
          "for a shared check. Returns only public catalog data.", {}),
+    tool("portbridge_health", "Read the last GitHub attempt, successful data age, coverage and snapshot time.", {}),
     tool("portbridge_ecosystem", "Read candidate repositories and reviewed, source-linked technical capabilities. "
          "Candidate links require review before any reuse.", {}),
+    tool("portbridge_radar", "Read the durable candidate queue. A candidate is an invitation to assess evidence.",
+         {"confidence": {"type": "string", "enum": ["high", "review", "research"]},
+          "state": {"type": "string", "maxLength": 20},
+          "console": {"type": "string", "enum": ["xbox-series", "ps5"]},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 24},
+          "after": {"type": "integer", "minimum": 0}}),
+    tool("portbridge_people", "Find source-backed technical participants for a public work item. "
+         "Profiles do not imply availability or permission to contact anyone.",
+         {**{key: {"type": "string", "maxLength": 300} for key in
+             ("q", "profile", "project", "specialty", "console", "period", "target")},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 100}, "after": {"type": "integer", "minimum": 0}}),
+    tool("portbridge_impact", "Read evidence-backed contributions, external use and non-usage metrics.",
+         {key: {"type": "string", "maxLength": 300} for key in ("console", "kind", "target")}),
+    tool("portbridge_partner", "Read published Lab tasks and reviewed results from the partner feed.",
+         {"project": {"type": "string", "maxLength": 61},
+          "console": {"type": "string", "enum": ["xbox-series", "ps5"]},
+          "kind": {"type": "string", "enum": ["task", "result"]},
+          "limit": {"type": "integer", "minimum": 1, "maximum": 100},
+          "after": {"type": "integer", "minimum": 0, "maximum": 999999999}}),
     tool("portbridge_lab", "Find a specific public volunteer test or filter by equipment and readiness. "
          "Provide the equipment yourself. "
          "The tool returns pinned revisions, expected results, and the discussion for reporting a run.",
          {"equipment": {"type": "string", "enum": list(EQUIPMENT)},
           "status": {"type": "string", "enum": list(STATUSES)},
-          "task": {"type": "string", "pattern": TASK_ID_PATTERN, "maxLength": 80}}),
+          "task": {"type": "string", "pattern": TASK_ID_PATTERN, "maxLength": 80},
+          **{key: {"type": "string", "maxLength": 80} for key in ("os", "kind", "specialty", "difficulty", "age", "console")}}),
     tool("portbridge_preflight", "Check PortBridge for existing work before investigating a compatibility issue. "
          "Provide a search query, a public GitHub source URL, or both.",
          {"q": {"type": "string", "minLength": 1, "maxLength": MAX_QUERY_CHARS,
@@ -122,6 +144,20 @@ DISCUSSION_TOOLS = {
                            read_only=False, required=["repo", "decision"]),
 }
 
+LAB_READ = tool("portbridge_my_lab", "Read your opt-in Lab queue and reports with the configured exchange key.",
+                {"task": {"type": "string", "pattern": TASK_ID_PATTERN, "maxLength": 80}})
+LAB_WRITE = tool("portbridge_change_lab", "Change your own Lab work only after the user approves the exact action. "
+                 "Review, adoption, and external posting are outside this tool.",
+                 {"action": {"type": "string", "enum": ["claim", "release", "submit", "correct", "withdraw_report", "profile"]},
+                  "request_id": {"type": "string", "maxLength": 80},
+                  "consent": {"type": "boolean"},
+                  "task": {"type": "string", "pattern": TASK_ID_PATTERN, "maxLength": 80},
+                  "ttl_seconds": {"type": "integer"}, "report": {"type": "object"},
+                  "report_id": {"type": "string"}, "enabled": {"type": "boolean"},
+                  "equipment": {"type": "array", "items": {"type": "string"}},
+                  "os": {"type": "string"}, "specialty": {"type": "string"}},
+                 read_only=False, required=["action", "consent", "request_id"])
+
 
 class RPCError(Exception):
     def __init__(self, code, message, data=None):
@@ -146,11 +182,15 @@ def tool_result(payload):
 
 
 class PortBridgeMCP:
-    def __init__(self, catalog, exchange=None, *, discussion_writes=False):
+    def __init__(self, catalog, exchange=None, *, discussion_writes=False, lab_writes=False):
         self.catalog = catalog
         self.exchange = exchange
         self.discussion_tools = {spec["name"]: (route, spec) for route, spec in DISCUSSION_TOOLS.items()
                                  if exchange and (discussion_writes or spec["annotations"]["readOnlyHint"])}
+        if exchange:
+            self.discussion_tools[LAB_READ["name"]] = ("lab-dashboard", LAB_READ)
+            if lab_writes:
+                self.discussion_tools[LAB_WRITE["name"]] = ("lab-action", LAB_WRITE)
         self.legacy_version = None
         self.legacy_ready = False
 
@@ -161,23 +201,77 @@ class PortBridgeMCP:
             raise RPCError(-32602, "Expected a known tool name and an arguments object")
         if name in self.discussion_tools:
             return self.run_discussion_tool(name, args)
+        if name == "portbridge_health":
+            if args:
+                return tool_error("The health tool takes no arguments.")
+            if self.catalog is not None:
+                return tool_result(self.catalog.health())
+            site = snapshot("site")
+            return tool_result(health_freshness(snapshot("health", site=site), generated_at=site.get("generated_at")))
         if name == "portbridge_activity":
             if args:
                 return tool_error("The activity tool takes no arguments.")
-            payload = snapshot("activity") if self.catalog is None else build_activity(self.catalog)
+            if self.catalog is None:
+                payload = snapshot("activity")
+            else:
+                with self.catalog.read_view() as catalog:
+                    payload = build_activity(catalog)
             return tool_result(payload)
         if name == "portbridge_ecosystem":
             if args:
                 return tool_error("The ecosystem tool takes no arguments.")
-            payload = snapshot("ecosystem") if self.catalog is None else build_ecosystem(self.catalog)
+            if self.catalog is None:
+                payload = snapshot("ecosystem")
+            else:
+                with self.catalog.read_view() as catalog:
+                    payload = build_ecosystem(catalog)
             return tool_result(payload)
+        if name in {"portbridge_people", "portbridge_impact"}:
+            from .community import filter_impact, filter_people, people
+
+            resource = name.removeprefix("portbridge_")
+            if self.catalog is None:
+                payload = snapshot(resource)
+            else:
+                with self.catalog.read_view() as catalog:
+                    payload = people(catalog)[0 if resource == "people" else 1]
+            try:
+                return tool_result((filter_people if resource == "people" else filter_impact)(payload, **args))
+            except (TypeError, ValueError) as exc:
+                return tool_error(str(exc))
+        if name == "portbridge_partner":
+            from .integrations import public_feed, select
+
+            if self.catalog is None:
+                payload = snapshot("partner")
+            else:
+                with self.catalog.read_view() as catalog:
+                    payload = public_feed(catalog)
+            return tool_result(select(payload, **{"limit": 24, **args}))
+        if name == "portbridge_radar":
+            import time
+            from .radar_store import radar_view, filter_radar
+            try:
+                if self.catalog is None:
+                    try:
+                        payload = snapshot("radar")
+                    except OSError:
+                        payload = {"candidates": [], "external_delivery": False}
+                    return tool_result(filter_radar(payload, **args))
+                return tool_result(radar_view(self.catalog, int(time.time()), **args))
+            except (TypeError, ValueError) as exc:
+                return tool_error(str(exc))
         if name == "portbridge_lab":
             enums = {"equipment": EQUIPMENT, "status": STATUSES}
-            if args.keys() - {"equipment", "status", "task"} or any(
+            if args.keys() - {"equipment", "status", "task", "os", "kind", "specialty", "difficulty", "age", "console"} or any(
                     key in args and args[key] not in values for key, values in enums.items()):
                 return tool_error("Provide Test Lab filters from the tool schema.")
             try:
-                lab = snapshot("lab") if self.catalog is None else build_lab(self.catalog)
+                if self.catalog is None:
+                    lab = snapshot("lab")
+                else:
+                    with self.catalog.read_view() as catalog:
+                        lab = build_lab(catalog)
                 return tool_result(filter_lab(lab, **args))
             except json.JSONDecodeError:
                 raise
@@ -230,10 +324,15 @@ class PortBridgeMCP:
         schema = spec["inputSchema"]
         if args.keys() - schema["properties"].keys() or not set(schema.get("required", [])) <= args.keys():
             return tool_error("Check the required discussion arguments")
-        types = {"string": str, "integer": int, "boolean": bool, "array": list}
+        types = {"string": str, "integer": int, "boolean": bool, "array": list, "object": dict}
         if any(type(value) is not types[schema["properties"][key]["type"]] for key, value in args.items()):
             return tool_error("Check the discussion argument types")
         try:
+            if route == "lab-action":
+                allowed = schema["properties"]["action"]["enum"]
+                if args["consent"] is not True or args["action"] not in allowed:
+                    return tool_error("This operation requires explicit approval and a volunteer action")
+                args = {key: value for key, value in args.items() if key != "consent"}
             options = {"query": args} if spec["annotations"]["readOnlyHint"] else {"body": args}
             return tool_result(self.exchange.request(route, **options))
         except ExchangeClientError as exc:
@@ -310,7 +409,8 @@ class PortBridgeMCP:
                 return self.run_tool(params)
             except (OSError, sqlite3.Error, ValueError, KeyError, TypeError) as exc:
                 if self.exchange is not None and params.get("name") not in {
-                    "portbridge_activity", "portbridge_ecosystem", "portbridge_lab",
+                    "portbridge_activity", "portbridge_ecosystem", "portbridge_lab", "portbridge_radar",
+                    "portbridge_people", "portbridge_impact", "portbridge_partner",
                 }:
                     return tool_error("Could not read the local exchange. Check its port and read key.")
                 if self.catalog is None:
@@ -323,9 +423,9 @@ def reject_non_json(value):
     raise ValueError(f"Invalid JSON constant: {value}")
 
 
-def serve(catalog, reader, writer, *, exchange=None, discussion_writes=False):
+def serve(catalog, reader, writer, *, exchange=None, discussion_writes=False, lab_writes=False):
     # https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/stdio
-    server = PortBridgeMCP(catalog, exchange=exchange, discussion_writes=discussion_writes)
+    server = PortBridgeMCP(catalog, exchange=exchange, discussion_writes=discussion_writes, lab_writes=lab_writes)
     while line := reader.readline(MAX_MESSAGE_BYTES + 1):
         if len(line) > MAX_MESSAGE_BYTES:
             while line and not line.endswith(b"\n"):
@@ -350,11 +450,13 @@ def main(argv=None):
     source.add_argument("--exchange-port", type=int, help="explicitly read an authorized loopback exchange")
     parser.add_argument("--enable-discussion-writes", action="store_true",
                         help="expose tools for explicitly approved subscriptions and messages")
+    parser.add_argument("--enable-lab-writes", action="store_true",
+                        help="expose volunteer-only actions when the user approves each action")
     args = parser.parse_args(argv)
     if args.db is not None and not args.db.is_file():
         parser.error("local catalog is missing; run python -m portbridge status first")
-    if args.enable_discussion_writes and args.exchange_port is None:
-        parser.error("--enable-discussion-writes requires --exchange-port")
+    if (args.enable_discussion_writes or args.enable_lab_writes) and args.exchange_port is None:
+        parser.error("Both write options require --exchange-port")
     catalog = ReadOnlyCatalog(args.db) if args.db is not None else None
     exchange = None
     if args.exchange_port is not None:
@@ -363,7 +465,7 @@ def main(argv=None):
         except ValueError as exc:
             parser.error(str(exc))
     serve(catalog, sys.stdin.buffer, sys.stdout.buffer, exchange=exchange,
-          discussion_writes=args.enable_discussion_writes)
+          discussion_writes=args.enable_discussion_writes, lab_writes=args.enable_lab_writes)
 
 
 if __name__ == "__main__":

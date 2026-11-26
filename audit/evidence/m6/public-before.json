@@ -1,0 +1,21 @@
+{
+  "checked_at": "2026-11-26T20:27:11+00:00",
+  "prior_main": "56e2262d62c492f4a866c350f3f708c3f694f77f",
+  "public_run": "https://github.com/akimfomin/PortBridge/actions/runs/45852310279",
+  "generation": "2026-11-26T15:49:46+00:00",
+  "site_sha256": "e8bd1beae2c431a44447914fa7cf4082d421be30b05b7fa71e2266893f3310f4",
+  "lab_sha256": "e723f8d679144f825486b726b7cb6366e8e4ca0993867d7dcb4e6a5776009840",
+  "source_health": "partial",
+  "observations": 25426,
+  "sections": [
+    "activity",
+    "coordination",
+    "ecosystem",
+    "health",
+    "lab",
+    "outreach",
+    "problems",
+    "projects"
+  ],
+  "partner_http": 404
+}

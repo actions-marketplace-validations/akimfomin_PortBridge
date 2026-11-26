@@ -1,0 +1,44 @@
+{
+  "method": "Real CLI export from a fresh seed database, then independent release_gate subprocesses. Only the temporary exported page was changed.",
+  "client_file": "data/browse-47dfeb72d9e3b02701c05069-matches-page-0.json",
+  "original_page_rows": 19,
+  "inventory_files": 281,
+  "m5_observation": {
+    "commit": "08d83410dd98863eb0b8e68b3a1b486c7ac12b23",
+    "candidate": "temporary copy of archived clean-site",
+    "client_file": "data/browse-47dfeb72d9e3b02701c05069-matches-page-0.json",
+    "original_page_rows": 19,
+    "intact_exit": 0,
+    "missing_exit": 0
+  },
+  "m51": {
+    "intact": {
+      "exit": 0,
+      "output": "Publication gate passed: all exported file checksums, partner contract and staging exclusions"
+    },
+    "missing": {
+      "exit": 1,
+      "output": "Publication gate failed: data/browse-47dfeb72d9e3b02701c05069-matches-page-0.json"
+    },
+    "changed_valid_json": {
+      "exit": 1,
+      "output": "Publication gate failed: data/browse-47dfeb72d9e3b02701c05069-matches-page-0.json"
+    },
+    "restored": {
+      "exit": 0,
+      "output": "Publication gate passed: all exported file checksums, partner contract and staging exclusions"
+    }
+  },
+  "repeat_export": {
+    "method": "Second export to the same temporary directory after recording one synthetic source observation",
+    "first_generation": "47dfeb72d9e3b02701c05069",
+    "next_generation": "9974db8f768ee293c56e3d90",
+    "first_inventory_files": 281,
+    "next_inventory_files": 298,
+    "old_generation_files_removed": 163,
+    "old_generation_files_remaining": 0,
+    "next_inventory_matches_all_files_on_disk": true,
+    "gate_failures": []
+  },
+  "reproduce": "python -B -m unittest discover -s tests -p test_release_gate.py -v"
+}

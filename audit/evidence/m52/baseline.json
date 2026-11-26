@@ -1,0 +1,192 @@
+{
+  "product_sha256": "a1806b575f41f2ea037c1a0155cf3e5578d800fab5413198ab33378b45e7208b",
+  "cases": [
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2852",
+      "observation": {
+        "project": "xcl",
+        "kind": "pr",
+        "source_id": "2852",
+        "title": "D3D12.X: forget command list before its final release",
+        "url": "https://github.com/xcl-dev/xcl/pull/2852",
+        "status": "open",
+        "updated_at": "2026-11-26T18:50:00Z",
+        "metadata": {
+          "number": 2852,
+          "head_sha": "69ebece8a98ae956556eb02d3721db712501e9b2",
+          "technical": {
+            "version": 4,
+            "terms": [
+              "d3d12",
+              "command list"
+            ],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null
+        }
+      },
+      "result": {
+        "subject": "",
+        "lookups": 0,
+        "cache_hits": 0,
+        "eligible": 0,
+        "batch_status": "complete",
+        "status": "not_scanned",
+        "top5": [],
+        "reviewed_top5": []
+      }
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+      "observation": {
+        "project": "continued",
+        "kind": "pr",
+        "source_id": "2392",
+        "title": "make_game: the pipelines stage fills the runtime's own journal with gta6rt --precompile-pipelines (MAKE-GAME-PIPELINES-VIA-RUNTIME)",
+        "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+        "status": "open",
+        "updated_at": "2026-11-26T18:50:18Z",
+        "metadata": {
+          "number": 2392,
+          "head_sha": "8a73cb09be44c908d7fbe4947d2510ee8c95e7c1",
+          "technical": {
+            "version": 4,
+            "terms": [
+              "shader",
+              "bindless",
+              "wine",
+              "spir-v"
+            ],
+            "signals": [],
+            "references": [
+              "https://github.com/ubiquitarianism/leonida/issues/1608"
+            ],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null
+        }
+      },
+      "result": {
+        "subject": "",
+        "lookups": 0,
+        "cache_hits": 0,
+        "eligible": 0,
+        "batch_status": "complete",
+        "status": "not_scanned",
+        "top5": [],
+        "reviewed_top5": []
+      }
+    },
+    {
+      "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+      "observation": {
+        "project": "kytyps5",
+        "kind": "pr",
+        "source_id": "2565",
+        "title": "config: add Ukrainian (ID 30) to the console languages",
+        "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+        "status": "open",
+        "updated_at": "2026-11-26T18:54:54Z",
+        "metadata": {
+          "number": 2565,
+          "head_sha": "d54e1c600f5678779fe961fb68d30d04118b1112",
+          "technical": {
+            "version": 4,
+            "terms": [],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null
+        }
+      },
+      "result": {
+        "subject": "",
+        "lookups": 0,
+        "cache_hits": 0,
+        "eligible": 0,
+        "batch_status": "complete",
+        "status": "not_scanned",
+        "top5": [],
+        "reviewed_top5": []
+      }
+    },
+    {
+      "url": "https://github.com/boykopovar/AnyPS5/pull/27600",
+      "observation": {
+        "project": "anyps5",
+        "kind": "pr",
+        "source_id": "27600",
+        "title": "docs(build): clarify the relinker seed manifest format",
+        "url": "https://github.com/boykopovar/AnyPS5/pull/27600",
+        "status": "open",
+        "updated_at": "2026-11-26T18:56:14Z",
+        "metadata": {
+          "number": 27600,
+          "head_sha": "9f9c3118d93368505a5e1d2840653bba9195163c",
+          "technical": {
+            "version": 4,
+            "terms": [
+              "shader"
+            ],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null
+        }
+      },
+      "result": {
+        "subject": "",
+        "lookups": 0,
+        "cache_hits": 0,
+        "eligible": 0,
+        "batch_status": "complete",
+        "status": "not_scanned",
+        "top5": [],
+        "reviewed_top5": []
+      }
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/429",
+      "observation": {
+        "project": "anyxboxx",
+        "kind": "pr",
+        "source_id": "429",
+        "title": "feat(victory-gpu): add opt-in tile reclamation and zero-alloc single-run mappings",
+        "url": "https://github.com/LooperSalty/AnyXboxX/pull/429",
+        "status": "merged",
+        "updated_at": "2026-11-26T18:47:00Z",
+        "metadata": {
+          "number": 429,
+          "head_sha": "0d20059eeeb6de1dd22c84ef14a1a8f39b5f2627",
+          "technical": {
+            "version": 4,
+            "terms": [],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": "2026-11-26T18:47:00Z"
+        }
+      },
+      "result": {
+        "subject": "",
+        "lookups": 0,
+        "cache_hits": 0,
+        "eligible": 0,
+        "batch_status": "complete",
+        "status": "not_scanned",
+        "top5": [],
+        "reviewed_top5": []
+      }
+    }
+  ]
+}

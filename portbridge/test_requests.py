@@ -145,7 +145,7 @@ def report_invitation_hold(task, github, equipment):
     except (OSError, Unavailable, ValueError):
         return "The linked Test Lab results could not be verified. No tester was invited."
     if has_passing_coverage(task, reports, equipment=equipment):
-        return "The requested Test Lab coverage is already reported and ready for review."
+        return "The requested Test Lab coverage is already reported and confirmed."
     return ""
 
 

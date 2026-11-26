@@ -4,6 +4,7 @@ from collections import defaultdict
 from hashlib import sha256
 
 from .catalog import source_sync_failed
+from .identity import SCHEMA_VERSION
 from .matching import canonical_url
 
 
@@ -21,7 +22,8 @@ def knowledge_graph(catalog):
             edges.append({"from": f"project:{solution['project']}", "to": card["id"], "kind": "technical_work",
                           "status": solution["status"], "relationship": card.get("relationship", "related_implementation"),
                           "sources": solution["source_refs"]})
-    return {"nodes": nodes, "edges": edges}
+    return {"nodes": nodes, "edges": edges, "data_schema_version": SCHEMA_VERSION,
+            "reviewed_evidence": catalog.reviewed_evidence(), "history": catalog.core_history()}
 
 
 def recommendations(catalog, *, project="", limit=20, matches=None):

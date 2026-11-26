@@ -1,0 +1,324 @@
+{
+  "product_tree": "77af3ff8ba93c3e13724ebc0469f22c91fbd8903",
+  "cases": [
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2860",
+      "observation": {
+        "project": "xcl",
+        "kind": "pr",
+        "source_id": "2860",
+        "title": "Shaders: separate Series S and Series X used manifests",
+        "url": "https://github.com/xcl-dev/xcl/pull/2860",
+        "status": "open",
+        "updated_at": "2026-11-26T19:25:02Z",
+        "metadata": {
+          "number": 2860,
+          "head_sha": "6efa82fab8dce5df52e7f69fff5539b8258e2d2c",
+          "technical": {
+            "version": 6,
+            "terms": [
+              "shader",
+              "wine"
+            ],
+            "discovery_cues": [],
+            "history_identifier": "XCL_DEVICE_TYPE",
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-26T19:25:02Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/xcl-dev/xcl/pull/2860",
+        "revision": "6efa82fab8dce5df52e7f69fff5539b8258e2d2c",
+        "subject": "XCL_DEVICE_TYPE",
+        "status": "available",
+        "search_scope": "receiver_merged_before_pr",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [
+          {
+            "url": "https://github.com/xcl-dev/xcl/pull/1053",
+            "title": "Fast-boot: opt-in Bink intro skip, frame interval override, device type and TTS mute env vars",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/xcl-dev/xcl/pull/2311",
+            "title": "Config: device_type in xcl.toml names the Series S in every spelling",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          }
+        ],
+        "explanation": "Inspect the earlier merged PR for an implementation or regression test matching this decision."
+      }
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2399",
+      "observation": {
+        "project": "continued",
+        "kind": "pr",
+        "source_id": "2399",
+        "title": "d3d12_xs: capture a pipeline stream that carries a VIEW_INSTANCING subobject",
+        "url": "https://github.com/ubiquitarianism/leonida/pull/2399",
+        "status": "open",
+        "updated_at": "2026-11-26T19:30:09Z",
+        "metadata": {
+          "number": 2399,
+          "head_sha": "3b5b36edd129dedabb9efadf3b6e1c7ef7118234",
+          "technical": {
+            "version": 6,
+            "terms": [
+              "d3d12",
+              "vulkan"
+            ],
+            "discovery_cues": [
+              "d3d12_pipeline_state_subobject_type_view_instancing"
+            ],
+            "history_identifier": "VIEW_INSTANCING",
+            "signals": [],
+            "references": [
+              "https://github.com/ubiquitarianism/leonida/issues/1608"
+            ],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-26T19:30:09Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/ubiquitarianism/leonida/pull/2399",
+        "revision": "3b5b36edd129dedabb9efadf3b6e1c7ef7118234",
+        "subject": "VIEW_INSTANCING",
+        "status": "available",
+        "search_scope": "receiver_merged_before_pr",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [],
+        "explanation": "No earlier merged PR for this identifier was returned by the bounded repository search."
+      }
+    },
+    {
+      "url": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+      "observation": {
+        "project": "kytyps5",
+        "kind": "pr",
+        "source_id": "2551",
+        "title": "graphics: release idle images when a new image cannot be allocated",
+        "url": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+        "status": "open",
+        "updated_at": "2026-11-26T19:23:23Z",
+        "metadata": {
+          "number": 2551,
+          "head_sha": "9e27d264d9c8d6e0a62f53f5fd9aacaa1d48358a",
+          "technical": {
+            "version": 6,
+            "terms": [
+              "stencil",
+              "readback",
+              "shader"
+            ],
+            "discovery_cues": [
+              "device loss"
+            ],
+            "history_identifier": "shader_recompiler_compute_tests",
+            "signals": [],
+            "references": [
+              "https://github.com/KytyPS5/KytyPS5/issues/2307",
+              "https://github.com/KytyPS5/KytyPS5/issues/2019",
+              "https://github.com/KytyPS5/KytyPS5/issues/2308"
+            ],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-25T19:02:13Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+        "revision": "9e27d264d9c8d6e0a62f53f5fd9aacaa1d48358a",
+        "subject": "shader_recompiler_compute_tests",
+        "status": "available",
+        "search_scope": "receiver_merged_before_pr",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [
+          {
+            "url": "https://github.com/KytyPS5/KytyPS5/pull/1983",
+            "title": "Rename near identifier to avoid Windows macro clash",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KytyPS5/KytyPS5/pull/1893",
+            "title": "renderer: decode R8, R8G8 and R16_UINT color register clears",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KytyPS5/KytyPS5/pull/801",
+            "title": "shader: preserve live predicates through whole-quad expansion",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KytyPS5/KytyPS5/pull/2528",
+            "title": "shader: match RDNA2 V_MED3_F32 on signed-zero ties and three NaN sources",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KytyPS5/KytyPS5/pull/1924",
+            "title": "shader: decode FLAT, GLOBAL and SCRATCH D16 high-half loads",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          }
+        ],
+        "explanation": "Inspect the earlier merged PR for an implementation or regression test matching this decision."
+      }
+    },
+    {
+      "url": "https://github.com/boykopovar/AnyPS5/pull/27618",
+      "observation": {
+        "project": "anyps5",
+        "kind": "pr",
+        "source_id": "27618",
+        "title": "fix(libScePosixForWebKit): raise the debug exception on mmap_np's ENOMEM",
+        "url": "https://github.com/boykopovar/AnyPS5/pull/27618",
+        "status": "open",
+        "updated_at": "2026-11-26T19:30:24Z",
+        "metadata": {
+          "number": 27618,
+          "head_sha": "e05d132a8dbc56e3e436f3d6f152bf23164dc68c",
+          "technical": {
+            "version": 6,
+            "terms": [
+              "spir-v"
+            ],
+            "discovery_cues": [],
+            "history_identifier": "mmap_np",
+            "signals": [],
+            "references": [
+              "https://github.com/boykopovar/AnyPS5/issues/21870"
+            ],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-26T19:28:55Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/boykopovar/AnyPS5/pull/27618",
+        "revision": "e05d132a8dbc56e3e436f3d6f152bf23164dc68c",
+        "subject": "mmap_np",
+        "status": "available",
+        "search_scope": "receiver_merged_before_pr",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [
+          {
+            "url": "https://github.com/boykopovar/AnyPS5/pull/22709",
+            "title": "feat(libScePosixForWebKit): implement sysinfo, setenv_np, msetname and sched/mmap wrappers",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/boykopovar/AnyPS5/pull/19430",
+            "title": "feat(libScePosixForWebKit): implement clock_gettime_np and getenv_np",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/boykopovar/AnyPS5/pull/8431",
+            "title": "feat(prx): declare the missing PS5 3.20 system exports in the next tier of libraries",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/boykopovar/AnyPS5/pull/9325",
+            "title": "feat(libScePosixForWebKit): forward the --wrap exports with implemented targets",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          }
+        ],
+        "explanation": "Inspect the earlier merged PR for an implementation or regression test matching this decision."
+      }
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+      "observation": {
+        "project": "anyxboxx",
+        "kind": "pr",
+        "source_id": "448",
+        "title": "fix(victory-shader): lower v_cmp_f and v_cmp_tru floats as constant booleans",
+        "url": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+        "status": "open",
+        "updated_at": "2026-11-26T19:14:56Z",
+        "metadata": {
+          "number": 448,
+          "head_sha": "727118c1d2cb4467d137a826be422040c7d78930",
+          "technical": {
+            "version": 6,
+            "terms": [
+              "shader",
+              "dxil",
+              "d3d12"
+            ],
+            "discovery_cues": [
+              "dxgi_error_device_suspended",
+              "v_cmp_f_f32",
+              "v_cmp_tru_f32",
+              "v_cmp_f_f16",
+              "v_cmp_tru_f16",
+              "v_cndmask_b32"
+            ],
+            "history_identifier": "",
+            "signals": [
+              "v_cmp_f_f32",
+              "v_cmp_tru_f32",
+              "v_cmp_f_f16",
+              "v_cmp_tru_f16",
+              "v_cmp_f_u32",
+              "v_cmp_f_i32",
+              "v_cmp_f_u16",
+              "v_cmp_f_i16",
+              "v_cmp_t_u32",
+              "v_cmp_t_i32",
+              "v_cmp_t_u16",
+              "v_cmp_t_i16",
+              "v_cndmask_b32",
+              "dxgi_error_device_suspended"
+            ],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-26T19:08:36Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+        "revision": "727118c1d2cb4467d137a826be422040c7d78930",
+        "subject": "dxgi_error_device_suspended",
+        "status": "available",
+        "search_scope": "external",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [],
+        "explanation": "The indexed corpus and first bounded GitHub page yielded no other source for this subject."
+      }
+    }
+  ]
+}

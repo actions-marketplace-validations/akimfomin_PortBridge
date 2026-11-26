@@ -8,11 +8,17 @@
 
 > PortBridge is an open coordination tool for independent Xbox Series compatibility projects. Find related work, reuse verified tests, and share results in the repositories where development happens.
 
-## Пассивная поддержка с 26 ноября 2026 года
+## Проверить один pull request
 
-Я прекращаю инициативные исследования и подбор тестировщиков. Каталог, поиск и Test Lab остаются открытыми. GitHub Actions обновляет открытые данные по расписанию. Отдельные источники могут отставать. Предложения и исправления можно по-прежнему отправить на GitHub. Срок ответа не гарантирован.
+Сопровождающий может включить [проверку GitHub](docs/GITHUB-ACTION.md). Результат появится прямо в PR с источниками или причиной пустой выдачи. В пилоте M5–M6 можно предложить один конкретный технический вопрос. [Подключение агента](docs/MCP.md) · [Партнёрская лента](API.md) · [Проверенные результаты и ограничения](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md)
+
+В пилоте Continued проверила, что новый процесс действительно использует записанный кэш. Два участника получили положительный результат на GTX 1050 Ti и RTX 5070 с помощью диагностики самой команды. [Предложение PortBridge](https://github.com/ubiquitarianism/leonida/pull/2392#issuecomment-7202363138) · [Проверка пустого и заполненного журналов](https://github.com/ubiquitarianism/leonida/pull/2392#pullrequestreview-6080300502)
 
 [Письмо основателя](https://akimfomin.github.io/PortBridge/letter.ru.html) · [Ответить или взять часть проекта](https://github.com/akimfomin/PortBridge/issues/91) · [История и инженерные итоги](docs/FINAL-AUDIT.ru.md) · [Как запустить и поддерживать проект](docs/PASSIVE-MAINTENANCE.md)
+
+## Discovery
+
+Ищите работы других проектов по ошибке, инструкции GPU, функции API или ссылке на известный Issue или PR. У находки указаны ревизия, ограничения, лицензия и предлагаемый тест. [Как попробовать](docs/PORTBRIDGE-M2.md)
 
 ## Что можно сделать сейчас
 
@@ -80,3 +86,9 @@ python -m portbridge.preflight --url https://github.com/LooperSalty/AnyXboxX/pul
 [Настройка и обслуживание](docs/MAINTAINERS.md) · [Как внести вклад](CONTRIBUTING.md) · [API](API.md) · [Лицензия MIT](LICENSE)
 
 В режиме `--office` доступен общий план проверок, обсуждения и поиск новых проектов. [Настройка рабочего штаба](docs/OFFICE.md)
+
+## Одна задача с агентом
+
+На сайте нажмите «Начать», вставьте ссылку на задачу или PR и откройте связанную проверку Lab. Для работы в своём репозитории доступны MCP, GitHub Action для чтения и виджет для партнёров. [Инструкция пилота](docs/PORTBRIDGE-M5-START.md)
+
+Если PortBridge пригодился, можно поставить звезду на GitHub. [Репозиторий](https://github.com/akimfomin/PortBridge)

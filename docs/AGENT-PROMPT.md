@@ -36,6 +36,20 @@ The destination should contain `SKILL.md`. If the command does not appear, start
 
 If you want the agent to call search and catalog tools directly, use the optional MCP connection. [MCP setup](MCP.md) · [Public API](../API.en.md)
 
+## Copyable M2 source check
+
+Use this prompt with the M2 checkout or give the two public sources to any web-capable agent.
+
+```text
+Read XCL PR https://github.com/xcl-dev/xcl/pull/2322 and the pinned reference
+https://github.com/llvm/llvm-project/blob/87f0227cb60147a26a1eeb4fb06e3b505e9c7261/llvm/lib/CodeGen/StackColoring.cpp#L8
+If you have the M2 checkout, run:
+python -m portbridge.discovery_search --url https://github.com/xcl-dev/xcl/pull/2322
+Explain which disjoint lifetimes permit reuse and where GPU dispatch changes the assumptions.
+Propose overlapping and non-overlapping controls. Record both revisions and state which checks were actually run.
+Prepare the result for human review.
+```
+
 ## Try PortBridge in your repository
 
 Paste a full GitHub PR link into the public Issue catalog, or give your agent the PR link and ask it to open the catalog's sources. For example, XCL #1100 finds the original Scarlett Layer FMA test and the independent XCL reports. This works without a PortBridge account or installation. [Try XCL #1100 in the catalog](https://akimfomin.github.io/PortBridge/#/problems?q=https%3A%2F%2Fgithub.com%2Fivall%2Fxcl%2Fpull%2F1100) · [FMA case](https://akimfomin.github.io/PortBridge/cases/pb-0006.html)
@@ -43,7 +57,7 @@ Paste a full GitHub PR link into the public Issue catalog, or give your agent th
 If the trial helps, maintainers can add this optional paragraph to their existing `AGENTS.md` or `CLAUDE.md`. Keep your normal contribution and review rules. Remove the paragraph to stop using the integration.
 
 ```markdown
-For public compatibility work, look for related tests and fixes in [PortBridge](https://akimfomin.github.io/PortBridge/) before repeating an investigation. Check the original source and exact revision. If a result helps, say in the current issue or pull request what you used and credit the source author and [PortBridge](https://github.com/akimfomin/PortBridge).
+Before substantial public compatibility work, check [PortBridge](https://akimfomin.github.io/PortBridge/) for prior work. Use the catalog or call portbridge_preflight when connected. Verify the exact revision, license and how the architectures differ. Reuse a verified test where it answers the same question. If the team chooses to share a reproducible result, credit the original work and link the result in the receiving issue or PR.
 ```
 
 If a result is useful, record what the receiving team actually did in that same issue or PR, with a link to its test, adopted change, or maintainer decision. For example, a reviewer may report that they ran the shared test at a pinned revision and got the expected result. Count an adopted result only when the receiving team's public evidence confirms it. [Pilot record](PILOT.md#что-записать-после-проверки)

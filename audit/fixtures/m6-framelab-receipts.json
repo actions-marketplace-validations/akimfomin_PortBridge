@@ -1,0 +1,69 @@
+{
+  "https://github.com/5headsmartbtw/leonida-framelab/issues/15": {
+    "reports": [
+      {
+        "revision": "82f069e82197e61b97f60bbcbcb7a3af7d3f8e77",
+        "revisions": [
+          "82f069e82197e61b97f60bbcbcb7a3af7d3f8e77"
+        ],
+        "equipment": "amd",
+        "hardware": "AMD Radeon 860M",
+        "device_id": "1002:1114",
+        "outcome": "pass",
+        "opt_in": false,
+        "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7147944059",
+        "author": "JoeY54",
+        "author_id": 71070620,
+        "reported_at": "2026-11-24T23:55:29Z",
+        "updated_at": "2026-11-24T23:55:29Z",
+        "authority": "approved",
+        "body_sha256": "a71c3ed0286f99d65f4e17e301ff7f757e8c2cbdac8c8802c6fee543d78bbca1"
+      },
+      {
+        "revision": "82f069e82197e61b97f60bbcbcb7a3af7d3f8e77",
+        "revisions": [
+          "82f069e82197e61b97f60bbcbcb7a3af7d3f8e77"
+        ],
+        "equipment": "amd",
+        "hardware": "AMD Radeon Graphics (Ryzen 9 9950X3D)",
+        "device_id": "1002:13c0",
+        "outcome": "pass",
+        "opt_in": false,
+        "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7153817545",
+        "author": "JoeY54",
+        "author_id": 71070620,
+        "reported_at": "2026-11-25T05:28:56Z",
+        "updated_at": "2026-11-25T05:28:56Z",
+        "authority": "approved",
+        "body_sha256": "36d64c4e85a49b372949c826f59e37737d986d0c041f8469760b958a1fddf070"
+      }
+    ],
+    "checked_at": "2026-11-26T20:22:57.998863+00:00",
+    "reviews": [
+      {
+        "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7160150401",
+        "author": "5headsmartbtw",
+        "author_id": 71517730,
+        "reported_at": "2026-11-25T10:46:18Z",
+        "updated_at": "2026-11-25T10:46:18Z",
+        "report_url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7147944059",
+        "body_sha256": "a71c3ed0286f99d65f4e17e301ff7f757e8c2cbdac8c8802c6fee543d78bbca1",
+        "review_decision": "approve"
+      },
+      {
+        "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7160151831",
+        "author": "5headsmartbtw",
+        "author_id": 71517730,
+        "reported_at": "2026-11-25T10:46:22Z",
+        "updated_at": "2026-11-25T10:46:22Z",
+        "report_url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7153817545",
+        "body_sha256": "36d64c4e85a49b372949c826f59e37737d986d0c041f8469760b958a1fddf070",
+        "review_decision": "approve"
+      }
+    ]
+  },
+  "https://github.com/5headsmartbtw/leonida-framelab/pull/12": {
+    "reports": [],
+    "checked_at": "2026-11-26T20:22:58.518821+00:00"
+  }
+}

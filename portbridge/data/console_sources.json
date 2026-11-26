@@ -1,0 +1,87 @@
+{
+  "boykopovar/anyps5": {
+    "repo": "boykopovar/AnyPS5",
+    "name": "AnyPS5",
+    "url": "https://github.com/boykopovar/AnyPS5",
+    "consoles": [
+      "ps5"
+    ],
+    "revision": "0b16257796508b77472154e48c927d6fc4035d26",
+    "license": "GPL-2.0 repository text",
+    "license_url": "https://github.com/boykopovar/AnyPS5/blob/0b16257796508b77472154e48c927d6fc4035d26/LICENSE",
+    "state": "tracked"
+  },
+  "kytyps5/kytyps5": {
+    "repo": "KytyPS5/KytyPS5",
+    "name": "KytyPS5",
+    "url": "https://github.com/KytyPS5/KytyPS5",
+    "consoles": [
+      "ps5"
+    ],
+    "revision": "93cce66564bdced2fc7054ca9794451dfeef4d9d",
+    "license": "GPL-2.0",
+    "license_url": "https://github.com/KytyPS5/KytyPS5/blob/93cce66564bdced2fc7054ca9794451dfeef4d9d/LICENSE",
+    "state": "tracked"
+  },
+  "jamescicada/gtavi-recomp": {
+    "repo": "JamesCicada/GTAVI-Recomp",
+    "name": "GTAVI-Recomp",
+    "url": "https://github.com/JamesCicada/GTAVI-Recomp",
+    "consoles": [
+      "ps5"
+    ],
+    "revision": "0b332f88343b0fdebf20a640a5c625a2132a521b",
+    "license": "GPL-2.0 repository text",
+    "license_url": "https://github.com/JamesCicada/GTAVI-Recomp/blob/0b332f88343b0fdebf20a640a5c625a2132a521b/LICENSE",
+    "state": "source_only"
+  },
+  "zazajr24/kytyps5-gta-vi": {
+    "repo": "ZazaJr24/KytyPs5-GTA-VI",
+    "name": "KytyPs5-GTA-VI",
+    "url": "https://github.com/ZazaJr24/KytyPs5-GTA-VI",
+    "consoles": [
+      "ps5"
+    ],
+    "revision": null,
+    "license": "Unverified",
+    "license_url": null,
+    "state": "unavailable"
+  },
+  "inorirus/kyty": {
+    "repo": "InoriRus/Kyty",
+    "name": "Kyty",
+    "url": "https://github.com/InoriRus/Kyty",
+    "consoles": [
+      "ps4",
+      "ps5"
+    ],
+    "revision": "4733b7e1c91b10554a52007903d74dc76c39a230",
+    "license": "MIT",
+    "license_url": "https://github.com/InoriRus/Kyty/blob/4733b7e1c91b10554a52007903d74dc76c39a230/LICENSE",
+    "state": "historical"
+  },
+  "jetsku/kytyps5": {
+    "repo": "Jetsku/KytyPS5",
+    "name": "KytyPS5 research fork",
+    "url": "https://github.com/Jetsku/KytyPS5",
+    "consoles": [
+      "ps5"
+    ],
+    "revision": "dd9f9901dbafc5419a8f8e98b8bda0eb80492b2c",
+    "license": "GPL-2.0 repository text",
+    "license_url": "https://github.com/Jetsku/KytyPS5/blob/dd9f9901dbafc5419a8f8e98b8bda0eb80492b2c/LICENSE",
+    "state": "source_only"
+  },
+  "craze1pirate/craziiemu": {
+    "repo": "craze1pirate/craziiEmu",
+    "name": "craziiEmu",
+    "url": "https://github.com/craze1pirate/craziiEmu",
+    "consoles": [
+      "ps5"
+    ],
+    "revision": "cdd12d697e75d0dab9ad3d5ffa79d96930e4242f",
+    "license": "GPL-2.0 repository text",
+    "license_url": "https://github.com/craze1pirate/craziiEmu/blob/cdd12d697e75d0dab9ad3d5ffa79d96930e4242f/LICENSE.txt",
+    "state": "source_only"
+  }
+}

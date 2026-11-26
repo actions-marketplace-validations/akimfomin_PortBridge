@@ -1,10 +1,18 @@
 # Working on PortBridge
 
+## PortBridge 3.0
+
+Start with the [owner specification](docs/PORTBRIDGE-SPEC.md), the [Discovery supplement](docs/PORTBRIDGE-DISCOVERY-SPEC.md), the [current status](docs/PORTBRIDGE-STATUS.md) and the [requirements register](docs/PORTBRIDGE-CHECKLIST.md). Follow the [milestone plan](docs/PORTBRIDGE-PLAN.md) and record tests, evidence and blockers by requirement ID. `verified` requires a completed check.
+
+Use a dedicated worktree for the current milestone. The scope of the M5–M6 release authorization is recorded below.
+
+The owner has authorized the M5 pilot and M6 release, including the audit branch, owner-controlled test integrations, targeted opt-in outreach, CI, rollout to main and Pages, and rollback. Maintain [audit/LATEST.md](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md) and the [122-requirement register](docs/PORTBRIDGE-CHECKLIST.md). Check the outgoing range for private drafts, contact lists, credentials, databases and identifiable logs. Use a normal merge and independently verify the published SHA and live service. An external repository owner decides whether to install.
+
 PortBridge coordinates independent Xbox Series compatibility projects. It connects related work, organizes shared checks, and records reviewed results so teams can reuse findings. Each team decides what to adopt. [Project overview](README.md) · [Working office](docs/OFFICE.md) · [Copyable agent prompt](docs/AGENT-PROMPT.md)
 
 ## Maintenance status
 
-The founder has ended proactive research and recruitment. When a contributor asks for help, use the workflow below for their chosen task. Invitations and external handoffs require a human decision. The public catalog, incoming issues and pull requests remain available. [Maintainer handoff](docs/PASSIVE-MAINTENANCE.md) · [Contact](https://github.com/akimfomin/PortBridge/issues/91)
+The broader research portfolio is in maintenance. The owner reopened work on the bounded M5 pilot and the M6 release. Ask receiving maintainers before installing in their repositories. Link the source and record the outcome of voluntary contact. [Maintainer handoff](docs/PASSIVE-MAINTENANCE.md) · [Contact](https://github.com/akimfomin/PortBridge/issues/91)
 
 ## Start from a link
 

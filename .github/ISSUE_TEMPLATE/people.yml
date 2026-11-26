@@ -1,0 +1,25 @@
+name: People attribution or display request
+description: Correct a source, hide your profile, or change your voluntary availability.
+title: "People: "
+body:
+  - type: dropdown
+    id: request
+    attributes:
+      label: What should change?
+      options:
+        - Correct attribution
+        - Hide my People profile
+        - Withdraw my availability
+        - Record my voluntary availability
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Public evidence
+      description: Include the technical permalink and the change you want. For availability, describe the scope and an end date within 90 days. Use only public GitHub references.
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: This form is public. Leave out real names, contact details, credentials and private logs. If you prefer a private display request, use a channel already agreed with the maintainer.

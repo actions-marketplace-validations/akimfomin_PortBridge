@@ -1,0 +1,14 @@
+{
+  "number": 429,
+  "title": "feat(victory-gpu): add opt-in tile reclamation and zero-alloc single-run mappings",
+  "state": "closed",
+  "updated_at": "2026-11-26T18:47:00Z",
+  "merged_at": "2026-11-26T18:47:00Z",
+  "labels": [],
+  "head": {
+    "sha": "0d20059eeeb6de1dd22c84ef14a1a8f39b5f2627"
+  },
+  "url": "https://github.com/LooperSalty/AnyXboxX/pull/429",
+  "repo": "LooperSalty/AnyXboxX",
+  "body_sha256": "88d4d9952cd3a9f6111f12b4b97351332a7b1042c0fd33195f77efb3da4d4712"
+}

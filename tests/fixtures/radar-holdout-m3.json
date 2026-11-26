@@ -1,0 +1,315 @@
+{
+  "version": 1,
+  "source": "Published PortBridge snapshot 2026-11-26T05:30Z, all 44 pinned direct-reference pairs in capture.",
+  "rule": "Count one specific useful check or shared mechanism. Ambiguity earns no positive credit. Frozen before M3 ranking.",
+  "labels": [
+    {
+      "id": "P01",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/186",
+      "b": "https://github.com/Marvisak/VIctory/pull/1021",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P02",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/187",
+      "b": "https://github.com/Marvisak/VIctory/pull/1366",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P03",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/188",
+      "b": "https://github.com/Marvisak/VIctory/pull/447",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P04",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/190",
+      "b": "https://github.com/Marvisak/VIctory/pull/169",
+      "expected": "negative",
+      "reason": "Specific normalization rail versus generic packing. Common outcome unestablished."
+    },
+    {
+      "id": "P05",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/191",
+      "b": "https://github.com/Marvisak/VIctory/pull/646",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P06",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/192",
+      "b": "https://github.com/Marvisak/VIctory/pull/1443",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P07",
+      "a": "https://github.com/fxceless/victory-fork/pull/885",
+      "b": "https://github.com/Marvisak/VIctory/pull/347",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P08",
+      "a": "https://github.com/LooperSalty/AnyXboxX/pull/331",
+      "b": "https://github.com/Marvisak/VIctory/pull/2094",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P09",
+      "a": "https://github.com/LooperSalty/AnyXboxX/pull/327",
+      "b": "https://github.com/Marvisak/VIctory/pull/1398",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P10",
+      "a": "https://github.com/LooperSalty/AnyXboxX/pull/320",
+      "b": "https://github.com/Marvisak/VIctory/commit/ea488a9f9901e4375c547a57795ae8cb79d577a4",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P11",
+      "a": "https://github.com/LooperSalty/AnyXboxX/pull/321",
+      "b": "https://github.com/Marvisak/VIctory/pull/605",
+      "expected": "negative",
+      "reason": "Rounding and signed NaN policies need disambiguation across both changes."
+    },
+    {
+      "id": "P12",
+      "a": "https://github.com/LooperSalty/AnyXboxX/pull/305",
+      "b": "https://github.com/Marvisak/VIctory/commit/78ed12eb79774bf141efaaf6ebd626a10bfb5bbf",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P13",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/81",
+      "b": "https://github.com/Marvisak/VIctory/pull/1599",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P14",
+      "a": "https://github.com/pablogonz12/Scarlight/pull/177",
+      "b": "https://github.com/fxceless/victory-fork/pull/188",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P15",
+      "a": "https://github.com/pablogonz12/Scarlight/pull/174",
+      "b": "https://github.com/fxceless/victory-fork/pull/1097",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P16",
+      "a": "https://github.com/uiliannn/VItoriaBr/pull/59",
+      "b": "https://github.com/Marvisak/VIctory/pull/1718",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P17",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/126",
+      "b": "https://github.com/Marvisak/VIctory/pull/1093",
+      "expected": "negative",
+      "reason": "Both sources were closed. No open receiver was established in this capture."
+    },
+    {
+      "id": "P18",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/7",
+      "b": "https://github.com/uiliannn/VItoriaBr/pull/11",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P19",
+      "a": "https://github.com/ubiquitarianism/leonida/pull/966",
+      "b": "https://github.com/Marvisak/VIctory/pull/1088",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P20",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/118",
+      "b": "https://github.com/Marvisak/VIctory/pull/1793",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P21",
+      "a": "https://github.com/Belobug/VIctory-Belobug-AMD/pull/118",
+      "b": "https://github.com/Marvisak/VIctory/pull/1917",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P22",
+      "a": "https://github.com/PastiiJay/klbf-lab/pull/12",
+      "b": "https://github.com/fxceless/victory-fork/pull/737",
+      "expected": "negative",
+      "reason": "Host worker stack size versus loop back-edge transform may have separate causes."
+    },
+    {
+      "id": "P23",
+      "a": "https://github.com/Marvisak/VIctory/pull/1793",
+      "b": "https://github.com/fxceless/victory-fork/pull/86",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P24",
+      "a": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+      "b": "https://github.com/Marvisak/VIctory/pull/605",
+      "expected": "negative",
+      "reason": "Wide merged set of operations versus a narrower signed NaN ruling."
+    },
+    {
+      "id": "P25",
+      "a": "https://github.com/fxceless/victory-fork/pull/934",
+      "b": "https://github.com/Marvisak/VIctory/pull/1696",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P26",
+      "a": "https://github.com/fxceless/victory-fork/pull/919",
+      "b": "https://github.com/Marvisak/VIctory/pull/1718",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P27",
+      "a": "https://github.com/PastiiJay/klbf-lab/pull/1",
+      "b": "https://github.com/Marvisak/VIctory/pull/347",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P28",
+      "a": "https://github.com/fxceless/victory-fork/pull/613",
+      "b": "https://github.com/xcl-dev/xcl/pull/1053",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P29",
+      "a": "https://github.com/fxceless/victory-fork/pull/819",
+      "b": "https://github.com/Marvisak/VIctory/pull/1093",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P30",
+      "a": "https://github.com/fxceless/victory-fork/pull/22",
+      "b": "https://github.com/Marvisak/VIctory/pull/175",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P31",
+      "a": "https://github.com/ubiquitarianism/leonida/pull/701",
+      "b": "https://github.com/LeonidaReforge/Leonida/pull/15",
+      "expected": "negative",
+      "reason": "Destination D16 XYZ accounting versus Wave64 half read-modify-write."
+    },
+    {
+      "id": "P32",
+      "a": "https://github.com/ubiquitarianism/leonida/pull/1260",
+      "b": "https://github.com/xcl-dev/xcl/pull/819",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P33",
+      "a": "https://github.com/fxceless/victory-fork/pull/667",
+      "b": "https://github.com/Marvisak/VIctory/pull/1244",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P34",
+      "a": "https://github.com/xcl-dev/xcl/pull/852",
+      "b": "https://github.com/Marvisak/VIctory/pull/599",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P35",
+      "a": "https://github.com/fxceless/victory-fork/pull/666",
+      "b": "https://github.com/Marvisak/VIctory/pull/1283",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P36",
+      "a": "https://github.com/fxceless/victory-fork/pull/186",
+      "b": "https://github.com/Marvisak/VIctory/pull/603",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P37",
+      "a": "https://github.com/fxceless/victory-fork/pull/186",
+      "b": "https://github.com/Marvisak/VIctory/pull/1097",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P38",
+      "a": "https://github.com/Marvisak/VIctory/pull/1475",
+      "b": "https://github.com/xcl-dev/xcl/pull/179",
+      "expected": "negative",
+      "reason": "DNS lookup cleanup versus Win32 descriptor validation are unrelated."
+    },
+    {
+      "id": "P39",
+      "a": "https://github.com/R0Y00/Xbox2Windows/pull/1885",
+      "b": "https://github.com/Marvisak/VIctory/pull/605",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P40",
+      "a": "https://github.com/R0Y00/Xbox2Windows/pull/1885",
+      "b": "https://github.com/ivall/xcl/pull/639",
+      "expected": "negative",
+      "reason": "NaN-as-zero versus sign saturation. A shared fix cannot be inferred."
+    },
+    {
+      "id": "P41",
+      "a": "https://github.com/pablogonz12/Scarlight/pull/9",
+      "b": "https://github.com/Marvisak/VIctory/pull/160",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P42",
+      "a": "https://github.com/xcl-dev/xcl/pull/1020",
+      "b": "https://github.com/Marvisak/VIctory/pull/605",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P43",
+      "a": "https://github.com/LooperSalty/AnyXboxX/pull/129",
+      "b": "https://github.com/Marvisak/VIctory/pull/571",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    },
+    {
+      "id": "P44",
+      "a": "https://github.com/R0Y00/Xbox2Windows/pull/1074",
+      "b": "https://github.com/xcl-dev/xcl/pull/84",
+      "expected": "useful",
+      "reason": "Sources concern a specific comparable operation or scoped control. Reuse and equivalence require separate evidence."
+    }
+  ]
+}

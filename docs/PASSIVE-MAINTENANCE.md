@@ -40,6 +40,27 @@ The owner’s PC can be off. The publication uses a GitHub-hosted runner, a job-
 - To resume research, start from the [published experiments](../research), find the pinned source, license, workload and expected measurements, and use a separate checkout. Keep original inputs and revisions intact. Report the hardware, output checks, limits and the upstream decision separately. Any team can resume an open experiment under the licenses of the components it uses.
 - Before merging, run `python -m unittest discover -s tests -v` and `python -m portbridge export --out dist --repository akimfomin/PortBridge`. To preview the static output, run `python -m http.server --directory dist --bind 127.0.0.1 8766` and open [the preview](http://127.0.0.1:8766). After deployment open the public route you changed.
 
+## Catalog checkpoint and publication guard · M1
+
+Use the following procedure to investigate a delayed publication or to restore a hosted run.
+
+1. Compare the previous public count with the candidate in **Publication safeguard**. If the previous count is unknown or candidate coverage shrank, the job keeps the previous published snapshot. Check the source and schedule summary before retrying. [Public health](https://akimfomin.github.io/PortBridge/data/health.json)
+2. The build checks the SQLite cache. A missing, invalid or smaller cache can trigger recovery from a recent successful main run's `portbridge-public-catalog-v1` artifact. Checkpoint retention is 14 days. Inspect the backup in a separate path. A usable copy is required when a first upgrade loses its cache.
+3. To verify a downloaded checkpoint, set `PORTBRIDGE_CHECKPOINT` to the file and run `python -m portbridge.pages_health checkpoint`. Copy it to a new database with `python -m portbridge --db checkpoint.sqlite3 backup --out restored.sqlite3`. Read `python -m portbridge --db restored.sqlite3 status`, then export to a separate directory. Keep the original database and avoid changing an open file.
+4. Open `site.json`, `health.json`, the site and one Lab task. Compare snapshot time, last source success, and per-channel coverage. If #146-style verification fails, compare both hashes again after propagation and record what was delayed. Revert the candidate in an approved release if the new code causes the failure. [Engineering report](PORTBRIDGE-M1.md)
+
+По-русски. При потере кэша используется отдельная проверенная копия. Сборка сохраняет прежнюю публикацию, если сравнение покрытия невозможно или новый каталог меньше. Для отката сохраните копию базы и проверьте её предыдущим кодом в отдельном файле.
+
+### Public checkpoint and rollback
+
+The hosted build reads public sources and creates `portbridge-public-catalog-v1` with `python -m portbridge --db SRC backup --public-checkpoint --out NEW`. This command produces a compact, verified copy in a new file. It admits the public Discovery, Radar and People records produced by the scheduled scanner. A populated volunteer claim, report or preference, a participant event, an unknown table or an Exchange database fails validation. Keep private Exchange backups within the consenting deployment. SQLite compaction removes bytes left by deleted rows. [SQLite snapshot semantics](https://sqlite.org/lang_vacuum.html#vacuuminto)
+
+To roll back a deployment, retain the last known-good code SHA, its successful Actions run, the checkpoint and the published manifest before starting. Make a separate checkout at that SHA, use a copy of its checkpoint and run the full tests and export. Verify the candidate against the saved public coverage before reverting the release commit on main. A merge commit uses `git revert -m 1 MERGE_SHA`. For an ordinary release commit use `git revert RELEASE_SHA`. Keep the audit branch and both artifacts. Check the public manifest, live Lab and partner feed after the resulting Pages job. If the prior release predates the partner API, subscriptions retain their cursors during rollback.
+
+### Observe the first week
+
+After a successful scheduled deployment verifies the live generation, GitHub retains a dated `portbridge-scheduled-publication-v1` receipt for 30 days. The receipt records the release revision, run and attempt, UTC verification time and both expected digests. Run `python audit/m6_autonomy.py --since YYYY-MM-DDTHH:MM:SSZ` using the actual rollout time in the [release handoff](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md). The report lists scheduled runs without a success receipt, the longest verified-publication gap and counts for seven consecutive 24-hour intervals. It tracks publication delivery. Individual sources can lag even when delivery succeeds.
+
 ## Коротко по-русски
 
 Сайт, каталог, поиск, Test Lab и JSON обслуживаются на GitHub. Компьютер основателя для них не нужен. Чтобы предложить исправление или взять направление, напишите в [общее обсуждение](https://github.com/akimfomin/PortBridge/issues/91). Для запуска своей копии достаточно Python и трёх команд в начале этой страницы. По поводу оборудования или результатов теста обращайтесь в ветку конкретной задачи. Решения о публикации, проверке результата и приглашении добровольца принимает человек, когда у него есть время.

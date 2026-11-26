@@ -1,51 +1,36 @@
-# Optional PortBridge pull request summary
+# Optional PortBridge check for pull requests
 
-Maintainers can open a prior-work summary for one existing public pull request. The job lists reviewed cards, cross-project matches and a scoped first check when available. [Successful pilot on XCL #1100](https://github.com/akimfomin/PortBridge/actions/runs/45420038315)
+## Check a PR against a receiving commit
 
-## Try it on one pull request
+Use the existing **PortBridge one-PR pilot** workflow with the PR URL and optional **target_revision**. The target is a full 40-character commit SHA in the same public repository as the PR. The workflow owner can run it from GitHub. Anyone with Git and Python can run the same check locally without a GitHub token or installation in the receiving repository.
 
-Add this workflow as `.github/workflows/portbridge-summary.yml` in the repository's default branch. Open **Actions → PortBridge prior work → Run workflow**, enter the full public pull request URL and open the job summary. The example pins the commit used in the XCL pilot. [GitHub manual run guide](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow) · [Tested PortBridge revision](https://github.com/akimfomin/PortBridge/commit/156fa43fe9a65f9111123a4c110599e837c35d24)
-
-```yaml
-name: PortBridge prior work
-
-on:
-  workflow_dispatch:
-    inputs:
-      pull_request_url:
-        description: Public GitHub pull request URL
-        required: true
-        type: string
-
-permissions: {}
-
-jobs:
-  prior-work:
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    steps:
-      - name: Add prior-work links to Job Summary
-        continue-on-error: true
-        uses: akimfomin/PortBridge@156fa43fe9a65f9111123a4c110599e837c35d24
+```sh
+git clone https://github.com/akimfomin/PortBridge.git
+cd PortBridge
+python -B -m portbridge.merge_check https://github.com/LooperSalty/AnyXboxX/pull/433 15024d54e690743604a67287f0e3f3f30adbaba8
 ```
 
-A manual run uses the URL entered in the form. Pull request events use the title and URL from the event. PortBridge matches the values locally against its public JSON snapshot. The job needs Python 3.10 or later on the runner and writes to `GITHUB_STEP_SUMMARY`. A catalog outage leaves the usual review available. [GitHub job summaries](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#adding-a-job-summary)
+Git reads both public revisions in a temporary bare repository and compares their trees. A result can be **conflict**, **clean merge**, **no tree changes** or **unverified**. The report pins both revisions, links conflicting source files that are present on the target and surfaces changed test files as candidates. Catalog evidence may predate the PR head. Resolve any conflict and run the linked test with its negative control on the resulting revision. Which behavior matters and whether it passed are decisions for the PR author. The workflow fetches source as Git objects and runs no code from the PR. [AnyXboxX technical discussion](https://github.com/LooperSalty/AnyXboxX/pull/409#issuecomment-7204512277)
 
-## Use it on incoming pull requests
+For a hosted check without workflow access, open a PortBridge issue with just the public PR URL and receiving SHA. A maintainer can run it and link the result. For a private repository use your team's local review process. GitHub API rate limits, a moving PR head and unavailable Git history produce an unverified result.
 
-If the one-PR trial helps, add this trigger under `on:` alongside `workflow_dispatch:`. Keep the job optional in branch protection. GitHub may require approval to run jobs from external forks. [GitHub pull request events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request)
+A maintainer can install the [pinned workflow](../examples/portbridge-pr.yml) in any selected repository. It looks up an ordinary public PR URL against the published PortBridge snapshot and posts a summary in **Actions**. For an automatic PR event, open **Checks → prior-work → Summary**. Select the linked sources to inspect their revision, scope and limits.
 
-```yaml
-  pull_request:
-    types: [opened, reopened, synchronize, edited]
-```
+## Install or try a single PR
 
-Use the original revisions and sources before repeating a test. If a result helps, link it in the receiving PR and say what it changed. Credit the source author and PortBridge when it helped you find the source. The workflow run records that the Action ran. A receiving team's test, commit or decision records reuse. [Try it without installing anything](AGENT-PROMPT.md#try-portbridge-in-your-repository)
+1. Copy the example to `.github/workflows/portbridge-pr.yml` on the receiving repository's default branch. This requires that repository's permission.
+2. Open a PR or update its branch. Alternatively, choose **Actions → Optional PortBridge prior work → Run workflow** and enter one full public GitHub PR URL.
+3. Open the run summary. A source link and exact PR revision identify the input. For a PR event the revision comes from GitHub's event. A typed URL resolves through one anonymous GitHub metadata read. The Action searches the published snapshot. An empty result may include a reason such as the absence of a saved external search. Snapshot evidence can predate the displayed PR head. Historical or automatic leads still require review in the receiving project.
 
-## Verify a release candidate
+The example allows `opened`, `reopened` and `synchronize`. Remove the `pull_request` trigger to run only on demand. GitHub verifies its own events and supplies the event file to a hosted runner. PortBridge does not operate a webhook listener or require an App key. The workflow has `permissions: {}`, processes the title and public URL, and runs only the pinned Action. It does not check out or execute the contributor's code. Keep this advisory job optional in branch protection. [GitHub event reference](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request) · [Job summaries](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-commands#adding-a-job-summary)
 
-Run the repository tests and check the job summary on a sample public PR with the candidate SHA. The [texture upload case](https://github.com/Marvisak/VIctory/pull/641) should have no rectangle-test recommendation. The [rectangle-list control](https://github.com/ubiquitarianism/leonida/pull/207) should still link the verified VIctory result. Check the public snapshot after deployment because the action reads it at runtime.
+## Repeat, recover or disconnect
 
-The root `action.yml` defines a reusable composite action. For a Marketplace release, the owner chooses the tested commit, accepts the GitHub Marketplace Developer Agreement if prompted, and publishes a tagged release. A pinned commit can be used directly before Marketplace listing. [GitHub Marketplace release steps](https://docs.github.com/en/actions/how-tos/create-and-publish-actions/publish-in-github-marketplace)
+- Each run writes to its own job summary. Replaying an event reads the catalog again. It creates no PR comment, enrollment, task or external message. The concurrency group cancels superseded runs for the same PR. A newer catalog can return different content.
+- A catalog outage still lets the receiving workflow continue. Open the summary for the scope of any bundled fallback. Re-run the job after service returns. A successful GitHub job means the advisory step ran, including when its input or the catalog was unavailable.
+- Other steps may read the optional Action output `steps.<id>.outputs.status`. A read snapshot gives `reported` even when partial, stale or empty. A catalog outage gives `unavailable`. For a typed URL, anonymous GitHub 404/410 gives `origin_missing` (absent or private), and a rate limit or an unverified identity gives `origin_unverified`. Other outcomes are `invalid_input`, `skipped` and `summary_unavailable`. An error resolving the Action itself happens before its outputs exist.
+- To pause, open the workflow menu under **Actions** and choose **Disable workflow**. To uninstall, remove the workflow file. Prior runs remain in the repository's Actions history under its retention policy. To roll back the component version, restore the preceding known-good commit pin from the workflow's Git history.
 
-To remove the integration, remove the workflow file from the repository that enabled it.
+Agents can obtain structured results through the [MCP quick start](QUICKSTART.md#connect-codex-or-claude-code) or poll the [partner feed](../API.en.md#partner-feed). The prior-work job reads public data without a token or a partner subscription. A team may separately credit a source or send a report through its normal review process. An Action run alone establishes only that the integration executed.
+
+The previous [one-PR demonstration](https://github.com/akimfomin/PortBridge/actions/runs/45420038315) used an earlier Action. The [M6 receiver](https://github.com/akimfomin/PortBridge-integration-test) is owned by PortBridge and separates real GitHub checks from independent team adoption.
