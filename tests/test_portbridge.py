@@ -1,5 +1,6 @@
 """Offline checks for the curated catalog, localhost API and static snapshot."""
 
+from datetime import datetime, timezone
 from http.client import HTTPConnection
 import json
 import os
@@ -327,12 +328,13 @@ class CatalogTest(CatalogFixture):
         self.catalog.record_sync({"items": [{**first, "status": "merged"}], "projects": [
             {"slug": "continued", "sync_status": "ok"},
         ]})
-        previous_health = self.catalog.health()
+        at = datetime(2026, 11, 25, 12, tzinfo=timezone.utc)
+        previous_health = self.catalog.health(now=at)
         old = {**first, "status": "closed", "metadata": {"head_sha": None},
                "updated_at": "2026-11-23T05:00:00+00:00"}
         self.catalog.record_sync({"items": [old], "warnings": ["backfill stopped"]}, update_health=False)
         card = self.catalog.problem("PB-0002")
-        self.assertEqual(self.catalog.health(), previous_health)
+        self.assertEqual(self.catalog.health(now=at), previous_health)
         source = card["solutions"][0]
         self.assertEqual(source["source_refs"][0]["github"]["status"], "merged")
         self.assertEqual(source["source_refs"][0]["github"]["revision"], "a" * 40)
