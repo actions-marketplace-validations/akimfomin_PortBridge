@@ -1,0 +1,127 @@
+{
+  "https://api.github.com/search/issues?q=%22command+list%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": [
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/3399",
+          "title": "vkd3d: Re-emit command list state after cubin launches.",
+          "state": "open",
+          "updated_at": "2026-10-26T15:08:29Z"
+        },
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3525",
+          "title": "WWM appears to be stuck or has timed out",
+          "state": "open",
+          "updated_at": "2026-11-26T08:18:49Z"
+        },
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3355",
+          "title": "Ghost of Tsushima: trivial COPY barrier path can bypass pending DGC flush and cause lighting flashes",
+          "state": "open",
+          "updated_at": "2026-11-12T11:54:35Z"
+        },
+        {
+          "html_url": "https://github.com/llvm/llvm-project/pull/239954",
+          "title": "[lldb] Make `platform process list` command more flexible",
+          "state": "open",
+          "updated_at": "2026-11-11T15:15:37Z"
+        },
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3508",
+          "title": "maybe helps but idk also how do you guys manage this this is insane",
+          "state": "open",
+          "updated_at": "2026-11-23T13:35:54Z"
+        }
+      ]
+    },
+    "captured_utc": "2026-11-26T19:00:43+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22vk_shader_stage_all%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": [
+        {
+          "html_url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13524",
+          "title": "GPU-AV misses errors that happen in fragment shader helper invocations",
+          "state": "open",
+          "updated_at": "2026-10-20T19:10:44Z"
+        },
+        {
+          "html_url": "https://github.com/KhronosGroup/MoltenVK/issues/2573",
+          "title": "The `vkGetDescriptorSetLayoutSupport` implementation makes using bindless impossible",
+          "state": "open",
+          "updated_at": "2026-11-22T17:25:15Z"
+        },
+        {
+          "html_url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13419",
+          "title": "debugPrintf: Handle esoteric descriptor set and descriptor buffer interaction",
+          "state": "open",
+          "updated_at": "2026-10-13T12:50:02Z"
+        },
+        {
+          "html_url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/10549",
+          "title": "Fix object tracking so invalid handle edge cases are all caught",
+          "state": "open",
+          "updated_at": "2025-12-23T17:40:45Z"
+        },
+        {
+          "html_url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13596",
+          "title": "heap-buffer-overflow read in vvl::DescriptorSet::DescriptorSet for variable descriptor count exceeding the layout's descriptorCount with immutable samplers",
+          "state": "closed",
+          "updated_at": "2026-10-30T23:45:59Z"
+        }
+      ]
+    },
+    "captured_utc": "2026-11-26T19:00:44+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22d3d12_tile_range_flag_null%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": []
+    },
+    "captured_utc": "2026-11-26T19:00:45+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22updatetilemappings%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": [
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3425",
+          "title": "Reserved-resource fallback eagerly commits the entire virtual-texture pool (~11 GiB) on non-sparse UMA devices: Forza Horizon 4 OOM crash",
+          "state": "closed",
+          "updated_at": "2026-10-30T13:51:09Z"
+        },
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/3231",
+          "title": "Ensure that GPUVA is aligned for placed resources",
+          "state": "closed",
+          "updated_at": "2026-08-26T14:30:38Z"
+        },
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/2307",
+          "title": "Batch sparse binds",
+          "state": "closed",
+          "updated_at": "2025-01-27T11:15:24Z"
+        },
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/2194",
+          "title": "vkd3d: Perform minimal validation on page table updates.",
+          "state": "closed",
+          "updated_at": "2024-11-07T13:40:30Z"
+        },
+        {
+          "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/1176",
+          "title": "vkd3d: Resolve fence waiters early.",
+          "state": "closed",
+          "updated_at": "2022-07-21T19:10:37Z"
+        }
+      ]
+    },
+    "captured_utc": "2026-11-26T19:02:06+00:00",
+    "network_attempts": 1
+  }
+}

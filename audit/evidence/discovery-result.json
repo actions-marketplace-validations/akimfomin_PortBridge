@@ -1,0 +1,28 @@
+{
+  "origin": "https://github.com/LooperSalty/AnyXboxX/pull/429",
+  "query": "D3D12_TILE_RANGE_FLAG_NULL UpdateTileMappings reclaim unmapped mip tiles before heap reuse fence completion",
+  "limit": 5,
+  "index_sha256": "b9cae8a403990ffdca24ee6538f557208e05c56487f33769e2357561523b89f5",
+  "case_present": false,
+  "ranked_top5": [
+    {
+      "rank": 1,
+      "id": "wgpu-scratch-pr",
+      "title": "Closed wgpu proposal for acceleration-structure scratch reuse",
+      "url": "https://github.com/gfx-rs/wgpu/pull/10155",
+      "revision": "7d881db7cb78696577faec82d58ec22c9b7007a2",
+      "score": 9
+    }
+  ],
+  "automatic": {
+    "head": "c0a11c0b2b20991e4443580acfe2ae90b3655cb9",
+    "title": "feat(victory-gpu): add opt-in tile reclamation and zero-alloc single-run mappings",
+    "source_state": "open",
+    "subject_extracted": "",
+    "eligible": 0,
+    "lookups": 0,
+    "batch_status": "complete",
+    "scan_status": "not_scanned",
+    "automatic_top5": []
+  }
+}

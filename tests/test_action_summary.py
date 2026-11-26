@@ -2,7 +2,8 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import TestCase, mock
-from urllib.error import URLError
+from io import BytesIO
+from urllib.error import HTTPError, URLError
 
 from portbridge import action_summary
 
@@ -21,7 +22,11 @@ class ActionSummaryTests(TestCase):
         }
         self.title = "$(example) <script> [link] @everyone"
         self.source = "https://github.com/example/port/pull/42"
-        self.event.write_text(json.dumps({"pull_request": {
+        resolver = mock.patch.object(action_summary, "public_pr_head", return_value="b" * 40)
+        self.resolve = resolver.start()
+        self.addCleanup(resolver.stop)
+        self.event.write_text(json.dumps({"repository": {"private": False}, "pull_request": {
+            "base": {"repo": {"private": False}}, "head": {"sha": "a" * 40},
             "title": self.title, "html_url": self.source,
             "body": "Secret body omitted from the summary and query",
         }}), encoding="utf-8")
@@ -113,6 +118,72 @@ class ActionSummaryTests(TestCase):
             self.assertEqual(action_summary.main(self.env), 0)
         self.assertIn("No related work was found", self.report.read_text(encoding="utf-8"))
 
+    def test_unknown_receiver_gets_a_bounded_health_note_and_reason(self):
+        result = {"origin_url": self.source, "catalog_status": "ok", "indexed": False,
+                  "problems": [], "matches": [], "source_coverage": [{"slug": str(i)} for i in range(100)],
+                  "discovery": {"empty_reason": "There is no saved external search for this link."}}
+        markdown = action_summary.render_report(result)
+        self.assertIn(self.source, markdown)
+        self.assertIn("data/health.json", markdown)
+        self.assertIn("no saved external search", markdown)
+        self.assertLess(len(markdown), 700)
+
+    def test_runner_outputs_and_privileged_event_with_explicit_input(self):
+        output = self.report.parent / "outputs"
+        env = {**self.env, "GITHUB_OUTPUT": str(output), "PORTBRIDGE_PR_URL": self.source}
+        with mock.patch.object(action_summary, "public_preflight", side_effect=[
+                URLError("unavailable"), {"problems": [], "matches": []}]) as preflight:
+            for overrides in ({"GITHUB_EVENT_NAME": "pull_request_target"}, {"PORTBRIDGE_PR_URL": "wrong"},
+                              {"GITHUB_STEP_SUMMARY": ""}, {}, {}):
+                self.assertEqual(action_summary.main({**env, **overrides}), 0)
+            self.assertEqual(preflight.call_count, 2)
+        self.assertEqual(output.read_text(encoding="utf-8").splitlines(), [
+            "status=skipped", "status=invalid_input", "status=summary_unavailable", "status=unavailable", "status=reported"])
+
+    def test_replay_uses_the_original_event_revision_and_url(self):
+        revision = "a" * 40
+        event = json.loads(self.event.read_text(encoding="utf-8"))
+        event["pull_request"]["head"]["sha"] = revision
+        self.event.write_text(json.dumps(event), encoding="utf-8")
+        report = {"origin_url": "https://github.com/legacy/alias/pull/42", "problems": [], "matches": []}
+        with mock.patch.object(action_summary, "public_preflight", return_value=report):
+            first = action_summary.summary(self.env)
+            self.assertEqual(first, action_summary.summary(self.env))
+            manual = action_summary.summary({**self.env, "PORTBRIDGE_PR_URL": self.source})
+        self.assertIn(self.source, first)
+        self.assertNotIn("legacy/alias", first)
+        self.assertIn(revision, first)
+        self.assertNotIn("PR event head", manual)
+        self.assertIn("Public PR head: `" + "b" * 40, manual)
+        self.resolve.assert_called_once_with(self.source)
+
+    def test_private_and_unpinned_events_do_not_access_the_catalog(self):
+        event = json.loads(self.event.read_text(encoding="utf-8"))
+        with mock.patch.object(action_summary, "public_preflight") as preflight:
+            for key, value in ((("repository", "private"), True),
+                               (("pull_request", "base", "repo", "private"), None),
+                               (("pull_request", "head", "sha"), "bad")):
+                modified = json.loads(json.dumps(event))
+                field = modified
+                for word in key[:-1]:
+                    field = field[word]
+                field[key[-1]] = value
+                self.event.write_text(json.dumps(modified), encoding="utf-8")
+                status, message = action_summary.summary_result(self.env)
+                self.assertEqual(status, "invalid_input")
+                self.assertNotIn(self.source, message)
+                self.assertNotIn(self.title, message)
+        preflight.assert_not_called()
+        self.resolve.assert_not_called()
+
+    def test_missing_public_pr_is_distinct_from_rate_limit_and_empty_result(self):
+        self.resolve.side_effect = [HTTPError(self.source, code, "", {}, None) for code in (404, 403)]
+        env = {**self.env, "PORTBRIDGE_PR_URL": self.source}
+        with mock.patch.object(action_summary, "public_preflight") as preflight:
+            self.assertEqual(action_summary.summary_result(env)[0], "origin_missing")
+            self.assertEqual(action_summary.summary_result(env)[0], "origin_unverified")
+        preflight.assert_not_called()
+
     def test_successful_snapshot_reports_an_unindexed_pull_request(self):
         result = {"origin_url": self.source, "indexed": False, "catalog_status": "ok",
                   "problems": [], "matches": [], "observations": []}
@@ -139,3 +210,20 @@ class ActionSummaryTests(TestCase):
             self.assertEqual(action_summary.main({"GITHUB_EVENT_NAME": "pull_request"}), 0)
         preflight.assert_not_called()
         self.assertIn("The pull request event could not be read", self.report.read_text(encoding="utf-8"))
+
+
+class PublicHeadTest(TestCase):
+    def test_public_metadata_needs_the_same_pr_and_public_repository(self):
+        url = "https://github.com/example/port/pull/42"
+        data = {"number": 42, "base": {"repo": {"private": False}}, "head": {"sha": "a" * 40}, "html_url": url}
+        with mock.patch.object(action_summary, "build_opener") as opener:
+            open_url = opener.return_value.open
+            open_url.side_effect = [BytesIO(json.dumps(obj).encode()) for obj in (
+                data, {**data, "number": 2}, {**data, "base": {"repo": {"private": True}}})]
+            self.assertEqual(action_summary.public_pr_head(url), "a" * 40)
+            for _ in range(2):
+                with self.assertRaises(ValueError):
+                    action_summary.public_pr_head(url)
+        req = open_url.call_args.args[0]
+        self.assertEqual(req.full_url, "https://api.github.com/repos/example/port/pulls/42")
+        self.assertFalse(req.has_header("Authorization"))

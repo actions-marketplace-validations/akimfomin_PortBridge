@@ -13,6 +13,7 @@ from .matching import (GENERAL_SOURCE_TERMS, ISA_OPCODE, RelatedIndex, observati
 
 
 MANIFEST = "data/preflight-index.json"
+VERSIONED_MANIFEST = re.compile(r"preflight-([0-9a-f]{24})-index\.json")
 SHARD = re.compile(r"preflight-[0-9a-f]{24}-[0-9a-f]{2,64}\.json")
 SHARD_FORMAT = "PortBridge search shard v1"
 SOURCE_NUMBER = re.compile(r"/(?:issues|pull)/([1-9][0-9]*)/?$")

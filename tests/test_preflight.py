@@ -20,7 +20,7 @@ class PublicSnapshotTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "size limit"):
                 snapshot("observations")
             with self.assertRaisesRegex(ValueError, "size limit"):
-                snapshot("health")
+                snapshot("health", site={})
 
 class PreflightTest(CatalogFixture):
     def test_xcl_repo_move_keeps_exact_link_and_scope(self):

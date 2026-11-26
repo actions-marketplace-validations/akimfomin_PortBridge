@@ -1,0 +1,219 @@
+{
+  "https://api.github.com/search/issues?q=%22d3d12_pipeline_state_subobject_type_view_instancing%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": []
+    },
+    "captured_utc": "2026-11-26T19:32:35+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22device+loss%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Axcl-dev%2Fxcl+repo%3Aubiquitarianism%2Fleonida&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": [
+        {
+          "html_url": "https://github.com/ubiquitarianism/leonida/pull/1298",
+          "title": "tests: cover retire-ticket device loss",
+          "state": "open",
+          "created_at": "2026-11-24T21:28:50Z",
+          "updated_at": "2026-11-25T14:55:00Z",
+          "pull_request": {
+            "merged_at": null
+          }
+        },
+        {
+          "html_url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13704",
+          "title": "GPU-AV vertex attribute fetch check causes device loss with vkCmdExecuteGeneratedCommandsEXT",
+          "state": "open",
+          "created_at": "2026-11-16T04:01:34Z",
+          "updated_at": "2026-11-16T05:08:27Z"
+        },
+        {
+          "html_url": "https://github.com/gfx-rs/wgpu/pull/11123",
+          "title": "fix(core): Validate all cmdbufs before deferred query set resolution",
+          "state": "open",
+          "created_at": "2026-11-26T02:56:16Z",
+          "updated_at": "2026-11-26T02:56:16Z",
+          "pull_request": {
+            "merged_at": null
+          }
+        },
+        {
+          "html_url": "https://github.com/ubiquitarianism/leonida/pull/1909",
+          "title": "d3d12: compute pipelines carry their shader's name through VK_EXT_debug_utils (RT-NAME-COMPUTE-PIPELINES)",
+          "state": "open",
+          "created_at": "2026-11-25T15:32:00Z",
+          "updated_at": "2026-11-26T09:52:44Z",
+          "pull_request": {
+            "merged_at": null
+          }
+        },
+        {
+          "html_url": "https://github.com/ubiquitarianism/leonida/pull/1931",
+          "title": "dstorage, fs: LEONIDA_IO_TRACE logs every read the title asks for, flushed as it goes (RT-IO-TRACE)",
+          "state": "open",
+          "created_at": "2026-11-25T16:02:26Z",
+          "updated_at": "2026-11-25T21:59:25Z",
+          "pull_request": {
+            "merged_at": null
+          }
+        }
+      ]
+    },
+    "captured_utc": "2026-11-26T19:32:36+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22dxgi_error_device_suspended%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": []
+    },
+    "captured_utc": "2026-11-26T19:32:37+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22XCL_DEVICE_TYPE%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Axcl-dev%2Fxcl+merged%3A%3C2026-11-26T19%3A25%3A02Z&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": [
+        {
+          "html_url": "https://github.com/xcl-dev/xcl/pull/1053",
+          "title": "Fast-boot: opt-in Bink intro skip, frame interval override, device type and TTS mute env vars",
+          "state": "closed",
+          "created_at": "2026-11-24T10:57:23Z",
+          "updated_at": "2026-11-24T23:41:40Z",
+          "pull_request": {
+            "merged_at": "2026-11-24T23:41:40Z"
+          }
+        },
+        {
+          "html_url": "https://github.com/xcl-dev/xcl/pull/2311",
+          "title": "Config: device_type in xcl.toml names the Series S in every spelling",
+          "state": "closed",
+          "created_at": "2026-11-25T13:32:52Z",
+          "updated_at": "2026-11-25T17:41:17Z",
+          "pull_request": {
+            "merged_at": "2026-11-25T16:15:36Z"
+          }
+        }
+      ]
+    },
+    "captured_utc": "2026-11-26T19:42:38+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22VIEW_INSTANCING%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Aubiquitarianism%2Fleonida+merged%3A%3C2026-11-26T19%3A30%3A09Z&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": []
+    },
+    "captured_utc": "2026-11-26T19:42:39+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22shader_recompiler_compute_tests%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Akytyps5%2Fkytyps5+merged%3A%3C2026-11-25T19%3A02%3A13Z&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": [
+        {
+          "html_url": "https://github.com/KytyPS5/KytyPS5/pull/1983",
+          "title": "Rename near identifier to avoid Windows macro clash",
+          "state": "closed",
+          "created_at": "2026-10-29T21:00:25Z",
+          "updated_at": "2026-10-29T23:41:22Z",
+          "pull_request": {
+            "merged_at": "2026-10-29T23:41:22Z"
+          }
+        },
+        {
+          "html_url": "https://github.com/KytyPS5/KytyPS5/pull/1893",
+          "title": "renderer: decode R8, R8G8 and R16_UINT color register clears",
+          "state": "closed",
+          "created_at": "2026-10-25T07:04:12Z",
+          "updated_at": "2026-10-25T17:47:46Z",
+          "pull_request": {
+            "merged_at": "2026-10-25T17:47:45Z"
+          }
+        },
+        {
+          "html_url": "https://github.com/KytyPS5/KytyPS5/pull/801",
+          "title": "shader: preserve live predicates through whole-quad expansion",
+          "state": "closed",
+          "created_at": "2026-09-24T07:12:30Z",
+          "updated_at": "2026-09-24T08:02:33Z",
+          "pull_request": {
+            "merged_at": "2026-09-24T08:02:19Z"
+          }
+        },
+        {
+          "html_url": "https://github.com/KytyPS5/KytyPS5/pull/2528",
+          "title": "shader: match RDNA2 V_MED3_F32 on signed-zero ties and three NaN sources",
+          "state": "closed",
+          "created_at": "2026-11-23T07:47:19Z",
+          "updated_at": "2026-11-24T04:22:11Z",
+          "pull_request": {
+            "merged_at": "2026-11-23T14:12:06Z"
+          }
+        },
+        {
+          "html_url": "https://github.com/KytyPS5/KytyPS5/pull/1924",
+          "title": "shader: decode FLAT, GLOBAL and SCRATCH D16 high-half loads",
+          "state": "closed",
+          "created_at": "2026-10-26T20:35:04Z",
+          "updated_at": "2026-10-26T21:34:55Z",
+          "pull_request": {
+            "merged_at": "2026-10-26T21:34:54Z"
+          }
+        }
+      ]
+    },
+    "captured_utc": "2026-11-26T19:42:40+00:00",
+    "network_attempts": 1
+  },
+  "https://api.github.com/search/issues?q=%22mmap_np%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Aboykopovar%2Fanyps5+merged%3A%3C2026-11-26T19%3A28%3A55Z&per_page=5": {
+    "page": {
+      "incomplete_results": false,
+      "items": [
+        {
+          "html_url": "https://github.com/boykopovar/AnyPS5/pull/22709",
+          "title": "feat(libScePosixForWebKit): implement sysinfo, setenv_np, msetname and sched/mmap wrappers",
+          "state": "closed",
+          "created_at": "2026-11-18T04:06:45Z",
+          "updated_at": "2026-11-18T04:30:38Z",
+          "pull_request": {
+            "merged_at": "2026-11-18T04:30:37Z"
+          }
+        },
+        {
+          "html_url": "https://github.com/boykopovar/AnyPS5/pull/19430",
+          "title": "feat(libScePosixForWebKit): implement clock_gettime_np and getenv_np",
+          "state": "closed",
+          "created_at": "2026-11-13T09:22:13Z",
+          "updated_at": "2026-11-13T22:26:08Z",
+          "pull_request": {
+            "merged_at": "2026-11-13T20:27:36Z"
+          }
+        },
+        {
+          "html_url": "https://github.com/boykopovar/AnyPS5/pull/8431",
+          "title": "feat(prx): declare the missing PS5 3.20 system exports in the next tier of libraries",
+          "state": "closed",
+          "created_at": "2026-10-20T12:37:21Z",
+          "updated_at": "2026-10-28T18:34:36Z",
+          "pull_request": {
+            "merged_at": "2026-10-21T13:32:52Z"
+          }
+        },
+        {
+          "html_url": "https://github.com/boykopovar/AnyPS5/pull/9325",
+          "title": "feat(libScePosixForWebKit): forward the --wrap exports with implemented targets",
+          "state": "closed",
+          "created_at": "2026-10-21T18:28:22Z",
+          "updated_at": "2026-10-22T22:48:47Z",
+          "pull_request": {
+            "merged_at": "2026-10-22T22:48:46Z"
+          }
+        }
+      ]
+    },
+    "captured_utc": "2026-11-26T19:42:40+00:00",
+    "network_attempts": 1
+  }
+}

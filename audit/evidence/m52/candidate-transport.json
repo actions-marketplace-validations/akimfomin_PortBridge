@@ -1,0 +1,67 @@
+[
+  {
+    "url": "https://github.com/xcl-dev/xcl/pull/2852",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      },
+      {
+        "route": "search",
+        "mode": "frozen search",
+        "network_attempts": 0
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      },
+      {
+        "route": "search",
+        "mode": "frozen search",
+        "network_attempts": 0
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/boykopovar/AnyPS5/pull/27600",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/LooperSalty/AnyXboxX/pull/429",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      },
+      {
+        "route": "search",
+        "mode": "frozen search",
+        "network_attempts": 0
+      }
+    ]
+  }
+]

@@ -1,0 +1,223 @@
+# Реестр PortBridge 3.0 / Requirements register
+
+Реестр сохраняет все 116 ID [обязательной спецификации](PORTBRIDGE-SPEC.md) и шесть ID [дополнения Discovery](PORTBRIDGE-DISCOVERY-SPEC.md). Всего 122 требования. [План](PORTBRIDGE-PLAN.md) · [Отчёт M1](PORTBRIDGE-M1.md) · [Отчёт M2](PORTBRIDGE-M2.md) · [Отчёт M2.1](PORTBRIDGE-M2.1.md) · [Отчёт M3](PORTBRIDGE-M3.md) · [Дополнение PS5](PORTBRIDGE-PS5-SPEC.md) · [Статус](PORTBRIDGE-STATUS.md)
+
+### Приёмка M5 и открытые проверки
+
+Владелец разрешил пилот M5, интеграцию M6, выпуск и откат. Ход приёмки по фактическим запускам и ответам команды ведётся в [актуальном отчёте](../audit/LATEST.md). Результаты независимого аудита, качество поиска SEARCH-08, оценка RAD-07 и подтверждения внешнего использования учитываются отдельно.
+
+### Открытые проверки M1
+
+- **Независимый аудит пакета** — открыт. Владелец предварительно принял отчёт. Подтверждение независимым аудитором ещё не получено. [Отчёт M1](PORTBRIDGE-M1.md)
+- **Эксплуатационная приёмка** — состояние живого сайта, подтверждения GitHub и семь суток наблюдения отражены в [актуальном отчёте](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md). У M5–M6 есть разрешение владельца на выпуск и проверку восстановления.
+
+Допустимые статусы: `not_started`, `partial`, `in_progress`, `verified`, `blocked`, `owner_approved_change`. Для `partial` и `not_started` ссылки показывают существующий код, тесты смежного поведения или исходные данные для сравнения. Для `verified` ссылки ведут на доказательство. У `blocked` указан внешний факт и условие разблокирования. Дальнейшее подтверждение требует проверки критерия из спецификации.
+
+The register accounts for every requirement in specification order. Only verified entries are complete. For partial, pending or blocked entries, the last column records the remaining work or the evidence needed to resume it.
+
+## AUD · Аудит
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| AUD-01 | M0 | `verified` | [статус и доказательства](PORTBRIDGE-STATUS.md) | Идентичность чистой копии, HEAD, тега и публичного main; старая копия с изменениями сохранена | — |
+| AUD-02 | M0 | `verified` | [статус и доказательства](PORTBRIDGE-STATUS.md) | Карта путей, история, 4 workflow, актуальный релиз, issues и PR сверены | AUD-01 |
+| AUD-03 | M0 | `verified` | [статус и доказательства](PORTBRIDGE-STATUS.md) | Прочитаны все указанные документы, ссылки в карте | AUD-01 |
+| AUD-04 | M0 | `verified` | [статус и доказательства](PORTBRIDGE-STATUS.md) | 197 исходных тестов, экспорт, Chrome, качество, размеры, база, логи Actions и Lab. Границы измерений указаны | AUD-01–03 |
+| AUD-05 | M0 | `verified` | [журнал](COMMUNITY-COORDINATION.md) | Повторная сверка первоисточников, открытых обязательств, отказа и нового отзыва. Неизвестные установки помечены | AUD-02 |
+| AUD-06 | M0 | `verified` | [план](PORTBRIDGE-PLAN.md) | 116 ID сверены со спецификацией по количеству, порядку и уникальности | AUD-01–05 |
+| AUD-07 | M0 | `verified` | [статус и доказательства](PORTBRIDGE-STATUS.md) · [план](PORTBRIDGE-PLAN.md) · [исследования 3.0](PORTBRIDGE-RESEARCH.md) · [сотрудничество](PORTBRIDGE-OUTREACH.md) · [AGENTS](../AGENTS.md) | Документы сохранены, P0-регрессия подтверждена. Готовая точка продолжения M1 | AUD-06 |
+
+## CORE · Общие данные
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| CORE-01 | M1 | `partial` | [ключи](../portbridge/identity.py) · [решение](decisions/013-catalog-health-and-recovery.md) · [тесты M1](../tests/test_m1.py) | Ключи добавлены, перенос и обратное чтение 56e2262 проверены. Подтвердить идентичности всех событий принятия и credit в будущих представлениях. | AUD-02 |
+| CORE-02 | M1 | `partial` | [provenance](../portbridge/identity.py) · [контекст](../portbridge/source_context.py) · [тесты M1](../tests/test_m1.py) | Публичные наблюдения, карточки и отчёты имеют источники и известные времена. Полная проверка всех фактов People и Impact остаётся в M4. | CORE-01 |
+| CORE-03 | M1 | `partial` | [типы](../portbridge/identity.py) · [журнал](../portbridge/core_events.py) · [тесты M1](../tests/test_m1.py) | Типы, направление и история проверенных связей реализованы. Доказательства одинаковых патчей и события Radar требуют SEARCH-04 и RAD-04. | CORE-01–02 |
+| CORE-04 | M1 | `verified` | [каталог](../portbridge/catalog.py) · [сбор](../portbridge/github.py) · [тесты M1](../tests/test_m1.py) · [отчёт](PORTBRIDGE-M1.md) | Проверены повторный импорт, сохранение истории, статус недоступности, однозначный rename и раздельные fork-ID. | CORE-01–02 |
+| CORE-05 | M1 | `verified` | [экспорт](../portbridge/export.py) · [API](../API.en.md) · [тесты M1](../tests/test_m1.py) | API 1 совместим. Экспорт читает одну SQLite-копию, версия схемы и манифесты согласованы. Поля сбора совпадают в пяти читателях. | CORE-01–04 |
+| CORE-06 | M1 | `partial` | [поток и миграция](decisions/013-catalog-health-and-recovery.md) · [тесты M1](../tests/test_m1.py) | Проверен перенос обновления и отзыва evidence в доступные Search, Lab и граф. Полный проход Radar, People и Impact зависит от M3–M4. | CORE-01–05 |
+
+## SRC · Sources
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| SRC-01 | M1 | `verified` | [сбор](../portbridge/github.py) · [ecosystem](../portbridge/ecosystem.py) · [тесты M1](../tests/test_m1.py) | Источники обнаруживаются из поиска, трекеров, ссылок, PR и форков. Фильтр исключает непубличные репозитории и оставляет кандидатов до проверки. | CORE-01–02 |
+| SRC-02 | M1 | `verified` | [история](../portbridge/github.py) · [контекст](../portbridge/source_context.py) · [исторические тесты](../tests/test_github.py) · [тесты M1](../tests/test_m1.py) | Проверены окна cursor/backfill, перекрытие и повторный импорт. Ограниченный контекст собирает комментарии, ревью и метаданные файлов, без сырых тел и патчей. | CORE-02 |
+| SRC-03 | M1 | `verified` | [сбор](../portbridge/github.py) · [тесты M1](../tests/test_m1.py) · [разбор](PORTBRIDGE-M1.md#разбор-35-предупреждений) | Сетевой прогон исправил i95 и распознал отключённый канал. Replay проверил 403/429, 404, таймаут, пагинацию и два равных цикла для пяти источников. | SRC-02 |
+| SRC-04 | M1 | `verified` | [checkpoint](../portbridge/backup.py) · [Pages](../.github/workflows/pages.yml) · [тесты M1](../tests/test_m1.py) | Локально пройдены восстановление с отдельной копией, потеря кэша и сохранение истории. Живой запуск на runner относится к OPS-01/06. | CORE-04,SRC-02 |
+| SRC-05 | M1 | `verified` | [поля](../portbridge/source_health.py) · [API](../API.md) · [тесты M1](../tests/test_m1.py) | Разделены попытка, успех, возраст, полнота, ошибки и дата снимка. Одинаковые значения в CLI, API, MCP и статическом JSON, поведение подтверждено Chrome. | CORE-02,SRC-02 |
+
+## OPS · Health и эксплуатация
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| OPS-01 | M1 | `partial` | [CI на реальных данных](https://github.com/akimfomin/PortBridge/actions/runs/45889755929) | На GitHub пройдены тесты, экспорт, восстановление и сборка предыдущей версии. Запуск публикации с main и состояние сайта отмечаются в текущем отчёте. | SRC-03–05 |
+| OPS-02 | M1 | `partial` | [история запусков](https://github.com/akimfomin/PortBridge/actions/workflows/pages.yml) · [проверка за семь суток](../audit/m6_autonomy.py) | До выпуска между запусками по расписанию 26 ноября прошло 10 ч 18 мин. Свежесть источников и успешность выкладки учитываются раздельно. Ориентир в два часа пока не подтверждён. | SRC-05,OPS-01 |
+| OPS-03 | M1 | `verified` | [отчёт](PORTBRIDGE-M1.md#операционные-наблюдения) · [runbook](PASSIVE-MAINTENANCE.md) · [тесты M1](../tests/test_m1.py) | Сверены расписание GitHub, отключение при неактивности, ограничения кэша и допустимые альтернативы. Локально проверены отказы API и восстановление. | SRC-04,OPS-01 |
+| OPS-04 | M1 | `partial` | [runbook](PASSIVE-MAINTENANCE.md) · [репетиция отката](../audit/evidence/m6/checkpoint-replay.md) | Схема резервной копии проверена на облачном runner. Состояние рабочей площадки проверяется отдельно. Добровольный канал уведомлений оператора не подключён. | SRC-05,OPS-01–03 |
+| OPS-05 | M1 | `verified` | [архитектура](decisions/013-catalog-health-and-recovery.md) · [runbook](PASSIVE-MAINTENANCE.md) · [тесты M1](../tests/test_m1.py) | Офлайн и hosted runner опираются на SQLite, JSON и токен GitHub одного задания. App остаётся отдельной необязательной интеграцией. | SRC-04,OPS-03 |
+| OPS-06 | M6 | `partial` | [облачное восстановление](https://github.com/akimfomin/PortBridge/actions/runs/45889755929) · [повтор на 25 426 записях](../audit/evidence/m6/checkpoint-replay.md) · [наблюдение](../audit/m6_autonomy.py) | Отказ, восстановление и возврат к прежнему коду проверены. Для недельного результата нужны семь фактических суток после выкладки с подтверждёнными плановыми публикациями. | OPS-01–05,SEC-02 |
+
+## RES · Исследования
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| RES-01 | M2 | `verified` | [аналоги](PORTBRIDGE-RESEARCH.md#m2--аналоги-и-эксперименты) · [источники](../portbridge/data/discovery.json) | Изучены ревизии, лицензии, полезные механизмы, затраты и ограничения для M2. Аналоги Lab, People и App относятся к своим этапам. | AUD-02 |
+| RES-02 | M2 | `verified` | [эксперименты](PORTBRIDGE-M2.md#сравнение-качества-поиска) · [benchmark](../portbridge/discovery_benchmark.py) · [patch-ID](../portbridge/patch_identity.py) | На одном корпусе сравнены словарный поиск, FTS5, локальные векторы и гибрид. Проверено сравнение локальных патчей. | RES-01,SEARCH-07 |
+| RES-03 | M2 | `verified` | [аналоги](PORTBRIDGE-RESEARCH.md#m2--аналоги-и-эксперименты) · [GitHub Search](PORTBRIDGE-M2.md#сравнение-качества-поиска) | Сопоставлены поиск по коду, триаж дубликатов и выдача GitHub. Различия привязаны к конкретным правилам и примерам. | RES-01 |
+| RES-04 | M2 | `verified` | [отчёт M2](PORTBRIDGE-M2.md) · [решение](decisions/014-bounded-historical-discovery.md) · [корпус и лицензии](../portbridge/data/discovery.json) | Сырые результаты и команды включены в локальный пакет. Технические ссылки и лицензии сохранены без переноса внешнего кода. | RES-01–03 |
+
+## SEARCH · Search
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| SEARCH-01 | M2 | `partial` | [точные ссылки и метрики](PORTBRIDGE-M2.1.md#сопоставимое-сравнение-search-07-и-search-08) | 28/28 новых URL и 39/39 прежних ID и ссылок. Извлечение признаков для новых публичных наблюдений ограничено техническими выражениями. Полный поиск произвольных SHA старого каталога открыт. | CORE-01–02 |
+| SEARCH-02 | M2 | `verified` | [поиск](../portbridge/discovery_search.py) · [FTS5](../portbridge/discovery_benchmark.py) · [API](../API.md#исторические-решения-discovery) | Измерен эквивалент с меньшим шумом, чем FTS5. В Discovery проверены технические токены и фильтры проекта, типа, состояния, даты проверки и платформы. | RES-02,SEARCH-07 |
+| SEARCH-03 | M2 | `verified` | [эксперименты](PORTBRIDGE-RESEARCH.md#m2--аналоги-и-эксперименты) · [поиск](../portbridge/discovery_search.py) | Смысловые группы повышают полноту против поиска по словам и SVD на замороженном наборе. Работают локально без моделей и платного API. Условие общей приёмки отдельно в SEARCH-08. | SEARCH-02,SEARCH-07 |
+| SEARCH-04 | M2 | `partial` | [patch-ID](../portbridge/patch_identity.py) · [тесты](../tests/test_discovery_search.py) | Проверены стабильный patch-ID и отрицательная пара. Общий предок отдельный факт. Автоматическое сопоставление внешних diff и проверка на расширенном наборе атрибутированных переносов открыты. | SRC-02,RES-02 |
+| SEARCH-05 | M2 | `verified` | [уровни доказательств](PORTBRIDGE-M2.1.md#пять-уровней-доказательств) | Широкий поиск и техническая выдача разделены. Состояние, дата источника, применимость, ограничения и закрытые обсуждения сохраняются. | CORE-02–03 |
+| SEARCH-06 | M2 | `verified` | [проверка интерфейсов](PORTBRIDGE-M2.1.md#режимы-и-проверка-интерфейсов) | Сайт, CLI, API, MCP и сводка Action используют общий результат. Сбой сети показан тестом, сохранённые результаты доступны локально. | CORE-05,SEARCH-01 |
+| SEARCH-07 | M2 | `verified` | [сопоставимое сравнение](PORTBRIDGE-M2.1.md#сопоставимое-сравнение-search-07-и-search-08) · [holdout](../tests/fixtures/discovery-holdout-m21.json) | 54 новые проверки зафиксированы до изменений. M1, M2, M2.1 и GitHub Search сравниваются на одинаковых запросах к Issues и PR. Сырые результаты в пакете. | AUD-04,RES-01 |
+| SEARCH-08 | M2 | `partial` | [Контрольная выборка M5.3 и оценка каждого источника](../audit/evidence/m53/assessment.md) · [Ручная проверка](../audit/evidence/m53/manual.md) | На пяти новых PR обе версии дали 0/5 решений. Эксперимент увеличил выдачу с 5 до 11 ссылок. Настройка остановлена, рабочая версия сохраняет поиск M5.2. | SEARCH-01–07 |
+
+## RAD · Radar
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| RAD-01 | M3 | `verified` | [radar](../portbridge/radar.py) · [activity](../portbridge/activity.py) · [test radar](../tests/test_radar.py) · [доказательства M3](PORTBRIDGE-M3.md) | Работают ограниченный проход по изменениям, повтор без обработки, Discovery по новым событиям и подключение к штатной сборке. | SRC-02–04 |
+| RAD-02 | M3 | `verified` | [radar](../portbridge/radar.py) · [matching](../portbridge/matching.py) · [test radar](../tests/test_radar.py) · [доказательства M3](PORTBRIDGE-M3.md) | Различаются прямое повторение, перенесённые изменения, применимые тесты, архивные работы, общий источник, точный diff и противоречия. Широкие совпадения остаются исследовательскими. | CORE-03,SEARCH-04–05 |
+| RAD-03 | M3 | `verified` | [radar](../portbridge/radar.py) · [test radar](../tests/test_radar.py) · [доказательства M3](PORTBRIDGE-M3.md) | Стабильный ID пары, независимая версия, источник, рамки, применимый тест и свежесть есть в выдаче. | RAD-01–02 |
+| RAD-04 | M3 | `partial` | [radar](../portbridge/radar.py) · [exchange](../portbridge/exchange.py) · [доказательства M3](PORTBRIDGE-M3.md) | Локальные состояния, срок claim, повтор, проверка и отзыв работают. Передача и принятие требуют факта со стороны принимающего проекта. | RAD-03,LAB-04,CORE-01 |
+| RAD-05 | M3 | `partial` | [radar](../portbridge/radar.py) · [lab](../portbridge/lab.py) · [coordination](../portbridge/coordination.py) · [доказательства M3](PORTBRIDGE-M3.md) · [доказательства M4](PORTBRIDGE-M4.md) | People, Lab, Search и Impact связаны локально. Принятие результатов внешними командами и публичная приёмка остаются открытыми. | RAD-03–04,LAB-08,PEOPLE-09,IMP-03 |
+| RAD-06 | M3 | `partial` | [activity](../portbridge/activity.py) · [radar](../portbridge/radar.py) · [test radar](../tests/test_radar.py) · [доказательства M3](PORTBRIDGE-M3.md) | Локальный каталог и digest ограничены. Автоматическая внешняя доставка отключена. Реальный публичный цикл ждёт согласия. | RAD-03–04,AG-08 |
+| RAD-07 | M3 | `partial` | [test radar](../tests/test_radar.py) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [доказательства M3](PORTBRIDGE-M3.md) | Заморожены 44 пары, 26/30 полезных высокой уверенности, 86,7%. Разметка отделена от настройки. Повтор независимым аудитором открыт. | RAD-01–03,SEARCH-07 |
+
+## LAB · Lab
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| LAB-01 | M3 | `verified` | [lab](../portbridge/lab.py) · [test lab](../tests/test_lab.py) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [доказательства M3](PORTBRIDGE-M3.md) | Сохранены 16 задач и прежние ID. Модель принимает новые виды проверок. | CORE-01,RAD-03 |
+| LAB-02 | M3 | `verified` | [lab](../portbridge/lab.py) · [Lab guide](TEST-LAB.md) · [test lab](../tests/test_lab.py) · [доказательства M3](PORTBRIDGE-M3.md) | Черновик имеет источник, SHA, критерии PASS/FAIL/SKIP, оборудование, ограничения, команды и копируемый промпт. | LAB-01,CORE-02 |
+| LAB-03 | M3 | `verified` | [lab](../portbridge/lab.py) · [web](../portbridge/static/app.js) · [test lab](../tests/test_lab.py) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [доказательства M3](PORTBRIDGE-M3.md) | Публичные фильтры, прямой путь, просмотр и копирование работают. Публичные карточки без регистрации. | LAB-02 |
+| LAB-04 | M3 | `verified` | [exchange](../portbridge/exchange.py) · [test exchange](../tests/test_exchange.py) · [доказательства M3](PORTBRIDGE-M3.md) | Проверены параллельный claim, отказ, истечение, второй доброволец и смена версии. | LAB-01,CORE-04 |
+| LAB-05 | M3 | `verified` | [lab_reports](../portbridge/lab_reports.py) · [Lab guide](TEST-LAB.md) · [test lab_reports](../tests/test_lab_reports.py) · [доказательства M3](PORTBRIDGE-M3.md) | Отчёты содержат исходный ID, полномочия, версии, стенд, команду, результат, хеш, ограничения и помощь ИИ. Неполные отчёты отмечаются. | LAB-02,CORE-02 |
+| LAB-06 | M3 | `verified` | [Intake](../.github/workflows/lab-intake.yml) · [lab_reports](../portbridge/lab_reports.py) · [test lab_reports](../tests/test_lab_reports.py) · [доказательства M3](PORTBRIDGE-M3.md) | Разделены отправка, валидный формат, независимое ревью, воспроизведение, отклонение, исправление и отзыв. Авторское саморевью отклоняется. | LAB-05,SEC-02–03 |
+| LAB-07 | M3 | `verified` | [volunteer_plan](../portbridge/volunteer_plan.py) · [test volunteer_plan](../tests/test_volunteer_plan.py) · [доказательства M3](PORTBRIDGE-M3.md) | Локальные добровольные предпочтения, фильтр задач и отключение проверены. Назначений и внешнего оповещения нет. | LAB-02,PEOPLE-09,AG-08 |
+| LAB-08 | M3 | `verified` | [issue forms](../.github/ISSUE_TEMPLATE) · [lab](../portbridge/lab.py) · [test lab](../tests/test_lab.py) · [доказательства M3](PORTBRIDGE-M3.md) | Radar создаёт черновики на новых наблюдениях. Команда может предложить отдельную пару и критерий. Решение ревьюера всегда отдельное. | RAD-03,LAB-02,LAB-06 |
+| LAB-09 | M3 | `partial` | [журнал](COMMUNITY-COORDINATION.md) · [exchange](../portbridge/exchange.py) · [test lab_reports](../tests/test_lab_reports.py) · [доказательства M3](PORTBRIDGE-M3.md) | Готов черновик сводки со ссылкой, версией и атрибуцией. Внешняя доставка и решения действующих команд остаются открытыми. | LAB-05–06,IMP-01 |
+| LAB-10 | M3 | `verified` | [Lab guide](TEST-LAB.md) · [lab](../portbridge/lab.py) · [test lab](../tests/test_lab.py) · [доказательства M3](PORTBRIDGE-M3.md) | Публичные раздельные версии, синтетические данные, отдельный выбор запуска, ограниченные права и локальная отправка сверены. | LAB-02,SEC-01,SEC-04 |
+
+## PEOPLE · People
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| PEOPLE-01 | M4 | `partial` | [ecosystem](../portbridge/ecosystem.py) · [coordination](../portbridge/coordination.py) · [volunteer_plan](../portbridge/volunteer_plan.py) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Автоматический поиск по публичным событиям, свежим PR, ревью, обсуждениям, Lab и Discovery. Покрытие ограничено доступными источниками. | CORE-02,SRC-02 |
+| PEOPLE-02 | M4 | `verified` | [ecosystem](../portbridge/ecosystem.py) · [volunteer_plan](../portbridge/volunteer_plan.py) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Устойчивый ID переживает переименование. Похожие аккаунты и боты отделены. Проверены исправление и скрытие. | CORE-01,PEOPLE-01 |
+| PEOPLE-03 | M4 | `verified` | [ecosystem](../portbridge/ecosystem.py) · [volunteer_plan](../portbridge/volunteer_plan.py) · [журнал](COMMUNITY-COORDINATION.md) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Официальная роль, проверенное действие и предполагаемая специализация обозначены отдельно. | PEOPLE-01–02 |
+| PEOPLE-04 | M4 | `verified` | [журнал](COMMUNITY-COORDINATION.md) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | У каждой роли есть источник, дата, проект и свежесть. Отзыв и исправление проверены локально. | PEOPLE-03,CORE-02 |
+| PEOPLE-05 | M4 | `verified` | [coordination](../portbridge/coordination.py) · [office](../portbridge/office.py) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Связи проектов, авторов, ревью, оборудования, специализаций и Lab подтверждаются первоисточниками. Межплатформенное сходство остаётся исследовательским. | PEOPLE-02–04,CORE-03 |
+| PEOPLE-06 | M4 | `verified` | [ecosystem](../portbridge/ecosystem.py) · [журнал](COMMUNITY-COORDINATION.md) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Профили показывают технический вклад. Оборудование привязано к отчётам, доступность определяется отдельным согласием. | PEOPLE-03–05 |
+| PEOPLE-07 | M4 | `verified` | [web](../portbridge/static/app.js) · [coordination](../portbridge/coordination.py) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Локально проверены фильтры, компактный снимок, доступные ссылки и список для мобильного. | PEOPLE-05–06,UX-04 |
+| PEOPLE-08 | M4 | `verified` | [ecosystem](../portbridge/ecosystem.py) · [coordination](../portbridge/coordination.py) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Обновление включено в цикл. Повтор, даты, исчезновение источника и восстановление проверены локально. | PEOPLE-01–05,SRC-02 |
+| PEOPLE-09 | M4 | `verified` | [volunteer_plan](../portbridge/volunteer_plan.py) · [radar](../portbridge/radar.py) · [test exchange](../tests/test_exchange.py) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Radar и Lab ведут к участникам по конкретной задаче. Доступность без явного согласия отсутствует. | PEOPLE-05–06,LAB-07,RAD-05 |
+| PEOPLE-10 | M4 | `partial` | [журнал](COMMUNITY-COORDINATION.md) · [сотрудничество](PORTBRIDGE-OUTREACH.md) · [код](../portbridge/community.py) · [тесты](../tests/test_community.py) · [доказательства M4](PORTBRIDGE-M4.md) | Исправления, скрытие и отзыв согласия проверены локально. Старые внешние артефакты проверяются при публичном пилоте. | PEOPLE-02,PEOPLE-06,SEC-05 |
+
+## AG · Agents
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| AG-01 | M2 | `verified` | [копируемая проверка](AGENT-PROMPT.md#copyable-m2-source-check) · [сквозная проверка](PORTBRIDGE-M2.md#сквозные-проверки-и-приёмка) | Есть один публичный пример с исходниками и командами без установки. Локально проверено получение контекста. Польза отдельной команды остаётся открытой. | LAB-02,UX-03 |
+| AG-02 | M2 | `verified` | [общий фрагмент](AGENT-PROMPT.md#try-portbridge-in-your-repository) · [клиенты](QUICKSTART.md#connect-codex-or-claude-code) | Один короткий фрагмент подходит для AGENTS и CLAUDE. В нём существенные задачи, проверка ревизии, лицензии и добровольное сообщение результата. | AG-01,SEC-01 |
+| AG-03 | M2 | `partial` | [API](../API.md#исторические-решения-discovery) · [MCP](MCP.md#поиск-за-пределами-каталога) · [CLI](../portbridge/discovery_search.py) · [доказательства M5](PORTBRIDGE-M5.md) | Проверено согласование HTTP, MCP, CLI и снимка партнёров. Точный поиск и фильтры доступны. Установка внешними участниками и будущие App-контракты открыты. | CORE-05,SEARCH-06 |
+| AG-04 | M2 | `partial` | [Codex и Claude](QUICKSTART.md#connect-codex-or-claude-code) · [MCP](MCP.md#работа-без-сети) · [сквозная проверка](PORTBRIDGE-M2.md#сквозные-проверки-и-приёмка) · [доказательства M5](PORTBRIDGE-M5.md) | Две независимые stdio-сессии прошли протокол. Подготовлены инструкции для Codex и Claude Code. Внешняя установка ждёт пилота. | AG-03 |
+| AG-05 | M2 | `verified` | [проверка в GitHub](../audit/evidence/m6/receiver.md) · [пример установки](../examples/portbridge-pr.yml) | Обычная ссылка на реальный PR и автоматическое событие дают читаемую сводку в принимающем репозитории. Проверены повтор, ошибка, восстановление и отсутствие входного PR. | SEARCH-06,SEC-01–02 |
+| AG-06 | M6 | `verified` | [установка, Checks и отключение](../audit/evidence/m6/receiver.md) · [правила подключения](GITHUB-ACTION.md) | Согласованный эквивалент App — workflow из доверенной конфигурации GitHub. Подписка задаётся в выбранном публичном репозитории, события доставляет GitHub, прав записи и собственного webhook нет. Отключение проверено последующим изменением ветки. | AG-05,SEC-02,OPS-05 |
+| AG-07 | M5–M6 | `partial` | [exchange](../portbridge/exchange.py) · [test exchange](../tests/test_exchange.py) · [agent prompt](AGENT-PROMPT.md) · [доказательства M5](PORTBRIDGE-M5.md) | В M5 вручную выбраны три пары. Ни одна не попала в свою пятёрку Discovery. Локальная передача задач и ревью проверена с двумя MCP-клиентами. Самостоятельная работа по автоматически найденной связи остаётся открытой. | RAD-04,LAB-04–06,SEC-02 |
+| AG-08 | M5–M6 | `partial` | [партнёрский API](../API.md) · [проверки курсора](../tests/test_m6_partner.py) | Лента поддерживает фильтры и страницы. Повтор не удваивает записи, неполный ответ и смена области сохраняют курсор. Добровольный внешний подписчик пока не подтверждён. | AG-07,NET-08,SEC-05 |
+| AG-09 | M5–M6 | `verified` | [исследования 3.0](PORTBRIDGE-RESEARCH.md) · [exchange guide](EXCHANGE-API.md) · [доказательства M5](PORTBRIDGE-M5.md) | Сравнены MCP stdio, MCP Streamable HTTP, A2A и существующий SDK. Для добровольного расписания проверен pull digest без общей базы клиента. | RES-01,AG-07–08 |
+| AG-10 | M2–M6 | `partial` | [интеграция на GitHub](../audit/evidence/m6/receiver.md) · [пилот](../audit/evidence/m6-pilot.md) | Проверены положительный и пустой результат, недоступная сеть, ограничения прав, повтор и отключение. Полное сравнение результатов веб-интерфейса, API и MCP при одном и том же сбое пока отсутствует. | AG-03–06,SEC-01–02 |
+
+## IMP · Impact
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| IMP-01 | M4 | `verified` | [аудит](FINAL-AUDIT.md) · [журнал](COMMUNITY-COORDINATION.md) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [доказательства M4](PORTBRIDGE-M4.md) | Сверены накопленные передачи. Разделены оригинальное авторство, перенос, проверка, ревью и слияние. | CORE-01–03 |
+| IMP-02 | M4 | `verified` | [lab](../portbridge/lab.py) · [lab_reports](../portbridge/lab_reports.py) · [журнал](COMMUNITY-COORDINATION.md) · [доказательства M4](PORTBRIDGE-M4.md) | Проверенные вклады разделены по действию. Отрицательный результат XCL и отклонённые гипотезы сохраняются с источниками. | IMP-01,LAB-05 |
+| IMP-03 | M4 | `verified` | [activity](../portbridge/activity.py) · [web](../portbridge/static/app.js) · [аудит](FINAL-AUDIT.md) · [доказательства M4](PORTBRIDGE-M4.md) | Работают страница Impact, ссылки на People, проверка и первоисточники. Публикация остаётся открытой. | IMP-01–02,PEOPLE-05,RAD-05 |
+| IMP-04 | M4 | `partial` | [activity](../portbridge/activity.py) · [feed](../portbridge/feed.py) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [доказательства M4](PORTBRIDGE-M4.md) | Метрики имеют определения и дедупликацию. Активные команды и MCP-пользователи без внешнего подтверждения неизвестны. | CORE-04,IMP-01–03,MET-02 |
+| IMP-05 | M4 | `verified` | [журнал](COMMUNITY-COORDINATION.md) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [доказательства M4](PORTBRIDGE-M4.md) | Звёзды, форки, наблюдатели, благодарности и упоминания показаны отдельно от реального применения. | IMP-04,MET-03 |
+| IMP-06 | M4 | `verified` | [журнал](COMMUNITY-COORDINATION.md) · [coordination](../portbridge/coordination.py) · [доказательства M4](PORTBRIDGE-M4.md) | Локально проверены сохранение авторства, исправление, скрытие, отзыв и дедупликация. | IMP-01–04,PEOPLE-10 |
+| IMP-07 | M4 | `verified` | [__main__](../portbridge/__main__.py) · [export](../portbridge/export.py) · [feed](../portbridge/feed.py) · [доказательства M4](PORTBRIDGE-M4.md) | Сайт, JSON, API, CLI и MCP согласованы. Подбор партнёров и черновики остаются локальными. | IMP-04–06,CORE-05 |
+
+## NET · Network
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| NET-01 | M5 | `verified` | [сотрудничество](PORTBRIDGE-OUTREACH.md) · [ecosystem](../portbridge/ecosystem.py) · [volunteer_plan](../portbridge/volunteer_plan.py) · [доказательства M4](PORTBRIDGE-M4.md) · [доказательства M5](PORTBRIDGE-M5.md) | People и актуальные PR формируют локальный план по семи направлениям. Каждый кандидат имеет нужду, ровно один выбранный контекст на проект и первоисточник. | PEOPLE-01–05,LAB-07 |
+| NET-02 | M0–M5 | `partial` | [журнал](COMMUNITY-COORDINATION.md) · [аудит](FINAL-AUDIT.md) · [сотрудничество](PORTBRIDGE-OUTREACH.md) · [доказательства M5](PORTBRIDGE-M5.md) | 55 профилей и шесть заявленных связей Xbox–PS5 перепроверены. Перед каждым будущим контактом нужны повторная проверка канала, роли и задачи. | NET-01,PEOPLE-03 |
+| NET-03 | M0–M5 | `verified` | [сотрудничество](PORTBRIDGE-OUTREACH.md) · [журнал](COMMUNITY-COORDINATION.md) · [пилот](PILOT.md) · [доказательства M5](PORTBRIDGE-M5.md) | Добавлены отдельные маршруты для сопровождающих, разработчиков, тестировщиков, инфраструктуры и трекеров. | NET-01–02 |
+| NET-04 | M0–M5 | `verified` | [сотрудничество](PORTBRIDGE-OUTREACH.md) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [доказательства M4](PORTBRIDGE-M4.md) · [доказательства M5](PORTBRIDGE-M5.md) | Три новые индивидуальные карточки по проверенным задачам и восемь черновиков M4 сохранены локально. Журнал содержит состояние и разрешение. | NET-02–03 |
+| NET-05 | M0–M5 | `partial` | [один адресный пилот](../audit/evidence/m6-pilot.md) | По открытой задаче Continued отправлено предложение проверить конкретный результат. Дальнейшая работа зависит от интереса команды. | NET-04,AG-01–02 |
+| NET-06 | M5 | `verified` | [AGENTS](../AGENTS.md) · [сотрудничество](PORTBRIDGE-OUTREACH.md) · [доказательства M5](PORTBRIDGE-M5.md) | Добавлена добровольная просьба о звезде в двуязычные страницы входа и README. Привязки к участию нет. | NET-10,UX-01 |
+| NET-07 | M0–M5 | `verified` | [проверка канала, истории и одно предложение](../audit/evidence/m6-pilot.md) | Проверены свежие обсуждения, учтено самостоятельно закрытое измерение #2399. Отправлено одно добровольное предложение по #2392. Повторных сообщений по пилоту нет. | NET-04–05,SEC-05 |
+| NET-08 | M0–M5 | `verified` | [сотрудничество](PORTBRIDGE-OUTREACH.md) · [журнал](COMMUNITY-COORDINATION.md) · [доказательства M5](PORTBRIDGE-M5.md) | Локальный журнал решений учитывается при планировании. Частные черновики и цели не входят в публичную ленту. | NET-04,NET-07 |
+| NET-09 | M0–M5 | `partial` | [журнал](COMMUNITY-COORDINATION.md) · [сотрудничество](PORTBRIDGE-OUTREACH.md) · [доказательства M5](PORTBRIDGE-M5.md) | Сверены существующие трекеры и их решения. Готовы JSON, API, виджет и ссылка на проверку. Приёмку партнёрами предстоит проверить. | NET-01–04,IMP-07 |
+| NET-10 | M0–M2 | `verified` | [быстрый запуск](QUICKSTART.md#try-discovery-locally) · [промпт](AGENT-PROMPT.md#copyable-m2-source-check) · [пилот](PORTBRIDGE-M2.md#сквозные-проверки-и-приёмка) · [доказательства M5](PORTBRIDGE-M5.md) | Локально проверены один вход, двуязычная мобильная страница, пример пользы, минимальная инструкция и путь без установки. | AG-01–05,UX-01 |
+| NET-11 | M5 | `blocked` | [публичный пилот](../audit/evidence/m6-pilot.md) | Предложение доставлено. Для зачёта нужен ответ участника о его собственной попытке, полученном результате и принятом решении. | NET-05,NET-07,NET-10 |
+| NET-12 | M5 | `blocked` | [раздельные счётчики](../audit/evidence/network.md) · [пилот](../audit/evidence/m6-pilot.md) | Исторически повторно использовал FrameLab. Для перезапуска требуется три независимые команды с двумя подтверждёнными действиями в каждой. Пока подтверждено 0 из 3. | NET-11,MET-04 |
+
+## UX · Интерфейс
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| UX-01 | M0–M5 | `partial` | [web](../portbridge/static/app.js) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [quickstart](QUICKSTART.md) | Текущая главная и пути проверены; дать быстрый вход к поиску, проверке и подключению | NET-10,IMP-03 |
+| UX-02 | M5 | `partial` | [web](../portbridge/static/app.js) · [export](../portbridge/export.py) · [test public_browse](../tests/test_public_browse.py) | Доработать связанные представления и ошибки с сохранением старых маршрутов | CORE-05,RAD-05,LAB-03,PEOPLE-07,IMP-03 |
+| UX-03 | M5 | `partial` | [web](../portbridge/static/app.js) · [lab](../portbridge/lab.py) · [статус и доказательства](PORTBRIDGE-STATUS.md) | Подтвердить двусторонние связи и deep links в каждом сценарии | UX-02,RAD-05,LAB-09,PEOPLE-06 |
+| UX-04 | M5 | `partial` | [web](../portbridge/static/app.js) · [public_browse](../portbridge/public_browse.py) · [test public_browse](../tests/test_public_browse.py) · [статус и доказательства](PORTBRIDGE-STATUS.md) | Сделать полный аудит клавиатуры/доступности, состояний, языка и крупных списков | UX-02–03 |
+| UX-05 | M0–M5 | `partial` | [быстрый старт](QUICKSTART.md) · [MCP](MCP.md) · [подключение и отключение](GITHUB-ACTION.md) · [партнёрский API](../API.md) | Подключение и отключение проверены в отдельном репозитории. Понятность инструкции для нового независимого участника проверит пилот. | AG-03–06,LAB-10,SEC-05 |
+| UX-06 | M0–M5 | `partial` | [статус и доказательства](PORTBRIDGE-STATUS.md) · [test public_browse](../tests/test_public_browse.py) | Chrome M0 прошёл шесть маршрутов. Дополнить все переходы и проверку нового деплоя | UX-01–05,OPS-04 |
+
+## SEC · Безопасность
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| SEC-01 | M1–M6 | `partial` | [границы](AGENT-PROMPT.md) · [контекст](../portbridge/source_context.py) · [тесты M1](../tests/test_m1.py) | Тела и сырые патчи не сохраняются, URL и размер ограничены. Проверки будущих инструментов остаются в AG-03/10. | AUD-03,AG-03 |
+| SEC-02 | M1–M6 | `partial` | [права получателя и отказные проверки](../audit/evidence/m6/receiver.md) · [контроль публичного checkpoint](../audit/evidence/m6/checkpoint-replay.md) | У принимающего workflow нет разрешений записи и входящего webhook. Проверены повтор события, ограничения входа и состав публичной копии. Отдельный аудит всех инструментов MCP и частного exchange остаётся открытым. | CORE-05,AG-03,AG-06 |
+| SEC-03 | M1–M6 | `partial` | [история](../portbridge/core_events.py) · [тесты M1](../tests/test_m1.py) · [Lab](TEST-LAB.md) | Зафиксированы предметные изменения, отзыв и неизменный повтор. Полная защита атрибуции, результатов Lab и Impact зависит от M3–M4. | LAB-06,IMP-01–06 |
+| SEC-04 | M1–M6 | `partial` | [решение](decisions/013-catalog-health-and-recovery.md) · [контекст](../portbridge/source_context.py) · [тесты M1](../tests/test_m1.py) | Используются публичные метаданные и синтетические стенды. Переиспользование внешнего кода и модельные лицензии проверяются при RES-04. | RES-04,LAB-10 |
+| SEC-05 | M1–M6 | `verified` | [отзыв и видимость профиля](../audit/evidence/m6/five-views.md) · [правила](PORTBRIDGE-OUTREACH.md) · [пилот](../audit/evidence/m6-pilot.md) | Скрытие профиля исключило предложения в изолированном прогоне по публичным данным. Пилот ограничился одним предложением в подходящем обсуждении. Установку и подписку выбирает получатель. | PEOPLE-10,NET-07 |
+| SEC-06 | M1–M6 | `partial` | [Pages](../.github/workflows/pages.yml) · [экспорт](../tests/test_portbridge.py) · [тесты M1](../tests/test_m1.py) | Новых зависимостей продукта нет. Проверены закреплённые Actions, секрет-фикстуры и запрет чужого хоста. Остальные интеграции проверяются по своим этапам. | SEC-01–05 |
+
+## MET · Метрики
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| MET-01 | M0 | `verified` | [статус и доказательства](PORTBRIDGE-STATUS.md) · [журнал](COMMUNITY-COORDINATION.md) | Записаны измеренные числа, неизвестные установки и затраты отдельно | AUD-04–05 |
+| MET-02 | M1–M6 | `partial` | [сводка](../portbridge/pages_health.py) · [отчёт](PORTBRIDGE-M1.md) | Добавлены фактические интервалы, возраст и причины сбоя источников. Измерения внедрения, latency, стоимости и качества продолжаются на своих этапах. | IMP-04,OPS-04,SEARCH-07 |
+| MET-03 | M1–M6 | `verified` | [определения измерений](../portbridge/community.py) · [правила учёта](PORTBRIDGE-OUTREACH.md) · [раздельная метрика](../portbridge/network_usage.py) | Недоступные измерения имеют значение null. Число подтверждений основано на первоисточниках. Чтение JSON и внутренние испытания не входят в независимое использование. | MET-01–02,SEC-05 |
+| MET-04 | M1–M6 | `blocked` | [адресное предложение](../audit/evidence/m6-pilot.md) · [счётчики](../audit/evidence/network.md) | Зафиксирована доставка в открытом обсуждении. Оценка полезности и затраты времени со слов независимого участника ожидаются. | NET-11–12,MET-02–03 |
+
+## E2E · Сквозная приёмка
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| E2E-01 | M6 | `partial` | [Четыре свежие ревизии](../audit/evidence/m6/e2e-intake.md) | Все четыре PR найдены по URL, Radar создал две задачи. Эти связи уже указали авторы. Широкая независимая полезность поиска открыта. | SRC-02,SEARCH-08,RAD-07 |
+| E2E-02 | M6 | `partial` | [Источник, Lab и самостоятельный аппаратный тест](../audit/evidence/m6/e2e-intake.md) | Техническая цепочка до добровольного claim проверена на стенде. Исторически участник FrameLab выполнил проверку со своим агентом. Передача от новой автоматически созданной задачи Radar независимому участнику не подтверждена. | RAD-05,LAB-04–10,AG-07 |
+| E2E-03 | M6 | `verified` | [Два аппаратных отчёта FrameLab и пять представлений](../audit/evidence/m6/five-views.md) | Подтверждение, отзыв, удаление источника и повтор прошли через поиск, Radar, Lab, People, Impact и партнёрскую ленту. Противоречащие результаты одного стенда отделяются от подтверждённых. | CORE-06,IMP-01–07,LAB-06 |
+| E2E-04 | M6 | `verified` | [Четыре настоящих PR и два проекта](../audit/evidence/m6/five-views.md) · [регрессии](../tests/test_community.py) | По публичным PR обнаружены один ранее отсутствовавший профиль и две подходящие задачи. Изолированное скрытие профиля убрало обе рекомендации. Разрешение участника на связь не получено и не подразумевается. | PEOPLE-01–10 |
+| E2E-05 | M6 | `verified` | [два реальных запуска одной ревизии и отключение](../audit/evidence/m6/receiver.md) | Техническая приёмка пройдена на отдельном репозитории владельца. Статус использования внешней командой ведётся в E2E-08. | AG-01–10 |
+| E2E-06 | M6 | `partial` | [испытание восстановления](../audit/evidence/m6/checkpoint-replay.md) · [проверки доступности](../tests/test_pages_health.py) | На GitHub восстановлен предыдущий renderer. Оценка публичной выкладки новой версии ведётся в отчёте выпуска. | OPS-01–06,SRC-04–05 |
+| E2E-07 | M6 | `partial` | [план](PORTBRIDGE-PLAN.md) · [статус и доказательства](PORTBRIDGE-STATUS.md) · [AGENTS](../AGENTS.md) | Список ID сверен. Перед итоговой приёмкой завершить доказательства и блокеры всех этапов | AUD-06–07,M1–M6 |
+| E2E-08 | M6 | `blocked` | [события и атрибуция](../audit/evidence/m6-pilot.md) · [счётчики](../audit/evidence/network.md) | Внутренний GitHub-стенд проверен. Доставка одного предложения зарегистрирована отдельно. Не получено свидетельства самостоятельного применения новой версии внешней командой. | NET-11–12,MET-04 |
+
+## DISC · PortBridge Discovery
+
+| ID | Этап | Статус | Код, тесты и доказательства | Результат, остаток или блокер | Зависимости |
+| --- | --- | --- | --- | --- | --- |
+| DISC-01 | M2 | `verified` | [источники](../portbridge/data/discovery.json) · [исследования](PORTBRIDGE-M2.md#проверенные-открытые-задачи) | Проверены все стартовые проекты и дополнительные первоисточники. 23 записи с ревизиями и лицензиями в ограниченном корпусе. | RES-01 |
+| DISC-02 | M2 | `verified` | [самостоятельный поиск](PORTBRIDGE-M2.1.md#самостоятельный-поиск-на-десяти-новых-задачах) | На девяти новых открытых задачах источник найден ограниченным поиском. Десятая зафиксирована без результата. Символы, история и закреплённый каталог по-прежнему доступны. | SEARCH-01–05 |
+| DISC-03 | M2 | `verified` | [карточки](../portbridge/data/discovery.json) · [тесты](../tests/test_discovery_search.py) | Для каждой записи есть первоисточник, ревизия, назначение, сходство, различия, ограничения, лицензия, возможная адаптация и тест. | CORE-02 |
+| DISC-04 | M2–M4 | `partial` | [уровни доказательств](PORTBRIDGE-M2.1.md#пять-уровней-доказательств) · [инкрементальный поиск](../portbridge/discovery_scan.py) · [доказательства M4](PORTBRIDGE-M4.md) | Search, Radar, Lab и People используют общие источники. Impact требует проверенного результата. Публичный путь ждёт пилота. | RAD-05,LAB-08,PEOPLE-04,IMP-01 |
+| DISC-05 | M2 | `verified` | [исследования M2](PORTBRIDGE-M2.md) · [проверка M2.1](PORTBRIDGE-M2.1.md#самостоятельный-поиск-на-десяти-новых-задачах) | Сохранены 13 исходных исследований. Десять новых задач проверены без готовых ответов. Отдельный holdout включает положительные, отрицательные и точные запросы. | SEARCH-07–08 |
+| DISC-06 | M2 | `verified` | [дополнение](PORTBRIDGE-DISCOVERY-SPEC.md) · [отчёт M2.1](PORTBRIDGE-M2.1.md) | Сохранены 122 ID и шесть черновиков. Пакет M0–M2.1 содержит исходные изменения, сырые замеры и журналы. Приёмка отделена от локальной проверки. | DISC-01–05 |

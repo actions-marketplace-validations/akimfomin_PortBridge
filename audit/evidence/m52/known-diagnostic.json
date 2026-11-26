@@ -1,0 +1,76 @@
+{
+  "purpose": "Manually chosen diagnostic on the known regression only, after the scored run",
+  "origin": "https://github.com/LooperSalty/AnyXboxX/pull/429",
+  "subject": "updatetilemappings",
+  "status": "available",
+  "transport": [
+    {
+      "route": "search",
+      "mode": "live",
+      "network_attempts": 1
+    }
+  ],
+  "search_responses": {
+    "https://api.github.com/search/issues?q=%22updatetilemappings%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5": {
+      "page": {
+        "incomplete_results": false,
+        "items": [
+          {
+            "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3425",
+            "title": "Reserved-resource fallback eagerly commits the entire virtual-texture pool (~11 GiB) on non-sparse UMA devices: Forza Horizon 4 OOM crash",
+            "state": "closed",
+            "updated_at": "2026-10-30T13:51:09Z"
+          },
+          {
+            "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/3231",
+            "title": "Ensure that GPUVA is aligned for placed resources",
+            "state": "closed",
+            "updated_at": "2026-08-26T14:30:38Z"
+          },
+          {
+            "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/2307",
+            "title": "Batch sparse binds",
+            "state": "closed",
+            "updated_at": "2025-01-27T11:15:24Z"
+          },
+          {
+            "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/2194",
+            "title": "vkd3d: Perform minimal validation on page table updates.",
+            "state": "closed",
+            "updated_at": "2024-11-07T13:40:30Z"
+          },
+          {
+            "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/1176",
+            "title": "vkd3d: Resolve fence waiters early.",
+            "state": "closed",
+            "updated_at": "2022-07-21T19:10:37Z"
+          }
+        ]
+      },
+      "captured_utc": "2026-11-26T19:02:06+00:00",
+      "network_attempts": 1
+    }
+  },
+  "top5": [
+    {
+      "url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3425",
+      "title": "Reserved-resource fallback eagerly commits the entire virtual-texture pool (~11 GiB) on non-sparse UMA devices: Forza Horizon 4 OOM crash"
+    },
+    {
+      "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/3231",
+      "title": "Ensure that GPUVA is aligned for placed resources"
+    },
+    {
+      "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/2307",
+      "title": "Batch sparse binds"
+    },
+    {
+      "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/2194",
+      "title": "vkd3d: Perform minimal validation on page table updates."
+    },
+    {
+      "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/1176",
+      "title": "vkd3d: Resolve fence waiters early."
+    }
+  ]
+}

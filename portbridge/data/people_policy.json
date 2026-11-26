@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "hidden_ids": [],
+  "hidden_logins": [],
+  "withdrawn": [],
+  "source_checks": {
+    "https://github.com/zettrox/ztrx/pull/13": {"state": "unavailable", "at": "2026-11-26T17:30:09Z"},
+    "https://github.com/zettrox/ztrx/pull/34": {"state": "unavailable", "at": "2026-11-26T17:30:09Z"},
+    "https://github.com/zettrox/ztrx/pull/63": {"state": "unavailable", "at": "2026-11-26T17:30:09Z"}
+  },
+  "corrections": {
+    "https://github.com/fxceless/victory-gta6/pull/265": {
+      "actor": {"login": "CDR-0000", "user_id": 69203742},
+      "proof": "https://github.com/fxceless/victory-fork/pull/265",
+      "roles": ["developer"],
+      "credit_kinds": ["fix"],
+      "specialties": ["graphics", "memory"]
+    }
+  },
+  "availability": [],
+  "decisions": []
+}

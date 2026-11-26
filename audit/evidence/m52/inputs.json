@@ -1,0 +1,54 @@
+[
+  {
+    "number": 2852,
+    "title": "D3D12.X: forget command list before its final release",
+    "state": "open",
+    "updated_at": "2026-11-26T18:50:00Z",
+    "labels": [],
+    "head": {
+      "sha": "69ebece8a98ae956556eb02d3721db712501e9b2"
+    },
+    "url": "https://github.com/xcl-dev/xcl/pull/2852",
+    "repo": "xcl-dev/xcl",
+    "body_sha256": "e773449ab1855fc0811bac57c631d5f8fb986719c8d1eb6e7a1c0af4bc39445f"
+  },
+  {
+    "number": 2392,
+    "title": "make_game: the pipelines stage fills the runtime's own journal with gta6rt --precompile-pipelines (MAKE-GAME-PIPELINES-VIA-RUNTIME)",
+    "state": "open",
+    "updated_at": "2026-11-26T18:50:18Z",
+    "labels": [],
+    "head": {
+      "sha": "8a73cb09be44c908d7fbe4947d2510ee8c95e7c1"
+    },
+    "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+    "repo": "ubiquitarianism/leonida",
+    "body_sha256": "efb8da77e92169c04d4c22273d0f1ec2e52353669f0ec8bcd8da1ad9d7911957"
+  },
+  {
+    "number": 2565,
+    "title": "config: add Ukrainian (ID 30) to the console languages",
+    "state": "open",
+    "updated_at": "2026-11-26T18:54:54Z",
+    "labels": [],
+    "head": {
+      "sha": "d54e1c600f5678779fe961fb68d30d04118b1112"
+    },
+    "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+    "repo": "KytyPS5/KytyPS5",
+    "body_sha256": "5ef171131948fc9b6a8137e63b66132f1dbf3f4abfa4c679bf38fa04c81cac33"
+  },
+  {
+    "number": 27600,
+    "title": "docs(build): clarify the relinker seed manifest format",
+    "state": "open",
+    "updated_at": "2026-11-26T18:56:14Z",
+    "labels": [],
+    "head": {
+      "sha": "9f9c3118d93368505a5e1d2840653bba9195163c"
+    },
+    "url": "https://github.com/boykopovar/AnyPS5/pull/27600",
+    "repo": "boykopovar/AnyPS5",
+    "body_sha256": "c58eaba28bf188bbfc0831a196f7f9ae11fbc148c1fa0ff8c5d39776032c46c8"
+  }
+]

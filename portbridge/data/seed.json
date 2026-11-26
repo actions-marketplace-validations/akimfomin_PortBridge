@@ -348,9 +348,10 @@
     },
     {
       "slug": "neonbridge",
-      "name": "Neonbridge",
-      "repo": "DesignWithTommy/Neonbridge",
-      "url": "https://github.com/DesignWithTommy/Neonbridge",
+      "name": "i95 (Neonbridge)",
+      "repo": "DesignWithTommy/i95",
+      "url": "https://github.com/DesignWithTommy/i95",
+      "github_id": 1469440034,
       "stack": "Rust, запуск и сравнение нескольких сред исполнения, собственные и сторонние компоненты",
       "license": "GPL-3.0-or-later / component licenses",
       "translations": {"en": {"stack": "Rust, multi-runtime launcher and comparisons, original and third-party components"}}
@@ -408,6 +409,36 @@
       "stack": "Синтетические пробы и анализ конвейеров, инструменты и патчи XCL",
       "license": "MIT / GPL-2.0 / CC-BY-4.0",
       "translations": {"en": {"stack": "Synthetic probes and pipeline analysis, tools and XCL patches"}}
+    },
+    {
+      "slug": "anyps5",
+      "name": "AnyPS5",
+      "repo": "boykopovar/AnyPS5",
+      "url": "https://github.com/boykopovar/AnyPS5",
+      "stack": "PS5 / Vulkan",
+      "translations": {"en": {"stack": "PlayStation 5 compatibility / Vulkan"}},
+      "consoles": [
+        "ps5"
+      ],
+      "license": "GPL-2.0 repository text",
+      "evidence_url": "https://github.com/boykopovar/AnyPS5/blob/0b16257796508b77472154e48c927d6fc4035d26/LICENSE",
+      "role": "compatibility",
+      "observation_scope": "public source metadata"
+    },
+    {
+      "slug": "kytyps5",
+      "name": "KytyPS5",
+      "repo": "KytyPS5/KytyPS5",
+      "url": "https://github.com/KytyPS5/KytyPS5",
+      "stack": "PS5 / Vulkan",
+      "translations": {"en": {"stack": "PlayStation 5 compatibility / Vulkan"}},
+      "consoles": [
+        "ps5"
+      ],
+      "license": "GPL-2.0",
+      "evidence_url": "https://github.com/KytyPS5/KytyPS5/blob/93cce66564bdced2fc7054ca9794451dfeef4d9d/LICENSE",
+      "role": "compatibility",
+      "observation_scope": "public source metadata"
     }
   ],
   "coordination": {

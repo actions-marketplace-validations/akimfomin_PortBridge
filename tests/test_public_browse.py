@@ -4,6 +4,7 @@ from hashlib import sha256
 import json
 from unittest.mock import patch
 
+from portbridge.catalog import ReadOnlyCatalog
 from portbridge.export import export
 from portbridge.preflight_index import SHARD_FORMAT, digest
 from portbridge.public_browse import BROWSE_MANIFEST, PAGE_SIZE, build_browse_files
@@ -57,9 +58,10 @@ class PublicBrowseTest(CatalogFixture):
         late = {**rows[-1], "title": "Late_marker ПРОВЕРКА"}
         rows[-1] = late
         self.catalog.record_sync({"items": rows})
-        with patch.object(self.catalog, "matches", wraps=self.catalog.matches) as calculate:
+        with patch.object(ReadOnlyCatalog, "matches", autospec=True, side_effect=ReadOnlyCatalog.matches) as calculate:
             destination = export(self.catalog, self.workspace / "site")
-        calculate.assert_called_once_with(limit=None)
+        self.assertEqual(calculate.call_count, 1)
+        self.assertEqual(calculate.call_args.kwargs, {"limit": None})
         index = manifest(destination)
         site = read(destination, "data/site.json")
         self.assertEqual(site["browse_index"], {"version": 1, "generation": index["generation"]})

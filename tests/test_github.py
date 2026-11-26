@@ -29,12 +29,12 @@ class GitHubSyncTest(unittest.TestCase):
 
     def fake_request(self, url, resource, etag):
         headers = {"ETag": '"metadata"'}
-        if "/search/issues?" in url:
-            data = {"items": [
+        if "/issues?" in url:
+            data = [
                 {"number": 1, "state": "open", "title": "Texture stalls", "body": "ignored body",
                  "user": {"login": "author"}},
                 {"number": 2, "pull_request": {}, "title": "An overlapping pull request"},
-            ]}
+            ]
         elif "/pulls?" in url:
             data = [{"number": 2, "state": "closed", "merged_at": "2026-01-01T00:00:00Z",
                      "title": "Handle texture stub", "head": {"sha": self.sha}, "body": "ignored body"}]
@@ -162,7 +162,8 @@ class GitHubSyncTest(unittest.TestCase):
                 attempted.append(slug)
                 if slug == attempted[0]:
                     return [], False, "live", now, None
-                return [], False, "error", None, github.Unavailable("GitHub request time budget exhausted")
+                return [], False, "error", None, github.Unavailable(
+                    "GitHub request time budget exhausted", reason="budget", attempted=False)
 
             with patch.object(github._Sync, "page", side_effect=page), \
                     patch("portbridge.__main__.refresh_ecosystem"):
@@ -244,12 +245,55 @@ class GitHubSyncTest(unittest.TestCase):
                 patch.object(github.time, "time", return_value=1700000060):
             again = github.collect([self.project], self.db_path, refresh=True)
         self.assertEqual(network.call_count, 4)
-        self.assertEqual(first["items"], again["items"])
+        for before, after in zip(first["items"], again["items"], strict=True):
+            self.assertEqual({k: v for k, v in before.items() if k != "revision_checked_at"},
+                             {k: v for k, v in after.items() if k != "revision_checked_at"})
+            if "revision_checked_at" in before:
+                expected = before["revision_checked_at"] if before["kind"] == "pr" else "2023-11-14T22:14:20+00:00"
+                self.assertEqual(after["revision_checked_at"], expected)
         self.assertEqual(again["projects"][0]["sync_status"], "partial")
         self.assertEqual(again["projects"][0]["sources"]["pr"]["sync_status"], "stale")
         self.assertEqual(again["projects"][0]["sources"]["pr"]["last_success"], "2023-11-14T22:13:20+00:00")
         self.assertEqual(again["projects"][0]["sources"]["issue"]["last_success"], "2023-11-14T22:14:20+00:00")
         self.assertIn("using stale cache", again["warnings"][0])
+
+    def test_exact_pr_304_refreshes_radar_without_promoting_summary_or_stale_cache(self):
+        from portbridge.radar_scan import evidence_source
+        from portbridge.radar_store import recent
+
+        catalog = Catalog(self.db_path, DEFAULT_SEED)
+        project = {"slug": "victory", "repo": "Marvisak/VIctory"}
+        target = "https://github.com/Marvisak/VIctory/pull/200"
+        epoch = 1700000000
+        hours = 3600
+        raw = {"number": 200, "state": "open", "title": "Queue tuning", "head": {"sha": self.sha},
+               "updated_at": "2023-11-01T00:00:00Z"}
+
+        def observe(hour, reply=None, *, error=None):
+            with patch.object(github._Sync, "_request", return_value=(reply, {"ETag": '"pinned"'}), side_effect=error), \
+                    patch.object(github.time, "time", return_value=epoch + hour * hours):
+                batch = github.refresh_references([project], self.db_path, [target], refresh=True)
+            catalog.record_sync(batch)
+            return batch["items"][0]
+
+        def radar():
+            row, = catalog.observations(project="victory")
+            return evidence_source(row, "target", {"victory": project})
+
+        initial = observe(0, raw)
+        self.assertFalse(recent({"sources": [radar()]}, epoch + 7 * hours))
+        refreshed = observe(8, github.NOT_MODIFIED)
+        self.assertEqual(initial["fetched_at"], refreshed["fetched_at"])
+        self.assertTrue(recent({"sources": [radar()]}, epoch + 8 * hours))
+        held = radar()["checked_at"]
+        summary = {**initial, "fetched_at": github._utc(epoch + 12 * hours),
+                   "metadata": {"head_sha": None}, "revision_checked_at": None}
+        catalog.record_sync({"items": [summary]})
+        observe(16, error=github.Unavailable("offline"))
+        self.assertEqual(radar()["checked_at"], held)
+        self.assertFalse(recent({"sources": [radar()]}, epoch + 16 * hours))
+        observe(17, github.NOT_MODIFIED)
+        self.assertTrue(recent({"sources": [radar()]}, epoch + 17 * hours))
 
     def test_private_repositories_cannot_be_listed_with_token(self):
         def check(url, resource, etag):
@@ -281,7 +325,7 @@ class GitHubSyncTest(unittest.TestCase):
             original = github.collect([self.project], self.db_path)
 
         def missing(url, resource, etag):
-            if "/search/issues?" in url:
+            if "/issues?" in url:
                 return github.NOT_MODIFIED, {}
             raise github.Unavailable("GitHub HTTP 404", http_status=404)
 
@@ -306,7 +350,11 @@ class GitHubSyncTest(unittest.TestCase):
                 patch.object(github.time, "time", return_value=1700000120):
             restored = github.collect(pending["projects"], self.db_path)
         self.assertEqual(restored["projects"][0]["sync_status"], "ok")
-        self.assertEqual(restored["items"], original["items"])
+        for before, after in zip(original["items"], restored["items"], strict=True):
+            self.assertEqual({k: v for k, v in before.items() if k != "revision_checked_at"},
+                             {k: v for k, v in after.items() if k != "revision_checked_at"})
+            if "revision_checked_at" in before:
+                self.assertEqual(after["revision_checked_at"], "2023-11-14T22:15:20+00:00")
 
     def test_anonymous_single_endpoint_failure_keeps_repository_visible(self):
         def partial(url, resource, etag):
@@ -328,7 +376,7 @@ class GitHubSyncTest(unittest.TestCase):
             with patch.object(sync.opener, "open", side_effect=error) as network:
                 with self.assertRaisesRegex(github.Unavailable, "429"):
                     sync._request("https://api.github.com/repos/example/port/pulls", "core", None)
-                with self.assertRaisesRegex(github.Unavailable, "retry after"):
+                with self.assertRaisesRegex(github.Unavailable, "paused until"):
                     sync._request("https://api.github.com/repos/example/port/commits", "core", None)
                 self.assertEqual(network.call_count, 1)
                 self.assertEqual(network.call_args.args[0].get_method(), "GET")
@@ -341,13 +389,13 @@ class GitHubSyncTest(unittest.TestCase):
 
         def get_page(url, resource, etag):
             seen.append(url)
-            if "/search/issues?" not in url:
+            if "/issues?" not in url:
                 return self.fake_request(url, resource, etag)
             if "&page=1&" in url:
-                return {"items": [{"number": 1, "title": "First"}]}, {
+                return [{"number": 1, "title": "First"}], {
                     "Link": '<https://example.com/unsafe>; rel="next"',
                 }
-            return {"items": [{"number": 2, "title": "Second"}]}, {}
+            return [{"number": 2, "title": "Second"}], {}
 
         with patch.object(github._Sync, "_request", side_effect=get_page):
             result = github.collect([self.project], self.db_path, pages=2)
@@ -362,9 +410,9 @@ class GitHubSyncTest(unittest.TestCase):
         attachment = "https://github.com/Example/Second/releases/download/v1/game.zip"
 
         def request(url, resource, etag):
-            if "/search/issues?" not in url:
+            if "/issues?" not in url:
                 return self.fake_request(url, resource, etag)
-            return {"items": [{"number": 9, "title": "D3D12 shader issue", "body": (
+            return [{"number": 9, "title": "D3D12 shader issue", "body": (
                 f"{private} vkCreateGraphicsPipelines DXGI_ERROR_DEVICE_REMOVED 0x887A0005. "
                 "Compare https://github.com/example/second/pull/72#discussion. "
                 "See [same](https://github.com/Example/Second/pull/72?x=1). "
@@ -372,7 +420,7 @@ class GitHubSyncTest(unittest.TestCase):
                 f"Ignore {attachment} https://untrusted.example/VK_ERROR_FAKE. "
                 "Ignore https://github.com/other/repo/issues/3 and "
                 "https://github.com/Example/Second/issues/1/attachments"
-            )}]}, {}
+            )}], {}
 
         with patch.object(github._Sync, "_request", side_effect=request):
             result = github.collect([self.project, second], self.db_path)

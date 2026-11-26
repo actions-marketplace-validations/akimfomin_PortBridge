@@ -1,0 +1,82 @@
+[
+  {
+    "url": "https://github.com/xcl-dev/xcl/pull/2860",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      },
+      {
+        "route": "search",
+        "mode": "live",
+        "network_attempts": 1,
+        "url": "https://api.github.com/search/issues?q=%22XCL_DEVICE_TYPE%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Axcl-dev%2Fxcl+merged%3A%3C2026-11-26T19%3A25%3A02Z&per_page=5"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/ubiquitarianism/leonida/pull/2399",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      },
+      {
+        "route": "search",
+        "mode": "live",
+        "network_attempts": 1,
+        "url": "https://api.github.com/search/issues?q=%22VIEW_INSTANCING%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Aubiquitarianism%2Fleonida+merged%3A%3C2026-11-26T19%3A30%3A09Z&per_page=5"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      },
+      {
+        "route": "search",
+        "mode": "live",
+        "network_attempts": 1,
+        "url": "https://api.github.com/search/issues?q=%22shader_recompiler_compute_tests%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Akytyps5%2Fkytyps5+merged%3A%3C2026-11-25T19%3A02%3A13Z&per_page=5"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/boykopovar/AnyPS5/pull/27618",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      },
+      {
+        "route": "search",
+        "mode": "live",
+        "network_attempts": 1,
+        "url": "https://api.github.com/search/issues?q=%22mmap_np%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Aboykopovar%2Fanyps5+merged%3A%3C2026-11-26T19%3A28%3A55Z&per_page=5"
+      }
+    ]
+  },
+  {
+    "url": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+    "transport": [
+      {
+        "route": "origin",
+        "mode": "frozen PR",
+        "network_attempts": 0
+      },
+      {
+        "route": "search",
+        "mode": "frozen search",
+        "network_attempts": 0,
+        "url": "https://api.github.com/search/issues?q=%22dxgi_error_device_suspended%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5"
+      }
+    ]
+  }
+]

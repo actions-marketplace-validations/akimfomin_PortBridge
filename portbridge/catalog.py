@@ -11,7 +11,10 @@ import sqlite3
 from urllib.parse import urlsplit
 
 from . import PROJECT_LINK
-from .matching import RelatedIndex, canonical_url, source_revision, source_url_aliases
+from . import core_events
+from .identity import contributor_id, evidence_fields, observation_provenance, relation_fields, repository_id
+from .matching import RelatedIndex, canonical_url, repository_identity, source_revision, source_url_aliases
+from .source_health import freshest, health_freshness
 
 
 PROBLEM_STATUS = {"investigating", "partial", "verified", "resolved"}
@@ -137,6 +140,9 @@ CREATE TABLE IF NOT EXISTS history_sync (
     slug TEXT NOT NULL REFERENCES projects(slug), mode TEXT NOT NULL, payload TEXT NOT NULL,
     PRIMARY KEY (slug, mode)
 );
+CREATE TABLE IF NOT EXISTS source_context (
+    url TEXT PRIMARY KEY, attempted_at REAL NOT NULL, payload TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY, value TEXT NOT NULL
 );
@@ -159,7 +165,7 @@ class Catalog:
         validate_seed(seed)
         with self.connect() as db:
             db.execute("PRAGMA journal_mode=WAL")
-            db.executescript(SCHEMA)
+            db.executescript(SCHEMA + core_events.SCHEMA)
             db.execute("BEGIN IMMEDIATE")
             db.executemany("INSERT INTO projects VALUES(?, ?) ON CONFLICT(slug) DO UPDATE SET payload=excluded.payload",
                            ((p["slug"], encode(p)) for p in seed["projects"]))
@@ -172,6 +178,7 @@ class Catalog:
                            ((p["id"], encode(p)) for p in seed["problems"]))
             db.execute("INSERT INTO settings VALUES('coordination', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
                        (encode(seed.get("coordination", {})),))
+            core_events.reconcile(db, seed["problems"], timestamp())
 
     @contextmanager
     def connect(self):
@@ -184,21 +191,45 @@ class Catalog:
         finally:
             db.close()
 
+    @contextmanager
+    def read_view(self):
+        with ReadOnlyCatalog(self.path).connect() as db:
+            db.execute("BEGIN")
+            yield _CatalogReadView(self.path, db)
+
     def projects(self):
         with self.connect() as db:
-            rows = db.execute("""SELECT projects.payload, sync.payload AS sync
-                FROM projects LEFT JOIN sync_projects sync USING(slug) ORDER BY projects.rowid""").fetchall()
+            return self._projects(db)
+
+    @staticmethod
+    def _projects(db):
+        rows = db.execute("""SELECT projects.payload, sync.payload AS sync
+            FROM projects LEFT JOIN sync_projects sync USING(slug) ORDER BY projects.rowid""").fetchall()
         projects = []
         for row in rows:
             sync = json.loads(row["sync"]) if row["sync"] else {}
-            projects.append({**json.loads(row["payload"]), "sync_status": sync.get("sync_status", "seed-only"),
-                             "last_success": sync.get("last_success"), "sources": sync.get("sources", {})})
+            project = json.loads(row["payload"])
+            project.setdefault("consoles", ["xbox-series"])
+            projects.append({**project, "sync_status": sync.get("sync_status", "seed-only"),
+                             "last_success": sync.get("last_success"), "last_attempt": sync.get("last_attempt"),
+                             "project_id": f"project:{project['slug']}", "repository_id": repository_id(project["repo"]),
+                             "github_id": sync.get("github_id") or project.get("github_id"),
+                             "current_repo": sync.get("current_repo") or project["repo"],
+                             "availability": sync.get("availability", "unknown"), "sources": sync.get("sources", {})})
         return projects
 
     def coordination(self):
         with self.connect() as db:
             row = db.execute("SELECT value FROM settings WHERE key='coordination'").fetchone()
         return json.loads(row[0]) if row else {}
+
+    def core_history(self, *, kind=None, entity_id=None, after=0, limit=None):
+        with self.connect() as db:
+            return core_events.events(db, kind=kind, entity_id=entity_id, after=after, limit=limit)
+
+    def reviewed_evidence(self):
+        with self.connect() as db:
+            return core_events.current(db, kind="evidence")
 
     def record_sync(self, result, *, update_health=True, history_mode=None):
         observed_at = timestamp()
@@ -216,14 +247,24 @@ class Catalog:
                 fetched_at = item.get("fetched_at") or observed_at
                 status, metadata = item["status"], dict(item["metadata"])
                 incoming_revision = source_revision({"metadata": metadata})
+                checked = (item.get("revision_checked_at") or fetched_at) if incoming_revision else None
                 old_metadata = {}
+                old_revision = old_checked = None
                 before = after = None
                 if previous:
+                    old_metadata = json.loads(previous["metadata"])
+                    old_revision = source_revision({"metadata": old_metadata})
+                    old_checked = old_metadata.get("revision_checked_at") or previous["fetched_at"]
                     older_update = utc_sort_key(previous["updated_at"])
                     prev_state = (older_update, utc_sort_key(previous["fetched_at"]))
                     if (updated_at, utc_sort_key(fetched_at)) < prev_state:
+                        # Another endpoint may have fetched a newer body at the same revision.
+                        if (checked and incoming_revision == old_revision and updated_at == older_update
+                                and status == previous["status"] and utc_sort_key(checked) > utc_sort_key(old_checked)):
+                            old_metadata["revision_checked_at"] = checked
+                            db.execute("UPDATE observations SET metadata=? WHERE project=? AND kind=? AND source_id=?",
+                                       (encode(old_metadata), *key))
                         continue
-                    old_metadata = json.loads(previous["metadata"])
                     metadata = {**old_metadata, **metadata}
                     preserve = ("merged_at", "base_branch") if updated_at == older_update else ("merged_at",)
                     for name in preserve:
@@ -238,6 +279,12 @@ class Catalog:
                         after = source_revision({"metadata": old_metadata})
                     metadata["head_sha"] = after
                     metadata["last_known_head_sha"] = after or before
+                effective_revision = source_revision({"metadata": metadata})
+                if effective_revision:
+                    previous_check = old_checked if old_revision == effective_revision else None
+                    metadata["revision_checked_at"] = freshest(checked, previous_check)
+                else:
+                    metadata.pop("revision_checked_at", None)
                 db.execute("""INSERT INTO observations VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(project, kind, source_id) DO UPDATE SET
                     title=excluded.title, url=excluded.url, status=excluded.status,
@@ -250,27 +297,52 @@ class Catalog:
                                    (item["project"], item["kind"], item["url"], previous["status"], status,
                                     before, after, fetched_at))
             if history_mode in {"backfill", "incremental"}:
-                db.executemany("""INSERT INTO history_sync VALUES (?, ?, ?)
-                    ON CONFLICT(slug, mode) DO UPDATE SET payload=excluded.payload""",
-                               ((entry["slug"], history_mode, encode({**entry, "checked_at": observed_at}))
-                                for entry in result.get("history", []) if entry["slug"] in projects))
+                for entry in result.get("history", []):
+                    slug = entry["slug"]
+                    if slug not in projects:
+                        continue
+                    previous = db.execute("SELECT payload FROM history_sync WHERE slug=? AND mode=?",
+                                          (slug, history_mode)).fetchone()
+                    old = json.loads(previous[0]) if previous else {}
+                    status = {**old, **entry, "checked_at": observed_at}
+                    for key in ("last_attempt", "last_success"):
+                        if key in old or key in entry:
+                            status[key] = freshest(old.get(key), entry.get(key))
+                    db.execute("""INSERT INTO history_sync VALUES (?, ?, ?)
+                        ON CONFLICT(slug, mode) DO UPDATE SET payload=excluded.payload""",
+                               (slug, history_mode, encode(status)))
             if not update_health:
                 return
             for status in result.get("projects", []):
                 slug = status.get("slug")
                 if slug in projects:
                     previous = db.execute("SELECT payload FROM sync_projects WHERE slug=?", (slug,)).fetchone()
-                    record = {**(json.loads(previous[0]) if previous else {}), **status}
-                    if not status.get("last_success") and previous:
-                        record["last_success"] = json.loads(previous[0]).get("last_success")
+                    previous_status = json.loads(previous[0]) if previous else {}
+                    record = {**previous_status, **status}
+                    same_repo = (repository_identity(previous_status.get("repo") or "").casefold() ==
+                                 repository_identity(record.get("repo") or "").casefold())
+                    if same_repo:
+                        for key in ("last_attempt", "last_success"):
+                            record[key] = freshest(previous_status.get(key), status.get(key))
+                    if "sources" in status and same_repo:
+                        old_sources = previous_status.get("sources", {})
+                        record["sources"] = {kind: dict(source) for kind, source in status["sources"].items()}
+                        for kind, source in record["sources"].items():
+                            old = old_sources.get(kind, {})
+                            for key in ("last_attempt", "last_success"):
+                                if key in old or key in source:
+                                    source[key] = freshest(old.get(key), source.get(key))
                     db.execute("INSERT INTO sync_projects VALUES(?, ?) ON CONFLICT(slug) DO UPDATE SET payload=excluded.payload",
                                (slug, encode(record)))
-            health = {"refresh_at": observed_at, "warnings": result.get("warnings", [])}
+            health = {"refresh_at": observed_at, "warnings": result.get("warnings", []),
+                      "reference_checks": result.get("references", [])}
             db.execute("INSERT INTO settings VALUES('sync', ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
                        (encode(health),))
 
-    def health(self):
+    def health(self, *, now=None, generated_at=None):
         with self.connect() as db:
+            if not db.in_transaction:
+                db.execute("BEGIN")
             row = db.execute("SELECT value FROM settings WHERE key='sync'").fetchone()
             count = db.execute("SELECT count(*) FROM observations").fetchone()[0]
             tables = {state[0] for state in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
@@ -281,14 +353,14 @@ class Catalog:
             if "history_sync" in tables:
                 for check in db.execute("SELECT * FROM history_sync"):
                     history_checks[check["slug"]][check["mode"]] = json.loads(check["payload"])
-        projects = self.projects()
+            projects = self._projects(db)
         states = {project["sync_status"] for project in projects}
         details = json.loads(row[0]) if row else {"refresh_at": None, "warnings": []}
         if row is None:
             status = "seed-only"
         elif states == {"ok"} and not details["warnings"]:
             status = "ok"
-        elif states == {"stale"}:
+        elif states == {"stale"} or (count and states <= FAILED_SYNC_STATES | {"seed-only"}):
             status = "stale"
         elif not count:
             status = "error"
@@ -305,8 +377,12 @@ class Catalog:
             for mode, check in history_checks[slug].items():
                 modes[mode].update(check)
             sources.append({"slug": slug, "repo": project["repo"], "freshness": project["sync_status"],
-                            "last_success": project["last_success"], "kinds": project["sources"], "history": modes})
-        return {"status": status, "observation_count": count, "history": history, "sources": sources, **details}
+                            "availability": project["availability"], "github_id": project["github_id"],
+                            "repository_id": project["repository_id"], "current_repo": project["current_repo"],
+                            "last_attempt": project["last_attempt"], "last_success": project["last_success"],
+                            "kinds": project["sources"], "history": modes})
+        return health_freshness({"status": status, "observation_count": count, "history": history,
+                                 "sources": sources, **details}, now=now, generated_at=generated_at)
 
     def problems(self, *, q="", project="", status="", partial=False):
         with self.connect() as db:
@@ -340,6 +416,7 @@ class Catalog:
         urls = sorted({url for source in sources for url in source_url_aliases(source)})
         result = {}
         with self.connect() as db:
+            has_context = db.execute("SELECT 1 FROM sqlite_master WHERE name='source_context' AND type='table'").fetchone()
             for start in range(0, len(urls), 200):
                 chunk = urls[start:start + 200]
                 placeholders = ", ".join("?" for _ in chunk)
@@ -351,6 +428,12 @@ class Catalog:
                     state["revision"] = source_revision({"metadata": metadata})
                     state["draft"] = metadata.get("draft") is True
                     result[canonical_url(row["url"])] = state
+                if has_context:
+                    contexts = db.execute(f"SELECT url, payload FROM source_context WHERE lower(url) IN ({placeholders})",
+                                          chunk)
+                    for context in contexts:
+                        if (key := canonical_url(context["url"])) in result:
+                            result[key]["context"] = json.loads(context["payload"])
         return result
 
     def observed_revisions(self, sources):
@@ -365,6 +448,9 @@ class Catalog:
         for url, state in self.observed_sources(references).items():
             for ref in references[url]:
                 ref["github"] = state
+        for values in references.values():
+            for ref in values:
+                ref.update(evidence_fields(ref, ref.get("github")))
         return problems
 
     def observations(self, *, q="", kind="", project="", limit=100):
@@ -380,6 +466,9 @@ class Catalog:
                 item = dict(row)
                 item["metadata"] = json.loads(item["metadata"])
                 if contains(item, q):
+                    item["provenance"] = observation_provenance(item)
+                    item["contributor_id"] = contributor_id(item["metadata"].get("author"),
+                                                            item["metadata"].get("github_user_id"))
                     result.append(item)
                     if limit is not None and len(result) >= limit:
                         break
@@ -400,10 +489,18 @@ class Catalog:
                 reason = ("Совпадает симптом. Общая причина не установлена." if state == "reviewed_symptom"
                           else "Связь указана в проверенной карточке каталога.")
                 for left, right in combinations(references, 2):
-                    approved.append(match(left, right, None, reason, state, problem["id"]))
+                    pair = match(left, right, None, reason, state, problem["id"])
+                    kind = problem.get("relationship", "same_problem")
+                    pair["relation"] = relation_fields(left, right, kind=kind, state=state, reason=reason,
+                                                       directed=kind in {"source_port", "test_reuse"})
+                    approved.append(pair)
         stacks = {project["slug"]: project["stack"] for project in self.projects()}
         suggested = self.search_index().matches(stacks, exclude=lambda a, b: known_links[a] & known_links[b],
                                                 keep=lambda pair: contains(pair, q), limit=limit)
+        for pair in suggested:
+            pair["relation"] = relation_fields(pair["left"], pair["right"], kind="related_implementation",
+                                               state=pair["state"], reason=pair["reason"],
+                                               confidence=pair.get("score"))
         return (approved + suggested)[:limit]
 
     def search_index(self):
@@ -484,6 +581,20 @@ class ReadOnlyCatalog(Catalog):
         with closing(sqlite3.connect(uri, uri=True, timeout=2)) as db:
             db.row_factory = sqlite3.Row
             yield db
+
+
+class _CatalogReadView(Catalog):
+    def __init__(self, path, connection):
+        self.path = path
+        self.connection = connection
+
+    @contextmanager
+    def connect(self):
+        yield self.connection
+
+    @contextmanager
+    def read_view(self):
+        yield self
 
 
 def summarize(problem):

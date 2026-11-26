@@ -1,0 +1,324 @@
+{
+  "method": "Development replay of three previously evaluated PRs. Fresh catalog per origin and full frozen M5.2 title/body/head plus public original creation time. Archive contains public search metadata only. The candidate receives the sanitized response in its original order. HTTP attempts below count search transmits during capture.",
+  "product_sha256": "cb9d4f821fcbbf7a516c6e6f8278f77fa5544c8bbe5f6467a30c13435684d12f",
+  "cases": [
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2852",
+      "head": "69ebece8a98ae956556eb02d3721db712501e9b2",
+      "body_sha256": "e773449ab1855fc0811bac57c631d5f8fb986719c8d1eb6e7a1c0af4bc39445f",
+      "created_at": "2026-11-26T18:50:00Z",
+      "created_at_source": "https://github.com/xcl-dev/xcl/pull/2852#issue-6633168221",
+      "normalized": {
+        "url": "https://github.com/xcl-dev/xcl/pull/2852",
+        "title": "D3D12.X: forget command list before its final release",
+        "status": "open",
+        "updated_at": "2026-11-26T18:50:00Z",
+        "metadata": {
+          "head_sha": "69ebece8a98ae956556eb02d3721db712501e9b2",
+          "number": 2852,
+          "created_at": "2026-11-26T18:50:00Z",
+          "technical": {
+            "version": 6,
+            "terms": [
+              "d3d12",
+              "command list"
+            ],
+            "discovery_cues": [],
+            "history_identifier": "",
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          }
+        }
+      },
+      "transport": [
+        "frozen_origin",
+        "search"
+      ],
+      "search": {
+        "url": "https://api.github.com/search/issues?q=%22command+list%22+is%3Apublic+repo%3Adoitsujin%2Fdxvk+repo%3AHansKristian-Work%2Fvkd3d-proton+repo%3AKhronosGroup%2FVulkan-ValidationLayers+repo%3AKhronosGroup%2FVulkan-Docs+repo%3AKhronosGroup%2FSPIRV-Tools+repo%3Ashadps4-emu%2FshadPS4+repo%3Axenia-project%2Fxenia+repo%3ARPCS3%2Frpcs3+repo%3Amicrosoft%2FDirectXShaderCompiler+repo%3AGPUOpen-LibrariesAndSDKs%2FVulkanMemoryAllocator+repo%3AGPUOpen-LibrariesAndSDKs%2FD3D12MemoryAllocator+repo%3Allvm%2Fllvm-project+repo%3Awine-mirror%2Fwine+repo%3Agfx-rs%2Fwgpu+repo%3AKhronosGroup%2FMoltenVK+repo%3Aboykopovar%2FAnyPS5+repo%3AKytyPS5%2FKytyPS5&per_page=5",
+        "captured_utc": "2026-11-26T19:40:52+00:00",
+        "http_attempts": 1,
+        "response": {
+          "incomplete_results": false,
+          "items": [
+            {
+              "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/3399",
+              "title": "vkd3d: Re-emit command list state after cubin launches.",
+              "state": "open",
+              "updated_at": "2026-10-26T15:08:29Z",
+              "pull_request": {
+                "merged_at": null
+              }
+            },
+            {
+              "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3525",
+              "title": "WWM appears to be stuck or has timed out",
+              "state": "open",
+              "updated_at": "2026-11-26T08:18:49Z"
+            },
+            {
+              "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3355",
+              "title": "Ghost of Tsushima: trivial COPY barrier path can bypass pending DGC flush and cause lighting flashes",
+              "state": "open",
+              "updated_at": "2026-11-12T11:54:35Z"
+            },
+            {
+              "html_url": "https://github.com/llvm/llvm-project/pull/239954",
+              "title": "[lldb] Make `platform process list` command more flexible",
+              "state": "open",
+              "updated_at": "2026-11-11T15:15:37Z",
+              "pull_request": {
+                "merged_at": null
+              }
+            },
+            {
+              "html_url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3508",
+              "title": "maybe helps but idk also how do you guys manage this this is insane",
+              "state": "open",
+              "updated_at": "2026-11-23T13:35:54Z"
+            }
+          ]
+        }
+      },
+      "result": {
+        "url": "https://github.com/xcl-dev/xcl/pull/2852",
+        "revision": "69ebece8a98ae956556eb02d3721db712501e9b2",
+        "subject": "command list",
+        "status": "available",
+        "search_scope": "external",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/3399",
+            "title": "vkd3d: Re-emit command list state after cubin launches.",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3525",
+            "title": "WWM appears to be stuck or has timed out",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3355",
+            "title": "Ghost of Tsushima: trivial COPY barrier path can bypass pending DGC flush and cause lighting flashes",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/llvm/llvm-project/pull/239954",
+            "title": "[lldb] Make `platform process list` command more flexible",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3508",
+            "title": "maybe helps but idk also how do you guys manage this this is insane",
+            "route": "github",
+            "evidence_status": "source_found"
+          }
+        ],
+        "explanation": "Open each source to compare the mechanism and revision."
+      }
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+      "head": "8a73cb09be44c908d7fbe4947d2510ee8c95e7c1",
+      "body_sha256": "efb8da77e92169c04d4c22273d0f1ec2e52353669f0ec8bcd8da1ad9d7911957",
+      "created_at": "2026-11-26T17:42:49Z",
+      "created_at_source": "https://github.com/ubiquitarianism/leonida/pull/2392#issue-6632184677",
+      "normalized": {
+        "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+        "title": "make_game: the pipelines stage fills the runtime's own journal with gta6rt --precompile-pipelines (MAKE-GAME-PIPELINES-VIA-RUNTIME)",
+        "status": "open",
+        "updated_at": "2026-11-26T18:50:18Z",
+        "metadata": {
+          "head_sha": "8a73cb09be44c908d7fbe4947d2510ee8c95e7c1",
+          "number": 2392,
+          "created_at": "2026-11-26T17:42:49Z",
+          "technical": {
+            "version": 6,
+            "terms": [
+              "shader",
+              "bindless",
+              "wine",
+              "spir-v"
+            ],
+            "discovery_cues": [
+              "vk_shader_stage_all"
+            ],
+            "history_identifier": "vk_pipeline_check",
+            "signals": [],
+            "references": [
+              "https://github.com/ubiquitarianism/leonida/issues/1608"
+            ],
+            "external_repositories": []
+          }
+        }
+      },
+      "transport": [
+        "frozen_origin",
+        "search"
+      ],
+      "search": {
+        "url": "https://api.github.com/search/issues?q=%22vk_pipeline_check%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Aubiquitarianism%2Fleonida+merged%3A%3C2026-11-26T17%3A42%3A49Z&per_page=5",
+        "captured_utc": "2026-11-26T19:40:53+00:00",
+        "http_attempts": 1,
+        "response": {
+          "incomplete_results": false,
+          "items": [
+            {
+              "html_url": "https://github.com/ubiquitarianism/leonida/pull/1891",
+              "title": "d3d12_vulkan_device: detect and enable VK_EXT_transform_feedback + vk_pipeline_check parity (D3D-TRANSFORM-FEEDBACK-DEVICE)",
+              "state": "closed",
+              "updated_at": "2026-11-25T22:32:28Z",
+              "pull_request": {
+                "merged_at": "2026-11-25T22:32:25Z"
+              }
+            },
+            {
+              "html_url": "https://github.com/ubiquitarianism/leonida/pull/821",
+              "title": "vk_pipeline_check: match runtime device features and restore pipeline_cache_seed test (RT-PIPELINE-CACHE-SEED)",
+              "state": "closed",
+              "updated_at": "2026-11-24T20:31:46Z",
+              "pull_request": {
+                "merged_at": "2026-11-24T20:31:44Z"
+              }
+            },
+            {
+              "html_url": "https://github.com/ubiquitarianism/leonida/pull/1630",
+              "title": "d3d12: real SO_STATISTICS query pools (D3D-302)",
+              "state": "closed",
+              "updated_at": "2026-11-25T22:37:27Z",
+              "pull_request": {
+                "merged_at": "2026-11-25T22:37:24Z"
+              }
+            },
+            {
+              "html_url": "https://github.com/ubiquitarianism/leonida/pull/1796",
+              "title": "docs/i18n/ru: the quickstart says shaders, assets and runtime run together (OLD-9936)",
+              "state": "closed",
+              "updated_at": "2026-11-25T21:28:52Z",
+              "pull_request": {
+                "merged_at": "2026-11-25T21:28:52Z"
+              }
+            },
+            {
+              "html_url": "https://github.com/ubiquitarianism/leonida/pull/43",
+              "title": "OLD-7148: make_game and first_light rebuild or report a stale vk_pipeline_check / vk_harness",
+              "state": "closed",
+              "updated_at": "2026-11-24T02:27:24Z",
+              "pull_request": {
+                "merged_at": "2026-11-24T02:27:23Z"
+              }
+            }
+          ]
+        }
+      },
+      "result": {
+        "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+        "revision": "8a73cb09be44c908d7fbe4947d2510ee8c95e7c1",
+        "subject": "vk_pipeline_check",
+        "status": "available",
+        "search_scope": "receiver_merged_before_pr",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [
+          {
+            "url": "https://github.com/ubiquitarianism/leonida/pull/1891",
+            "title": "d3d12_vulkan_device: detect and enable VK_EXT_transform_feedback + vk_pipeline_check parity (D3D-TRANSFORM-FEEDBACK-DEVICE)",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/ubiquitarianism/leonida/pull/821",
+            "title": "vk_pipeline_check: match runtime device features and restore pipeline_cache_seed test (RT-PIPELINE-CACHE-SEED)",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/ubiquitarianism/leonida/pull/1630",
+            "title": "d3d12: real SO_STATISTICS query pools (D3D-302)",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/ubiquitarianism/leonida/pull/1796",
+            "title": "docs/i18n/ru: the quickstart says shaders, assets and runtime run together (OLD-9936)",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/ubiquitarianism/leonida/pull/43",
+            "title": "OLD-7148: make_game and first_light rebuild or report a stale vk_pipeline_check / vk_harness",
+            "route": "repository_history",
+            "evidence_status": "source_found"
+          }
+        ],
+        "explanation": "Inspect the earlier merged PR for an implementation or regression test matching this decision."
+      }
+    },
+    {
+      "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+      "head": "d54e1c600f5678779fe961fb68d30d04118b1112",
+      "body_sha256": "5ef171131948fc9b6a8137e63b66132f1dbf3f4abfa4c679bf38fa04c81cac33",
+      "created_at": "2026-11-26T18:54:53Z",
+      "created_at_source": "https://github.com/KytyPS5/KytyPS5/pull/2565#issue-6633241288",
+      "normalized": {
+        "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+        "title": "config: add Ukrainian (ID 30) to the console languages",
+        "status": "open",
+        "updated_at": "2026-11-26T18:54:54Z",
+        "metadata": {
+          "head_sha": "d54e1c600f5678779fe961fb68d30d04118b1112",
+          "number": 2565,
+          "created_at": "2026-11-26T18:54:53Z",
+          "technical": {
+            "version": 6,
+            "terms": [],
+            "discovery_cues": [],
+            "history_identifier": "MAX_CONSOLE_LANGUAGE",
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          }
+        }
+      },
+      "transport": [
+        "frozen_origin",
+        "search"
+      ],
+      "search": {
+        "url": "https://api.github.com/search/issues?q=%22MAX_CONSOLE_LANGUAGE%22+is%3Apublic+is%3Apr+is%3Amerged+repo%3Akytyps5%2Fkytyps5+merged%3A%3C2026-11-26T18%3A54%3A53Z&per_page=5",
+        "captured_utc": "2026-11-26T19:40:54+00:00",
+        "http_attempts": 1,
+        "response": {
+          "incomplete_results": false,
+          "items": []
+        }
+      },
+      "result": {
+        "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+        "revision": "d54e1c600f5678779fe961fb68d30d04118b1112",
+        "subject": "MAX_CONSOLE_LANGUAGE",
+        "status": "available",
+        "search_scope": "receiver_merged_before_pr",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [],
+        "explanation": "No earlier merged PR for this identifier was returned by the bounded repository search."
+      }
+    }
+  ],
+  "verified_replay": {
+    "product_commit": "64773afc66dd2ad261f877c4df34ca8b58e8ca52",
+    "network_attempts": 0,
+    "identical_results": true
+  }
+}

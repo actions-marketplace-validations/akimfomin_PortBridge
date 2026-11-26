@@ -27,6 +27,8 @@ Open the individual test card and check the original report and observed results
 
 ## Для участника
 
+Когда подтверждённые отчёты закрывают запрошенное аппаратное покрытие, карточка получает статус `completed`. Если для полного покрытия остаётся только проверка полученного отчёта, статус — `awaiting_review`. После отзыва подтверждения задача снова требует прогона, если её не закрывает другой отчёт. Решение команды о внедрении записывается отдельно.
+
 Откройте очередь и выберите AMD, NVIDIA или CPU. Сначала показаны проверки, которым нужен исполнитель. Включите **Показать все статусы**, чтобы увидеть также результаты на ревью и отложенные проверки.
 
 Нажмите **Открыть эту проверку**, чтобы отправить ссылку на одну задачу. Кнопка **Копировать эту проверку для агента** включает точные версии, шаги и ожидаемый итог. [Пример](https://akimfomin.github.io/PortBridge/?lang=ru#/lab?task=framelab-12-vulkan-handoff)
@@ -49,11 +51,15 @@ Open the individual test card and check the original report and observed results
 
 ## For integrations
 
+The status of a curated hardware check becomes `completed` when approved passing reports satisfy its coverage policy. If the remaining required coverage could be satisfied by reviewing submissions already on file, the status is `awaiting_review`. A revoked confirmation reopens the requirement unless other reports cover it. The revoked report stays visible. Completion describes the requested test coverage and leaves upstream adoption as a separate decision.
+
 Read `data/lab.json` from the public site, call the local `GET /api/v1/lab` endpoint, or use the read-only `portbridge_lab` MCP tool. Use `task` to filter by a task's exact `id`. To open the same check for a person, link to `#/lab?task=<id>` on the public site. The equipment filter uses a value supplied by the caller. `checked_at` records when the queue was reviewed. Consult the linked discussions for the latest claims, source revisions, and decisions.
 
 Monitored tasks include `report_sync`. Its `state` is `fresh` after a successful check, `stale` when the latest attempt failed and the previous check is still available, `unavailable` when a check fails with no previous check available, or `unchecked` before the first attempt. The object's `checked_at` and `attempted_at` give the last successful and attempted checks in UTC. Either may be null. The `sources` list gives the freshness of each linked discussion. Each entry in `reports` has the original comment `url`, GitHub `author`, tested `revision`, `hardware`, `outcome` (`pass`, `fail`, or `partial`), and `reported_at`. The `authority` value includes reports accepted through an owner decision. `review` identifies an applicable decision by its permalink, author and time. `body_sha256` identifies the exact report text when present. Community submissions remain listed for review. A card's `coverage` tracks each hardware cell, and `adoption` separately records the receiving team's decision.
 
 Pages checks monitored discussions before exporting the queue. To refresh a local copy, run `python -m portbridge refresh-lab`. To use a specific database, run `python -m portbridge --db path/to/catalog.sqlite3 refresh-lab` and use that same database for the local API, export, or MCP.
+
+A passing or failing public report with an active, body-pinned approval from a different repository-owner account also appears in PR search, Research Radar and Impact. Its two links identify the report and the review separately. People uses the public authorship of each contribution and honors display corrections and opt-outs. A revoked approval drops from these reviewed results on the next successful refresh. The original test can remain attributed. Availability for future checks, independent replication, delivery and adoption each require their own evidence. [Reproducible FrameLab example](../audit/evidence/m6/five-views.md)
 
 ### Show open checks on a partner site
 

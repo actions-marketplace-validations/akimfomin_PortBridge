@@ -1,0 +1,276 @@
+{
+  "product_tree": "ae8a4d5c8b1f1316226af0ad03cbd8d02690501c",
+  "cases": [
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2860",
+      "observation": {
+        "project": "xcl",
+        "kind": "pr",
+        "source_id": "2860",
+        "title": "Shaders: separate Series S and Series X used manifests",
+        "url": "https://github.com/xcl-dev/xcl/pull/2860",
+        "status": "open",
+        "updated_at": "2026-11-26T19:25:02Z",
+        "metadata": {
+          "number": 2860,
+          "head_sha": "6efa82fab8dce5df52e7f69fff5539b8258e2d2c",
+          "technical": {
+            "version": 5,
+            "terms": [
+              "shader",
+              "wine"
+            ],
+            "discovery_cues": [],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-26T19:25:02Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/xcl-dev/xcl/pull/2860",
+        "revision": "6efa82fab8dce5df52e7f69fff5539b8258e2d2c",
+        "subject": "",
+        "status": "no_subject",
+        "search_issue": null,
+        "lookups": 0,
+        "cache_hits": 0,
+        "top5": [],
+        "explanation": "No supported technical subject was found in the PR title or stored metadata. No external search ran."
+      }
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2399",
+      "observation": {
+        "project": "continued",
+        "kind": "pr",
+        "source_id": "2399",
+        "title": "d3d12_xs: capture a pipeline stream that carries a VIEW_INSTANCING subobject",
+        "url": "https://github.com/ubiquitarianism/leonida/pull/2399",
+        "status": "open",
+        "updated_at": "2026-11-26T19:30:09Z",
+        "metadata": {
+          "number": 2399,
+          "head_sha": "3b5b36edd129dedabb9efadf3b6e1c7ef7118234",
+          "technical": {
+            "version": 5,
+            "terms": [
+              "d3d12",
+              "vulkan"
+            ],
+            "discovery_cues": [
+              "d3d12_pipeline_state_subobject_type_view_instancing"
+            ],
+            "signals": [],
+            "references": [
+              "https://github.com/ubiquitarianism/leonida/issues/1608"
+            ],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-26T19:30:09Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/ubiquitarianism/leonida/pull/2399",
+        "revision": "3b5b36edd129dedabb9efadf3b6e1c7ef7118234",
+        "subject": "d3d12_pipeline_state_subobject_type_view_instancing",
+        "status": "available",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [],
+        "explanation": "The indexed corpus and first bounded GitHub page yielded no other source for this subject."
+      }
+    },
+    {
+      "url": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+      "observation": {
+        "project": "kytyps5",
+        "kind": "pr",
+        "source_id": "2551",
+        "title": "graphics: release idle images when a new image cannot be allocated",
+        "url": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+        "status": "open",
+        "updated_at": "2026-11-26T19:23:23Z",
+        "metadata": {
+          "number": 2551,
+          "head_sha": "9e27d264d9c8d6e0a62f53f5fd9aacaa1d48358a",
+          "technical": {
+            "version": 5,
+            "terms": [
+              "stencil",
+              "readback",
+              "shader"
+            ],
+            "discovery_cues": [
+              "device loss"
+            ],
+            "signals": [],
+            "references": [
+              "https://github.com/KytyPS5/KytyPS5/issues/2307",
+              "https://github.com/KytyPS5/KytyPS5/issues/2019",
+              "https://github.com/KytyPS5/KytyPS5/issues/2308"
+            ],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-25T19:02:13Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+        "revision": "9e27d264d9c8d6e0a62f53f5fd9aacaa1d48358a",
+        "subject": "device loss",
+        "status": "available",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [
+          {
+            "url": "https://github.com/ubiquitarianism/leonida/pull/1298",
+            "title": "tests: cover retire-ticket device loss",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13704",
+            "title": "GPU-AV vertex attribute fetch check causes device loss with vkCmdExecuteGeneratedCommandsEXT",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/gfx-rs/wgpu/pull/11123",
+            "title": "fix(core): Validate all cmdbufs before deferred query set resolution",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/ubiquitarianism/leonida/pull/1909",
+            "title": "d3d12: compute pipelines carry their shader's name through VK_EXT_debug_utils (RT-NAME-COMPUTE-PIPELINES)",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/ubiquitarianism/leonida/pull/1931",
+            "title": "dstorage, fs: LEONIDA_IO_TRACE logs every read the title asks for, flushed as it goes (RT-IO-TRACE)",
+            "route": "github",
+            "evidence_status": "source_found"
+          }
+        ],
+        "explanation": "Open each source to compare the mechanism and revision."
+      }
+    },
+    {
+      "url": "https://github.com/boykopovar/AnyPS5/pull/27618",
+      "observation": {
+        "project": "anyps5",
+        "kind": "pr",
+        "source_id": "27618",
+        "title": "fix(libScePosixForWebKit): raise the debug exception on mmap_np's ENOMEM",
+        "url": "https://github.com/boykopovar/AnyPS5/pull/27618",
+        "status": "open",
+        "updated_at": "2026-11-26T19:30:24Z",
+        "metadata": {
+          "number": 27618,
+          "head_sha": "e05d132a8dbc56e3e436f3d6f152bf23164dc68c",
+          "technical": {
+            "version": 5,
+            "terms": [
+              "spir-v"
+            ],
+            "discovery_cues": [],
+            "signals": [],
+            "references": [
+              "https://github.com/boykopovar/AnyPS5/issues/21870"
+            ],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-26T19:28:55Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/boykopovar/AnyPS5/pull/27618",
+        "revision": "e05d132a8dbc56e3e436f3d6f152bf23164dc68c",
+        "subject": "",
+        "status": "no_subject",
+        "search_issue": null,
+        "lookups": 0,
+        "cache_hits": 0,
+        "top5": [],
+        "explanation": "No supported technical subject was found in the PR title or stored metadata. No external search ran."
+      }
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+      "observation": {
+        "project": "anyxboxx",
+        "kind": "pr",
+        "source_id": "448",
+        "title": "fix(victory-shader): lower v_cmp_f and v_cmp_tru floats as constant booleans",
+        "url": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+        "status": "open",
+        "updated_at": "2026-11-26T19:14:56Z",
+        "metadata": {
+          "number": 448,
+          "head_sha": "727118c1d2cb4467d137a826be422040c7d78930",
+          "technical": {
+            "version": 5,
+            "terms": [
+              "shader",
+              "dxil",
+              "d3d12"
+            ],
+            "discovery_cues": [
+              "dxgi_error_device_suspended",
+              "v_cmp_f_f32",
+              "v_cmp_tru_f32",
+              "v_cmp_f_f16",
+              "v_cmp_tru_f16",
+              "v_cndmask_b32"
+            ],
+            "signals": [
+              "v_cmp_f_f32",
+              "v_cmp_tru_f32",
+              "v_cmp_f_f16",
+              "v_cmp_tru_f16",
+              "v_cmp_f_u32",
+              "v_cmp_f_i32",
+              "v_cmp_f_u16",
+              "v_cmp_f_i16",
+              "v_cmp_t_u32",
+              "v_cmp_t_i32",
+              "v_cmp_t_u16",
+              "v_cmp_t_i16",
+              "v_cndmask_b32",
+              "dxgi_error_device_suspended"
+            ],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null,
+          "created_at": "2026-11-26T19:08:36Z"
+        }
+      },
+      "result": {
+        "url": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+        "revision": "727118c1d2cb4467d137a826be422040c7d78930",
+        "subject": "dxgi_error_device_suspended",
+        "status": "available",
+        "search_issue": null,
+        "lookups": 1,
+        "cache_hits": 0,
+        "top5": [],
+        "explanation": "The indexed corpus and first bounded GitHub page yielded no other source for this subject."
+      }
+    }
+  ]
+}

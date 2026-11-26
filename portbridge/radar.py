@@ -8,7 +8,7 @@ import re
 from .activity import source_time
 from .catalog import public_url, source_sync_failed
 from .github import WORK_URL
-from .matching import canonical_url, source_revision, subject_kind
+from .matching import canonical_url, revision_checked_at, source_revision, subject_kind
 
 
 FRESH_FOR = timedelta(hours=2)
@@ -36,7 +36,7 @@ def proof(role, url, revision=None):
 def observation_check(row, projects, now):
     if row is None:
         return {"state": "unknown", "checked_at": None}
-    checked = row.get("fetched_at")
+    checked = revision_checked_at(row)
     if source_sync_failed(projects.get(row["project"], {}), row["url"]):
         state = "stale" if checked else "unknown"
     else:
@@ -54,7 +54,11 @@ def lab_action(task, kind, priority, confidence, check, action, criteria, *,
                equipment=(), extra_sources=(), subject=None):
     target = task["result_url"] if subject is None else subject["url"]
     revision = source_revision(subject) if subject is not None else None
-    task_proofs = [proof("procedure", task["procedure_url"]), *extra_sources]
+    related = [{"role": "catalog_evidence", "url": evidence["provenance"]["url"],
+                "revision": evidence["provenance"]["revision"], "evidence_id": evidence["evidence_id"],
+                "state": evidence["state"], "outcome": evidence["outcome"]}
+               for evidence in task.get("related_evidence", ())]
+    task_proofs = [proof("procedure", task["procedure_url"]), *extra_sources, *related]
     return {
         "id": identify(kind, task["id"], canonical_url(target)), "kind": kind,
         "state": kind if check["state"] == "fresh" else "verify_sources",

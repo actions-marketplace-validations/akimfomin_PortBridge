@@ -6,11 +6,19 @@
 
 PortBridge connects public issues, pull requests, and test results across projects bringing Xbox Series software to PC. Look up an error or shader instruction, see what another team already tested, and share a reproducible result in the repository where it can help. Each team keeps its own tools, priorities, and review process.
 
-## Passive maintenance · 26 November 2026
+## Try PortBridge on one pull request
 
-I have stepped back from initiating research and recruiting testers. The catalog, search and Test Lab stay open. GitHub Actions refreshes public data while individual sources can lag. Issues and pull requests remain welcome. There is no guaranteed response time.
+A repository maintainer can enable the [read-only GitHub check](docs/GITHUB-ACTION.md) to see earlier work or the reason for an empty result directly in a PR. The M5–M6 pilot welcomes one concrete technical decision at a time. [Agent setup](docs/MCP.md) · [Partner feed](API.en.md) · [Measured outcomes and open limits](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md)
 
 [Letter from the founder](https://akimfomin.github.io/PortBridge/letter.html) · [Reply or volunteer to maintain a component](https://github.com/akimfomin/PortBridge/issues/91) · [Engineering history and evidence](docs/FINAL-AUDIT.md) · [Run or maintain PortBridge](docs/PASSIVE-MAINTENANCE.md)
+
+## Discovery
+
+Search for earlier implementations from other projects using an error, GPU instruction, API symbol or a known issue or PR link. Results include the source revision, compatibility limits, license and a proposed check. [Try it locally](docs/QUICKSTART.md#try-discovery-locally)
+
+## People and Impact
+
+The public projections link technical work to its sources and distinguish contributions, independent tests and receiving decisions. [M4 evidence](docs/PORTBRIDGE-M4.md) · [Engineering record](docs/FINAL-AUDIT.md)
 
 ## For project contributors
 
@@ -25,6 +33,16 @@ I have stepped back from initiating research and recruiting testers. The catalog
 | Get a test run on hardware you lack | Open a request in the Test Lab. Volunteers can reply there. A maintainer can manually send a reviewed invitation. [Test requests](docs/TEST-REQUESTS.md) |
 | Try PortBridge in your repository | Check one open PR for prior work, then see if a collaborator can reuse a result. [Pilot for maintainers](docs/AGENT-PROMPT.md#try-portbridge-in-your-repository) |
 | Suggest a project, a missing link, or a search improvement | Open the [feedback form](https://github.com/akimfomin/PortBridge/issues/new?template=idea.yml). |
+
+## Start from a pull request
+
+From this checkout, give Discovery the public GitHub PR URL. It reads the PR metadata and makes at most one external search lookup. The result shows the selected technical subject, up to five source links and an explanation when the search is empty or unavailable.
+
+```sh
+python -m portbridge.discovery_scan --online --url https://github.com/LooperSalty/AnyXboxX/pull/429
+```
+
+Inspect the linked evidence before applying a result. [Measured examples](audit/evidence/m52/assessment.md) · [Audit report](audit/LATEST.md)
 
 ## Look up one real case
 
@@ -75,3 +93,9 @@ The [public catalog](https://akimfomin.github.io/PortBridge/) works without an a
 [Contribute](CONTRIBUTING.md) · [Tracked projects](https://akimfomin.github.io/PortBridge/#/projects) · [API reference](API.en.md) · [MIT license](LICENSE)
 
 Try PortBridge's GitHub Action on one existing public PR. [Setup guide](docs/GITHUB-ACTION.md) · [Successful XCL pilot](https://github.com/akimfomin/PortBridge/actions/runs/45420038315) · [GitHub Marketplace](https://github.com/marketplace/actions/portbridge-prior-work-summary)
+
+## Try one task with an agent
+
+Open the dashboard, choose **Start here**, and follow one public issue or PR through Search and Lab. The local M5 candidate includes an optional MCP connection, a read-only PR Action and a partner widget. [Pilot quick start](docs/PORTBRIDGE-M5-START.md)
+
+If you find PortBridge useful, a GitHub star would be greatly appreciated. It helps other teams discover the project. [PortBridge on GitHub](https://github.com/akimfomin/PortBridge)

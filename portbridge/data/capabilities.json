@@ -298,5 +298,29 @@
     "scope": "Исследование различает накопительный счётчик постановки компиляции, текущую очередь и ожидание результата.",
     "translations": {"en": {"scope": "The analysis distinguishes cumulative compile requests, current backlog and waiting for a result."}},
     "evidence": "https://github.com/sub-north/xbox-hle-lab/commit/8863028b486dedf660303fcd3c756b05bbbebf91"
+  },
+  {
+    "project": "anyps5",
+    "area": "shaders",
+    "kind": "source",
+    "summary": "Синтетическая проверка Wave32 в широкой подгруппе.",
+    "evidence": "https://github.com/boykopovar/AnyPS5/blob/0b16257796508b77472154e48c927d6fc4035d26/core/libs/tests/Wave32WideSubgroup.cpp",
+    "translations": {
+      "en": {
+        "summary": "Synthetic Wave32 check in a wide subgroup."
+      }
+    }
+  },
+  {
+    "project": "kytyps5",
+    "area": "graphics",
+    "kind": "source",
+    "summary": "Реализация кэша текстур в Vulkan backend.",
+    "evidence": "https://github.com/KytyPS5/KytyPS5/blob/93cce66564bdced2fc7054ca9794451dfeef4d9d/src/graphics/host_gpu/renderer/cache/textureCache.cpp",
+    "translations": {
+      "en": {
+        "summary": "Texture cache implementation in the Vulkan backend."
+      }
+    }
   }
 ]

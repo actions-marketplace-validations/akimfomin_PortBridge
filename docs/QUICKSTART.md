@@ -16,6 +16,18 @@ Choose AMD, NVIDIA, or CPU in the Test Lab. Check the linked discussion, run the
 2. Open the linked issue, PR, or test. Compare its commit, platform, and tested condition with yours. Use automated matches as leads to check.
 3. Share one reproducible result through the [evidence form](https://github.com/akimfomin/PortBridge/issues/new?template=evidence.yml). Keep the original discussion linked.
 
+## Try Discovery locally
+
+From the M2 checkout, search by technical terms or the receiving PR URL.
+
+```sh
+python -m portbridge.discovery_search --q "DXGI adapter LUID"
+python -m portbridge.discovery_search --url https://github.com/xcl-dev/xcl/pull/2322
+python -m portbridge serve --offline
+```
+
+In the local site, choose **Issue catalog** and enter the same query. Open the source and the applicability details for the suggested test, architectural limits and license. The date shows when the bundled source was reviewed. [M2 examples and limits](PORTBRIDGE-M2.md)
+
 ## Connect Codex or Claude Code
 
 Use Python 3.10 or later and clone PortBridge. The default server reads the public catalog. It runs locally and needs no database or GitHub token.
@@ -44,7 +56,7 @@ Run `codex mcp list` and open a new session. Check the connection with `/mcp`. [
 From the project you want to work on in Claude Code, run these commands.
 
 ```sh
-claude mcp add --env "PYTHONPATH=/absolute/path/to/PortBridge" --transport stdio portbridge -- python -m portbridge.mcp
+claude mcp add --transport stdio portbridge --env "PYTHONPATH=/absolute/path/to/PortBridge" -- python -m portbridge.mcp
 claude mcp list
 ```
 

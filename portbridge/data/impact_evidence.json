@@ -1,0 +1,2344 @@
+{
+  "version": 1,
+  "people": [
+    {
+      "subject": "https://github.com/akimfomin/PortBridge",
+      "source": "https://github.com/akimfomin/PortBridge",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX",
+      "source": "https://github.com/LooperSalty/AnyXboxX",
+      "actor": {
+        "login": "LooperSalty",
+        "user_id": 106304476
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida",
+      "source": "https://github.com/ubiquitarianism/leonida",
+      "actor": {
+        "login": "ubiquitarianism",
+        "user_id": 283527159
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5",
+      "source": "https://github.com/boykopovar/AnyPS5",
+      "actor": {
+        "login": "boykopovar",
+        "user_id": 184076081
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/clquwu/leonida-ultimate",
+      "source": "https://github.com/clquwu/leonida-ultimate",
+      "actor": {
+        "login": "clquwu",
+        "user_id": 60440820
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/Marvisak/VIctory",
+      "source": "https://github.com/Marvisak/VIctory",
+      "actor": {
+        "login": "Marvisak",
+        "user_id": 60314886
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/fxceless/victory-fork",
+      "source": "https://github.com/fxceless/victory-fork",
+      "actor": {
+        "login": "fxceless",
+        "user_id": 36782933
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/5headsmartbtw/leonida-framelab",
+      "source": "https://github.com/5headsmartbtw/leonida-framelab",
+      "actor": {
+        "login": "5headsmartbtw",
+        "user_id": 71517730
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/KretliJ/victory-monitor",
+      "source": "https://github.com/KretliJ/victory-monitor",
+      "actor": {
+        "login": "KretliJ",
+        "user_id": 133608750
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/JamesCicada/GTAVI-Recomp",
+      "source": "https://github.com/JamesCicada/GTAVI-Recomp",
+      "actor": {
+        "login": "JamesCicada",
+        "user_id": 64677547
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/InoriRus/Kyty",
+      "source": "https://github.com/InoriRus/Kyty",
+      "actor": {
+        "login": "InoriRus",
+        "user_id": 7149418
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "role_state": "historical"
+    },
+    {
+      "subject": "https://github.com/Jetsku/KytyPS5",
+      "source": "https://github.com/Jetsku/KytyPS5",
+      "actor": {
+        "login": "Jetsku",
+        "user_id": 59046009
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/craze1pirate/craziiEmu",
+      "source": "https://github.com/craze1pirate/craziiEmu",
+      "actor": {
+        "login": "craze1pirate",
+        "user_id": 204754514
+      },
+      "at": "2026-11-26T16:28:00Z",
+      "role": "repository_owner",
+      "basis": "GitHub repository metadata identifies the owner",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b",
+      "source": "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b",
+      "actor": {
+        "login": "clquwu",
+        "user_id": 60440820
+      },
+      "at": "2026-11-25T09:16:19Z",
+      "role": "developer",
+      "basis": "Receiving commit credits the Continued Vulkan layout range work",
+      "specialties": [
+        "graphics",
+        "api"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "commit"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/129",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/129",
+      "actor": {
+        "login": "Skyfrye",
+        "user_id": 344975579
+      },
+      "at": "2026-11-24T11:28:23Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "feat: accès LDS _d16 dans l'interpréteur de référence RDNA 2",
+      "revision": "1bc9e47b13a96bf39a21109700b003eacdc86240"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/129",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/129#pullrequestreview-6038520840",
+      "actor": {
+        "login": "LooperSalty",
+        "user_id": 106304476
+      },
+      "at": "2026-11-24T11:39:13Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+      "actor": {
+        "login": "KainanP",
+        "user_id": 75652099
+      },
+      "at": "2026-11-24T12:21:00Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "feat: instructions VOP1/VOP2 restantes de l'interpréteur RDNA 2 (conversions, frexp, retenue VCC)",
+      "revision": "4c23275529b845eaa4537413a551f57765d9c650"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/133#pullrequestreview-6040053655",
+      "actor": {
+        "login": "LooperSalty",
+        "user_id": 106304476
+      },
+      "at": "2026-11-24T13:29:57Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/133#pullrequestreview-6041873843",
+      "actor": {
+        "login": "LooperSalty",
+        "user_id": 106304476
+      },
+      "at": "2026-11-24T15:10:46Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/133#pullrequestreview-6047237497",
+      "actor": {
+        "login": "LooperSalty",
+        "user_id": 106304476
+      },
+      "at": "2026-11-24T20:54:46Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/133#pullrequestreview-6058498348",
+      "actor": {
+        "login": "LooperSalty",
+        "user_id": 106304476
+      },
+      "at": "2026-11-25T13:29:41Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/144",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/144",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-24T14:34:38Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "testing"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "fix: fiabiliser le test ALU compute sur WARP",
+      "revision": "a56090a935fb2ba508beeaa0458ea168bf00c16c"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/701",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/701",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-24T12:23:29Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "rdna2spirv: track D16 XYZ writes per destination",
+      "revision": "66dbbf3e176880487617609547b02c98add60297"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/701",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/701#pullrequestreview-6039203797",
+      "actor": {
+        "login": "abnalstlll-byte",
+        "user_id": 284980532
+      },
+      "at": "2026-11-24T12:29:40Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/1713",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/1713",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-25T09:16:19Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "vulkan: coalesce equal image layout ranges (VK-IMAGE-LAYOUT-RANGE-COALESCING)",
+      "revision": "ef9ae1fd54d5c452eb31236c1ca86debe0a5fda9"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/1713",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/1713#pullrequestreview-6055209960",
+      "actor": {
+        "login": "kawaii-shakal",
+        "user_id": 32997876
+      },
+      "at": "2026-11-25T09:45:33Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/1042",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/1042",
+      "actor": {
+        "login": "madhyn",
+        "user_id": 79798339
+      },
+      "at": "2026-11-24T17:07:21Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "performance"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "frame_pacer: wake blocked waiters on set_uncapped and guard shutdown entry",
+      "revision": "29736be5589c2c3d0d2d1cdeaf2c8364ce6d4d41"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/1042",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/1042#pullrequestreview-6044064503",
+      "actor": {
+        "login": "KernelSmoker",
+        "user_id": 360572053
+      },
+      "at": "2026-11-24T17:20:40Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "performance"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/1042",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/1042#pullrequestreview-6044649650",
+      "actor": {
+        "login": "fin-github",
+        "user_id": 70870542
+      },
+      "at": "2026-11-24T18:00:48Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "performance"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/1026",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/1026",
+      "actor": {
+        "login": "yawn-animals",
+        "user_id": 360427772
+      },
+      "at": "2026-11-24T17:01:57Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders",
+        "memory",
+        "testing"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "TEST-LDS-CMPST-WAIT: wait for the last LDS read in cs_lds_b64_cmpst",
+      "revision": "40a2b1c6b60aac005cbe2ecaf4b1130a630d6494"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "actor": {
+        "login": "malekaifa",
+        "user_id": 32399935
+      },
+      "at": "2026-11-22T13:39:44Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "fix(shader): broadcast Wave32 readfirstlane on narrow subgroups",
+      "revision": "c0065b712b90ca51a5e2c4564ba86e81a3745fe5"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6012571146",
+      "actor": {
+        "login": "MarcZX10",
+        "user_id": 67475268
+      },
+      "at": "2026-11-22T13:50:31Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6012678292",
+      "actor": {
+        "login": "MarcZX10",
+        "user_id": 67475268
+      },
+      "at": "2026-11-22T14:17:08Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6017416133",
+      "actor": {
+        "login": "mihiii1337",
+        "user_id": 283781852
+      },
+      "at": "2026-11-23T06:33:05Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6017512695",
+      "actor": {
+        "login": "mihiii1337",
+        "user_id": 283781852
+      },
+      "at": "2026-11-23T06:46:30Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6017584922",
+      "actor": {
+        "login": "MarcZX10",
+        "user_id": 67475268
+      },
+      "at": "2026-11-23T06:56:12Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6017626419",
+      "actor": {
+        "login": "throny",
+        "user_id": 11830644
+      },
+      "at": "2026-11-23T07:01:30Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6019071721",
+      "actor": {
+        "login": "mihiii1337",
+        "user_id": 283781852
+      },
+      "at": "2026-11-23T09:18:17Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6019227254",
+      "actor": {
+        "login": "mihiii1337",
+        "user_id": 283781852
+      },
+      "at": "2026-11-23T09:31:06Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6019238555",
+      "actor": {
+        "login": "MarcZX10",
+        "user_id": 67475268
+      },
+      "at": "2026-11-23T09:32:01Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6022456951",
+      "actor": {
+        "login": "mihiii1337",
+        "user_id": 283781852
+      },
+      "at": "2026-11-23T13:24:51Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660#pullrequestreview-6049045875",
+      "actor": {
+        "login": "MarcZX10",
+        "user_id": 67475268
+      },
+      "at": "2026-11-24T23:27:29Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/317",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/317",
+      "actor": {
+        "login": "mauroalvare",
+        "user_id": 149129640
+      },
+      "at": "2026-11-26T02:37:51Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "fix: preserve wave64 first-lane reads on 32-lane hosts",
+      "revision": "89df1b296c80da11a4d60fe6c0c2e0ac518285da"
+    },
+    {
+      "subject": "https://github.com/llvm/llvm-project/pull/234715",
+      "source": "https://github.com/llvm/llvm-project/pull/234715",
+      "actor": {
+        "login": "erizheng-amd",
+        "user_id": 265066666
+      },
+      "at": "2026-10-22T18:20:27Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "discovery",
+      "title": "[AMDGPU] Legalize SGPR inline-asm inputs with readfirstlane",
+      "revision": "b47f8bfa0158d81e94572408e9b4dc2782bc9197",
+      "discovery_for": "https://github.com/boykopovar/anyps5/pull/25660"
+    },
+    {
+      "subject": "https://github.com/llvm/llvm-project/pull/234715",
+      "source": "https://github.com/llvm/llvm-project/pull/234715#pullrequestreview-5638951771",
+      "actor": {
+        "login": "krzysz00",
+        "user_id": 486396
+      },
+      "at": "2026-10-24T16:26:38Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/pull/1100",
+      "source": "https://github.com/xcl-dev/xcl/pull/1100",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-24T11:34:40Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders",
+        "testing"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "Recompiler tests: compare FMA modifiers against Scarlett Layer",
+      "revision": "1b3fbc4bc8c3088e69d78f85a2e73f1cccf4df51"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/pull/1144",
+      "source": "https://github.com/xcl-dev/xcl/pull/1144",
+      "actor": {
+        "login": "b3IKK",
+        "user_id": 278540256
+      },
+      "at": "2026-11-24T12:32:18Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "Recompiler: v_div_fmas_f32 scales by VCC and v_div_fixup_f32 handles NaN/zero/sign",
+      "revision": "eac652c3d11927169ea46739249ebcc188ad800e"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/issues/145",
+      "source": "https://github.com/LooperSalty/AnyXboxX/issues/145",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-24T14:36:17Z",
+      "role": "researcher",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "issue",
+      "title": "WARP : écart d’arrondi bilinéaire avec des opérations HLSL precise",
+      "revision": null
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/966",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/966",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-24T15:59:30Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "rdna2spirv: keep DATA0 for equal paired LDS write offsets (SHADER-LDS-EQUAL-WRITES)",
+      "revision": "9ae6f1253ffc45cc1ebf774dcaa630959111ccb0"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/966",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/966#pullrequestreview-6042837366",
+      "actor": {
+        "login": "KernelSmoker",
+        "user_id": 360572053
+      },
+      "at": "2026-11-24T16:02:58Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/966",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/966#pullrequestreview-6063402581",
+      "actor": {
+        "login": "tiguan26",
+        "user_id": 360798628
+      },
+      "at": "2026-11-25T19:06:55Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/pull/2034",
+      "source": "https://github.com/xcl-dev/xcl/pull/2034",
+      "actor": {
+        "login": "Royalflamejlh",
+        "user_id": 49204095
+      },
+      "at": "2026-11-25T01:23:20Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "Recompiler: direct DXIL lowers a repeating compute program's blocks once",
+      "revision": "e591a8c8971206c854b0d6c5f8f21362182ed12d"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/pull/2034",
+      "source": "https://github.com/xcl-dev/xcl/pull/2034#pullrequestreview-6050608586",
+      "actor": {
+        "login": "gsucristo",
+        "user_id": 73517989
+      },
+      "at": "2026-11-25T02:10:08Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "shaders"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/KretliJ/victory-monitor/issues/1",
+      "source": "https://github.com/KretliJ/victory-monitor/issues/1",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-25T04:19:34Z",
+      "role": "researcher",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "issue",
+      "title": "Frame-time chart adds submit wait on top of frame duration",
+      "revision": null
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/pull/2322",
+      "source": "https://github.com/xcl-dev/xcl/pull/2322",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-25T14:21:28Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "Recompiler: reuse scratch slots across disjoint payload lifetimes",
+      "revision": "b3f7ab5574c4489761141e2de0ce31d2eb216412"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/188",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/188",
+      "actor": {
+        "login": "Lewandox",
+        "user_id": 108379891
+      },
+      "at": "2026-11-25T01:02:42Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "feat(texture): add GFX10 64 KiB tiling, XOR modes, mip tails, and 2D texture arrays (#14)",
+      "revision": "2904a65114d6f25cdb78d9f9c533a71851c635e8"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/202",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/202",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-25T09:18:51Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "graphics",
+        "performance"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "perf(texture): accélérer le décodage BC7 des surfaces",
+      "revision": "c499ce137f6dc7120be49a43270715681f936386"
+    },
+    {
+      "subject": "https://github.com/LooperSalty/AnyXboxX/pull/202",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/202#pullrequestreview-6056983166",
+      "actor": {
+        "login": "Exorion1er",
+        "user_id": 8749995
+      },
+      "at": "2026-11-25T11:43:48Z",
+      "role": "reviewer",
+      "basis": "GitHub records a submitted technical review",
+      "specialties": [
+        "graphics",
+        "performance"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/itsSio/xcl/pull/9",
+      "source": "https://github.com/itsSio/xcl/pull/9",
+      "actor": {
+        "login": "itsSio",
+        "user_id": 31954644
+      },
+      "at": "2026-11-26T05:29:27Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "shaders",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "Recompiler: Wave32 pixel mask writes kill one SGPR, not a pair",
+      "revision": "e1e5bbf0d9bd5b1567c58d55acf2be7ce8d44bc3"
+    },
+    {
+      "subject": "https://github.com/5headsmartbtw/leonida-framelab/pull/36",
+      "source": "https://github.com/5headsmartbtw/leonida-framelab/pull/36",
+      "actor": {
+        "login": "JoeY54",
+        "user_id": 71070620
+      },
+      "at": "2026-11-26T08:39:58Z",
+      "role": "developer",
+      "basis": "GitHub identifies the work item author",
+      "specialties": [
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "pr",
+      "title": "FL-14: opt-in D3D12 DLSS Super Resolution component with installed C/C++ consumers",
+      "revision": "cc77061d81fa2b17f467b9a5a87ee5e411f803be"
+    },
+    {
+      "subject": "https://github.com/akimfomin/PortBridge/issues/19",
+      "source": "https://github.com/akimfomin/PortBridge/issues/19#issuecomment-7136020663",
+      "actor": {
+        "login": "Lyrnc",
+        "user_id": 98659851
+      },
+      "at": "2026-11-24T15:26:06Z",
+      "role": "hardware_tester",
+      "basis": "Hardware differential carry-mask results",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "hardware": "AMD RDNA2",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/701",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/701#issuecomment-7131731339",
+      "actor": {
+        "login": "GeorgiyDemo",
+        "user_id": 16972045
+      },
+      "at": "2026-11-24T12:38:58Z",
+      "role": "hardware_tester",
+      "basis": "Original and patched D16 translator cases",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "hardware": "Apple M5 Pro",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/1042",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/1042#issuecomment-7138758788",
+      "actor": {
+        "login": "morodirule",
+        "user_id": 66974870
+      },
+      "at": "2026-11-24T17:08:57Z",
+      "role": "tester",
+      "basis": "Independent patched and control frame pacer test",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/ubiquitarianism/leonida/pull/1026",
+      "source": "https://github.com/ubiquitarianism/leonida/pull/1026#issuecomment-7138695955",
+      "actor": {
+        "login": "morodirule",
+        "user_id": 66974870
+      },
+      "at": "2026-11-24T17:06:29Z",
+      "role": "tester",
+      "basis": "Independent validation of LDS compare-store-wait experiment",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/5headsmartbtw/leonida-framelab/issues/15",
+      "source": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7147944059",
+      "actor": {
+        "login": "JoeY54",
+        "user_id": 71070620
+      },
+      "at": "2026-11-24T23:55:29Z",
+      "role": "hardware_tester",
+      "basis": "Four independent standalone evidence cases",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "hardware": "Radeon 860M",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/5headsmartbtw/leonida-framelab/issues/15",
+      "source": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7153817545",
+      "actor": {
+        "login": "JoeY54",
+        "user_id": 71070620
+      },
+      "at": "2026-11-25T05:28:56Z",
+      "role": "hardware_tester",
+      "basis": "Second public hardware report by the same participant",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "hardware": "Ryzen 9 9950X3D integrated GPU",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/issues/2584",
+      "source": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7178879816",
+      "actor": {
+        "login": "DarkPanda69",
+        "user_id": 297194557
+      },
+      "at": "2026-11-26T00:33:30Z",
+      "role": "hardware_tester",
+      "basis": "Independent paired pre-fix and patched tests",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "hardware": "RX 9070 XT and RTX 3060",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/issues/2584",
+      "source": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7179418085",
+      "actor": {
+        "login": "luckyteagirl",
+        "user_id": 290248872
+      },
+      "at": "2026-11-26T01:05:13Z",
+      "role": "hardware_tester",
+      "basis": "Independent focused test on the exact patched revision",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "hardware": "Radeon RX 6800M",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/issues/2584",
+      "source": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7183532233",
+      "actor": {
+        "login": "itsSio",
+        "user_id": 31954644
+      },
+      "at": "2026-11-26T05:29:29Z",
+      "role": "hardware_tester",
+      "basis": "Independent focused and wider NVIDIA tests on rebased revision",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "hardware": "RTX 5080 and RTX 2080 SUPER",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/akimfomin/PortBridge/issues/19",
+      "source": "https://github.com/akimfomin/PortBridge/issues/19",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-24T14:19:00Z",
+      "role": "coordinator",
+      "basis": "Opened a technical validation request with a synthetic RDNA2 case",
+      "specialties": [
+        "shaders",
+        "testing",
+        "infrastructure"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z"
+    },
+    {
+      "subject": "https://github.com/akimfomin/PortBridge/issues/91",
+      "source": "https://github.com/akimfomin/PortBridge/issues/91",
+      "actor": {
+        "login": "akimfomin",
+        "user_id": 201861029
+      },
+      "at": "2026-11-26T02:23:18Z",
+      "role": "lead",
+      "basis": "Founder letter establishes historical leadership and transition to passive support",
+      "specialties": [
+        "infrastructure"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "role_state": "historical"
+    },
+    {
+      "subject": "https://github.com/ecox982745/Leonida/commit/a300ba63d1a9a4cdfde1d64f136728545b4ab7b8",
+      "source": "https://github.com/ecox982745/Leonida/commit/a300ba63d1a9a4cdfde1d64f136728545b4ab7b8",
+      "actor": {
+        "login": "ecox982745",
+        "user_id": 196405083
+      },
+      "at": "2026-11-24T12:23:29Z",
+      "role": "developer",
+      "basis": "Original implementation explicitly attributed by receiving PR",
+      "specialties": [
+        "shaders",
+        "memory"
+      ],
+      "checked_at": "2026-11-26T16:28:00Z",
+      "kind": "commit"
+    },
+    {
+      "subject": "https://github.com/5headsmartbtw/leonida-framelab/issues/15",
+      "source": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7160148587",
+      "actor": {
+        "login": "5headsmartbtw",
+        "user_id": 71517730
+      },
+      "at": "2026-11-26T16:45:00Z",
+      "basis": "Repository owner signed the public FL-07 maintainer review",
+      "role": "maintainer",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "checked_at": "2026-11-26T16:45:00Z"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/pull/2080",
+      "source": "https://github.com/xcl-dev/xcl/pull/2080#issuecomment-7153700167",
+      "actor": {
+        "login": "JoaoPauluu",
+        "user_id": 30844304
+      },
+      "at": "2026-11-25T05:21:56Z",
+      "basis": "Reported three failures in the pinned Linux validation",
+      "role": "hardware_tester",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "hardware": "RTX 3060",
+      "checked_at": "2026-11-26T16:45:00Z",
+      "kind": "lab"
+    },
+    {
+      "subject": "https://github.com/xcl-dev/xcl/pull/2080",
+      "source": "https://github.com/xcl-dev/xcl/pull/2080#issuecomment-7154185295",
+      "actor": {
+        "login": "Kalmarv",
+        "user_id": 59708937
+      },
+      "at": "2026-11-25T05:50:13Z",
+      "basis": "Compared two versions of vkd3d-proton in the technical follow-up",
+      "role": "hardware_tester",
+      "specialties": [
+        "testing",
+        "graphics"
+      ],
+      "hardware": "RTX 2060",
+      "checked_at": "2026-11-26T16:45:00Z",
+      "kind": "lab"
+    }
+  ],
+  "stories": [
+    {
+      "id": "impact:rdna2-carry",
+      "title": "RDNA2 carry validation reused in AnyXboxX",
+      "state": "accepted",
+      "type": "evidence_reuse",
+      "at": "2026-11-25T13:29:58Z",
+      "summary": "KainanP authored the instruction implementation. akimfomin prepared the validation request and LooperSalty reviewed the PR. Lyrnc supplied an independent native RDNA2 run. The receiving PR cites the data and merged to main.",
+      "scope": "Source and targeted hardware checks cover the listed instructions. This does not measure downstream deployment.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "shaders",
+      "sources": [
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+          "label": "Receiving PR and attribution"
+        },
+        {
+          "url": "https://github.com/akimfomin/PortBridge/issues/19#issuecomment-7136020663",
+          "label": "Native RDNA2 result"
+        },
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/pull/133#issuecomment-7136721736",
+          "label": "Receiving author records the result"
+        },
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/commit/71d4c615c6981280b95c11290fd48ef015b5d4cb",
+          "label": "Receiving merge commit"
+        },
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/pull/133#pullrequestreview-6041873843",
+          "label": "Public review"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+          "basis": "Authored the receiving implementation",
+          "login": "KainanP",
+          "user_id": 75652099
+        },
+        {
+          "kind": "coordination",
+          "source": "https://github.com/akimfomin/PortBridge/issues/19",
+          "basis": "Prepared the pinned validation request",
+          "login": "akimfomin",
+          "user_id": 201861029
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/akimfomin/PortBridge/issues/19#issuecomment-7136020663",
+          "basis": "Reported independent native RDNA2 validation",
+          "login": "Lyrnc",
+          "user_id": 98659851
+        },
+        {
+          "kind": "review",
+          "source": "https://github.com/LooperSalty/AnyXboxX/pull/133#pullrequestreview-6041873843",
+          "basis": "Submitted the receiving-project review",
+          "login": "LooperSalty",
+          "user_id": 106304476
+        },
+        {
+          "kind": "receiving_team",
+          "source": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+          "basis": "Maintainers merged to main",
+          "login": null,
+          "user_id": null,
+          "team": "AnyXboxX"
+        },
+        {
+          "kind": "connection",
+          "source": "https://github.com/LooperSalty/AnyXboxX/pull/133#issuecomment-7136721736",
+          "basis": "Used and credited the Native RDNA2 test in the receiving discussion",
+          "login": "KainanP",
+          "user_id": 75652099
+        }
+      ],
+      "measures": [
+        [
+          "accepted_changes",
+          "https://github.com/LooperSalty/AnyXboxX/pull/133"
+        ],
+        [
+          "independent_reproductions",
+          "https://github.com/akimfomin/PortBridge/issues/19#issuecomment-7136020663"
+        ],
+        [
+          "evidence_reuse",
+          "https://github.com/LooperSalty/AnyXboxX/pull/133#issuecomment-7136721736"
+        ],
+        [
+          "delivered_results",
+          "https://github.com/LooperSalty/AnyXboxX/pull/133#issuecomment-7136721736"
+        ]
+      ],
+      "related": [
+        "https://github.com/akimfomin/PortBridge/issues/19",
+        "https://github.com/LooperSalty/AnyXboxX/pull/133"
+      ],
+      "title_ru": "AnyXboxX применил независимую проверку переноса RDNA2",
+      "summary_ru": "KainanP написал реализацию. akimfomin подготовил запрос, Lyrnc провёл аппаратную проверку, LooperSalty подписал ревью. Принимающий PR ссылается на данные и был слит."
+    },
+    {
+      "id": "impact:d16-transfer",
+      "title": "D16 translator fix with original author retained",
+      "state": "reviewed",
+      "type": "cross_project_transfer",
+      "at": "2026-11-24T12:38:58Z",
+      "summary": "ecox982745 authored the Reforge correction. akimfomin prepared the Continued transfer. abnalstlll-byte reviewed it and GeorgiyDemo ran an independent Apple M5 Pro comparison.",
+      "scope": "Continued #701 remains open. The original contribution, port and hardware check have separate attribution.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "shaders",
+      "sources": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/701",
+          "label": "Receiving draft"
+        },
+        {
+          "url": "https://github.com/ecox982745/Leonida/commit/a300ba63d1a9a4cdfde1d64f136728545b4ab7b8",
+          "label": "Original implementation"
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/701#issuecomment-7131731339",
+          "label": "Independent test"
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/701#pullrequestreview-6039203797",
+          "label": "Public review"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/ecox982745/Leonida/commit/a300ba63d1a9a4cdfde1d64f136728545b4ab7b8",
+          "basis": "Original D16 fix",
+          "login": "ecox982745",
+          "user_id": 196405083
+        },
+        {
+          "kind": "port",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/701",
+          "basis": "Prepared the Continued adaptation",
+          "login": "akimfomin",
+          "user_id": 201861029
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/701#issuecomment-7131731339",
+          "basis": "Compared the port and the control on Apple M5 Pro",
+          "login": "GeorgiyDemo",
+          "user_id": 16972045
+        },
+        {
+          "kind": "review",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/701#pullrequestreview-6039203797",
+          "basis": "Reviewed the receiving change",
+          "login": "abnalstlll-byte",
+          "user_id": 284980532
+        }
+      ],
+      "measures": [
+        [
+          "delivered_results",
+          "https://github.com/ubiquitarianism/leonida/pull/701"
+        ],
+        [
+          "independent_reproductions",
+          "https://github.com/ubiquitarianism/leonida/pull/701#issuecomment-7131731339"
+        ]
+      ],
+      "related": [
+        "https://github.com/ecox982745/Leonida/commit/a300ba63d1a9a4cdfde1d64f136728545b4ab7b8",
+        "https://github.com/ubiquitarianism/leonida/pull/701"
+      ],
+      "title_ru": "Перенос исправления D16 с сохранением автора",
+      "summary_ru": "ecox982745 написал исходную правку. akimfomin подготовил перенос в Continued. abnalstlll-byte провёл ревью, GeorgiyDemo сравнил две версии на Apple M5 Pro."
+    },
+    {
+      "id": "impact:vulkan-range-transfer",
+      "title": "Vulkan layout optimization in a receiving fork",
+      "state": "accepted",
+      "type": "cross_project_transfer",
+      "at": "2026-11-25T09:16:19Z",
+      "summary": "The Continued work describes coalescing equivalent Vulkan layout ranges. clquwu incorporated and credited the mechanism in Leonida Ultimate.",
+      "scope": "The original PR remains open. The receiving commit establishes one adoption, separate from ongoing use or unmeasured workload benefits.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "graphics",
+      "sources": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/1713",
+          "label": "Original Continued implementation"
+        },
+        {
+          "url": "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b",
+          "label": "Receiving commit"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/1713",
+          "basis": "Authored the original range coalescing work",
+          "login": "akimfomin",
+          "user_id": 201861029
+        },
+        {
+          "kind": "port",
+          "source": "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b",
+          "basis": "Carried the optimization into Leonida Ultimate",
+          "login": "clquwu",
+          "user_id": 60440820
+        },
+        {
+          "kind": "receiving_team",
+          "source": "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b",
+          "basis": "Attribution and implementation are in the receiving commit",
+          "team": "Leonida Ultimate"
+        }
+      ],
+      "measures": [
+        [
+          "accepted_changes",
+          "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b"
+        ],
+        [
+          "cross_project_transfers",
+          "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b"
+        ]
+      ],
+      "related": [
+        "https://github.com/ubiquitarianism/leonida/pull/1713",
+        "https://github.com/clquwu/leonida-ultimate/commit/e7124f97bff187968a30931fb31e7c42bd88622b"
+      ],
+      "title_ru": "Leonida Ultimate принял оптимизацию Vulkan",
+      "summary_ru": "clquwu включил объединение диапазонов с одинаковым layout и сослался на исходную работу Continued."
+    },
+    {
+      "id": "impact:framelab-use",
+      "title": "FrameLab used PortBridge Test Lab for Vulkan verification",
+      "state": "reviewed",
+      "type": "external_integration",
+      "at": "2026-11-25T05:28:56Z",
+      "summary": "FrameLab opened a native cross-vendor Vulkan handoff task and linked the PortBridge Test Lab in its documentation. JoeY54 supplied two hardware results under one account.",
+      "scope": "The result covers standalone synthetic synchronization and image readback. It does not prove continuous usage, frame generation or super resolution.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "testing",
+      "sources": [
+        {
+          "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15",
+          "label": "FrameLab test request"
+        },
+        {
+          "url": "https://github.com/5headsmartbtw/leonida-framelab/blob/1b1c3cfc371225cd020bf4bfbba50e8c696a86f1/docs/evidence/independent-vulkan-handoff.md",
+          "label": "FrameLab documentation"
+        },
+        {
+          "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7147944059",
+          "label": "Radeon 860M report"
+        },
+        {
+          "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7153817545",
+          "label": "Second hardware report"
+        },
+        {
+          "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7160148587",
+          "label": "Maintainer review of both AMD runs"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "coordination",
+          "source": "https://github.com/5headsmartbtw/leonida-framelab/issues/15",
+          "basis": "Opened the receiving project test request"
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7147944059",
+          "basis": "Ran all four synthetic cases on Radeon 860M",
+          "login": "JoeY54",
+          "user_id": 71070620
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7153817545",
+          "basis": "Ran a separate setup under the same login",
+          "login": "JoeY54",
+          "user_id": 71070620
+        },
+        {
+          "kind": "receiving_team",
+          "source": "https://github.com/5headsmartbtw/leonida-framelab/blob/1b1c3cfc371225cd020bf4bfbba50e8c696a86f1/docs/evidence/independent-vulkan-handoff.md",
+          "basis": "Documents the integration and target check",
+          "team": "FrameLab"
+        },
+        {
+          "kind": "review",
+          "source": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7160148587",
+          "basis": "Reviewed both runs against the original criteria",
+          "login": "5headsmartbtw",
+          "user_id": 71517730
+        }
+      ],
+      "measures": [
+        [
+          "integration_use",
+          "https://github.com/5headsmartbtw/leonida-framelab/blob/1b1c3cfc371225cd020bf4bfbba50e8c696a86f1/docs/evidence/independent-vulkan-handoff.md"
+        ],
+        [
+          "independent_reproductions",
+          "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7147944059"
+        ],
+        [
+          "independent_reproductions",
+          "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7153817545"
+        ]
+      ],
+      "related": [
+        "https://github.com/5headsmartbtw/leonida-framelab/issues/15",
+        "https://github.com/5headsmartbtw/leonida-framelab/blob/1b1c3cfc371225cd020bf4bfbba50e8c696a86f1/docs/evidence/independent-vulkan-handoff.md"
+      ],
+      "title_ru": "FrameLab использовал Test Lab для проверки Vulkan",
+      "summary_ru": "FrameLab открыл отдельную задачу и добавил ссылку на Test Lab в документацию. JoeY54 выполнил два прогона на разных устройствах."
+    },
+    {
+      "id": "impact:wave32-review",
+      "title": "Three contributors checked a Wave32 carry fix",
+      "state": "reviewed",
+      "type": "hardware_review",
+      "at": "2026-11-26T05:29:29Z",
+      "summary": "DarkPanda69 and luckyteagirl independently tested the focused XCL patch. itsSio reported controlled NVIDIA runs on a separately pinned rebased revision.",
+      "scope": "The RX 6800M report checked the fix only. The original XCL issue remains open. The tested rebased revision is distinct from the current fork head.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "shaders",
+      "sources": [
+        {
+          "url": "https://github.com/xcl-dev/xcl/issues/2584",
+          "label": "Technical issue"
+        },
+        {
+          "url": "https://github.com/akimfomin/xcl/commit/d3e7725f9f48c39c18e7b6e011ec76423edb0004",
+          "label": "Original fix"
+        },
+        {
+          "url": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7178879816",
+          "label": "Paired AMD and NVIDIA test"
+        },
+        {
+          "url": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7179418085",
+          "label": "AMD focused test"
+        },
+        {
+          "url": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7183532233",
+          "label": "Rebased NVIDIA results"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/akimfomin/xcl/commit/d3e7725f9f48c39c18e7b6e011ec76423edb0004",
+          "basis": "Authored the narrowly scoped fix",
+          "login": "akimfomin",
+          "user_id": 201861029
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7178879816",
+          "basis": "Control failed and the fix passed on two GPUs",
+          "login": "DarkPanda69",
+          "user_id": 297194557
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7179418085",
+          "basis": "Focused check passes on a different AMD GPU",
+          "login": "luckyteagirl",
+          "user_id": 290248872
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7183532233",
+          "basis": "Supplied independent comparative NVIDIA checks",
+          "login": "itsSio",
+          "user_id": 31954644
+        }
+      ],
+      "measures": [
+        [
+          "independent_reproductions",
+          "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7178879816"
+        ],
+        [
+          "independent_reproductions",
+          "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7179418085"
+        ],
+        [
+          "independent_reproductions",
+          "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7183532233"
+        ]
+      ],
+      "related": [
+        "https://github.com/xcl-dev/xcl/issues/2584",
+        "https://github.com/akimfomin/xcl/commit/d3e7725f9f48c39c18e7b6e011ec76423edb0004"
+      ],
+      "title_ru": "Три участника проверили исправление Wave32",
+      "summary_ru": "DarkPanda69 и luckyteagirl независимо проверили точечную правку. itsSio опубликовал результаты на двух NVIDIA после переноса на новую базу."
+    },
+    {
+      "id": "impact:pacer",
+      "title": "Frame pacer work with separate author, tester and reviewer",
+      "state": "reviewed",
+      "type": "external_review",
+      "at": "2026-11-24T17:07:21Z",
+      "summary": "madhyn developed the fix, morodirule tested it and fin-github reviewed the contribution.",
+      "scope": "Independent checking is recorded separately from an accepted change.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "performance",
+      "sources": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/1042",
+          "label": "Technical PR"
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/1042#issuecomment-7138758788",
+          "label": "Independent test"
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/1042#pullrequestreview-6044649650",
+          "label": "Public review"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/1042",
+          "basis": "Submitted the project's implementation",
+          "login": "madhyn",
+          "user_id": 79798339
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/1042#issuecomment-7138758788",
+          "basis": "Published the independent test",
+          "login": "morodirule",
+          "user_id": 66974870
+        },
+        {
+          "kind": "review",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/1042#pullrequestreview-6044649650",
+          "basis": "Public review of the receiving work",
+          "login": "fin-github",
+          "user_id": 70870542
+        }
+      ],
+      "measures": [
+        [
+          "independent_reproductions",
+          "https://github.com/ubiquitarianism/leonida/pull/1042#issuecomment-7138758788"
+        ]
+      ],
+      "related": [
+        "https://github.com/ubiquitarianism/leonida/pull/1042",
+        "https://github.com/ubiquitarianism/leonida/pull/1042#issuecomment-7138758788"
+      ],
+      "title_ru": "Исправление времени кадров в Continued",
+      "summary_ru": "madhyn написал исправление, morodirule его проверил, fin-github провёл ревью."
+    },
+    {
+      "id": "impact:wave32-fork-draft",
+      "title": "Wave32 fix adapted in a downstream draft",
+      "state": "draft",
+      "type": "cross_project_transfer",
+      "at": "2026-11-26T05:29:27Z",
+      "summary": "itsSio moved the focused patch to a separate fork and preserved the original author’s attribution.",
+      "scope": "The fork PR is not evidence of merge into XCL. The independent GPU report names its exact tested revision.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "shaders",
+      "sources": [
+        {
+          "url": "https://github.com/itsSio/xcl/pull/9",
+          "label": "Downstream draft"
+        },
+        {
+          "url": "https://github.com/akimfomin/xcl/commit/d3e7725f9f48c39c18e7b6e011ec76423edb0004",
+          "label": "Original fix"
+        },
+        {
+          "url": "https://github.com/xcl-dev/xcl/issues/2584#issuecomment-7183532233",
+          "label": "Public handoff and test scope"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "port",
+          "source": "https://github.com/itsSio/xcl/pull/9",
+          "basis": "Prepared the downstream draft and retained authorship",
+          "login": "itsSio",
+          "user_id": 31954644
+        },
+        {
+          "kind": "fix",
+          "source": "https://github.com/akimfomin/xcl/commit/d3e7725f9f48c39c18e7b6e011ec76423edb0004",
+          "basis": "Original author retained",
+          "login": "akimfomin",
+          "user_id": 201861029
+        }
+      ],
+      "measures": [],
+      "related": [
+        "https://github.com/xcl-dev/xcl/issues/2584",
+        "https://github.com/itsSio/xcl/pull/9"
+      ],
+      "title_ru": "Исправление Wave32 перенесли в черновик отдельного форка",
+      "summary_ru": "itsSio подготовил перенос и сохранил исходное авторство. Черновик открыт, а в отчёте указана точная проверенная версия."
+    },
+    {
+      "id": "impact:lds-skyfrye",
+      "title": "LDS D16 implementation by Skyfrye",
+      "state": "accepted",
+      "type": "external_merge",
+      "at": "2026-11-24T11:41:25Z",
+      "summary": "AnyXboxX adopted Skyfrye’s own implementation.",
+      "scope": "Project-owned work. The merge does not assign the implementation to PortBridge.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "shaders",
+      "sources": [
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/pull/129",
+          "label": "Author and merge record"
+        },
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/commit/b15d8821bffcd8fbc98e56f41daf07fc91118192",
+          "label": "Merge commit"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/LooperSalty/AnyXboxX/pull/129",
+          "basis": "GitHub lists the implementation author",
+          "login": "Skyfrye",
+          "user_id": 344975579
+        },
+        {
+          "kind": "receiving_team",
+          "source": "https://github.com/LooperSalty/AnyXboxX/commit/b15d8821bffcd8fbc98e56f41daf07fc91118192",
+          "basis": "Verified main-branch merge",
+          "team": "AnyXboxX"
+        }
+      ],
+      "measures": [
+        [
+          "accepted_changes",
+          "https://github.com/LooperSalty/AnyXboxX/pull/129"
+        ]
+      ],
+      "related": [
+        "https://github.com/LooperSalty/AnyXboxX/pull/129",
+        "https://github.com/LooperSalty/AnyXboxX/commit/b15d8821bffcd8fbc98e56f41daf07fc91118192"
+      ],
+      "title_ru": "Реализация LDS D16 от Skyfrye",
+      "summary_ru": "AnyXboxX слил собственную реализацию Skyfrye."
+    },
+    {
+      "id": "impact:warp-alu",
+      "title": "Focused WARP ALU test fix",
+      "state": "accepted",
+      "type": "external_merge",
+      "at": "2026-11-24T15:14:24Z",
+      "summary": "AnyXboxX received and merged a narrowly scoped compute prologue test correction from akimfomin.",
+      "scope": "Confirmed merge to main. Performance and reuse remain bounded by the original evidence.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "testing",
+      "sources": [
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/pull/144",
+          "label": "Author and merge record"
+        },
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/commit/becaf7829d2aa03c293e0b52125fc740c5590ea1",
+          "label": "Merge commit"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/LooperSalty/AnyXboxX/pull/144",
+          "basis": "GitHub lists the implementation author",
+          "login": "akimfomin",
+          "user_id": 201861029
+        },
+        {
+          "kind": "receiving_team",
+          "source": "https://github.com/LooperSalty/AnyXboxX/commit/becaf7829d2aa03c293e0b52125fc740c5590ea1",
+          "basis": "Verified main-branch merge",
+          "team": "AnyXboxX"
+        }
+      ],
+      "measures": [
+        [
+          "accepted_changes",
+          "https://github.com/LooperSalty/AnyXboxX/pull/144"
+        ]
+      ],
+      "related": [
+        "https://github.com/LooperSalty/AnyXboxX/pull/144",
+        "https://github.com/LooperSalty/AnyXboxX/commit/becaf7829d2aa03c293e0b52125fc740c5590ea1"
+      ],
+      "title_ru": "Исправление проверки ALU на WARP",
+      "summary_ru": "AnyXboxX слил точечную поправку теста от akimfomin."
+    },
+    {
+      "id": "impact:bc7",
+      "title": "BC7 decoder performance change",
+      "state": "accepted",
+      "type": "external_merge",
+      "at": "2026-11-25T11:43:53Z",
+      "summary": "AnyXboxX merged the BC7 decoder change submitted by akimfomin. The receiving PR documents its own scope.",
+      "scope": "Confirmed merge to main. Performance and reuse remain bounded by the original evidence.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "performance",
+      "sources": [
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/pull/202",
+          "label": "Author and merge record"
+        },
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/commit/0539d7f8ad7734e30396e7c913edeb0755d0f9ce",
+          "label": "Merge commit"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/LooperSalty/AnyXboxX/pull/202",
+          "basis": "GitHub lists the implementation author",
+          "login": "akimfomin",
+          "user_id": 201861029
+        },
+        {
+          "kind": "receiving_team",
+          "source": "https://github.com/LooperSalty/AnyXboxX/commit/0539d7f8ad7734e30396e7c913edeb0755d0f9ce",
+          "basis": "Verified main-branch merge",
+          "team": "AnyXboxX"
+        }
+      ],
+      "measures": [
+        [
+          "accepted_changes",
+          "https://github.com/LooperSalty/AnyXboxX/pull/202"
+        ]
+      ],
+      "related": [
+        "https://github.com/LooperSalty/AnyXboxX/pull/202",
+        "https://github.com/LooperSalty/AnyXboxX/commit/0539d7f8ad7734e30396e7c913edeb0755d0f9ce"
+      ],
+      "title_ru": "Оптимизация декодера BC7",
+      "summary_ru": "AnyXboxX слил изменение akimfomin. Границы проверки указаны в исходном PR."
+    },
+    {
+      "id": "impact:lds-closed",
+      "title": "LDS transfer reviewed and closed without merge",
+      "state": "closed_unmerged",
+      "type": "external_review",
+      "at": "2026-11-24T17:01:57Z",
+      "summary": "The public follow-up tested the transfer. GitHub records the PR closed without a merge.",
+      "scope": "Independent checking is recorded separately from an accepted change.",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "shaders",
+      "sources": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/1026",
+          "label": "Technical PR"
+        },
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/1026#issuecomment-7138695955",
+          "label": "Independent test"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/1026",
+          "basis": "Submitted the project's implementation",
+          "login": "yawn-animals",
+          "user_id": 360427772
+        },
+        {
+          "kind": "independent_test",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/1026#issuecomment-7138695955",
+          "basis": "Published the independent test",
+          "login": "morodirule",
+          "user_id": 66974870
+        }
+      ],
+      "measures": [
+        [
+          "independent_reproductions",
+          "https://github.com/ubiquitarianism/leonida/pull/1026#issuecomment-7138695955"
+        ]
+      ],
+      "related": [
+        "https://github.com/ubiquitarianism/leonida/pull/1026",
+        "https://github.com/ubiquitarianism/leonida/pull/1026#issuecomment-7138695955"
+      ],
+      "title_ru": "Перенос LDS проверен и закрыт без слияния",
+      "summary_ru": "Публичный отчёт подтвердил проверку. Основная ветка изменение не приняла."
+    },
+    {
+      "id": "impact:legacy-pb-0006",
+      "title": "Recompiler tests: compare FMA modifiers against Scarlett Layer",
+      "state": "reported",
+      "type": "historical_record",
+      "specialty": "testing",
+      "at": "2026-11-24T11:34:40Z",
+      "consoles": [
+        "xbox-series"
+      ],
+      "summary": "Receiving repository history preserved from PB-0006.",
+      "scope": "The public record establishes the authored work. A merge or downstream adoption is not established here.",
+      "related": [
+        "https://github.com/xcl-dev/xcl/pull/1100"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/xcl-dev/xcl/pull/1100",
+          "label": "Verified receiving item"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/xcl-dev/xcl/pull/1100",
+          "basis": "GitHub identifies the author",
+          "login": "akimfomin",
+          "user_id": 201861029
+        }
+      ],
+      "measures": [],
+      "summary_ru": "История принимающего репозитория сохранена. Сведения сверены с первичной карточкой."
+    },
+    {
+      "id": "impact:legacy-pb-0012",
+      "title": "Recompiler: v_div_fmas_f32 scales by VCC and v_div_fixup_f32 handles NaN/zero/sign",
+      "state": "reported",
+      "type": "historical_record",
+      "specialty": "testing",
+      "at": "2026-11-24T12:32:18Z",
+      "consoles": [
+        "xbox-series"
+      ],
+      "summary": "Receiving repository history preserved from PB-0012.",
+      "scope": "The public record establishes the authored work. A merge or downstream adoption is not established here.",
+      "related": [
+        "https://github.com/xcl-dev/xcl/pull/1144"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/xcl-dev/xcl/pull/1144",
+          "label": "Verified receiving item"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/xcl-dev/xcl/pull/1144",
+          "basis": "GitHub identifies the author",
+          "login": "b3IKK",
+          "user_id": 278540256
+        }
+      ],
+      "measures": [],
+      "summary_ru": "История принимающего репозитория сохранена. Сведения сверены с первичной карточкой."
+    },
+    {
+      "id": "impact:legacy-pb-0015",
+      "title": "WARP : écart d’arrondi bilinéaire avec des opérations HLSL precise",
+      "state": "reported",
+      "type": "historical_record",
+      "specialty": "testing",
+      "at": "2026-11-24T14:36:17Z",
+      "consoles": [
+        "xbox-series"
+      ],
+      "summary": "Receiving repository history preserved from PB-0015.",
+      "scope": "The public record establishes the authored work. A merge or downstream adoption is not established here.",
+      "related": [
+        "https://github.com/LooperSalty/AnyXboxX/issues/145"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/issues/145",
+          "label": "Verified receiving item"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "idea",
+          "source": "https://github.com/LooperSalty/AnyXboxX/issues/145",
+          "basis": "GitHub identifies the author",
+          "login": "akimfomin",
+          "user_id": 201861029
+        }
+      ],
+      "measures": [],
+      "summary_ru": "История принимающего репозитория сохранена. Сведения сверены с первичной карточкой."
+    },
+    {
+      "id": "impact:legacy-pb-0018",
+      "title": "rdna2spirv: keep DATA0 for equal paired LDS write offsets (SHADER-LDS-EQUAL-WRITES)",
+      "state": "reported",
+      "type": "historical_record",
+      "specialty": "testing",
+      "at": "2026-11-24T15:59:30Z",
+      "consoles": [
+        "xbox-series"
+      ],
+      "summary": "Receiving repository history preserved from PB-0018.",
+      "scope": "The public record establishes the authored work. A merge or downstream adoption is not established here.",
+      "related": [
+        "https://github.com/ubiquitarianism/leonida/pull/966"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/ubiquitarianism/leonida/pull/966",
+          "label": "Verified receiving item"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/ubiquitarianism/leonida/pull/966",
+          "basis": "GitHub identifies the author",
+          "login": "akimfomin",
+          "user_id": 201861029
+        }
+      ],
+      "measures": [],
+      "summary_ru": "История принимающего репозитория сохранена. Сведения сверены с первичной карточкой."
+    },
+    {
+      "id": "impact:legacy-pb-0022",
+      "title": "Recompiler: direct DXIL lowers a repeating compute program's blocks once",
+      "state": "accepted",
+      "type": "external_merge",
+      "specialty": "testing",
+      "at": "2026-11-25T02:08:28Z",
+      "consoles": [
+        "xbox-series"
+      ],
+      "summary": "Receiving repository history preserved from PB-0022.",
+      "scope": "GitHub confirms the receiving merge. This alone establishes no PortBridge-caused adoption or deployment.",
+      "related": [
+        "https://github.com/xcl-dev/xcl/pull/2034"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/xcl-dev/xcl/pull/2034",
+          "label": "Verified receiving item"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/xcl-dev/xcl/pull/2034",
+          "basis": "GitHub identifies the author",
+          "login": "Royalflamejlh",
+          "user_id": 49204095
+        }
+      ],
+      "measures": [
+        [
+          "accepted_changes",
+          "https://github.com/xcl-dev/xcl/pull/2034"
+        ]
+      ],
+      "summary_ru": "История принимающего репозитория сохранена. Сведения сверены с первичной карточкой."
+    },
+    {
+      "id": "impact:legacy-pb-0023",
+      "title": "Frame-time chart adds submit wait on top of frame duration",
+      "state": "reported",
+      "type": "historical_record",
+      "specialty": "testing",
+      "at": "2026-11-25T04:19:34Z",
+      "consoles": [
+        "xbox-series"
+      ],
+      "summary": "Receiving repository history preserved from PB-0023.",
+      "scope": "The public record establishes the authored work. A merge or downstream adoption is not established here.",
+      "related": [
+        "https://github.com/KretliJ/victory-monitor/issues/1"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/KretliJ/victory-monitor/issues/1",
+          "label": "Verified receiving item"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "idea",
+          "source": "https://github.com/KretliJ/victory-monitor/issues/1",
+          "basis": "GitHub identifies the author",
+          "login": "akimfomin",
+          "user_id": 201861029
+        }
+      ],
+      "measures": [],
+      "summary_ru": "История принимающего репозитория сохранена. Сведения сверены с первичной карточкой."
+    },
+    {
+      "id": "impact:legacy-pb-0025",
+      "title": "Recompiler: reuse scratch slots across disjoint payload lifetimes",
+      "state": "reported",
+      "type": "historical_record",
+      "specialty": "testing",
+      "at": "2026-11-25T14:21:28Z",
+      "consoles": [
+        "xbox-series"
+      ],
+      "summary": "Receiving repository history preserved from PB-0025.",
+      "scope": "The public record establishes the authored work. A merge or downstream adoption is not established here.",
+      "related": [
+        "https://github.com/xcl-dev/xcl/pull/2322"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/xcl-dev/xcl/pull/2322",
+          "label": "Verified receiving item"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/xcl-dev/xcl/pull/2322",
+          "basis": "GitHub identifies the author",
+          "login": "akimfomin",
+          "user_id": 201861029
+        }
+      ],
+      "measures": [],
+      "summary_ru": "История принимающего репозитория сохранена. Сведения сверены с первичной карточкой."
+    },
+    {
+      "id": "impact:legacy-pb-0026",
+      "title": "feat(texture): add GFX10 64 KiB tiling, XOR modes, mip tails, and 2D texture arrays (#14)",
+      "state": "closed_unmerged",
+      "type": "historical_record",
+      "specialty": "testing",
+      "at": "2026-11-25T01:02:42Z",
+      "consoles": [
+        "xbox-series"
+      ],
+      "summary": "Receiving repository history preserved from PB-0026.",
+      "scope": "The public record establishes the authored work. A merge or downstream adoption is not established here.",
+      "related": [
+        "https://github.com/LooperSalty/AnyXboxX/pull/188"
+      ],
+      "sources": [
+        {
+          "url": "https://github.com/LooperSalty/AnyXboxX/pull/188",
+          "label": "Verified receiving item"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "fix",
+          "source": "https://github.com/LooperSalty/AnyXboxX/pull/188",
+          "basis": "GitHub identifies the author",
+          "login": "Lewandox",
+          "user_id": 108379891
+        }
+      ],
+      "measures": [],
+      "summary_ru": "История принимающего репозитория сохранена. Сведения сверены с первичной карточкой."
+    },
+    {
+      "id": "impact:vkd3d-negative",
+      "title": "Linux comparison narrowed the XCL failure",
+      "at": "2026-11-25T05:50:13Z",
+      "state": "reviewed",
+      "type": "hardware_review",
+      "consoles": [
+        "xbox-series"
+      ],
+      "specialty": "testing",
+      "summary": "JoaoPauluu reported three failures with vkd3d-proton 3.1. Kalmarv compared the same checks with a later backend revision.",
+      "scope": "The reports identify a backend/version difference. They do not isolate its cause.",
+      "sources": [
+        {
+          "url": "https://github.com/xcl-dev/xcl/pull/2080",
+          "label": "XCL comparison"
+        },
+        {
+          "url": "https://github.com/xcl-dev/xcl/pull/2080#issuecomment-7153700167",
+          "label": "Independent negative result"
+        },
+        {
+          "url": "https://github.com/xcl-dev/xcl/pull/2080#issuecomment-7154185295",
+          "label": "Author follow-up"
+        }
+      ],
+      "credits": [
+        {
+          "kind": "negative_result",
+          "source": "https://github.com/xcl-dev/xcl/pull/2080#issuecomment-7153700167",
+          "login": "JoaoPauluu",
+          "user_id": 30844304,
+          "basis": "Published three failed runs with the reported setup"
+        },
+        {
+          "kind": "test",
+          "source": "https://github.com/xcl-dev/xcl/pull/2080#issuecomment-7154185295",
+          "login": "Kalmarv",
+          "user_id": 59708937,
+          "basis": "Compared behavior across vkd3d-proton versions"
+        }
+      ],
+      "related": [
+        "https://github.com/xcl-dev/xcl/pull/2080"
+      ],
+      "measures": [
+        [
+          "negative_results",
+          "https://github.com/xcl-dev/xcl/pull/2080#issuecomment-7153700167"
+        ]
+      ],
+      "title_ru": "Сравнение на Linux уточнило условия сбоя XCL",
+      "summary_ru": "JoaoPauluu зафиксировал три сбоя с vkd3d-proton 3.1. Kalmarv проверил поведение с другой версией."
+    }
+  ],
+  "research_links": [
+    {
+      "id": "people:wave32-cross-console",
+      "from": "loopersalty/anyxboxx",
+      "to": "boykopovar/anyps5",
+      "source": "https://github.com/LooperSalty/AnyXboxX/pull/317",
+      "comparison": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "state": "research",
+      "kind": "shared_mechanism",
+      "at": "2026-11-26T16:28:00Z",
+      "consoles": [
+        "ps5",
+        "xbox-series"
+      ],
+      "specialty": "shaders",
+      "basis": "Public author and review receipts tie both work items to readfirstlane. The Xbox and PS5 guest wave widths differ."
+    },
+    {
+      "id": "people:wave32-discovery",
+      "from": "boykopovar/anyps5",
+      "to": "llvm/llvm-project",
+      "source": "https://github.com/boykopovar/AnyPS5/pull/25660",
+      "comparison": "https://github.com/llvm/llvm-project/pull/234715",
+      "state": "research",
+      "kind": "shared_mechanism",
+      "at": "2026-11-26T16:28:00Z",
+      "consoles": [
+        "ps5"
+      ],
+      "specialty": "shaders",
+      "basis": "Public LLVM authors and reviewers were found during the Discovery readfirstlane search. Architecture and backend applicability remain open."
+    },
+    {
+      "id": "people:memory-budget-cross-console",
+      "from": "kytyps5/kytyps5",
+      "to": "loopersalty/anyxboxx",
+      "source": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+      "comparison": "https://github.com/LooperSalty/AnyXboxX/pull/354",
+      "at": "2026-11-26T16:45:00Z",
+      "kind": "shared_mechanism",
+      "state": "research",
+      "consoles": [
+        "ps5",
+        "xbox-series"
+      ],
+      "specialty": "memory",
+      "basis": "Both changes address resource pressure. The allocation retry, eviction triggers and synchronization semantics need separate tests."
+    }
+  ],
+  "visibility": {
+    "stars": {
+      "value": 2,
+      "url": "https://github.com/akimfomin/PortBridge",
+      "as_of": "2026-11-26T16:28:00Z"
+    },
+    "watchers": {
+      "value": 1,
+      "url": "https://github.com/akimfomin/PortBridge",
+      "as_of": "2026-11-26T16:28:00Z"
+    },
+    "forks": {
+      "value": 1,
+      "url": "https://github.com/akimfomin/PortBridge",
+      "as_of": "2026-11-26T16:28:00Z"
+    },
+    "public_thanks": {
+      "value": null,
+      "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7160148587"
+    },
+    "public_mentions": {
+      "value": null,
+      "url": "https://github.com/akimfomin/PortBridge/issues/91"
+    }
+  }
+}

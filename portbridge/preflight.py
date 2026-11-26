@@ -10,11 +10,16 @@ from urllib.parse import urlsplit
 from urllib.request import Request, build_opener
 
 from .catalog import PROBLEM_ID, ReadOnlyCatalog, public_url
+from .consoles import console_families
+from .discovery_scan import cached_index
+from .discovery_search import MAX_QUERY as MAX_DISCOVERY_QUERY, discover, empty_link_result, historical_candidates
 from .github import NoRedirect
 from .global_search import append_external_results
 from .matching import (GENERAL_SOURCE_TERMS, RelatedIndex, canonical_url, current_repository, observation_summary,
                        preflight_matches, rank_query, terms)
 from .preflight_index import MANIFEST, MANIFEST_LIMIT, QUERY_READS, QueryBudget, SearchReader, source_number
+from .source_health import health_freshness
+from .radar_store import filter_findings, reviewed_snapshot
 
 
 PUBLIC_BASE = "https://akimfomin.github.io/PortBridge/"
@@ -27,13 +32,24 @@ COMMENT_FRAGMENT = re.compile(r"(?:issuecomment-|discussion_r|pullrequestreview-
 GENERAL_CARD_TERMS = {"d3d12", "vulkan", "shader", "spirv", "wave32", "wave64", "gpu", "runtime"}
 
 
-def snapshot(resource, *, base_url=PUBLIC_BASE):
+def snapshot(resource, *, base_url=PUBLIC_BASE, site=None, revalidate=False):
     if base_url.rstrip("/") != PUBLIC_BASE.rstrip("/"):
         raise ValueError("Unrecognized PortBridge public catalog")
-    if resource not in {"activity", "ecosystem", "health", "lab", "problems", "projects", "observations", "site"}:
+    if resource not in {"activity", "ecosystem", "health", "lab", "problems", "projects", "observations", "site", "discovery", "radar", "people", "impact", "partner"}:
         raise ValueError("Unknown PortBridge snapshot")
-    limit = {"observations": OBSERVATIONS_SNAPSHOT_LIMIT, "site": MANIFEST_LIMIT}.get(resource, SNAPSHOT_LIMIT)
-    return read_public_file(f"data/{resource}.json", limit)
+    limit = {"observations": OBSERVATIONS_SNAPSHOT_LIMIT, "site": MANIFEST_LIMIT,
+             "discovery": 512 * 1024}.get(resource, SNAPSHOT_LIMIT)
+    if resource not in {"site", "observations"}:
+        site = site if site is not None else snapshot("site", base_url=base_url)
+        if not isinstance(site, dict) or not isinstance(site.get("snapshots", {}), dict):
+            raise ValueError("Invalid PortBridge public snapshot manifest")
+        pointers = site.get("snapshots", {})
+        file = pointers.get(resource)
+        if file is not None:
+            if not isinstance(file, str) or not re.fullmatch(rf"{resource}-[0-9a-f]{{24}}\.json", file):
+                raise ValueError("Invalid PortBridge public snapshot filename")
+            return read_public_file(f"data/{file}", limit, revalidate=revalidate)
+    return read_public_file(f"data/{resource}.json", limit, revalidate=revalidate)
 
 
 def read_public_file(path, limit, timeout=PUBLIC_TIMEOUT, *, revalidate=False):
@@ -54,38 +70,99 @@ def public_problem(ident, *, base_url=PUBLIC_BASE):
     return next((card for card in snapshot("problems", base_url=base_url)["problems"] if card["id"] == ident), None)
 
 
+def attach_discovery(result, q, url, limit, index=None, *, index_source=None):
+    if url:
+        fragment = urlsplit(url).fragment
+        result["community_target"] = canonical_url(url) + (f"#{fragment}" if fragment else "")
+    if len(q) > MAX_DISCOVERY_QUERY:
+        return result
+    source = index_source or ("bundled" if index is None else "published_snapshot")
+    try:
+        report = discover(q, origin_url=url, index=index, limit=min(limit, 10))
+    except (AttributeError, KeyError, TypeError, ValueError):
+        if index is None:
+            raise
+        report = discover(q, origin_url=url, limit=min(limit, 10))
+        source = "bundled_fallback"
+    if source == "bundled_fallback" and report["empty_reason"]:
+        report["scan_status"], report["scan_reason"] = "unavailable", "snapshot_unavailable"
+        report["status"], report["empty_reason"] = empty_link_result(url, report["scan_status"], report["scan_reason"])
+    if report["matches"] or report["case"] or report["scan_status"] != "not_scanned" or report["empty_reason"]:
+        result["discovery"] = {**report, "index_source": source, "radar_candidates": historical_candidates(report)}
+    return result
+
+
 def preflight(catalog, *, q="", url="", limit=5, expand_global=False):
     q, url = query_options(q, url, limit)
-    records = catalog.observations(limit=None)
-    result = assess(catalog.problems(), catalog.projects(), records, catalog.health(), q=q, url=url, limit=limit)
+    with catalog.read_view() as view:
+        records = view.observations(limit=None)
+        result = assess(view.problems(), view.projects(), records, view.health(), q=q, url=url, limit=limit)
+        attach_discovery(result, q, url, limit, cached_index(view), index_source="local_catalog")
+        if findings := filter_findings(reviewed_snapshot(view), url=url, query=q, limit=limit):
+            result["radar_findings"] = findings
     return append_external_results(result, records, q=q, url=url) if expand_global else result
 
 
 def public_preflight(*, q="", url="", limit=5, base_url=PUBLIC_BASE, expand_global=False):
     q, url = query_options(q, url, limit)
-    site, health, problems, projects = (snapshot(resource, base_url=base_url)
-                                        for resource in ("site", "health", "problems", "projects"))
-    if not isinstance(site, dict):
-        raise ValueError("Invalid PortBridge public site snapshot")
-    if "search_index" not in site:
-        records = snapshot("observations", base_url=base_url)["observations"]
-        result = assess(problems["problems"], projects["projects"], records, health, q=q, url=url, limit=limit)
-        return append_external_results(result, records, q=q, url=url) if expand_global else result
-
+    try:
+        site = snapshot("site", base_url=base_url)
+    except OSError:
+        result = {"query": q, "origin_url": url, "catalog_status": "unavailable",
+                  "problems": [], "matches": [], "observations": [], "first_check": None,
+                  "next_step": "Public catalog unavailable. Discovery uses the bundled reviewed sources."}
+        attach_discovery(result, q, url, limit, index_source="bundled_fallback")
+        if "discovery" in result:
+            return result
+        raise
     options = {"q": q, "url": url, "limit": limit, "expand_global": expand_global, "budget": QueryBudget()}
     for retry in (False, True):
         if retry:
             site = read_public_file("data/site.json", MANIFEST_LIMIT, revalidate=True)
-        index = site.get("search_index") if isinstance(site, dict) else None
-        if not isinstance(index, dict) or type(index.get("version")) is not int or index["version"] != 1:
-            raise ValueError("Unsupported PortBridge public search index")
+        if not isinstance(site, dict):
+            raise ValueError("Invalid PortBridge public site snapshot")
         try:
-            manifest = read_public_file(MANIFEST, MANIFEST_LIMIT, revalidate=retry)
+            health, problems, projects = (snapshot(resource, base_url=base_url, site=site, revalidate=retry)
+                                          for resource in ("health", "problems", "projects"))
+            health = health_freshness(health, generated_at=site.get("generated_at"))
+            discovery = None
+            if site.get("snapshots", {}).get("radar"):
+                try:
+                    radar = snapshot("radar", base_url=base_url, site=site, revalidate=retry)
+                    findings = filter_findings(radar.get("findings", []), url=url, query=q, limit=limit)
+                except (OSError, ValueError, KeyError, TypeError, AttributeError):
+                    findings = []
+            else:
+                findings = []
+            if site.get("snapshots", {}).get("discovery"):
+                try:
+                    discovery = snapshot("discovery", base_url=base_url, site=site, revalidate=retry)
+                except (OSError, ValueError):
+                    discovery = {}
+            if "search_index" not in site:
+                records = snapshot("observations", base_url=base_url)["observations"]
+                result = assess(problems["problems"], projects["projects"], records, health, q=q, url=url, limit=limit)
+                if findings:
+                    result["radar_findings"] = findings
+                attach_discovery(result, q, url, limit, discovery)
+                return append_external_results(result, records, q=q, url=url) if expand_global else result
+            index = site["search_index"]
+            if not isinstance(index, dict) or type(index.get("version")) is not int or index["version"] != 1:
+                raise ValueError("Unsupported PortBridge public search index")
+            generation = index.get("generation")
+            file = index.get("manifest")
+            if file is not None and (not isinstance(generation, str) or not re.fullmatch(r"[a-f0-9]{24}", generation)
+                                     or file != f"preflight-{generation}-index.json"):
+                raise ValueError("Invalid PortBridge public search manifest filename")
+            manifest = read_public_file(f"data/{file}" if file else MANIFEST, MANIFEST_LIMIT, revalidate=retry)
             if not isinstance(manifest, dict) or manifest.get("generation") != index.get("generation"):
                 if not retry:
                     continue
                 raise ValueError("PortBridge public search is updating. Try again shortly.")
-            return assess_public_index(manifest, problems["problems"], projects["projects"], health, **options)
+            result = assess_public_index(manifest, problems["problems"], projects["projects"], health, **options)
+            if findings:
+                result["radar_findings"] = findings
+            return attach_discovery(result, q, url, limit, discovery)
         except HTTPError as error:
             # The site's old generation can disappear during a deployment.
             if retry or error.code not in {404, 503}:
@@ -311,6 +388,9 @@ def assess(cards, projects, records, health, *, q="", url="", limit=5, indexed=N
     return {"query": q, "origin_url": f"{origin}#{origin_fragment}" if comment_source else origin,
             "indexed": indexed_origin in index.rows if origin else None,
             "catalog_status": health.get("status"), "catalog_refreshed_at": health.get("refresh_at"),
+            "catalog_last_success": health.get("last_success"), "catalog_freshness": health.get("freshness"),
+            "publication": health.get("publication"),
+            "consoles": project_map.get(origin_project, {}).get("consoles", console_families(url)),
             "source_coverage": source_coverage(health, origin_project),
             "problems": found[:limit], "matches": matches, "observations": observations,
             "first_check": first_check, "next_step": next_step, "guidance": GUIDANCE}

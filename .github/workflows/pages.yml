@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   issue_comment:
     types: [created, edited, deleted]
   schedule:
@@ -31,18 +33,22 @@ jobs:
         && !github.event.issue.pull_request && contains(fromJSON('[4,5,9,54,58,63,84,87]'), github.event.issue.number)
         && (contains(github.event.comment.body, 'PortBridge test review v1')
           || contains(github.event.changes.body.from, 'PortBridge test review v1'))))) ||
-      (github.event_name == 'workflow_dispatch' && github.ref_type == 'branch')
+      (github.event_name == 'workflow_dispatch' && github.ref_type == 'branch') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        && github.head_ref == 'audit/review')
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 20
     permissions:
       contents: read
       issues: read
       pull-requests: read
+      actions: read
     outputs:
       previous_status: ${{ steps.previous.outputs.previous_status }}
       previous_generation: ${{ steps.previous.outputs.previous_generation }}
       site_sha256: ${{ steps.checksums.outputs.site_sha256 }}
       lab_sha256: ${{ steps.checksums.outputs.lab_sha256 }}
+      publication_ready: ${{ steps.guard.outputs.ready }}
     steps:
       - name: Check out PortBridge
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -56,7 +62,7 @@ jobs:
 
       - name: Check the currently published GitHub Pages snapshot
         id: previous
-        if: github.repository == 'akimfomin/PortBridge' && github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true'
+        if: github.repository == 'akimfomin/PortBridge' && (github.ref == 'refs/heads/main' || github.event_name == 'pull_request') && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true'
         run: python -m portbridge.pages_health probe
 
       - name: Run tests
@@ -69,6 +75,45 @@ jobs:
           path: .portbridge/portbridge.sqlite3
           key: ${{ runner.os }}-portbridge-db-v1-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: ${{ runner.os }}-portbridge-db-v1-
+
+      - name: Read a production-size cache for the release review
+        if: github.event_name == 'pull_request'
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: .portbridge/portbridge.sqlite3
+          key: ${{ runner.os }}-portbridge-review-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-portbridge-db-v1-
+
+      - name: Recover the latest verified catalog checkpoint if the cache is missing
+        if: github.repository == 'akimfomin/PortBridge' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PORTBRIDGE_MIN_CHECKPOINT_COUNT: ${{ steps.previous.outputs.previous_count }}
+        run: |
+          database=.portbridge/portbridge.sqlite3
+          if PORTBRIDGE_CHECKPOINT="$database" python -m portbridge.pages_health checkpoint; then exit 0; fi
+          mkdir -p .portbridge/recovery
+          runs=$(gh run list --workflow pages.yml --branch main --status success --limit 8 \
+            --json databaseId --jq '.[].databaseId') || {
+            echo '::warning::Unable to list recovery checkpoints.'
+            exit 0
+          }
+          for run in $runs; do
+            candidate=".portbridge/recovery/$run/public.sqlite3"
+            if gh run download "$run" --name portbridge-public-catalog-v1 --dir ".portbridge/recovery/$run" \
+              && PORTBRIDGE_CHECKPOINT="$candidate" python -m portbridge.pages_health checkpoint \
+              && python -m portbridge --db "$candidate" backup --out .portbridge/recovery/verified.sqlite3; then
+              if test -e "$database"; then mv -- "$database" .portbridge/recovery/previous.sqlite3; fi
+              mv -- .portbridge/recovery/verified.sqlite3 "$database"
+              echo "Recovered public catalog from run $run."
+              exit 0
+            fi
+          done
+          if test -e "$database" && ! PORTBRIDGE_CHECKPOINT="$database" PORTBRIDGE_MIN_CHECKPOINT_COUNT=0 \
+            python -m portbridge.pages_health checkpoint; then
+            mv -- "$database" .portbridge/recovery/incomplete.sqlite3
+          fi
+          echo '::warning::No verified checkpoint available. Publication safeguard will check retained coverage.'
 
       - name: Refresh Test Lab reports
         env:
@@ -86,15 +131,88 @@ jobs:
           fi
 
       - name: Continue historical and incremental index
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         env:
           PORTBRIDGE_GITHUB_TOKEN: ${{ github.token }}
         run: |
           python -m portbridge backfill --pages 6
           python -m portbridge incremental --pages 6
+          python -m portbridge radar --refresh --discovery --limit 96
+          python -m portbridge refresh-people --limit 8
 
       - name: Export site and JSON
         run: python -m portbridge export --out dist --repository "$GITHUB_REPOSITORY"
+
+      - name: Verify publication candidate
+        run: python -m portbridge.release_gate dist
+
+      - name: Verify retained coverage and database recovery on the review runner
+        if: github.event_name == 'pull_request'
+        env:
+          PORTBRIDGE_MIN_CHECKPOINT_COUNT: ${{ steps.previous.outputs.previous_count }}
+        run: |
+          test -n "$PORTBRIDGE_MIN_CHECKPOINT_COUNT"
+          python -m portbridge backup --public-checkpoint --out .portbridge/rehearsal.sqlite3
+          PORTBRIDGE_CHECKPOINT=.portbridge/rehearsal.sqlite3 python -m portbridge.pages_health checkpoint
+
+      - name: Check out the preceding main revision for a rollback rehearsal
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .portbridge/previous-release
+          persist-credentials: false
+
+      - name: Rebuild the preceding site with the recovered public catalog
+        if: github.event_name == 'pull_request'
+        working-directory: .portbridge/previous-release
+        run: |
+          python -m portbridge --db ../rehearsal.sqlite3 export --out ../rollback-site --repository "$GITHUB_REPOSITORY"
+          python "$GITHUB_WORKSPACE/audit/m6_rollback.py" "$GITHUB_WORKSPACE/dist" ../rollback-site
+
+      - name: Archive the read-only review site
+        if: github.ref != 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request')
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: portbridge-review-site
+          path: dist
+          retention-days: 3
+          if-no-files-found: error
+
+      - name: Protect the previous public snapshot
+        if: github.repository == 'akimfomin/PortBridge' && github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true'
+        id: guard
+        env:
+          PORTBRIDGE_PREVIOUS_COUNT: ${{ steps.previous.outputs.previous_count }}
+        run: python -m portbridge.pages_health guard
+
+      - name: Prepare public catalog checkpoint
+        if: github.repository == 'akimfomin/PortBridge' && github.ref == 'refs/heads/main' && steps.guard.outputs.ready != 'false'
+        env:
+          PORTBRIDGE_CHECKPOINT: .portbridge/portbridge.sqlite3
+        run: |
+          python -m portbridge.pages_health checkpoint
+          python -m portbridge backup --public-checkpoint --out .portbridge/public.sqlite3
+
+      - name: Retain public catalog checkpoint separately from the cache
+        if: github.repository == 'akimfomin/PortBridge' && github.ref == 'refs/heads/main' && steps.guard.outputs.ready != 'false'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: portbridge-public-catalog-v1
+          path: .portbridge/public.sqlite3
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Summarize source age and observed schedule delivery
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_REPOSITORY" = "akimfomin/PortBridge" ]; then
+            gh run list --workflow pages.yml --event schedule --branch main --limit 8 \
+              --json createdAt,conclusion > .portbridge/scheduled-runs.json || true
+          fi
+          python -m portbridge.pages_health ops
 
       - name: Record the exported JSON checksums
         id: checksums
@@ -135,13 +253,13 @@ jobs:
           PY
 
       - name: Upload GitHub Pages artifact
-        if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true'
+        if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true' && steps.guard.outputs.ready != 'false'
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: dist
 
       - name: Upload Cloudflare Pages artifact
-        if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_CLOUDFLARE_PAGES == 'true' && vars.PORTBRIDGE_CLOUDFLARE_PROJECT != ''
+        if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_CLOUDFLARE_PAGES == 'true' && vars.PORTBRIDGE_CLOUDFLARE_PROJECT != '' && steps.guard.outputs.ready != 'false'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: portbridge-cloudflare-site
@@ -150,7 +268,7 @@ jobs:
           if-no-files-found: error
 
   github-pages:
-    if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true'
+    if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true' && needs.build.outputs.publication_ready != 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     needs: build
@@ -186,8 +304,32 @@ jobs:
           PREVIOUS_GENERATION: ${{ needs.build.outputs.previous_generation }}
         run: python3 -m portbridge.pages_health verify
 
+      - name: Record independently verified publications for the autonomy observation
+        if: github.event_name == 'schedule'
+        env:
+          SITE_SHA256: ${{ needs.build.outputs.site_sha256 }}
+          LAB_SHA256: ${{ needs.build.outputs.lab_sha256 }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from datetime import datetime, timezone
+          receipt = {key: os.environ[key] for key in ("GITHUB_SHA", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "SITE_SHA256", "LAB_SHA256")}
+          receipt["verified_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+          Path("publication-receipt.json").write_text(json.dumps(receipt) + "\n", encoding="utf-8")
+          PY
+
+      - name: Retain the dated verification receipt
+        if: github.event_name == 'schedule'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: portbridge-scheduled-publication-v1
+          path: publication-receipt.json
+          retention-days: 30
+          if-no-files-found: error
+
   cloudflare-pages:
-    if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_CLOUDFLARE_PAGES == 'true' && vars.PORTBRIDGE_CLOUDFLARE_PROJECT != ''
+    if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_CLOUDFLARE_PAGES == 'true' && vars.PORTBRIDGE_CLOUDFLARE_PROJECT != '' && needs.build.outputs.publication_ready != 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     needs: build

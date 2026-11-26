@@ -1,0 +1,1159 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-11-26T00:00:00Z",
+  "sources": {
+    "llvm": {
+      "name": "LLVM AMDGPU",
+      "url": "https://github.com/llvm/llvm-project",
+      "revision": "87f0227cb60147a26a1eeb4fb06e3b505e9c7261",
+      "release": "llvmorg-20.1.8",
+      "license": "Apache-2.0 WITH LLVM-exception",
+      "license_url": "https://github.com/llvm/llvm-project/blob/87f0227cb60147a26a1eeb4fb06e3b505e9c7261/llvm/LICENSE.TXT"
+    },
+    "dxvk": {
+      "name": "DXVK",
+      "url": "https://github.com/doitsujin/dxvk",
+      "revision": "9d6f54a1ade20d1d27dd421024717a636f3d8c68",
+      "release": "v2.6.2",
+      "license": "Zlib",
+      "license_url": "https://github.com/doitsujin/dxvk/blob/9d6f54a1ade20d1d27dd421024717a636f3d8c68/LICENSE"
+    },
+    "vkd3d": {
+      "name": "VKD3D-Proton",
+      "url": "https://github.com/HansKristian-Work/vkd3d-proton",
+      "revision": "0d66699b1b1e250ef19d793f2649d9288b0808ff",
+      "release": "v2.14.1",
+      "license": "LGPL-2.1-or-later",
+      "license_url": "https://github.com/HansKristian-Work/vkd3d-proton/blob/0d66699b1b1e250ef19d793f2649d9288b0808ff/COPYING"
+    },
+    "mesa": {
+      "name": "Mesa RADV / ACO",
+      "url": "https://gitlab.freedesktop.org/mesa/mesa",
+      "revision": "5c142e46f3f6e752ed745fd48912ebb8fad67145",
+      "release": "mesa-25.1.0",
+      "license": "MIT for the selected sources",
+      "license_url": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/5c142e46f3f6e752ed745fd48912ebb8fad67145/docs/license.rst"
+    },
+    "shadps4": {
+      "name": "shadPS4",
+      "url": "https://github.com/shadps4-emu/shadPS4",
+      "revision": "9c2f71326a0c09795864a138050ee87ffd2d010f",
+      "release": "v.0.9.0",
+      "license": "GPL-2.0-or-later",
+      "license_url": "https://github.com/shadps4-emu/shadPS4/blob/9c2f71326a0c09795864a138050ee87ffd2d010f/LICENSE"
+    },
+    "xenia": {
+      "name": "Xenia",
+      "url": "https://github.com/xenia-project/xenia",
+      "revision": "95a5c3ee250f80c3b9d139658649d9ffb6db3eec",
+      "release": null,
+      "license": "BSD-3-Clause",
+      "license_url": "https://github.com/xenia-project/xenia/blob/95a5c3ee250f80c3b9d139658649d9ffb6db3eec/LICENSE"
+    },
+    "wine": {
+      "name": "Wine",
+      "url": "https://github.com/wine-mirror/wine",
+      "revision": "b073859675060c9211fcbccfd90e4e87520dc2c2",
+      "release": "wine-10.0",
+      "license": "LGPL-2.1-or-later",
+      "license_url": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/LICENSE"
+    },
+    "rpcs3": {
+      "name": "RPCS3",
+      "url": "https://github.com/RPCS3/rpcs3",
+      "revision": "0ca5eb0efe50ec4e8aa07892ab86d57842246eb4",
+      "release": null,
+      "license": "GPL-2.0 project license",
+      "license_url": "https://github.com/RPCS3/rpcs3/blob/0ca5eb0efe50ec4e8aa07892ab86d57842246eb4/LICENSE"
+    },
+    "vma": {
+      "name": "Vulkan Memory Allocator / AMD GPUOpen",
+      "url": "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator",
+      "revision": "1d8f600fd424278486eade7ed3e877c99f0846b1",
+      "release": "v3.3.0",
+      "license": "MIT",
+      "license_url": "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/blob/1d8f600fd424278486eade7ed3e877c99f0846b1/LICENSE.txt"
+    },
+    "d3d12ma": {
+      "name": "D3D12 Memory Allocator / AMD GPUOpen",
+      "url": "https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator",
+      "revision": "9ef66bc14edd10dee0de3a545b98578363552f66",
+      "release": "v3.0.1",
+      "license": "MIT",
+      "license_url": "https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator/blob/9ef66bc14edd10dee0de3a545b98578363552f66/LICENSE.txt"
+    },
+    "dxc": {
+      "name": "Microsoft DirectXShaderCompiler",
+      "url": "https://github.com/microsoft/DirectXShaderCompiler",
+      "revision": "b4711839eb9a87da7c3436d9b212e0492359fbbd",
+      "release": "v1.8.2502",
+      "license": "University of Illinois/NCSA plus MIT (project notices)",
+      "license_url": "https://github.com/microsoft/DirectXShaderCompiler/blob/b4711839eb9a87da7c3436d9b212e0492359fbbd/LICENSE.TXT"
+    },
+    "spirv": {
+      "name": "SPIRV-Tools",
+      "url": "https://github.com/KhronosGroup/SPIRV-Tools",
+      "revision": "a62abcb402009b9ca5975e6167c09f237f630e0e",
+      "release": "v2025.2",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/KhronosGroup/SPIRV-Tools/blob/a62abcb402009b9ca5975e6167c09f237f630e0e/LICENSE"
+    },
+    "vvl": {
+      "name": "Vulkan Validation Layers",
+      "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers",
+      "revision": "7f40c4da068ccd81a426ae4bf355a63e07a106f1",
+      "release": "v1.4.321",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/7f40c4da068ccd81a426ae4bf355a63e07a106f1/LICENSE.txt"
+    },
+    "vulkan": {
+      "name": "Khronos Vulkan specification",
+      "url": "https://github.com/KhronosGroup/Vulkan-Docs",
+      "revision": "dad857284bf63d027ac9d6a97e9a1689831bab0d",
+      "release": "v1.4.321",
+      "license": "CC-BY-4.0 specification chapters",
+      "license_url": "https://github.com/KhronosGroup/Vulkan-Docs/blob/dad857284bf63d027ac9d6a97e9a1689831bab0d/COPYING.adoc"
+    },
+    "gnulib": {
+      "name": "GNU C Library",
+      "url": "https://github.com/bminor/glibc",
+      "revision": "74f59e9271cbb4071671e5a474e7d4f1622b186f",
+      "release": "glibc-2.41",
+      "license": "LGPL-2.1-or-later",
+      "license_url": "https://github.com/bminor/glibc/blob/74f59e9271cbb4071671e5a474e7d4f1622b186f/COPYING.LIB"
+    },
+    "wgpu": {
+      "name": "wgpu",
+      "url": "https://github.com/gfx-rs/wgpu",
+      "revision": "7d881db7cb78696577faec82d58ec22c9b7007a2",
+      "release": null,
+      "license": "MIT OR Apache-2.0 (base project terms; inspect changed files before any reuse)",
+      "license_url": "https://github.com/gfx-rs/wgpu/blob/60cef2be828e03ba54e2e1598001b4625c0c2163/LICENSE.MIT"
+    },
+    "moltenvk": {
+      "name": "MoltenVK",
+      "url": "https://github.com/KhronosGroup/MoltenVK",
+      "revision": "df4014bee61026f5fc8461f2a40c20e9740a4874",
+      "release": null,
+      "license": "Apache-2.0 (base project terms; inspect changed files before any reuse)",
+      "license_url": "https://github.com/KhronosGroup/MoltenVK/blob/5189f8de86ec365860f63bf1da736815cfaea5cd/LICENSE"
+    },
+    "vvl-1.3.280": {
+      "name": "Vulkan Validation Layers / SDK 1.3.280",
+      "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers",
+      "revision": "8506077b9a25a00684e8be24b779733ae1405a54",
+      "release": "vulkan-sdk-1.3.280.0",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/8506077b9a25a00684e8be24b779733ae1405a54/LICENSE.txt"
+    }
+  },
+  "facets": {
+    "wave-mask": [
+      "whole quad mode",
+      "wqm",
+      "helper lanes",
+      "helper invocations",
+      "execution mask",
+      "lane mask",
+      "pixel carry"
+    ],
+    "scratch-reuse": [
+      "stack coloring",
+      "scratch slots",
+      "scratch memory reuse",
+      "disjoint lifetimes",
+      "live-range interference",
+      "temporary storage reuse"
+    ],
+    "ray-scratch": [
+      "acceleration structure scratch",
+      "build scratch buffer",
+      "ray tracing scratch"
+    ],
+    "tessellation-scratch": [
+      "tessellation scratch",
+      "shader reflected output",
+      "tessellation output stride"
+    ],
+    "pipeline-identity": [
+      "pipelinecacheuuid",
+      "pipeline cache uuid",
+      "driver blob",
+      "pipeline library",
+      "adapter cache",
+      "cache incompatibility",
+      "cache header"
+    ],
+    "pipeline-key": [
+      "pipeline cache key",
+      "graphics pipeline cache",
+      "pipeline variants",
+      "pipeline state key"
+    ],
+    "image-layout": [
+      "image layout",
+      "subresource range",
+      "image barrier",
+      "layout transition",
+      "range coalescing",
+      "adjacent subresources"
+    ],
+    "waiter-wakeup": [
+      "condition variable",
+      "blocked waiter",
+      "notify_all",
+      "futex wake",
+      "mode switch",
+      "wake waiting threads",
+      "lost wakeup"
+    ],
+    "structured-stride": [
+      "structured buffer",
+      "structurebytestride",
+      "structured stride",
+      "mixed stride",
+      "byte offset",
+      "structured resource"
+    ],
+    "subgroup-lanes": [
+      "wave64 on wave32",
+      "readlane",
+      "wave size",
+      "subgroup shuffle",
+      "subgroup lanes",
+      "subgroup lane index"
+    ],
+    "shader-compiler": [
+      "d3dcompile2",
+      "d3dcompiler",
+      "legacy bytecode",
+      "dxbc",
+      "hlsl target"
+    ],
+    "sync-hazard": [
+      "write after write",
+      "write-after-write",
+      "syncval",
+      "waw hazard",
+      "waw diagnostics",
+      "access hazard"
+    ],
+    "adapter-luid": [
+      "adapter luid",
+      "device luid",
+      "luid mapping",
+      "gpu counter luid",
+      "adapter identity"
+    ],
+    "local-invocation": [
+      "localinvocationindex",
+      "flattened local invocation",
+      "local invocation index",
+      "linear local invocation",
+      "workgroup linear index",
+      "workgroup coordinates"
+    ],
+    "queue-transfer": [
+      "queue family ownership",
+      "queue ownership transfer",
+      "release acquire",
+      "external queue handoff",
+      "queue family indices",
+      "external completion"
+    ],
+    "virtual-allocation": [
+      "virtual allocation",
+      "virtual block",
+      "suballocation",
+      "linear allocator",
+      "allocation offsets"
+    ],
+    "alias-memory": [
+      "aliasing resource",
+      "heap aliasing",
+      "overlapping resources",
+      "placed resource",
+      "memory aliasing"
+    ],
+    "access-chain": [
+      "opaccesschain",
+      "access chain validation",
+      "aggregate indexing",
+      "pointer indices"
+    ],
+    "spill-allocation": [
+      "register spilling",
+      "register spills",
+      "sgpr spill",
+      "vgpr spill",
+      "spill slots"
+    ],
+    "radv-cache": [
+      "radv shader cache",
+      "radv pipeline cache",
+      "spir-v cache objects"
+    ]
+  },
+  "entries": [
+    {
+      "id": "llvm-wqm",
+      "project": "llvm",
+      "kind": "implementation",
+      "title": "Whole-quad execution masks in LLVM AMDGPU",
+      "title_ru": "Маски исполнения пиксельных квадов в LLVM",
+      "source": "https://github.com/llvm/llvm-project/blob/87f0227cb60147a26a1eeb4fb06e3b505e9c7261/llvm/lib/Target/AMDGPU/SIWholeQuadMode.cpp#L10",
+      "state": "reference",
+      "topics": [
+        "wave-mask"
+      ],
+      "symbols": [
+        "SIWholeQuadMode",
+        "EXEC",
+        "StrictWWM",
+        "v_add_co_u32",
+        "Wave32"
+      ],
+      "platforms": [
+        "AMD",
+        "RDNA2"
+      ],
+      "problem": "Handle derivative-related execution while retaining the actual live-lane mask.",
+      "similarity": "WQM extends the lanes used for derivatives and separately preserves live coverage.",
+      "differences": "LLVM is a native AMDGPU compiler. XCL emits HLSL/DXIL and the report concerns the destination carry mask.",
+      "limits": "The pass does not specify XCL's SGPR pair bookkeeping or host compiler behavior.",
+      "adaptation": "Use the live/expanded distinction as an oracle for mask handling.",
+      "test": "Compare the carry and adjacent destination with helper pixels at triangle edges in synthetic Wave32 and full-coverage controls.",
+      "authors": []
+    },
+    {
+      "id": "llvm-stack-coloring",
+      "project": "llvm",
+      "kind": "implementation",
+      "title": "Disjoint lifetime stack colouring in LLVM",
+      "title_ru": "Переиспользование ячеек по срокам жизни в LLVM",
+      "source": "https://github.com/llvm/llvm-project/blob/87f0227cb60147a26a1eeb4fb06e3b505e9c7261/llvm/lib/CodeGen/StackColoring.cpp#L8",
+      "state": "reference",
+      "topics": [
+        "scratch-reuse"
+      ],
+      "symbols": [
+        "StackColoring",
+        "LIFETIME_START",
+        "LIFETIME_END",
+        "liveness",
+        "interference graph"
+      ],
+      "platforms": [
+        "CPU",
+        "LLVM"
+      ],
+      "problem": "Reduce stack-frame size by reusing stack slots with non-overlapping lifetimes.",
+      "similarity": "Both allocators need proof that two payloads are never live together.",
+      "differences": "LLVM colours stack-frame objects. XCL transports per-workgroup GPU payloads between dispatch stages.",
+      "limits": "The receiver must retain synchronization, alignment and address escape constraints.",
+      "adaptation": "Adapt the interference rule and conservative fallback, without importing implementation code.",
+      "test": "Use synthetic crossing and disjoint intervals, branch joins and varying alignment. Compare output hashes and bytes per group.",
+      "authors": []
+    },
+    {
+      "id": "vkd3d-cache-uuid",
+      "project": "vkd3d",
+      "kind": "implementation",
+      "title": "Reject foreign pipeline blobs by device and cache UUID",
+      "title_ru": "Проверка устройства и UUID кэша в VKD3D-Proton",
+      "source": "https://github.com/HansKristian-Work/vkd3d-proton/blob/0d66699b1b1e250ef19d793f2649d9288b0808ff/libs/vkd3d/cache.c#L365",
+      "state": "reference",
+      "topics": [
+        "pipeline-identity"
+      ],
+      "symbols": [
+        "pipelineCacheUUID",
+        "vendorID",
+        "deviceID",
+        "D3D12_ERROR_ADAPTER_NOT_FOUND"
+      ],
+      "platforms": [
+        "Linux",
+        "Vulkan",
+        "D3D12",
+        "Windows"
+      ],
+      "problem": "Detect pipeline blobs incompatible with the current device or Vulkan pipeline cache.",
+      "similarity": "The header separately identifies device and driver-compatible cache.",
+      "differences": "VKD3D-Proton validates its own serialized blob. VIctory needs cache file isolation and XCL reports a failure with matching-looking caches.",
+      "limits": "A matching UUID cannot prove the driver's cached code is safe in the reported configuration.",
+      "adaptation": "Use validated adapter/cache identity for namespace and a cold fallback for rejected data.",
+      "test": "Use a tiny public synthetic pipeline with cold/warm driver and application caches in all four combinations, plus a deliberately foreign adapter header.",
+      "authors": []
+    },
+    {
+      "id": "vulkan-cache-format",
+      "project": "vulkan",
+      "kind": "spec",
+      "title": "Vulkan pipeline cache header identity",
+      "title_ru": "Заголовок и идентичность кэша Vulkan",
+      "source": "https://github.com/KhronosGroup/Vulkan-Docs/blob/dad857284bf63d027ac9d6a97e9a1689831bab0d/chapters/pipelines.adoc#L8000",
+      "state": "reference",
+      "topics": [
+        "pipeline-identity"
+      ],
+      "symbols": [
+        "VkPipelineCacheHeaderVersionOne",
+        "pipelineCacheUUID",
+        "vendorID",
+        "deviceID",
+        "vkCreatePipelineCache"
+      ],
+      "platforms": [
+        "Vulkan",
+        "Linux",
+        "Windows"
+      ],
+      "problem": "Define the portable header fields for pipeline cache serialization and compatibility.",
+      "similarity": "The explicit header can serve as an independent check of the candidate cache namespace.",
+      "differences": "This is the Vulkan contract. It is not an implementation for D3D12 serialized libraries.",
+      "limits": "Passing header checks is not proof of reuse or absence of driver faults.",
+      "adaptation": "Check source cache header metadata before reusing library entries and separate diagnostics by adapter.",
+      "test": "Open a valid cache and a controlled copy with foreign header in a synthetic Vulkan pipeline test.",
+      "authors": []
+    },
+    {
+      "id": "dxvk-image-barriers",
+      "project": "dxvk",
+      "kind": "implementation",
+      "title": "DXVK image barrier batch construction",
+      "title_ru": "Пакетная сборка барьеров изображений в DXVK",
+      "source": "https://github.com/doitsujin/dxvk/blob/9d6f54a1ade20d1d27dd421024717a636f3d8c68/src/dxvk/dxvk_barrier.cpp#L457",
+      "state": "reference",
+      "topics": [
+        "image-layout"
+      ],
+      "symbols": [
+        "DxvkBarrierBatch",
+        "addImageBarrier",
+        "VkImageMemoryBarrier2",
+        "VkDependencyInfo"
+      ],
+      "platforms": [
+        "Linux",
+        "Vulkan"
+      ],
+      "problem": "Accumulate image barrier descriptions and issue batched dependency commands.",
+      "similarity": "Both systems carry old/new layout and affected subresources into a batched submission.",
+      "differences": "The cited routine batches barrier records. It does not establish Continued's rectangle coalescing rule.",
+      "limits": "Queue ownership, access masks, aspects and layout differences remain mandatory boundaries.",
+      "adaptation": "Use the data layout and a non-coalescing reference implementation as a comparison.",
+      "test": "Replay a synthetic mip/layer grid and compare per-cell transitions, including a hole and mismatched aspects.",
+      "authors": []
+    },
+    {
+      "id": "glibc-cond-wake",
+      "project": "gnulib",
+      "kind": "implementation",
+      "title": "glibc condition variable broadcast and signal accounting",
+      "title_ru": "Пробуждение ожидающих потоков в glibc",
+      "source": "https://github.com/bminor/glibc/blob/74f59e9271cbb4071671e5a474e7d4f1622b186f/nptl/pthread_cond_broadcast.c#L38",
+      "state": "reference",
+      "topics": [
+        "waiter-wakeup"
+      ],
+      "symbols": [
+        "pthread_cond_broadcast",
+        "futex_wake",
+        "notify_all",
+        "set_uncapped"
+      ],
+      "platforms": [
+        "Linux",
+        "CPU"
+      ],
+      "problem": "Wake condition-variable waiters with ordered signal accounting.",
+      "similarity": "Changes relevant to waiters need a wakeup edge in addition to the shared state change.",
+      "differences": "glibc implements POSIX condition variables using futexes. Continued uses a C++ condition variable with mode and shutdown predicates.",
+      "limits": "The library's waiter groups and ordering are not an application-level lock or lifetime protocol.",
+      "adaptation": "Treat broadcast behavior as a reference and keep the application predicate and lifetime guard.",
+      "test": "Run a deterministic waiter/mode-switch/shutdown harness with spurious wakes and separate wake-all controls.",
+      "authors": []
+    },
+    {
+      "id": "dxc-structured-layout",
+      "project": "dxc",
+      "kind": "spec",
+      "title": "DXIL StructuredBuffer element stride metadata",
+      "title_ru": "Размер элемента StructuredBuffer в DXIL",
+      "source": "https://github.com/microsoft/DirectXShaderCompiler/blob/b4711839eb9a87da7c3436d9b212e0492359fbbd/docs/DXIL.rst#L1094",
+      "state": "reference",
+      "topics": [
+        "structured-stride"
+      ],
+      "symbols": [
+        "StructuredBuffer",
+        "RWStructuredBuffer",
+        "StructureByteStride",
+        "RawBufferLoad",
+        "kDxilStructuredBufferElementStrideTag"
+      ],
+      "platforms": [
+        "D3D12",
+        "DXIL",
+        "Windows"
+      ],
+      "problem": "Define resource type metadata used to describe structured-buffer element stride.",
+      "similarity": "The metadata distinguishes stride from raw byte offsets and supplies a source-backed resource contract.",
+      "differences": "The compiler document specifies resource metadata rather than a runtime descriptor lookup or console address translation.",
+      "limits": "One declaration does not reconcile two descriptors with different runtime strides.",
+      "adaptation": "Use the structure stride contract as a reference for per-descriptor index/remainder conversion.",
+      "test": "Run a two-descriptor synthetic test at 32 and 56 bytes, checking boundary offsets and the raw buffer control.",
+      "authors": []
+    },
+    {
+      "id": "shadps4-subgroup",
+      "project": "shadps4",
+      "kind": "implementation",
+      "title": "shadPS4 subgroup lane operations in SPIR-V",
+      "title_ru": "Операции между линиями подгруппы в shadPS4",
+      "source": "https://github.com/shadps4-emu/shadPS4/blob/9c2f71326a0c09795864a138050ee87ffd2d010f/src/shader_recompiler/backend/spirv/emit_spirv_warp.cpp#L16",
+      "state": "reference",
+      "topics": [
+        "subgroup-lanes"
+      ],
+      "symbols": [
+        "EmitReadLane",
+        "SubgroupLocalInvocationId",
+        "OpGroupNonUniformQuadBroadcast",
+        "Wave32",
+        "Wave64"
+      ],
+      "platforms": [
+        "Vulkan",
+        "AMD",
+        "NVIDIA"
+      ],
+      "problem": "Lower console shader lane and quad operations to SPIR-V subgroup operations.",
+      "similarity": "Both translators need explicit semantics for which host lane supplies a value.",
+      "differences": "shadPS4 translates PlayStation shaders to SPIR-V; the cited operations stay inside one Vulkan subgroup.",
+      "limits": "The code does not implement Xbox-style 64 logical lanes on two physical Wave32 subgroups.",
+      "adaptation": "Reuse its subgroup scoping as a negative boundary and compare any software cross-half design separately.",
+      "test": "Use distinct values per lane and compare indexes 0, 31, 32 and 63 across native and split Wave sizes.",
+      "authors": []
+    },
+    {
+      "id": "wine-legacy-compiler",
+      "project": "wine",
+      "kind": "diagnostic",
+      "title": "Wine's D3DCompile2 path for legacy HLSL",
+      "title_ru": "Маршрут компиляции старого HLSL в Wine",
+      "source": "https://github.com/wine-mirror/wine/blob/b073859675060c9211fcbccfd90e4e87520dc2c2/dlls/d3dcompiler_43/compiler.c#L451",
+      "state": "reference",
+      "topics": [
+        "shader-compiler"
+      ],
+      "symbols": [
+        "D3DCompile2",
+        "vkd3d_shader_compile",
+        "DXBC",
+        "d3dcompiler_43"
+      ],
+      "platforms": [
+        "Wine",
+        "Linux",
+        "Windows"
+      ],
+      "problem": "Route D3DCompile2 HLSL requests through Wine's compiler backend.",
+      "similarity": "The open issue compares behavior after switching the old compiler, so the dispatch path is a useful isolation point.",
+      "differences": "This source shows how the request is compiled. It identifies neither the failing shader nor why the target renders black.",
+      "limits": "No directly transferable fix is established. DXC DXIL generation does not substitute for the older DXBC contract.",
+      "adaptation": "Use the compiler entry point to design a diagnostics-only comparison with no driver or title assumptions.",
+      "test": "Compile the same small public HLSL vertex/pixel pair with identical profile and flags, then compare signatures, diagnostics and draw readback.",
+      "authors": []
+    },
+    {
+      "id": "vvl-waw",
+      "project": "vvl",
+      "kind": "test",
+      "title": "Vulkan SyncVal negative write-after-write control",
+      "title_ru": "Отрицательный контроль write-after-write в Vulkan",
+      "source": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/7f40c4da068ccd81a426ae4bf355a63e07a106f1/tests/unit/sync_val.cpp#L2468",
+      "state": "reference",
+      "topics": [
+        "sync-hazard",
+        "image-layout"
+      ],
+      "symbols": [
+        "SYNC-HAZARD-WRITE-AFTER-WRITE",
+        "NegativeSyncVal",
+        "vkCmdBeginRenderPass"
+      ],
+      "platforms": [
+        "Vulkan",
+        "Linux",
+        "Windows"
+      ],
+      "problem": "Verify that an unsafe sequence of render pass and layout transitions triggers a write-after-write diagnostic.",
+      "similarity": "It supplies a minimal public test for interpreting a WAW diagnostic independent of the vendor runtime.",
+      "differences": "FrameLab observes the warning inside an NGX recording boundary; the public fixture controls both writers.",
+      "limits": "The cited test does not expose or repair the closed implementation's command recording.",
+      "adaptation": "Reuse the methodology to separate an application-controlled hazard from a vendor-owned boundary.",
+      "test": "Confirm one known WAW positive and one barrier-corrected negative with the same validation layer before comparing the application's public boundary.",
+      "authors": []
+    },
+    {
+      "id": "dxvk-adapter-luid",
+      "project": "dxvk",
+      "kind": "implementation",
+      "title": "DXVK adapter LUID reconciliation",
+      "title_ru": "Сверка LUID видеоадаптеров в DXVK",
+      "source": "https://github.com/doitsujin/dxvk/blob/9d6f54a1ade20d1d27dd421024717a636f3d8c68/src/dxgi/dxgi_adapter.cpp#L158",
+      "state": "reference",
+      "topics": [
+        "adapter-luid"
+      ],
+      "symbols": [
+        "adapterLUIDs",
+        "deviceLUIDValid",
+        "deviceLUID",
+        "GetDesc",
+        "DXGI_ADAPTER_DESC"
+      ],
+      "platforms": [
+        "Windows",
+        "Vulkan",
+        "Linux"
+      ],
+      "problem": "Reconcile adapter identifiers when reporting DXGI and Vulkan device information.",
+      "similarity": "Both systems need a stable matching key when friendly device names are ambiguous.",
+      "differences": "DXVK queries live DXGI/Vulkan properties. victory-fork joins external telemetry samples collected independently.",
+      "limits": "LUIDs are machine/session context and visibility dependent. Missing validity is not a match.",
+      "adaptation": "Adapt explicit validity and unknown handling, preserving source names and device identities separately.",
+      "test": "Test two identical adapter names with distinct LUIDs, one unmatched counter, and a non-valid Vulkan LUID.",
+      "authors": []
+    },
+    {
+      "id": "vulkan-local-index",
+      "project": "vulkan",
+      "kind": "spec",
+      "title": "Vulkan linear local invocation index",
+      "title_ru": "Линейный индекс локального вызова Vulkan",
+      "source": "https://github.com/KhronosGroup/Vulkan-Docs/blob/dad857284bf63d027ac9d6a97e9a1689831bab0d/chapters/interfaces.adoc#L3480",
+      "state": "reference",
+      "topics": [
+        "local-invocation"
+      ],
+      "symbols": [
+        "LocalInvocationIndex",
+        "LocalInvocationId",
+        "WorkgroupSize",
+        "local_size_x",
+        "local_size_y"
+      ],
+      "platforms": [
+        "Vulkan",
+        "Compute"
+      ],
+      "problem": "Define the linear local index for two- and three-dimensional workgroups.",
+      "similarity": "The specification separates coordinate flattening from subgroup lane position.",
+      "differences": "The Vulkan local index is a host contract. The receiver must reconstruct console ordering for its own wave layout.",
+      "limits": "Matching the formula alone does not establish the console subgroup/half mapping.",
+      "adaptation": "Use the Vulkan index as one input to an explicitly verified mapping rather than aligning an x coordinate to wave size.",
+      "test": "Emit ID and lane values for 8×8, 16×4 and asymmetric 3D groups and compare the reconstructed sequence to a CPU model.",
+      "authors": []
+    },
+    {
+      "id": "vulkan-queue-transfer",
+      "project": "vulkan",
+      "kind": "spec",
+      "title": "Vulkan queue-family ownership transfer",
+      "title_ru": "Передача владения ресурсом между очередями Vulkan",
+      "source": "https://github.com/KhronosGroup/Vulkan-Docs/blob/dad857284bf63d027ac9d6a97e9a1689831bab0d/chapters/synchronization.adoc#L6981",
+      "state": "reference",
+      "topics": [
+        "queue-transfer"
+      ],
+      "symbols": [
+        "VkImageMemoryBarrier2",
+        "srcQueueFamilyIndex",
+        "dstQueueFamilyIndex",
+        "VK_SHARING_MODE_EXCLUSIVE"
+      ],
+      "platforms": [
+        "Vulkan",
+        "Linux",
+        "Windows"
+      ],
+      "problem": "Specify matching release/acquire operations for exclusive queue family transitions.",
+      "similarity": "It establishes the resource lifetime and synchronization contract needed outside the producer queue.",
+      "differences": "The specification concerns Vulkan queue families. The FrameLab interface also models backend-neutral external completion.",
+      "limits": "Concurrent sharing, external queue family extensions and timeline semaphore ordering may require different cases.",
+      "adaptation": "Separate wait/completion and ownership transfer in the synthetic test design.",
+      "test": "Compare same-family with distinct-family queues, preserve resource contents, and verify a deliberately missing acquire is detected.",
+      "authors": []
+    },
+    {
+      "id": "rpcs3-vk-sync",
+      "project": "rpcs3",
+      "kind": "implementation",
+      "title": "RPCS3 preserves queue family indices in barrier translation",
+      "title_ru": "Передача индексов семейств очередей в RPCS3",
+      "source": "https://github.com/RPCS3/rpcs3/blob/0ca5eb0efe50ec4e8aa07892ab86d57842246eb4/rpcs3/Emu/RSX/VK/vkutils/sync.cpp#L105",
+      "state": "reference",
+      "topics": [
+        "queue-transfer"
+      ],
+      "symbols": [
+        "VkDependencyInfo",
+        "srcQueueFamilyIndex",
+        "dstQueueFamilyIndex",
+        "pImageMemoryBarriers"
+      ],
+      "platforms": [
+        "Vulkan",
+        "Linux",
+        "Windows"
+      ],
+      "problem": "Translate Vulkan synchronization descriptions while retaining the queue-family fields.",
+      "similarity": "This shows the importance of carrying ownership metadata when converting synchronization representations.",
+      "differences": "It is a PS3 RSX host representation and legacy/Vulkan barrier bridge.",
+      "limits": "It does not implement the destination project's external completion object or importing foreign semaphore handles.",
+      "adaptation": "Use it as a field-preservation checklist.",
+      "test": "Run two synthetic queues and compare all barrier ownership and stage fields before and after adaptation.",
+      "authors": []
+    },
+    {
+      "id": "mesa-spill-slots",
+      "project": "mesa",
+      "kind": "implementation",
+      "title": "Mesa ACO spill slot assignment",
+      "title_ru": "Распределение ячеек spill в Mesa ACO",
+      "source": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/5c142e46f3f6e752ed745fd48912ebb8fad67145/src/amd/compiler/aco_spill.cpp#L1406",
+      "state": "reference",
+      "topics": [
+        "spill-allocation",
+        "scratch-reuse"
+      ],
+      "symbols": [
+        "assign_spill_slots",
+        "sgpr_spill_slots",
+        "vgpr_spill_slots",
+        "spill_ctx"
+      ],
+      "platforms": [
+        "AMD",
+        "Vulkan"
+      ],
+      "problem": "Assign GPU backend spill locations for register pressure and interference.",
+      "similarity": "It supplies a hardware-grounded comparison for disjoint allocation scopes.",
+      "differences": "ACO register spilling concerns compiler SSA values and register pressure. XCL scratch payloads can cross dispatches.",
+      "limits": "Different synchronization domains and spill classes make direct slot equivalence unsafe.",
+      "adaptation": "Use the separation of slot classes and interference as a design control.",
+      "test": "Stress different wave widths and spill classes separately from synthetic persistent-dispatch payload tests.",
+      "authors": []
+    },
+    {
+      "id": "mesa-radv-cache",
+      "project": "mesa",
+      "kind": "implementation",
+      "title": "RADV shader cache objects",
+      "title_ru": "Объекты кэша шейдеров RADV",
+      "source": "https://gitlab.freedesktop.org/mesa/mesa/-/blob/5c142e46f3f6e752ed745fd48912ebb8fad67145/src/amd/vulkan/radv_pipeline_cache.c#L42",
+      "state": "reference",
+      "topics": [
+        "radv-cache",
+        "pipeline-key"
+      ],
+      "symbols": [
+        "radv_shader_destroy",
+        "vk_pipeline_cache_object",
+        "disk_cache",
+        "RADV"
+      ],
+      "platforms": [
+        "AMD",
+        "Vulkan",
+        "Linux"
+      ],
+      "problem": "Manage compiled shader/cache objects within the RADV Vulkan driver.",
+      "similarity": "The boundary helps distinguish a driver cache from an application-level cache.",
+      "differences": "RADV is a particular Mesa AMD driver, whereas the XCL report names an NVIDIA driver.",
+      "limits": "Object lifetimes and serialization state in one driver are not portable fixes.",
+      "adaptation": "Use it to map which cache layer an observation actually refers to.",
+      "test": "Repeat an open Vulkan pipeline with both cache layers independently enabled or cleared and log driver/UUID.",
+      "authors": []
+    },
+    {
+      "id": "xenia-pipeline-state",
+      "project": "xenia",
+      "kind": "implementation",
+      "title": "Xenia Vulkan graphics pipeline state cache",
+      "title_ru": "Кэш графических конвейеров Vulkan в Xenia",
+      "source": "https://github.com/xenia-project/xenia/blob/95a5c3ee250f80c3b9d139658649d9ffb6db3eec/src/xenia/gpu/vulkan/vulkan_pipeline_cache.cc#L2140",
+      "state": "reference",
+      "topics": [
+        "pipeline-key"
+      ],
+      "symbols": [
+        "VulkanPipelineCache",
+        "vkCreateGraphicsPipelines",
+        "pipeline state"
+      ],
+      "platforms": [
+        "Vulkan",
+        "Xbox360",
+        "Linux"
+      ],
+      "problem": "Construct and track host Vulkan graphics pipeline objects for Xbox 360 workloads.",
+      "similarity": "The pipeline key and creation boundary give a historical architecture reference for state caching.",
+      "differences": "Xbox 360 guest state and Xenia host Vulkan pipeline creation differ from Xbox Series D3D12 pipeline libraries.",
+      "limits": "It is not a serialized driver-blob or adapter migration solution.",
+      "adaptation": "Compare which bits of state are needed for a deterministic descriptor and variant key.",
+      "test": "Use two synthetic descriptors differing in one graphics state and check separate host pipeline reuse without cache collisions.",
+      "authors": []
+    },
+    {
+      "id": "vma-virtual",
+      "project": "vma",
+      "kind": "implementation",
+      "title": "VMA virtual allocation and linear suballocation",
+      "title_ru": "Виртуальное распределение памяти в VMA",
+      "source": "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/blob/1d8f600fd424278486eade7ed3e877c99f0846b1/include/vk_mem_alloc.h#L812",
+      "state": "reference",
+      "topics": [
+        "virtual-allocation"
+      ],
+      "symbols": [
+        "VMA_VIRTUAL_BLOCK_CREATE_LINEAR_ALGORITHM_BIT",
+        "vmaVirtualAllocate",
+        "vmaVirtualFree",
+        "VirtualBlock"
+      ],
+      "platforms": [
+        "Vulkan"
+      ],
+      "problem": "Allocate and free offsets within a virtual block without allocating actual Vulkan device memory.",
+      "similarity": "It is a useful test reference for alignment, bounds and allocation strategy.",
+      "differences": "A virtual block tracks offsets but does not prove two GPU users are disjoint in time.",
+      "limits": "Explicit ownership and synchronization are caller responsibilities.",
+      "adaptation": "Use the allocator's offset checks as a control for a separately validated lifetime algorithm.",
+      "test": "Test aligned offsets, wraparound, exhaustion and two active ranges that must remain disjoint.",
+      "authors": []
+    },
+    {
+      "id": "d3d12ma-alias",
+      "project": "d3d12ma",
+      "kind": "implementation",
+      "title": "D3D12MA virtual blocks and aliased allocation",
+      "title_ru": "Виртуальные блоки и алиасинг в D3D12MA",
+      "source": "https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator/blob/9ef66bc14edd10dee0de3a545b98578363552f66/include/D3D12MemAlloc.h#L504",
+      "state": "reference",
+      "topics": [
+        "alias-memory",
+        "virtual-allocation"
+      ],
+      "symbols": [
+        "D3D12MA::VirtualBlock",
+        "CreateAliasingResource",
+        "placed resource",
+        "aliasing barrier"
+      ],
+      "platforms": [
+        "D3D12",
+        "Windows"
+      ],
+      "problem": "Describe the allocation and resource primitives used when multiple resources occupy memory in one heap.",
+      "similarity": "The resource placement boundary makes the difference between shared backing memory and active resource correctness explicit.",
+      "differences": "It allocates offsets/resources on a host heap. It does not know a console shader's execution lifetime.",
+      "limits": "Aliasing barriers, alignment, resource flags and lifetime proof are separate constraints.",
+      "adaptation": "Use documented constraints when designing a focused host allocation test.",
+      "test": "Compare two placed-resource alias intervals with explicit barriers plus a negative test using overlapping active lifetimes.",
+      "authors": []
+    },
+    {
+      "id": "spirv-access-chain",
+      "project": "spirv",
+      "kind": "test",
+      "title": "SPIRV-Tools access-chain validation",
+      "title_ru": "Валидация цепочки доступа в SPIRV-Tools",
+      "source": "https://github.com/KhronosGroup/SPIRV-Tools/blob/a62abcb402009b9ca5975e6167c09f237f630e0e/source/val/validate_memory.cpp#L1460",
+      "state": "reference",
+      "topics": [
+        "access-chain"
+      ],
+      "symbols": [
+        "ValidateAccessChain",
+        "OpAccessChain",
+        "integer index",
+        "runtime array"
+      ],
+      "platforms": [
+        "SPIR-V",
+        "Vulkan"
+      ],
+      "problem": "Validate pointer access through a SPIR-V aggregate and its index operands.",
+      "similarity": "The validator provides a checked structural baseline for tests of generated code.",
+      "differences": "SPIR-V aggregate type validation is different from D3D12 descriptor stride and does not run the target's shader.",
+      "limits": "A structurally valid module can still access the wrong logical element.",
+      "adaptation": "Use the validator before comparing real readback, while keeping the runtime result as a separate check.",
+      "test": "Generate a small valid module and a wrong index-type module, then independently check actual buffer element selection.",
+      "authors": []
+    },
+    {
+      "id": "wgpu-scratch-pr",
+      "project": "wgpu",
+      "kind": "pr",
+      "title": "Closed wgpu proposal for acceleration-structure scratch reuse",
+      "title_ru": "Закрытое предложение wgpu по временному буферу ускоряющих структур",
+      "source": "https://github.com/gfx-rs/wgpu/pull/10155",
+      "state": "closed",
+      "topics": [
+        "ray-scratch"
+      ],
+      "symbols": [
+        "acceleration structure",
+        "build scratch buffer",
+        "reuse"
+      ],
+      "platforms": [
+        "Vulkan",
+        "wgpu"
+      ],
+      "problem": "Reduce repeated scratch buffer allocation during acceleration structure builds.",
+      "similarity": "It addresses reuse of a temporary GPU allocation.",
+      "differences": "An acceleration-structure builder scratch buffer is distinct from shader payload lifetime slots.",
+      "limits": "PR closed without merge. The recorded PR head is evidence of a proposal only.",
+      "adaptation": "Use as a rejected transfer case for XCL scratch slots and compare separate allocator costs only where acceleration structures are actually used.",
+      "test": "Vary scratch sizes across repeated synthetic builds and compare resource counts without attributing shader spill behavior.",
+      "authors": [
+        "mstampfli"
+      ]
+    },
+    {
+      "id": "moltenvk-tessellation-pr",
+      "project": "moltenvk",
+      "kind": "pr",
+      "title": "MoltenVK proposal to size tessellation scratch from reflection",
+      "title_ru": "Предложение MoltenVK о размере памяти тесселяции по отражению шейдера",
+      "source": "https://github.com/KhronosGroup/MoltenVK/pull/2892",
+      "state": "open",
+      "topics": [
+        "tessellation-scratch"
+      ],
+      "symbols": [
+        "tessellation",
+        "reflection",
+        "scratch buffer",
+        "output stride"
+      ],
+      "platforms": [
+        "Vulkan",
+        "Metal"
+      ],
+      "problem": "Propose deriving tessellation intermediate sizes from actual shader output reflection.",
+      "similarity": "Both cases are about reducing oversized temporary allocations.",
+      "differences": "The patch concerns tessellation stage output on Metal rather than dispatch-to-dispatch lifetimes on D3D12.",
+      "limits": "The examined proposal is open. No merge or receiver applicability has been established.",
+      "adaptation": "Use it as an example of independent reflection-based sizing, keeping the lifetime problem separate.",
+      "test": "Construct two synthetic shaders with different reflected output sizes and compare required buffer sizes and results.",
+      "authors": [
+        "nivogli"
+      ]
+    },
+    {
+      "id": "vvl-secondary-waw-issue",
+      "project": "vvl-1.3.280",
+      "kind": "issue",
+      "title": "Closed SyncVal WAW report with secondary command buffers",
+      "title_ru": "Закрытый отчёт SyncVal о двойной записи во вторичных буферах",
+      "source": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/7743",
+      "state": "closed",
+      "topics": [
+        "sync-hazard"
+      ],
+      "symbols": [
+        "secondary command buffer",
+        "SYNC-HAZARD-WRITE-AFTER-WRITE",
+        "render pass"
+      ],
+      "platforms": [
+        "Vulkan",
+        "Windows"
+      ],
+      "problem": "Explain a WAW diagnostic when a multisubpass render pass uses secondary command buffers.",
+      "similarity": "Both reports need to distinguish an actual output hazard from how SyncVal records commands.",
+      "differences": "The archived report describes SDK 1.3.280.0 and a secondary command buffer. The FrameLab report is at the NGX boundary.",
+      "limits": "The pinned SDK is the code reference for the reported version. Closure and reviewer discussion do not establish a fix for FrameLab.",
+      "adaptation": "Use the secondary buffer vs inline command contrast as a separate diagnostics control.",
+      "test": "Run both library-independent variants with the same layers and compare IDs and actual attachment output.",
+      "authors": [
+        "artem-lunarg"
+      ],
+      "supplemental": true
+    }
+  ],
+  "cases": [
+    {
+      "id": "wave32-carry",
+      "origin_url": "https://github.com/xcl-dev/xcl/issues/2584",
+      "title": "HLSL pixel masks: adjacent Wave32 carry destinations lose s21 on WQM triangle edges",
+      "state": "open",
+      "query": "WQM Wave32 pixel carry",
+      "primary": "llvm-wqm",
+      "related": [
+        "shadps4-subgroup"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Use live versus expanded mask as an oracle."
+    },
+    {
+      "id": "scratch-lifetimes",
+      "origin_url": "https://github.com/xcl-dev/xcl/pull/2322",
+      "title": "Recompiler: reuse scratch slots across disjoint payload lifetimes",
+      "state": "open",
+      "query": "stack coloring disjoint lifetimes",
+      "primary": "llvm-stack-coloring",
+      "related": [
+        "mesa-spill-slots"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Apply interference checks to the separate inter-dispatch allocation policy."
+    },
+    {
+      "id": "warm-driver-blob",
+      "origin_url": "https://github.com/xcl-dev/xcl/issues/2003",
+      "title": "Linux / NVIDIA: XCL's cached driver blob plus a warm NVIDIA shader cache crashes in vkCreateGraphicsPipelines",
+      "state": "open",
+      "query": "Vulkan pipeline cache UUID driver blob",
+      "primary": "vulkan-cache-format",
+      "related": [
+        "vkd3d-cache-uuid",
+        "mesa-radv-cache"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Compare both cache layers with separate toggles. The crash cause is open."
+    },
+    {
+      "id": "coalesce-layouts",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/pull/1713",
+      "title": "vulkan: coalesce equal image layout ranges (VK-IMAGE-LAYOUT-RANGE-COALESCING)",
+      "state": "open",
+      "query": "Vulkan image layout barrier range coalescing",
+      "primary": "dxvk-image-barriers",
+      "related": [
+        "vulkan-queue-transfer"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Use the non-coalescing batch as a reference. Rule equivalence needs testing."
+    },
+    {
+      "id": "mode-switch-wait",
+      "origin_url": "https://github.com/ubiquitarianism/leonida/pull/1042",
+      "title": "frame_pacer: wake blocked waiters on set_uncapped and guard shutdown entry",
+      "state": "open",
+      "query": "condition variable blocked waiter notify_all",
+      "primary": "glibc-cond-wake",
+      "related": [],
+      "verdict": "candidate",
+      "conclusion": "Compare awakened and sleeping paths, keeping predicates in the receiver."
+    },
+    {
+      "id": "mixed-stride",
+      "origin_url": "https://github.com/Marvisak/VIctory/pull/984",
+      "title": "Shaders: split flat byte-offset accesses to structured buffers",
+      "state": "open",
+      "query": "DXIL structured buffer StructureByteStride",
+      "primary": "dxc-structured-layout",
+      "related": [
+        "spirv-access-chain"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Use stride metadata as the oracle for two descriptors."
+    },
+    {
+      "id": "per-adapter-library",
+      "origin_url": "https://github.com/Marvisak/VIctory/issues/2637",
+      "title": "GPU: one host pipeline library for every adapter, so a WARP run discards the hardware one",
+      "state": "open",
+      "query": "D3D12 pipeline library adapter cache",
+      "primary": "vkd3d-cache-uuid",
+      "related": [
+        "vulkan-cache-format"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Use per-adapter keying and retain foreign-cache rejection."
+    },
+    {
+      "id": "split-wave64",
+      "origin_url": "https://github.com/LooperSalty/AnyXboxX/issues/213",
+      "title": "VIctory on NVIDIA (32-lane waves): 17 wave64 compute pipelines refused per run on main (RTX 5080)",
+      "state": "open",
+      "query": "Wave64 on Wave32 subgroup shuffle",
+      "primary": "shadps4-subgroup",
+      "related": [
+        "llvm-wqm"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Use subgroup scoping. Cross-half software work remains separate."
+    },
+    {
+      "id": "legacy-compiler-black",
+      "origin_url": "https://github.com/LooperSalty/AnyXboxX/issues/264",
+      "title": "Neptune base on Linux (Wine, RTX 5060 8 GB): black with Wine's d3dcompiler; with Microsoft's, Series X draws at ~0.2 fps and Series S is grey at ~1.2 fps",
+      "state": "open",
+      "query": "Wine D3DCompile2 DXBC d3dcompiler",
+      "primary": "wine-legacy-compiler",
+      "related": [
+        "dxc-structured-layout"
+      ],
+      "verdict": "no_transfer_found",
+      "conclusion": "No transferable compiler fix found in the bounded scan. Suggested test isolates legacy code and signatures."
+    },
+    {
+      "id": "ngx-write-after-write",
+      "origin_url": "https://github.com/5headsmartbtw/leonida-framelab/issues/24",
+      "title": "Investigate Vulkan SyncVal WAW diagnostics inside the NGX recording boundary",
+      "state": "open",
+      "query": "Vulkan SyncVal write after write",
+      "primary": "vvl-waw",
+      "related": [
+        "dxvk-image-barriers"
+      ],
+      "verdict": "no_transfer_found",
+      "conclusion": "No direct vendor-side implementation found. Start with a published positive/negative pair."
+    },
+    {
+      "id": "adapter-telemetry",
+      "origin_url": "https://github.com/fxceless/victory-fork/issues/55",
+      "title": "Resource collector: GPU counter LUIDs cannot be matched to adapter names in multi-GPU captures",
+      "state": "open",
+      "query": "DXGI adapter LUID deviceLUIDValid",
+      "primary": "dxvk-adapter-luid",
+      "related": [],
+      "verdict": "candidate",
+      "conclusion": "Separate unknown identifiers and validation of real matches."
+    },
+    {
+      "id": "3d-workgroup-id",
+      "origin_url": "https://github.com/fxceless/victory-fork/issues/1243",
+      "title": "Console thread ids in 2-D/3-D compute groups on 32-lane hosts: the wave-aligned rounding in `thread_id` / `console_thread` does not hold (RTX 4060 Laptop, Radeon 780M)",
+      "state": "open",
+      "query": "Vulkan LocalInvocationIndex 3D workgroup coordinates",
+      "primary": "vulkan-local-index",
+      "related": [
+        "shadps4-subgroup"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Do not substitute local index for subgroup lane. Compare mappings on asymmetric groups."
+    },
+    {
+      "id": "external-queue-completion",
+      "origin_url": "https://github.com/5headsmartbtw/leonida-framelab/issues/2",
+      "title": "Validate external completion and multi-queue resource handoff",
+      "state": "open",
+      "query": "Vulkan queue family ownership release acquire",
+      "primary": "vulkan-queue-transfer",
+      "related": [
+        "rpcs3-vk-sync"
+      ],
+      "verdict": "candidate",
+      "conclusion": "Use contract and field-preservation reference on two controlled queues."
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+[
+  {
+    "body_sha256": "cda674daee5b6cc64b2b6ca1f4fa483e016dc447e0d90c01bff46e8126a222be",
+    "created_rank": 1,
+    "head": {
+      "sha": "6efa82fab8dce5df52e7f69fff5539b8258e2d2c"
+    },
+    "labels": [],
+    "merged_at": null,
+    "number": 2860,
+    "repo": "xcl-dev/xcl",
+    "state": "open",
+    "title": "Shaders: separate Series S and Series X used manifests",
+    "updated_at": "2026-11-26T19:25:02Z",
+    "url": "https://github.com/xcl-dev/xcl/pull/2860"
+  },
+  {
+    "body_sha256": "6f938ed18b24c5e7f3bd6191d2d5067e2287d07652a7546266998910c87db6ed",
+    "created_rank": 1,
+    "head": {
+      "sha": "3b5b36edd129dedabb9efadf3b6e1c7ef7118234"
+    },
+    "labels": [],
+    "merged_at": null,
+    "number": 2399,
+    "repo": "ubiquitarianism/leonida",
+    "state": "open",
+    "title": "d3d12_xs: capture a pipeline stream that carries a VIEW_INSTANCING subobject",
+    "updated_at": "2026-11-26T19:30:09Z",
+    "url": "https://github.com/ubiquitarianism/leonida/pull/2399"
+  },
+  {
+    "body_sha256": "93698ebed9e174ba56210f15dd97ae2dbda061a019f805028fb9c9cafc79fde9",
+    "created_rank": 2,
+    "head": {
+      "sha": "9e27d264d9c8d6e0a62f53f5fd9aacaa1d48358a"
+    },
+    "labels": [],
+    "merged_at": null,
+    "number": 2551,
+    "repo": "KytyPS5/KytyPS5",
+    "state": "open",
+    "title": "graphics: release idle images when a new image cannot be allocated",
+    "updated_at": "2026-11-26T19:23:23Z",
+    "url": "https://github.com/KytyPS5/KytyPS5/pull/2551"
+  },
+  {
+    "body_sha256": "6070e46f45cd8023e6f3a7f9ac6fca16a4de202853d24614c3583027a66070a5",
+    "created_rank": 1,
+    "head": {
+      "sha": "e05d132a8dbc56e3e436f3d6f152bf23164dc68c"
+    },
+    "labels": [],
+    "merged_at": null,
+    "number": 27618,
+    "repo": "boykopovar/AnyPS5",
+    "state": "open",
+    "title": "fix(libScePosixForWebKit): raise the debug exception on mmap_np's ENOMEM",
+    "updated_at": "2026-11-26T19:30:24Z",
+    "url": "https://github.com/boykopovar/AnyPS5/pull/27618"
+  },
+  {
+    "body_sha256": "32a117f18a7cb09a4a9ab203be7096494fc7c60d63c665b8d307b4ad7d93525d",
+    "created_rank": 1,
+    "head": {
+      "sha": "727118c1d2cb4467d137a826be422040c7d78930"
+    },
+    "labels": [],
+    "merged_at": null,
+    "number": 448,
+    "repo": "LooperSalty/AnyXboxX",
+    "state": "open",
+    "title": "fix(victory-shader): lower v_cmp_f and v_cmp_tru floats as constant booleans",
+    "updated_at": "2026-11-26T19:14:56Z",
+    "url": "https://github.com/LooperSalty/AnyXboxX/pull/448"
+  }
+]
