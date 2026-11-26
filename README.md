@@ -34,6 +34,16 @@ The local candidate maps public technical work across Xbox Series and PS5 and re
 | Try PortBridge in your repository | Check one open PR for prior work, then see if a collaborator can reuse a result. [Pilot for maintainers](docs/AGENT-PROMPT.md#try-portbridge-in-your-repository) |
 | Suggest a project, a missing link, or a search improvement | Open the [feedback form](https://github.com/akimfomin/PortBridge/issues/new?template=idea.yml). |
 
+## Start from a pull request
+
+From this checkout, give Discovery the public GitHub PR URL. It reads the PR metadata and makes at most one external search lookup. The result shows the selected technical subject, up to five source links and an explanation when the search is empty or unavailable.
+
+```sh
+python -m portbridge.discovery_scan --online --url https://github.com/LooperSalty/AnyXboxX/pull/429
+```
+
+Inspect the linked evidence before applying a result. [Measured examples](audit/evidence/m52/assessment.md) · [Audit report](audit/LATEST.md)
+
 ## Look up one real case
 
 Paste a GitHub URL into the [public source index](https://akimfomin.github.io/PortBridge/#/sources), then open related work. The site shows how many entries match and labels automatically found candidates. Open the [reviewed catalog](https://akimfomin.github.io/PortBridge/#/problems) for recorded results and the [Research Radar](https://akimfomin.github.io/PortBridge/#/partial) for work that has a next step.

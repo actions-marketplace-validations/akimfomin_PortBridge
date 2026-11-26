@@ -12,7 +12,7 @@ from urllib.request import Request, build_opener
 from .catalog import PROBLEM_ID, ReadOnlyCatalog, public_url
 from .consoles import console_families
 from .discovery_scan import cached_index
-from .discovery_search import MAX_QUERY as MAX_DISCOVERY_QUERY, discover, historical_candidates
+from .discovery_search import MAX_QUERY as MAX_DISCOVERY_QUERY, discover, empty_link_result, historical_candidates
 from .github import NoRedirect
 from .global_search import append_external_results
 from .matching import (GENERAL_SOURCE_TERMS, RelatedIndex, canonical_url, current_repository, observation_summary,
@@ -84,7 +84,10 @@ def attach_discovery(result, q, url, limit, index=None, *, index_source=None):
             raise
         report = discover(q, origin_url=url, limit=min(limit, 10))
         source = "bundled_fallback"
-    if report["matches"] or report["case"] or report["scan_status"] != "not_scanned":
+    if source == "bundled_fallback" and report["empty_reason"]:
+        report["scan_status"], report["scan_reason"] = "unavailable", "snapshot_unavailable"
+        report["status"], report["empty_reason"] = empty_link_result(url, report["scan_status"], report["scan_reason"])
+    if report["matches"] or report["case"] or report["scan_status"] != "not_scanned" or report["empty_reason"]:
         result["discovery"] = {**report, "index_source": source, "radar_candidates": historical_candidates(report)}
     return result
 

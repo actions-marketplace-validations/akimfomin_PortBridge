@@ -21,15 +21,18 @@ const PortBridgeDiscovery = (() => {
     }
   }
 
-  function rank(index, request, limit = 5) {
+  function search(index, request, limit = 5) {
     if (!index || index.schema_version !== 1 || !Array.isArray(index.entries) || index.entries.length > 128
-      || typeof request !== 'string' || request.length > 200) return [];
+      || typeof request !== 'string' || request.length > 200) {
+      return {matches: [], scan_status: 'unavailable', scan_reason: 'snapshot_unavailable'};
+    }
     request = request.trim();
     const normalized = (url) => sourceKey(url).replace(/^github\.com\/([^/]+\/[^/]+)\//, (_, repo) =>
       'github.com/' + (index.repository_moves?.[repo] || repo) + '/');
     const requestedUrl = /#(?:issuecomment-|discussion_r|pullrequestreview-)/.test(request) ? '' : normalized(request);
     const found = index.cases.find((item) => normalized(item.origin_url) === requestedUrl);
-    const query = found ? found.query : request;
+    const scan = index.automatic?.[requestedUrl];
+    const query = requestedUrl ? (found?.query || scan?.subject || '') : request;
     const recommended = found?.state === 'open' && found.verdict === 'candidate' && found.primary;
     const tokens = new Set(words(query).filter((word) => !stop.has(word)));
     const phrase = ' ' + words(query).join(' ') + ' ';
@@ -55,8 +58,13 @@ const PortBridgeDiscovery = (() => {
       hits.push({...row, score, evidence_status: eligible ? 'potentially_applicable' : 'source_found', match: {exact, facets: topics.sort(), symbols: symbols.sort()}});
     }
     const ranked = hits.sort((a, b) => Number(b.match.exact) - Number(a.match.exact) || b.score - a.score || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)).slice(0, limit);
-    return ranked.concat((index.automatic?.[requestedUrl]?.matches || []).slice(0, limit));
+    return {matches: ranked.concat((scan?.matches || []).slice(0, limit)),
+      scan_status: scan?.status || 'not_scanned', scan_reason: scan?.reason || null};
   }
 
-  return {rank, sourceKey};
+  function rank(index, request, limit = 5) {
+    return search(index, request, limit).matches;
+  }
+
+  return {rank, search, sourceKey};
 })();

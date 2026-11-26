@@ -38,6 +38,12 @@
       "next_step": "Existing volunteer board remains the route for hardware checks."
     }
   ],
+  "relaunch_versions": {
+    "a9fcf3ecda9dd5e7db769080c9b83aa626931414": {"name": "PortBridge M5", "committed_at": "2026-11-26T18:48:32Z"},
+    "0738093add1ed01dad89c4bdcb6df74eb8891701": {"name": "PortBridge M5.1", "committed_at": "2026-11-26T18:48:33Z"}
+  },
+  "relaunch_teams": {},
+  "relaunch_usage": [],
   "usage": [
     {
       "actor": "KainanP",

@@ -1,0 +1,285 @@
+{
+  "product_sha256": "2daa179f9bde65c074be83bfdfc10c49295122863da9caa30ee95f67bb841ba9",
+  "cases": [
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2852",
+      "observation": {
+        "project": "xcl",
+        "kind": "pr",
+        "source_id": "2852",
+        "title": "D3D12.X: forget command list before its final release",
+        "url": "https://github.com/xcl-dev/xcl/pull/2852",
+        "status": "open",
+        "updated_at": "2026-11-26T18:50:00Z",
+        "metadata": {
+          "number": 2852,
+          "head_sha": "69ebece8a98ae956556eb02d3721db712501e9b2",
+          "technical": {
+            "version": 5,
+            "terms": [
+              "d3d12",
+              "command list"
+            ],
+            "discovery_cues": [],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null
+        }
+      },
+      "result": {
+        "subject": "command list",
+        "lookups": 1,
+        "cache_hits": 0,
+        "status": "available",
+        "explanation": "Open each source to compare the mechanism and revision.",
+        "top5": [
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/3399",
+            "title": "vkd3d: Re-emit command list state after cubin launches.",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3525",
+            "title": "WWM appears to be stuck or has timed out",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3355",
+            "title": "Ghost of Tsushima: trivial COPY barrier path can bypass pending DGC flush and cause lighting flashes",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/llvm/llvm-project/pull/239954",
+            "title": "[lldb] Make `platform process list` command more flexible",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3508",
+            "title": "maybe helps but idk also how do you guys manage this this is insane",
+            "route": "github",
+            "evidence_status": "source_found"
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+      "observation": {
+        "project": "continued",
+        "kind": "pr",
+        "source_id": "2392",
+        "title": "make_game: the pipelines stage fills the runtime's own journal with gta6rt --precompile-pipelines (MAKE-GAME-PIPELINES-VIA-RUNTIME)",
+        "url": "https://github.com/ubiquitarianism/leonida/pull/2392",
+        "status": "open",
+        "updated_at": "2026-11-26T18:50:18Z",
+        "metadata": {
+          "number": 2392,
+          "head_sha": "8a73cb09be44c908d7fbe4947d2510ee8c95e7c1",
+          "technical": {
+            "version": 5,
+            "terms": [
+              "shader",
+              "bindless",
+              "wine",
+              "spir-v"
+            ],
+            "discovery_cues": [
+              "vk_shader_stage_all"
+            ],
+            "signals": [],
+            "references": [
+              "https://github.com/ubiquitarianism/leonida/issues/1608"
+            ],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null
+        }
+      },
+      "result": {
+        "subject": "vk_shader_stage_all",
+        "lookups": 1,
+        "cache_hits": 0,
+        "status": "available",
+        "explanation": "Open each source to compare the mechanism and revision.",
+        "top5": [
+          {
+            "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13524",
+            "title": "GPU-AV misses errors that happen in fragment shader helper invocations",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KhronosGroup/MoltenVK/issues/2573",
+            "title": "The `vkGetDescriptorSetLayoutSupport` implementation makes using bindless impossible",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13419",
+            "title": "debugPrintf: Handle esoteric descriptor set and descriptor buffer interaction",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/10549",
+            "title": "Fix object tracking so invalid handle edge cases are all caught",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/13596",
+            "title": "heap-buffer-overflow read in vvl::DescriptorSet::DescriptorSet for variable descriptor count exceeding the layout's descriptorCount with immutable samplers",
+            "route": "github",
+            "evidence_status": "source_found"
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+      "observation": {
+        "project": "kytyps5",
+        "kind": "pr",
+        "source_id": "2565",
+        "title": "config: add Ukrainian (ID 30) to the console languages",
+        "url": "https://github.com/KytyPS5/KytyPS5/pull/2565",
+        "status": "open",
+        "updated_at": "2026-11-26T18:54:54Z",
+        "metadata": {
+          "number": 2565,
+          "head_sha": "d54e1c600f5678779fe961fb68d30d04118b1112",
+          "technical": {
+            "version": 5,
+            "terms": [],
+            "discovery_cues": [],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null
+        }
+      },
+      "result": {
+        "subject": "",
+        "lookups": 0,
+        "cache_hits": 0,
+        "status": "no_subject",
+        "explanation": "No supported technical subject was found in the PR title or stored metadata. No external search ran.",
+        "top5": []
+      }
+    },
+    {
+      "url": "https://github.com/boykopovar/AnyPS5/pull/27600",
+      "observation": {
+        "project": "anyps5",
+        "kind": "pr",
+        "source_id": "27600",
+        "title": "docs(build): clarify the relinker seed manifest format",
+        "url": "https://github.com/boykopovar/AnyPS5/pull/27600",
+        "status": "open",
+        "updated_at": "2026-11-26T18:56:14Z",
+        "metadata": {
+          "number": 27600,
+          "head_sha": "9f9c3118d93368505a5e1d2840653bba9195163c",
+          "technical": {
+            "version": 5,
+            "terms": [
+              "shader"
+            ],
+            "discovery_cues": [],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": null
+        }
+      },
+      "result": {
+        "subject": "",
+        "lookups": 0,
+        "cache_hits": 0,
+        "status": "no_subject",
+        "explanation": "No supported technical subject was found in the PR title or stored metadata. No external search ran.",
+        "top5": []
+      }
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/429",
+      "observation": {
+        "project": "anyxboxx",
+        "kind": "pr",
+        "source_id": "429",
+        "title": "feat(victory-gpu): add opt-in tile reclamation and zero-alloc single-run mappings",
+        "url": "https://github.com/LooperSalty/AnyXboxX/pull/429",
+        "status": "merged",
+        "updated_at": "2026-11-26T18:47:00Z",
+        "metadata": {
+          "number": 429,
+          "head_sha": "0d20059eeeb6de1dd22c84ef14a1a8f39b5f2627",
+          "technical": {
+            "version": 5,
+            "terms": [],
+            "discovery_cues": [
+              "updatetilemappings",
+              "d3d12_tile_range_flag_null"
+            ],
+            "signals": [],
+            "references": [],
+            "external_repositories": []
+          },
+          "labels": [],
+          "merged_at": "2026-11-26T18:47:00Z"
+        }
+      },
+      "result": {
+        "subject": "updatetilemappings",
+        "lookups": 1,
+        "cache_hits": 0,
+        "status": "available",
+        "explanation": "Open each source to compare the mechanism and revision.",
+        "top5": [
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/issues/3425",
+            "title": "Reserved-resource fallback eagerly commits the entire virtual-texture pool (~11 GiB) on non-sparse UMA devices: Forza Horizon 4 OOM crash",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/3231",
+            "title": "Ensure that GPUVA is aligned for placed resources",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/2307",
+            "title": "Batch sparse binds",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/2194",
+            "title": "vkd3d: Perform minimal validation on page table updates.",
+            "route": "github",
+            "evidence_status": "source_found"
+          },
+          {
+            "url": "https://github.com/HansKristian-Work/vkd3d-proton/pull/1176",
+            "title": "vkd3d: Resolve fence waiters early.",
+            "route": "github",
+            "evidence_status": "source_found"
+          }
+        ]
+      }
+    }
+  ]
+}

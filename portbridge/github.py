@@ -14,6 +14,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from .discovery_terms import API_SYMBOL, cues
 from .matching import (RelatedIndex, canonical_url, current_repository, instruction_names, repository_identity,
                        source_revision)
 
@@ -25,7 +26,7 @@ WORK_URL = re.compile(rf"https://github\.com/{REPO.pattern}/(?:pull|issues)/[1-9
 SHA = re.compile(r"[0-9a-fA-F]{40,64}")
 PAGE_SIZE = 20
 CACHE_TTL = 900
-SIGNATURE_VERSION = 4
+SIGNATURE_VERSION = 5
 PAIR_CHECK_LIMIT = 8
 MAX_RESPONSE = 4 * 1024 * 1024
 NOT_MODIFIED = object()
@@ -55,14 +56,7 @@ TERM_ALIASES = {
     "spir v": "spir-v", "rectangle list": "rectlist", "swap chain": "swapchain",
     "atomics": "atomic", "shaders": "shader", "work graph": "workgraph",
 }
-API_SYMBOL = re.compile(
-    r"\b(?:vk(?:[A-Z][A-Za-z0-9]{1,62})|ID3D12[A-Za-z0-9_]{1,58}|"
-    r"IDXGI[A-Za-z0-9_]{1,59}|(?:VK_ERROR|DXGI_ERROR|D3D12_ERROR|D3D12_MESSAGE_ID|"
-    r"STATUS_ACCESS|SPV_ERROR|XAUDIO2_E)_[A-Z0-9_]{1,43}|VUID-[A-Za-z0-9_-]{1,59}|"
-    r"(?:OpAtomic|OpGroupNonUniform)[A-Z][A-Za-z0-9]{0,46}|"
-    r"ExecuteIndirect|DispatchMesh|DrawIndexedInstanced|CreateGraphicsPipelineState|"
-    r"0[xX](?:887[Aa]00[0-9a-fA-F]{2}|80070057|8007000[Ee]|80004005|[Cc]0000005))\b"
-)
+
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -193,6 +187,7 @@ def _technical(entry, label_names, repositories):
     return {
         "version": SIGNATURE_VERSION,
         "terms": _limited(TERM_ALIASES.get(term, term) for term in terms),
+        "discovery_cues": cues(searchable),
         "signals": (instruction_names(searchable)[:INSTRUCTION_LIMIT]
                     + _limited(match[0].casefold() for match in API_SYMBOL.finditer(searchable))),
         "references": references,
@@ -865,7 +860,7 @@ def public_source_revisions(db_path, sources):
     return revisions
 
 
-def refresh_references(projects, db_path, references, *, refresh=False, skip_unavailable=False):
+def refresh_references(projects, db_path, references, *, refresh=False, skip_unavailable=False, anonymous=False):
     """Recheck exact public Issue, PR and CI links already in reviewed cards."""
     checked = [_project(project) for project in projects]
     by_repo = {project["repo"].lower(): project for project in checked}
@@ -895,7 +890,7 @@ def refresh_references(projects, db_path, references, *, refresh=False, skip_una
 
     result = {"items": [], "warnings": [], "references": []}
     with closing(sqlite3.connect(db_path, timeout=8)) as db:
-        sync = _Sync(db, refresh, checked)
+        sync = _Sync(db, refresh, checked, anonymous=anonymous)
         for target, (project, kind, endpoint, run, job) in watched.items():
             cached = db.execute("SELECT etag, fetched_at, items FROM github_cache WHERE url=?", (endpoint,)).fetchone()
             try:

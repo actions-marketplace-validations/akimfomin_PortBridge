@@ -395,12 +395,12 @@ function problemCard(problem, view) {
   return card;
 }
 
-function drawProblems(problems, view, discovery = [], findings = []) {
+function drawProblems(problems, view, discovery, findings) {
   const count = numberFormat.format(problems.length);
   viewStatus.textContent = t(`Issues: ${count}`, `Проблем в списке: ${count}`);
-  if (!problems.length && !discovery.length && !findings.length) {
+  if (!problems.length && !discovery.matches.length && !findings.length) {
     stateScreen(t('No issues found', 'Проблемы не найдены'),
-      t('Try another search or reset the filters.', 'Измените поисковый запрос или сбросьте фильтры.'));
+      discovery.emptyMessage || t('Try another search or reset the filters.', 'Измените поисковый запрос или сбросьте фильтры.'));
     return;
   }
   const wrapper = element('div', 'cards');
@@ -411,18 +411,43 @@ function drawProblems(problems, view, discovery = [], findings = []) {
   drawReviewedRadar(findings);
 }
 
+function emptyDiscoveryMessage(status, reason) {
+  if (status === 'available') return t('The reviewed index and saved GitHub search have no matching source in this scope.',
+    'В проверенном каталоге и сохранённой выдаче GitHub подходящих источников не нашлось.');
+  if (status === 'no_subject') return t('No supported technical subject was found in the PR. No external search ran.',
+    'В PR не найден технический признак для поиска. Внешний поиск не запускался.');
+  if (status === 'not_scanned') return t('There is no saved external search for this PR.',
+    'Для этого PR пока нет сохранённого внешнего поиска.');
+  if (status === 'partial') return t('GitHub returned an incomplete search page. Other matching sources may exist.',
+    'GitHub вернул неполную выдачу. В ней могут отсутствовать подходящие источники.');
+  if (status === 'offline') return t('The search ran offline. No external sources were checked.',
+    'Поиск работал без сети. Внешние источники не проверялись.');
+  if (status === 'stale') return t('The saved search is out of date. A current match could not be confirmed.',
+    'Сохранённая выдача устарела. Наличие актуальных источников выяснить не удалось.');
+  if (reason === 'snapshot_unavailable') return t('The Discovery index is unavailable. Try again later.',
+    'Индекс поиска недоступен. Попробуйте позже.');
+  if (status === 'rate_limit' || reason === 'rate_limit') return t('GitHub rate-limited the search. Try again later.',
+    'GitHub временно ограничил число запросов. Попробуйте позже.');
+  return t('The external search could not be completed. Try again later.',
+    'Завершить внешний поиск не удалось. Попробуйте позже.');
+}
+
 async function discoveryResults(query, signal) {
-  if (!query || query.length > 200) return [];
+  if (!query || query.length > 200) return {matches: []};
+  let result;
   try {
     if (!snapshotSite) {
-      const result = await fetchJSON(`/discovery?${new URLSearchParams({q: query})}`, signal);
-      return [...list(result.matches), ...list(result.automatic_matches)];
+      result = await fetchJSON(`/discovery?${new URLSearchParams({q: query})}`, signal);
+    } else {
+      const index = snapshotSite.snapshots?.discovery && await readSnapshot('discovery', signal);
+      result = PortBridgeDiscovery.search(index, query);
     }
-    if (!snapshotSite.snapshots?.discovery) return [];
-    return PortBridgeDiscovery.rank(await readSnapshot('discovery', signal), query);
   } catch {
-    return [];
+    result = {scan_status: 'unavailable', scan_reason: 'snapshot_unavailable'};
   }
+  const matches = [...list(result.matches), ...list(result.automatic_matches)];
+  const pr = /^https:\/\/github\.com\/[\w-]+\/[\w.-]+\/pull\/[1-9]\d*\/?$/i.test(query.trim());
+  return {matches, emptyMessage: pr && !matches.length ? emptyDiscoveryMessage(result.scan_status, result.scan_reason) : ''};
 }
 
 async function reviewedRadarResults(query, signal) {
@@ -467,8 +492,11 @@ function discoveryLink(title, url) {
   return link;
 }
 
-function drawDiscovery(matches) {
-  if (!matches.length) return;
+function drawDiscovery({matches, emptyMessage}) {
+  if (!matches.length) {
+    if (emptyMessage) content.append(element('p', 'activity-note', emptyMessage));
+    return;
+  }
   const panel = element('section', 'activity-panel discovery-results');
   panel.append(element('h2', '', t('Historical work in other projects', 'Исторические решения в других проектах')),
     element('p', 'activity-note', t('These leads need a check in the receiving project.',
@@ -842,12 +870,13 @@ const sourceStates = {
 const sourceKinds = {pr: 'PR', issue: t('Issue', 'Задача'), commit: t('Commit', 'Коммит'), workflow: t('CI check', 'Проверка CI'),
   test: t('CI check', 'Проверка CI')};
 
-function drawSources(result, current) {
+function drawSources(result, current, emptyMessage) {
   const total = numberFormat.format(result.total);
   viewStatus.textContent = t(`Sources found: ${total} of ${numberFormat.format(result.all)}`,
     `Найдено источников: ${total} из ${numberFormat.format(result.all)}`);
   if (!result.items.length) {
-    stateScreen(t('No GitHub sources found', 'Источники не найдены'), t('Try fewer terms or clear a filter.', 'Сократите запрос или сбросьте фильтр.'));
+    stateScreen(t('No GitHub sources found', 'Источники не найдены'),
+      emptyMessage || t('Try fewer terms or clear a filter.', 'Сократите запрос или сбросьте фильтр.'));
     return;
   }
   const rows = element('ul', 'source-list');
@@ -2327,9 +2356,10 @@ async function loadView(current, focus = false, recovering = false, previousSnap
       if (!active.signal.aborted) {
         if (isMatches) drawMatches(result.items, result, current);
         else {
-          drawSources(result, current);
           const facts = await discoveryResults(current.params.get('q'), active.signal);
-          if (!active.signal.aborted) drawDiscovery(facts);
+          if (active.signal.aborted) return;
+          drawSources(result, current, facts.emptyMessage);
+          if (result.items.length || facts.matches.length) drawDiscovery(facts);
         }
         sectionDates(snapshotSite?.generated_at, latestChecked(Array.from(projects.values(), (project) => project.last_success)));
       }
@@ -2351,7 +2381,7 @@ async function loadView(current, focus = false, recovering = false, previousSnap
       if (current.view === 'problems' && summaryData) showSummary(summaryData);
       const [facts, findings] = current.view === 'problems'
         ? await Promise.all([discoveryResults(current.params.get('q'), active.signal),
-          reviewedRadarResults(current.params.get('q'), active.signal)]) : [[], []];
+          reviewedRadarResults(current.params.get('q'), active.signal)]) : [{matches: []}, []];
       if (active.signal.aborted) return;
       drawProblems(problems, current.view, facts, findings);
       const source = githubURL(current.params.get('q'));

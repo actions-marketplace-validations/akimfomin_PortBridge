@@ -1,0 +1,67 @@
+{
+  "method": "Two immutable read-only local SQLite snapshots. Count PR rows once per snapshot, independently of state. The snapshots may overlap. No search HTTP, no database writes. Example rows contain only the fields used by subject().",
+  "snapshots": [
+    {
+      "name": "M4 pilot final",
+      "pr_rows": 11169,
+      "v4": 11168,
+      "unversioned": 1,
+      "m51_with_subject": 2520,
+      "m52_with_subject": 3771,
+      "gained": 1251,
+      "lost": 0,
+      "changed_nonempty_subject": 89,
+      "unchanged_nonempty": 2431,
+      "empty_both": 7398
+    },
+    {
+      "name": "M5 live pilot at pinned head",
+      "pr_rows": 5,
+      "unversioned": 5,
+      "m51_with_subject": 3,
+      "m52_with_subject": 3,
+      "gained": 0,
+      "lost": 0,
+      "changed_nonempty_subject": 0,
+      "unchanged_nonempty": 3,
+      "empty_both": 2
+    }
+  ],
+  "examples": [
+    {
+      "url": "https://github.com/LeonidaReforge/Leonida/pull/56",
+      "title": "runtime: make Vulkan scratch buffer ownership safe across allocation failures",
+      "metadata": {
+        "technical": {
+          "version": 4,
+          "signals": [
+            "vkqueuesubmit"
+          ],
+          "terms": [
+            "vulkan"
+          ]
+        }
+      },
+      "m51_subject": "",
+      "m52_subject": "vkqueuesubmit"
+    },
+    {
+      "url": "https://github.com/fxceless/victory-fork/pull/501",
+      "title": "Pipelines: no blending on integer render targets (mesh f5e50eb2108c425b refused on NVIDIA)",
+      "metadata": {
+        "technical": {
+          "version": 4,
+          "signals": [
+            "creategraphicspipelinestate"
+          ],
+          "terms": [
+            "d3d12",
+            "shader"
+          ]
+        }
+      },
+      "m51_subject": "",
+      "m52_subject": "creategraphicspipelinestate"
+    }
+  ]
+}

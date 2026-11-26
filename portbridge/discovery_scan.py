@@ -12,10 +12,12 @@ from uuid import uuid4
 from .catalog import Catalog, public_url
 from .community_sources import DATA, SCHEMA as PEOPLE_SCHEMA, actor, remember_discovery
 from .consoles import console_families
-from .discovery_search import SOURCE_FOUND, discovery_index, key
-from .github import API, API_SYMBOL, _Sync, _text, Unavailable
+from .discovery_search import SOURCE_FOUND, discover, discovery_index, key
+from .discovery_terms import MAX_CUES, cues, stored_cue
+from .github import (API, INSTRUCTION_LIMIT, PR_URL, SIGNATURE_LIMIT, TECHNICAL_TERM, URL, Unavailable,
+                     _Sync, _text, refresh_references)
 from .global_search import result_entry, RESULT_PATH
-from .matching import ISA_OPCODE, source_revision
+from .matching import current_repository, source_revision
 
 MAX_ORIGINS = 64
 MAX_LOOKUPS = 5
@@ -24,16 +26,7 @@ TTL = 24 * 3600
 FAILURE_TTL = 15 * 60
 BATCH_SECONDS = 14
 QUERY_VERSION = "m21-v1"
-# Subjects and repository scope are independent. No subject names an expected result.
-SYMBOLS = re.compile(
-    r"\b(?:DXGI|D3D12|VK|SPV|GL)_[A-Z0-9_]{3,60}\b|"
-    r"\b(?:GetCopyableFootprints|CopyTextureRegion|EnumAdapterByGpuPreference|"
-    r"requiredSubgroupSize|R\d+G\d+B\d+E\d+|ds_bpermute(?:_b32)?)\b"
-)
-MECHANISMS = re.compile(
-    r"\b(?:subgroup[-_ ]size|shared exponent|memory budget|device loss|typed buffer|"
-    r"raw buffer view|pipeline state|frame pacing|texture upload|texture uploads|robust buffer access)\b", re.I
-)
+
 EXTERNAL = (
     "doitsujin/dxvk", "HansKristian-Work/vkd3d-proton", "KhronosGroup/Vulkan-ValidationLayers",
     "KhronosGroup/Vulkan-Docs", "KhronosGroup/SPIRV-Tools", "shadps4-emu/shadPS4",
@@ -57,21 +50,18 @@ CREATE TABLE IF NOT EXISTS discovery_lease (
 """
 
 
-def symbol_terms(text):
-    return [match.group() for pattern in (SYMBOLS, API_SYMBOL, ISA_OPCODE) for match in pattern.finditer(text)]
-
-
 def subject(observation):
-    title = _text(observation["title"])
-    symbols = symbol_terms(title)
-    phrases = [" ".join(word.group().casefold().replace("_", " ").replace("-", " ").split())
-               for word in MECHANISMS.finditer(title)]
-    metadata = observation.get("metadata", {}).get("technical", {})
-    signals = [term for term in metadata.get("signals", [])[:8] if isinstance(term, str)
-               and (API_SYMBOL.fullmatch(term) or ISA_OPCODE.fullmatch(term))]
-    options = symbols + phrases + signals
+    title = URL.sub(" ", _text(observation["title"]))
+    metadata = observation.get("metadata", {}).get("technical") or {}
+    options = cues(title)
+    # Old observations have a case-folded signals list and no discovery_cues.
+    # The full bounded list can include 48 instructions before the API signals.
+    for name, limit in (("discovery_cues", MAX_CUES), ("signals", INSTRUCTION_LIMIT + SIGNATURE_LIMIT)):
+        values = metadata.get(name)
+        if isinstance(values, list):
+            options.extend(term.casefold() for term in values[:limit] if stored_cue(term))
     if options:
-        return options[0].casefold()
+        return options[0]
     # Short fixed conjunctions match signs of the mechanism even when the title's
     # prose differs from documentation or an older tracker.
     tokens = set(re.findall(r"[a-z0-9]+", title.casefold()))
@@ -82,6 +72,12 @@ def subject(observation):
         return "memory budget"
     if {"sparse", "tiles"} <= tokens:
         return "sparse binding"
+    # Multi-word mechanisms already retained by the GitHub normalizer can be
+    # recovered from old rows without guessing a term from free-form prose.
+    terms = metadata.get("terms")
+    if isinstance(terms, list):
+        return next((term.casefold() for term in terms[:SIGNATURE_LIMIT] if isinstance(term, str)
+                     and " " in term and TECHNICAL_TERM.fullmatch(term)), "")
     return ""
 
 
@@ -112,18 +108,33 @@ def cached_index(catalog):
         if not db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='discovery_observation'").fetchone():
             return index
         rows = db.execute("""
-            SELECT observation.url, query.retrieved, query.status, query.items
-            FROM discovery_observation AS observation JOIN discovery_query AS query USING (query)
+            SELECT observation.url, observation.revision, observation.query,
+                   query.retrieved, query.status, query.items, saved.title, saved.metadata, saved.updated_at
+            FROM discovery_observation AS observation LEFT JOIN discovery_query AS query USING (query)
+            LEFT JOIN observations AS saved ON lower(saved.url) = observation.url AND saved.kind IN ('pr', 'issue')
             ORDER BY observation.seen DESC, observation.url LIMIT ?
         """, (MAX_ORIGINS,)).fetchall()
     now = time.time()
     automatic = {}
-    for url, retrieved, status, items in rows:
+    for url, revision, query, retrieved, state, items, title, metadata, updated in rows:
+        term = query.split(":", 2)[-1]
+        status, _, reason = (state or "no_subject").partition(":")
+        if title is not None:
+            row = {"title": title, "metadata": json.loads(metadata)}
+            current_term = subject(row)
+            if current_term != term or revision != (source_revision(row) or updated):
+                automatic[key(url)] = {"subject": current_term, "status": "not_scanned" if current_term else "no_subject",
+                                       "matches": []}
+                continue
+        if retrieved is None:
+            automatic[key(url)] = {"subject": term, "status": status, "matches": []}
+            continue
         if retrieved + TTL <= now and status in {"available", "partial"}:
             status = "stale"
         checked_on = datetime.fromtimestamp(retrieved, timezone.utc).date().isoformat()
-        automatic[key(url)] = {"status": status, "matches": [
+        automatic[key(url)] = {"status": status, "reason": reason or None, "subject": term, "matches": [
             {**item, "retrieved_on": checked_on, "retrieval_status": status} for item in json.loads(items)
+            if key(item["url"]) != key(url)
         ]}
     return {**index, "automatic": automatic} if automatic else index
 
@@ -149,23 +160,26 @@ def fetch(client, term, *, family="xbox-series"):
     return ("partial" if data.get("incomplete_results") else "available"), list(source_results(data["items"]))
 
 
-def lookup_plan(observations, known):
+def lookup_plan(observations, known, *, requested_url=None):
     plan = {}
     for observation in observations:
         url = observation["url"]
-        if (observation["status"] != "open" or not public_url(url) or not RESULT_PATH.fullmatch(urlsplit(url).path)
-                or source_repo(url) not in known or not (term := subject(observation))):
+        explicit = requested_url is not None and url == requested_url
+        if (not public_url(url) or not RESULT_PATH.fullmatch(urlsplit(url).path)
+                or (not explicit and (observation["status"] != "open" or source_repo(url) not in known))):
             continue
-        plan.setdefault(url.lower(), (source_revision(observation) or observation.get("updated_at"), term))
+        term = subject(observation)
+        if term or explicit:
+            plan.setdefault(url.lower(), (source_revision(observation) or observation.get("updated_at"), term))
     return plan
 
 
-def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS):
+def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS, requested_url=None):
     if type(max_lookups) is not int or not 1 <= max_lookups <= MAX_LOOKUPS:
         raise ValueError(f"Use 1 to {MAX_LOOKUPS} Discovery lookups per batch")
     known = {row["repo"].lower() for row in catalog.projects()}
-    plan = lookup_plan(observations[:MAX_ORIGINS], known)
-    report = {"status": "offline" if not online else "complete", "eligible": len(plan),
+    plan = lookup_plan(observations[:MAX_ORIGINS], known, requested_url=requested_url)
+    report = {"status": "offline" if not online else "complete", "eligible": sum(bool(term) for _, term in plan.values()),
               "lookups": 0, "cache_hits": 0, "origins": []}
     if not online:
         return report
@@ -184,8 +198,12 @@ def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS):
                 prior = db.execute("SELECT retrieved,retry_at,status,items FROM discovery_query WHERE query=?",
                                    (query,)).fetchone()
                 now = time.time()
-                if prior and prior["retry_at"] > now:
-                    status, items = prior["status"], json.loads(prior["items"])
+                reason = None
+                if not term:
+                    status, items = "no_subject", []
+                elif prior and prior["retry_at"] > now:
+                    status, _, reason = prior["status"].partition(":")
+                    items = json.loads(prior["items"])
                     report["cache_hits"] += 1
                 elif report["lookups"] >= max_lookups or time.monotonic() >= client.deadline:
                     report["status"] = "budget"
@@ -195,25 +213,28 @@ def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS):
                     try:
                         status, items = fetch(client, term, family=family)
                     except Unavailable as error:
+                        if not error.attempted:
+                            report["lookups"] -= 1
                         items = json.loads(prior["items"]) if prior else []
                         status = "stale" if items else "unavailable"
-                        report["status"] = error.reason
+                        reason = report["status"] = error.reason
                     finished = time.time()
                     retrieved = prior["retrieved"] if status == "stale" else finished
                     with db:
                         db.execute("REPLACE INTO discovery_query VALUES (?,?,?,?,?)",
                                    (query, retrieved, finished + (TTL if status == "available" else FAILURE_TTL),
-                                    status, json.dumps(items)))
+                                    f"{status}:{reason}" if reason else status, json.dumps(items)))
                 with db:
                     db.execute("""
                         INSERT INTO discovery_observation VALUES (?,?,?,?)
                         ON CONFLICT(url) DO UPDATE SET revision=excluded.revision, query=excluded.query, seen=excluded.seen
                         WHERE revision IS NOT excluded.revision OR query != excluded.query
                     """, (url, revision, query, now))
+                    items = [item for item in items if key(item["url"]) != key(url)]
                     if status in {"available", "partial"}:
                         remember_discovery(db, url, items, now, policy)
                 report["origins"].append({"url": url, "revision": revision, "query": term, "status": status,
-                                          "matches": [item["url"] for item in items]})
+                                          "reason": reason or None, "matches": [item["url"] for item in items]})
                 if report["status"] not in {"complete", "budget"}:
                     break
         finally:
@@ -225,6 +246,72 @@ def scan(catalog, observations, *, online=False, max_lookups=MAX_LOOKUPS):
     return report
 
 
+def link_result(catalog, observation):
+    """Search one normalized observation; a user-selected PR may already be merged."""
+    url = observation["url"]
+    term = subject(observation)
+    batch = scan(catalog, [observation], online=True, max_lookups=1, requested_url=url)
+    origin = next(iter(batch["origins"]), None)
+    index = cached_index(catalog)
+    # Ignore a prior revision's automatic results if this attempt never ran.
+    if not origin:
+        index = {**index, "automatic": {}}
+    report = discover(origin_url=url, index=index, limit=PAGE_SIZE)
+    if term and not report["case"] and not origin:
+        report = discover(term, origin_url=url, index=index, limit=PAGE_SIZE)
+    primary, lexical = [], []
+    for row in report["matches"]:
+        target = primary if row["match"]["exact"] or row in report["technical_recommendations"] else lexical
+        target.append((row, "catalog"))
+    external = [(row, "github") for row in report["automatic_matches"]]
+    found = {}
+    for row, route in primary + external + lexical:
+        source = row["source"]
+        if key(source) != key(url):
+            found.setdefault(key(source), {"url": source, "title": row["title"], "route": route,
+                                         "evidence_status": row["evidence_status"]})
+    status = origin["status"] if origin else batch["status"]
+    issue = origin.get("reason") if origin else status
+    if status == "no_subject":
+        explanation = "No supported technical subject was found in the PR title or stored metadata. No external search ran."
+    elif status == "available":
+        explanation = ("Open each source to compare the mechanism and revision." if found else
+                       "The indexed corpus and first bounded GitHub page yielded no other source for this subject.")
+    elif status == "partial":
+        explanation = "GitHub returned an incomplete search page. A missing match is inconclusive."
+    else:
+        explanation = f"The external search is {issue or status}. Any retained results need a freshness check."
+    return {"url": url, "revision": source_revision(observation), "subject": term, "status": status,
+            "search_issue": issue, "lookups": batch["lookups"], "cache_hits": batch["cache_hits"],
+            "top5": list(found.values())[:PAGE_SIZE], "explanation": explanation}
+
+
+def search_link(catalog, url):
+    """Resolve an explicitly supplied public PR; never expand catalog subscriptions."""
+    if isinstance(url, str):
+        url = url.removesuffix("/")
+    if not isinstance(url, str) or len(url) > 500 or not PR_URL.fullmatch(url):
+        raise ValueError("Provide a public GitHub pull request URL")
+    owner, name, _, number = urlsplit(url).path.strip("/").split("/")
+    repo = current_repository(f"{owner}/{name}")
+    projects = catalog.projects()
+    tracked = next((project for project in projects if project["repo"].casefold() == repo.casefold()), None)
+    project = tracked or {"repo": repo, "slug": repo.casefold()}
+    source = f"https://github.com/{project['repo']}/pull/{number}"
+    checked = refresh_references(projects if tracked else [*projects, project], catalog.path, [source], anonymous=True)
+    if checked["references"] or not checked["items"]:
+        failure = next(iter(checked["references"]), {})
+        reason = failure.get("reason") or "unavailable"
+        retry = failure.get("retry_at")
+        detail = (f" Retry after {retry}." if retry else "")
+        return {"url": source, "revision": None, "subject": "", "status": reason, "retry_at": retry, "lookups": 0,
+                "cache_hits": 0, "top5": [], "explanation":
+                f"Public PR metadata could not be read ({reason}). No external search ran.{detail}"}
+    if tracked:
+        catalog.record_sync(checked, update_health=False)
+    return link_result(catalog, checked["items"][0])
+
+
 def main():
     from .__main__ import DEFAULT_DB, DEFAULT_SEED
 
@@ -232,10 +319,19 @@ def main():
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
     parser.add_argument("--online", action="store_true", help="allow bounded anonymous GitHub reads")
     parser.add_argument("--limit", type=int, default=MAX_LOOKUPS)
+    parser.add_argument("--url", help="look up previous work for one public GitHub PR using --online")
     args = parser.parse_args()
+    if not 1 <= args.limit <= MAX_LOOKUPS:
+        parser.error(f"--limit must be between 1 and {MAX_LOOKUPS}")
+    if args.url and not args.online:
+        parser.error("--url needs --online to read the public PR")
     catalog = Catalog(args.db, DEFAULT_SEED)
-    print(json.dumps(scan(catalog, catalog.observations(limit=MAX_ORIGINS), online=args.online, max_lookups=args.limit),
-                     indent=2, ensure_ascii=True))
+    try:
+        report = (search_link(catalog, args.url) if args.url else
+                  scan(catalog, catalog.observations(limit=MAX_ORIGINS), online=args.online, max_lookups=args.limit))
+    except ValueError as error:
+        parser.error(str(error))
+    print(json.dumps(report, indent=2, ensure_ascii=True))
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 
 from .identity import stable_id
 from .consoles import console_families
+from .github import PR_URL
 from .matching import REPOSITORY_MOVES, current_repository
 
 DATA = Path(__file__).with_name("data") / "discovery.json"
@@ -114,6 +115,30 @@ def result_entry(row, score, matched_facets, matched_symbols, exact, reviewed_pr
             "match": {"exact": exact, "facets": sorted(matched_facets), "symbols": sorted(matched_symbols)}}
 
 
+def empty_link_result(requested_url, scan_status, reason):
+    """Describe what was actually searched when a source URL has no hits."""
+    if scan_status == "available":
+        return "no_match", "The reviewed index and saved GitHub search have no matching source in this scope."
+    if scan_status == "no_subject":
+        return scan_status, "No supported technical subject was found in the source metadata. No external search ran."
+    if scan_status == "not_scanned":
+        message = "There is no saved external search for this link."
+        if PR_URL.fullmatch("https://" + requested_url):
+            message += " To search this PR, run python -m portbridge.discovery_scan --online --url followed by its URL."
+        return scan_status, message
+    if scan_status == "partial":
+        return scan_status, "GitHub returned an incomplete search page. Other matching sources may exist."
+    if scan_status == "offline":
+        return scan_status, "The search ran offline. No external sources were checked."
+    if scan_status == "stale":
+        return scan_status, "The saved search is out of date. A current match could not be confirmed."
+    if reason == "snapshot_unavailable":
+        return "unavailable", "The public Discovery snapshot is unavailable. Only the bundled reviewed index was searched."
+    if scan_status == "rate_limit" or reason == "rate_limit":
+        return "unavailable", "GitHub rate-limited the search. A matching source could not be checked."
+    return "unavailable", "The external search could not be completed. A matching source could not be checked."
+
+
 def discover(q="", *, origin_url="", index=None, project="", kind="", status="", platform="",
              before="", after="", limit=5, profile="hybrid"):
     if not isinstance(q, str) or len(q) > MAX_QUERY or type(limit) is not int or not 1 <= limit <= MAX_RESULTS:
@@ -133,7 +158,8 @@ def discover(q="", *, origin_url="", index=None, project="", kind="", status="",
     request = q.strip()
     requested_url = query_key(request) or query_key(origin_url)
     case = next((row for row in index["cases"] if key(row["origin_url"]) == requested_url), None)
-    query = case["query"] if case and (not request or key(request)) else request
+    scans = index.get("automatic", {}).get(requested_url, {})
+    query = (case["query"] if case else scans.get("subject", "")) if (not request or query_key(request)) else request
     reviewed_primary = (case["primary"] if case and case["state"] == "open" and case["verdict"] == "candidate"
                         and (not request or query_key(request) == requested_url or request == case["query"]) else None)
     query_words = set(features(query))
@@ -166,19 +192,28 @@ def discover(q="", *, origin_url="", index=None, project="", kind="", status="",
             score += 18
         matches.append(result_entry(row, score, matched_topics, matched_symbols, exact, reviewed_primary))
     matches.sort(key=lambda row: (not row["match"]["exact"], -row["score"], row["id"]))
-    scans = index.get("automatic", {}).get(requested_url, {})
     automatic = [row for row in scans.get("matches", [])
                  if (not project or row["project"] == project.lower())
                  and (not kind or row["kind"] == kind) and (not status or row["state"] == status)
                  and not platform and (not before or row["retrieved_on"] <= before)
                  and (not after or row["retrieved_on"] >= after)][:limit]
+    scan_status = scans.get("status", "not_scanned")
+    reason = scans.get("reason")
+    result_status, empty_reason = "available", None
+    if not matches and not automatic:
+        if requested_url:
+            result_status, empty_reason = empty_link_result(requested_url, scan_status, reason)
+        else:
+            result_status = "no_match" if query else "query_needed"
     return {"schema_version": 1, "reviewed_on": index["reviewed_on"],
             "target_consoles": console_families(origin_url or request,
                                 default=("xbox-series",) if case else ()) ,
-            "status": "available" if matches or automatic else "no_match" if (query or requested_url) else "query_needed",
+            "status": result_status,
             "scope": "reviewed_external_sources", "case": case, "matches": matches[:limit],
+            "subject": scans.get("subject", ""),
+            "empty_reason": empty_reason, "scan_reason": reason,
             "technical_recommendations": [row for row in matches[:limit] if row["evidence_status"] == POTENTIAL],
-            "automatic_matches": automatic, "scan_status": scans.get("status", "not_scanned"),
+            "automatic_matches": automatic, "scan_status": scan_status,
             "evidence_stages": list(EVIDENCE_STAGES)}
 
 
