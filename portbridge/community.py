@@ -9,6 +9,7 @@ from .community_sources import DATA, LOGIN, TECH, captured, evidence_key, fact, 
 from .consoles import console_families
 from .discovery_scan import cached_index
 from .identity import contributor_id, stable_id
+from .lab_reports import independent_owner_review, missing_public_comments
 from .matching import source_revision
 from .radar_store import epoch, public_outcome_receipts, radar_view, reviewed_snapshot, timestamp
 
@@ -104,7 +105,7 @@ def report_facts(lab):
             source = row.get("url")
             if not public_url(source):
                 continue
-            setup = row.get("adapter") or row.get("configuration") or row.get("gpu") or ""
+            setup = row.get("hardware") or row.get("adapter") or row.get("configuration") or row.get("gpu") or ""
             hardware = setup if isinstance(setup, str) and setup and len(setup) < 90 and re.fullmatch(
                 r"[\w .()/-]+", setup) else ""
             if item := fact(source.split("#")[0], source, participant(row.get("author"), row.get("author_id")),
@@ -112,6 +113,13 @@ def report_facts(lab):
                             "Public structured Lab report", topics(task.get("title")) + ["testing"],
                             kind="lab", task=task["id"], hardware=hardware, revision=row.get("revision"),
                             outcome=row.get("outcome"), checked_at=row.get("updated_at")):
+                yield item
+            review = independent_owner_review(row)
+            if review and (item := fact(review["url"].split("#")[0], review["url"],
+                                         participant(review["author"], review["author_id"]), review["reported_at"],
+                                         "reviewer", "Repository owner's approval of a pinned public Lab report",
+                                         topics(task.get("title")) + ["testing"], kind="lab", task=task["id"],
+                                         revision=row.get("revision"), checked_at=review["updated_at"])):
                 yield item
 
 
@@ -319,7 +327,7 @@ def people(catalog, *, lab=None, radar=None, observations=None, projects=None, n
               "filters": {"projects": sorted({row["repo"] for profile in profiles for row in profile["projects"]}),
                           "specialties": list(TECH)},
               "sensitivities": "Public professional activity. Availability requires a separate opt-in."}
-    return result, build_impact(catalog, config, policy, identity, radar, secured, now)
+    return result, build_impact(catalog, config, policy, identity, radar, secured, now, lab)
 
 
 def technical_links(radar, config, policy):
@@ -357,8 +365,18 @@ def technical_links(radar, config, policy):
     return sorted(distinct.values(), key=lambda row: (row["state"] == "historical", -epoch(row["at"]), row["id"]))
 
 
-def build_impact(catalog, config, policy, identity, radar, secured, now):
+def build_impact(catalog, config, policy, identity, radar, secured, now, lab):
+    from .lab import TASKS
+
     withdrawn = set(policy.get("withdrawn", []))
+    findings = radar["findings"] if "findings" in radar else reviewed_snapshot(catalog, lab=lab)
+    inactive = {evidence_key(item["source_url"]): "conflicting_reports" for item in findings if item.get("contested")}
+    inactive.update({evidence_key(url): "source_unavailable" for url in missing_public_comments(
+        catalog, TASKS, (row["url"] for case in config["stories"] for row in case["sources"]))})
+    for task in lab["tasks"]:
+        for report in task.get("report_sync", {}).get("reports", []):
+            if report.get("review", {}).get("decision") == "revoke":
+                inactive[evidence_key(report["url"])] = "review_revoked"
     stories, credits, metrics = [], {}, defaultdict(set)
     for case in config["stories"]:
         if case["id"] in withdrawn or case["state"] in {"withdrawn", "pending"}:
@@ -366,10 +384,13 @@ def build_impact(catalog, config, policy, identity, radar, secured, now):
         sources = [row for row in case["sources"] if public_url(row["url"]) and evidence_key(row["url"]) not in withdrawn]
         if len(sources) != len(case["sources"]):
             continue
+        historical = [{**row, "status": inactive[evidence_key(row["url"])]}
+                      for row in sources if evidence_key(row["url"]) in inactive]
+        sources = [row for row in sources if evidence_key(row["url"]) not in inactive]
         group = []
         for row in case["credits"]:
             key = evidence_key(row["source"])
-            if key in withdrawn or not public_url(row["source"]):
+            if key in withdrawn or key in inactive or not public_url(row["source"]):
                 continue
             who = participant(row.get("login"), row.get("user_id"))
             correction = policy.get("corrections", {}).get(key)
@@ -389,28 +410,48 @@ def build_impact(catalog, config, policy, identity, radar, secured, now):
         for name in hidden_names:
             pattern = rf"(?<![\w-])@?{re.escape(name)}(?![\w-])"
             body = {key: re.sub(pattern, "the contributor", value, flags=re.I) for key, value in body.items()}
-        story = {**case, **body, "sources": sources, "credits": group}
+        measures = [[name, source] for name, source in case.get("measures", []) if public_url(source)
+                    and evidence_key(source) not in withdrawn and evidence_key(source) not in inactive]
+        story = {**case, **body, "sources": sources, "credits": group, "measures": measures}
+        if historical:
+            story["historical_sources"] = historical
+            if not sources or case.get("measures") and not measures:
+                story["state"] = "historical"
         stories.append(story)
-        for name, source in case.get("measures", []):
-            if public_url(source) and evidence_key(source) not in withdrawn:
-                metrics[name].add(evidence_key(source))
-    for item in reviewed_snapshot(catalog):
+        for name, source in measures:
+            metrics[name].add(evidence_key(source))
+    for item in findings:
         source = item["source_url"]
-        if item["id"] in withdrawn or evidence_key(source) in withdrawn or item.get("contested"):
+        approval = item.get("review_url")
+        if (item["id"] in withdrawn or evidence_key(source) in withdrawn
+                or approval and evidence_key(approval) in withdrawn or item.get("contested")):
             continue
         key = item["id"]
-        metrics["reviewed_lab_results"].add(key)
+        metrics["reviewed_lab_results"].add(evidence_key(source))
         if item["status"] == "reproduced":
             metrics["independent_reproductions"].add(key)
         if item["outcome"] == "FAIL":
-            metrics["negative_results"].add(key)
+            metrics["negative_results"].add(evidence_key(source))
+        report_kind = "negative_result" if item["outcome"] == "FAIL" else "independent_test"
+        if approval and report_kind == "independent_test" and stable_id(
+                "impact-credit", evidence_key(source), report_kind) not in credits:
+            report_kind = "test_report"
+        sources = [{"label": "Pinned report source", "url": source}]
+        group = [
+            {"kind": report_kind, "person": None, "basis": "Separate local volunteer account", "source": source},
+            {"kind": "review", "person": None, "basis": "Different authorized reviewer", "source": source}]
+        if approval:
+            sources.append({"label": "Repository owner review", "url": approval})
+            for credit, at, basis in zip(group, (source, approval),
+                    ("Authored the public test report", "Reviewed the pinned report in the designated thread")):
+                credit_id = stable_id("impact-credit", evidence_key(at), credit["kind"])
+                who = secured.get(evidence_key(at))
+                credit.update(id=credit_id, source=at, person=who, login=identity.display(who, None), basis=basis)
+                credits[credit_id] = credit
         stories.append({"id": key, "title": item["title"], "state": "reviewed", "type": "lab_review",
                         "at": item.get("reviewed_at") or "",
                         "summary": item["observed"], "scope": item["limitations"], "consoles": item["consoles"],
-                        "sources": [{"label": "Pinned report source", "url": source}], "credits": [
-                           {"kind": "negative_result" if item["outcome"] == "FAIL" else "independent_test",
-                            "person": None, "basis": "Separate local volunteer account", "source": source},
-                           {"kind": "review", "person": None, "basis": "Different authorized reviewer", "source": source}],
+                        "sources": sources, "credits": group,
                         "related": [item["target_url"], item["peer_url"]]})
     receiving = {}
     for row in public_outcome_receipts(catalog):
@@ -440,7 +481,7 @@ def build_impact(catalog, config, policy, identity, radar, secured, now):
         "candidates": "Distinct Radar pair IDs currently visible in the catalog",
         "recorded_stories": "Distinct evidence-backed stories in this snapshot",
         "credited_acts": "Distinct evidence permalink + contribution type",
-        "reviewed_lab_results": "Distinct opted-in and uncontested reports reviewed by another authorized account",
+        "reviewed_lab_results": "Distinct uncontested report sources shared in Lab or publicly approved by a different owner account",
         "independent_reproductions": "Unique evidence receipts where an independent result is verified",
         "negative_results": "Unique reviewed negative result IDs or primary links",
         "rejected_hypotheses": "Distinct Radar pair IDs marked rejected",
@@ -465,7 +506,7 @@ def build_impact(catalog, config, policy, identity, radar, secured, now):
             per_person[credit["person"]].add(evidence_key(credit["source"]))
     metrics["repeat_contributors"] = {person for person, refs in per_person.items() if len(refs) > 1}
     origins = {"candidates": "Radar candidate queue", "recorded_stories": "Impact records",
-               "credited_acts": "Scoped attribution receipts", "reviewed_lab_results": "Opted-in Lab review events",
+               "credited_acts": "Scoped attribution receipts", "reviewed_lab_results": "Shared Lab reviews and public owner approvals",
                "rejected_hypotheses": "Radar decision history", "repeat_contributors": "Scoped attribution receipts"}
     measurements = {name: {"value": None if name in {"mcp_users", "installations", "active_teams"} and not metrics[name]
                       else len(metrics[name]), "definition": desc, "period": "evidence retained through this snapshot",

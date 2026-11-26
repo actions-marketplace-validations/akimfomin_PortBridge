@@ -59,6 +59,8 @@ Monitored tasks include `report_sync`. Its `state` is `fresh` after a successful
 
 Pages checks monitored discussions before exporting the queue. To refresh a local copy, run `python -m portbridge refresh-lab`. To use a specific database, run `python -m portbridge --db path/to/catalog.sqlite3 refresh-lab` and use that same database for the local API, export, or MCP.
 
+A passing or failing public report with an active, body-pinned approval from a different repository-owner account also appears in PR search, Research Radar and Impact. Its two links identify the report and the review separately. People uses the public authorship of each contribution and honors display corrections and opt-outs. A revoked approval drops from these reviewed results on the next successful refresh. The original test can remain attributed. Availability for future checks, independent replication, delivery and adoption each require their own evidence. [Reproducible FrameLab example](../audit/evidence/m6/five-views.md)
+
 ### Show open checks on a partner site
 
 Start with a link to [PortBridge Test Lab](https://akimfomin.github.io/PortBridge/#/lab). This optional snippet shows up to three checks marked `needs_run` and the equipment they need. Each link opens the instructions and reporting discussion for that check. Set data-equipment to amd, nvidia, intel or cpu for your audience, or omit it for all setups. It reads the [public JSON](https://akimfomin.github.io/PortBridge/data/lab.json) across origins without credentials. The Test Lab link stays visible if the feed is empty or unavailable.

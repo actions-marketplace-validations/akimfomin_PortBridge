@@ -12,7 +12,7 @@ PortBridge coordinates independent Xbox Series compatibility projects. It connec
 
 ## Maintenance status
 
-The founder has ended proactive research and recruitment. When a contributor asks for help, use the workflow below for their chosen task. Invitations and external handoffs require a human decision. The public catalog, incoming issues and pull requests remain available. [Maintainer handoff](docs/PASSIVE-MAINTENANCE.md) · [Contact](https://github.com/akimfomin/PortBridge/issues/91)
+The broader research portfolio is in maintenance. The owner reopened work on the bounded M5 pilot and the M6 release. Ask receiving maintainers before installing in their repositories. Link the source and record the outcome of voluntary contact. [Maintainer handoff](docs/PASSIVE-MAINTENANCE.md) · [Contact](https://github.com/akimfomin/PortBridge/issues/91)
 
 ## Start from a link
 

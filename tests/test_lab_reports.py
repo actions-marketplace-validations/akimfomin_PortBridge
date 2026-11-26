@@ -186,6 +186,38 @@ class LabReportsTest(CatalogFixture):
         removed = self.refresh(private=True)
         self.assertEqual((removed["state"], removed["reports"]), ("unavailable", []))
 
+    def test_curated_results_follow_complete_public_comment_reads_only(self):
+        from portbridge.community import people
+        from portbridge.integrations import public_feed
+
+        first, second = 7147944059, 7153817545
+        missing = f"{FRAMELAB_RESULTS}#issuecomment-{first}"
+        def results():
+            impact = people(self.catalog)[1]
+            active = {url for item in public_feed(self.catalog)["items"] for url in item.get("proofs", [])}
+            return impact["metrics"]["independent_reproductions"]["value"], active
+        def visible(ident):
+            return {"id": ident, "issue_url": ISSUE, "html_url": f"{FRAMELAB_RESULTS}#issuecomment-{ident}",
+                    "body": "A public historical comment outside the normalized report format"}
+        baseline, links = results()
+        self.assertIn(missing, links)
+        self.refresh(Unavailable("temporarily offline", http_status=503))
+        self.assertEqual(results(), (baseline, links))
+        self.refresh(([visible(first), visible(second)], {}))
+        self.assertEqual(results()[0], baseline)
+        outage = Unavailable("rate limit after partial page")
+        self.refresh(([visible(second)], {"Link": '<unused>; rel="next"'}), outage)
+        self.assertIn(missing, results()[1])
+        self.refresh(([visible(second)], {}))
+        revised, active = results()
+        self.assertEqual(revised, baseline - 1)
+        self.assertNotIn(missing, active)
+        self.assertIn(f"{FRAMELAB_RESULTS}#issuecomment-{second}", active)
+        self.refresh(Unavailable("temporarily offline", http_status=503))
+        self.assertEqual(results(), (revised, active))
+        self.refresh(([visible(first), visible(second)], {}))
+        self.assertIn(missing, results()[1])
+
 
 def structured_comment(task, source, ident, *, equipment, actor_id=9876, association="NONE", cases=None):
     repo, issue = report_source(task, source)
@@ -353,6 +385,113 @@ class ThreadReviewTest(CatalogFixture):
         enhanced, = card["report_sync"]["reports"]
         self.assertEqual({key: enhanced[key] for key in reports[0]}, reports[0])
         self.assertTrue(enhanced["report_id"].startswith("report:"))
+
+    def test_owner_review_reaches_five_views_then_retracts_on_replay(self):
+        from portbridge.community import people
+        from portbridge.identity import lab_report_id
+        from portbridge.preflight import preflight
+        from portbridge.radar_store import reviewed_snapshot
+
+        report_url, approval_url = self.report["html_url"], self.approval["html_url"]
+        ident = lab_report_id(report_url)
+        original_impact = people(self.catalog)[1]["metrics"]
+        for decisions, approved in (([], False), ([self.approval], True), ([self.approval], True),
+                ([self.approval, review_comment(self.task, self.primary, self.report, 3, "revoke")], False)):
+            with self.subTest(approved=approved, decisions=len(decisions)):
+                self.read(decisions, cached=True)
+                card, = build_lab(self.catalog, task=self.task["id"])["tasks"]
+                self.assertEqual(card["report_sync"]["reports"][0]["authority"] == "approved", approved)
+                target = self.task["source_url"]
+                search = preflight(self.catalog, url=target).get("radar_findings", [])
+                site = export(self.catalog, self.workspace / "review-site") / "data"
+                read = lambda section: json.loads((site / (section + ".json")).read_bytes())
+                for records in (search, reviewed_snapshot(self.catalog), read("radar")["findings"],
+                                read("activity")["radar"]["findings"], read("impact")["stories"]):
+                    self.assertEqual(sum(row["id"] == ident for row in records), int(approved))
+                impact = read("impact")
+                for measure in ("delivered_results", "accepted_changes", "independent_reproductions"):
+                    self.assertEqual(impact["metrics"][measure]["value"], original_impact[measure]["value"])
+                self.assertEqual(impact["metrics"]["reviewed_lab_results"]["value"],
+                                 original_impact["reviewed_lab_results"]["value"] + int(approved))
+                persons = read("people")["profiles"]
+                proof = {(p["id"], e["source"], e["role"]) for p in persons for e in p["evidence"]}
+                self.assertIn(("github-user:9876", report_url, "hardware_tester"), proof)
+                self.assertEqual(("github-user:4321", approval_url, "reviewer") in proof, approved)
+                if approved:
+                    story = next(row for row in impact["stories"] if row["id"] == ident)
+                    self.assertEqual([(c["kind"], c["person"], c["source"]) for c in story["credits"]],
+                                     [("test_report", "github-user:9876", report_url),
+                                      ("review", "github-user:4321", approval_url)])
+
+    def test_self_review_by_renamed_account_does_not_become_independent_finding(self):
+        from portbridge.radar_store import reviewed_snapshot
+
+        self.approval["user"].update(id=self.report["user"]["id"], login="AnotherName")
+        self.read([self.approval], cached=True)
+        self.assertEqual(reviewed_snapshot(self.catalog), [])
+
+    def test_conflicting_independent_runs_need_matching_setup_and_case(self):
+        from portbridge.community import people
+        from portbridge.identity import lab_report_id, stable_id
+        from portbridge.integrations import public_feed
+        from portbridge.radar_store import reviewed_snapshot
+
+        failed = structured_comment(self.task, self.linked, 3, equipment="intel", actor_id=6543,
+                                    cases={self.task["report_cases"][0]: "fail"})
+        reports = {self.report["html_url"], failed["html_url"]}
+        partner_ids = {stable_id("result", lab_report_id(url)) for url in reports}
+        for setup, contested in ((failed, True), ({**failed, "user": self.report["user"]}, True),
+                                 ({**failed, "body": failed["body"].replace("Driver: 1.2.3", "Driver: 1.2.4")}, False)):
+            other = review_comment(self.task, self.primary, setup, 4)
+            self.read([self.approval, other], [self.report, setup], cached=True)
+            findings = {r["source_url"]: r for r in reviewed_snapshot(self.catalog)}
+            self.assertEqual({link for link in reports if findings[link]["contested"]}, reports if contested else set())
+            stories = people(self.catalog)[1]["stories"]
+            self.assertEqual(len([row for row in stories if row["id"] in {lab_report_id(url) for url in reports}]),
+                             0 if contested else 2)
+            listed = {row["id"] for row in public_feed(self.catalog)["items"]}
+            self.assertEqual(listed & partner_ids, set() if contested else partner_ids)
+        self.read([self.approval, review_comment(self.task, self.primary, failed, 4),
+                   review_comment(self.task, self.primary, failed, 5, "revoke")], [self.report, failed], cached=True)
+        remaining, = reviewed_snapshot(self.catalog)
+        self.assertEqual((remaining["source_url"], remaining["contested"]), (self.report["html_url"], False))
+
+    def test_revoke_real_curated_receipt_preserves_source_history_and_removes_current_proof(self):
+        from pathlib import Path
+        from portbridge.community import people
+        from portbridge.integrations import public_feed
+        from portbridge.lab_reports import TABLE, review_scope, save_scan, scope
+
+        task = next(t for t in TASKS if t["id"] == FRAMELAB_TASK)
+        captured = json.loads((Path(__file__).resolve().parents[1] / "audit/fixtures/m6-framelab-receipts.json").read_bytes())
+        with self.catalog.connect() as db:
+            db.execute(TABLE)
+            for url, receipt in captured.items():
+                key = scope(task, url)
+                for name, record_scope in (("reports", key), ("reviews", review_scope(key))):
+                    if name in receipt:
+                        at = receipt["checked_at"]
+                        save_scan(db, task, record_scope, at, state="fresh", checked=at, reports=receipt[name], replace=True)
+        _, before = people(self.catalog)
+        stored = captured[FRAMELAB_RESULTS]
+        original = stored["reviews"][0]
+        report_url = original["report_url"]
+        revoke = {**original, "url": FRAMELAB_RESULTS + "#issuecomment-9999999999", "review_decision": "revoke",
+                  "reported_at": "2026-11-26T20:22:55Z", "updated_at": "2026-11-26T20:22:55Z"}
+        at = stored["checked_at"]
+        with self.catalog.connect() as db:
+            save_scan(db, task, review_scope(scope(task, FRAMELAB_RESULTS)), at, state="fresh", checked=at,
+                      reports=[*stored["reviews"], revoke], replace=True)
+        _, impact = people(self.catalog)
+        history = next(story for story in impact["stories"] if story["id"] == "impact:framelab-use")
+        self.assertEqual(history["state"], "reviewed")
+        self.assertEqual([(r["url"], r["status"]) for r in history["historical_sources"]], [(report_url, "review_revoked")])
+        self.assertIn(FRAMELAB_RESULTS, {r["url"] for r in history["sources"]})
+        self.assertNotIn(report_url, {url for _, url in history["measures"]} | {r["url"] for r in history["sources"]})
+        self.assertEqual(impact["metrics"]["independent_reproductions"]["value"],
+                         before["metrics"]["independent_reproductions"]["value"] - 1)
+        self.assertEqual(impact["metrics"]["integration_use"]["value"], before["metrics"]["integration_use"]["value"])
+        self.assertNotIn(report_url, {url for row in public_feed(self.catalog)["items"] for url in row.get("proofs", [])})
 
     def test_review_then_revoke_reopens_only_the_affected_hardware_requirement(self):
         amd = structured_comment(self.task, self.primary, 4, equipment="amd", association="OWNER")

@@ -304,6 +304,30 @@ jobs:
           PREVIOUS_GENERATION: ${{ needs.build.outputs.previous_generation }}
         run: python3 -m portbridge.pages_health verify
 
+      - name: Record independently verified publications for the autonomy observation
+        if: github.event_name == 'schedule'
+        env:
+          SITE_SHA256: ${{ needs.build.outputs.site_sha256 }}
+          LAB_SHA256: ${{ needs.build.outputs.lab_sha256 }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from datetime import datetime, timezone
+          receipt = {key: os.environ[key] for key in ("GITHUB_SHA", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "SITE_SHA256", "LAB_SHA256")}
+          receipt["verified_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+          Path("publication-receipt.json").write_text(json.dumps(receipt) + "\n", encoding="utf-8")
+          PY
+
+      - name: Retain the dated verification receipt
+        if: github.event_name == 'schedule'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: portbridge-scheduled-publication-v1
+          path: publication-receipt.json
+          retention-days: 30
+          if-no-files-found: error
+
   cloudflare-pages:
     if: github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_CLOUDFLARE_PAGES == 'true' && vars.PORTBRIDGE_CLOUDFLARE_PROJECT != '' && needs.build.outputs.publication_ready != 'false'
     runs-on: ubuntu-latest

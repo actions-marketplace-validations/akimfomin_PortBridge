@@ -50,7 +50,7 @@ def plan(catalog, local, *, console=""):
                                if channel["status"] in {"listed", "candidate", "used_in_task"}]
     return {"as_of": raw["as_of"], "categories": categories, "prior_channel_summary": public["channels"],
             "outcome": outcomes(public, local),
-            "delivery": "Local review only. Every contact requires a separate owner decision."}
+            "delivery": "Local suggestions for human review. Check consent, the current task and channel rules before contact."}
 
 
 def main(argv=None):

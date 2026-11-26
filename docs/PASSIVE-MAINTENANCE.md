@@ -57,6 +57,10 @@ The hosted build reads public sources and creates `portbridge-public-catalog-v1`
 
 To roll back a deployment, retain the last known-good code SHA, its successful Actions run, the checkpoint and the published manifest before starting. Make a separate checkout at that SHA, use a copy of its checkpoint and run the full tests and export. Verify the candidate against the saved public coverage before reverting the release commit on main. A merge commit uses `git revert -m 1 MERGE_SHA`. For an ordinary release commit use `git revert RELEASE_SHA`. Keep the audit branch and both artifacts. Check the public manifest, live Lab and partner feed after the resulting Pages job. If the prior release predates the partner API, subscriptions retain their cursors during rollback.
 
+### Observe the first week
+
+After a successful scheduled deployment verifies the live generation, GitHub retains a dated `portbridge-scheduled-publication-v1` receipt for 30 days. The receipt records the release revision, run and attempt, UTC verification time and both expected digests. Run `python audit/m6_autonomy.py --since YYYY-MM-DDTHH:MM:SSZ` using the actual rollout time in the [release handoff](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md). The report lists scheduled runs without a success receipt, the longest verified-publication gap and counts for seven consecutive 24-hour intervals. It tracks publication delivery. Individual sources can lag even when delivery succeeds.
+
 ## Коротко по-русски
 
 Сайт, каталог, поиск, Test Lab и JSON обслуживаются на GitHub. Компьютер основателя для них не нужен. Чтобы предложить исправление или взять направление, напишите в [общее обсуждение](https://github.com/akimfomin/PortBridge/issues/91). Для запуска своей копии достаточно Python и трёх команд в начале этой страницы. По поводу оборудования или результатов теста обращайтесь в ветку конкретной задачи. Решения о публикации, проверке результата и приглашении добровольца принимает человек, когда у него есть время.

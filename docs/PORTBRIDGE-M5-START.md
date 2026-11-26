@@ -1,6 +1,6 @@
 # Start a one-task PortBridge pilot
 
-Open the dashboard and choose **Start here**. For a public compatibility issue, paste its GitHub URL into Issue catalog. Review the source revisions, then try one exact test in Lab. You can use the catalog and send a link with no installation. During review, open the `start.html` from the site artifact. After approval the same entry point will be available on the public site.
+Open the dashboard and choose **Start here**. For a public compatibility issue, paste its GitHub URL into Issue catalog. Review the source revisions, then try one exact test in Lab. You can use the catalog and send a link with no installation. Open the [public Start page](https://akimfomin.github.io/PortBridge/start.html) or use `start.html` from a release-review artifact.
 
 ## Codex and Claude Code
 
@@ -12,7 +12,7 @@ The optional authenticated Lab route uses `--exchange-port 8765 --enable-lab-wri
 
 ## GitHub Action and partner feeds
 
-Copy [the optional PR workflow](../examples/portbridge-pr.yml) to `.github/workflows/portbridge-pr.yml`. Its current pin is the previously public commit; use the reviewed M5 SHA when it is accessible on GitHub. It produces a job summary with one PR's prior work. It has no checkout of the contributor branch, no write permissions and no PR comments. To remove it, delete that workflow. [Action input and examples](GITHUB-ACTION.md)
+Copy [the optional PR workflow](../examples/portbridge-pr.yml) to `.github/workflows/portbridge-pr.yml` in a repository you maintain. Open a pull request or choose **Actions → Optional PortBridge prior work → Run workflow** and paste its public URL. Open the run summary for source links or the reason for an empty result. The workflow uses a pinned PortBridge revision, runs without checking out the PR, and requests no repository write permissions. To disconnect, disable the workflow under Actions or remove that file. [Action instructions and measured results](GITHUB-ACTION.md)
 
 Use [the partner contract](../API.en.md#partner-feed) for JSON, the widget or a local digest. Schedule the pull in your own environment only if the updates help your work. Stop the schedule and remove its cursor to unsubscribe.
 

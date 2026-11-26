@@ -1,0 +1,100 @@
+"""Read the actual GitHub Pages consumer paths and compare a partner poll with its repeat."""
+import argparse
+from hashlib import sha256
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from portbridge.integrations import digest
+from portbridge.pages_health import public_snapshot, verify_linked_snapshots
+from portbridge.preflight import public_preflight
+
+
+def read(name):
+    with public_snapshot(name) as res:
+        return json.load(res)
+
+
+def mcp_partner_page():
+    messages = [
+        {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+            "protocolVersion": "2025-11-25", "capabilities": {},
+            "clientInfo": {"name": "PortBridge-release-check", "version": "1"}}},
+        {"jsonrpc": "2.0", "method": "notifications/initialized"},
+        {"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {
+            "name": "portbridge_partner", "arguments": {"kind": "task", "limit": 1}}},
+    ]
+    wire = "".join(json.dumps(row) + "\n" for row in messages)
+    run = subprocess.run([sys.executable, "-B", "-m", "portbridge.mcp"], input=wire,
+                         capture_output=True, text=True, check=True, timeout=60,
+                         cwd=Path(__file__).resolve().parents[1])
+    init, page = (json.loads(line) for line in run.stdout.splitlines())
+    if (init.get("id") != 1 or init.get("result", {}).get("protocolVersion") != "2025-11-25"
+            or page.get("id") != 2 or page.get("result", {}).get("isError")):
+        raise ValueError("Public MCP partner call failed")
+    return page["result"]["structuredContent"]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--site-sha256", help="optional expected data/site.json digest from the deployment")
+    args = parser.parse_args()
+    with public_snapshot("site") as res:
+        raw = res.read()
+    checksum = sha256(raw).hexdigest()
+    if args.site_sha256 and args.site_sha256 != checksum:
+        raise SystemExit("Public site.json differs from the requested build")
+    failed = verify_linked_snapshots(checksum)
+    if failed:
+        raise SystemExit("Inconsistent public snapshots: " + ", ".join(failed))
+    site = json.loads(raw)
+    feed = read(site["snapshots"]["partner"].removesuffix(".json"))
+    canonical_feed = read("partner")
+    if feed != canonical_feed:
+        raise SystemExit("Stable partner feed differs from the published generation")
+    from portbridge.integrations import select
+
+    page = mcp_partner_page()
+    if page != select(feed, kind="task", limit=1):
+        raise SystemExit("Public MCP task page differs from the published partner feed")
+    first, cursor = digest(feed, {}, kind="task")
+    if first["state"] != "available":
+        raise SystemExit("Current partner feed cannot initialize a subscription: " + first["state"])
+    repeat, _ = digest(feed, cursor, kind="task")
+    if repeat["state"] != "available" or repeat["added_or_changed"] or repeat["no_longer_listed"]:
+        raise SystemExit("A repeated subscription poll changed the result")
+    generation = site["browse_index"]["generation"]
+    if not re.fullmatch("[0-9a-f]{24}", generation):
+        raise SystemExit("Invalid public browse generation")
+    index = read(f"browse-{generation}-index")
+    counts = {}
+    for kind in ("matches", "sources"):
+        total = index["kinds"][kind]["total"]
+        if total:
+            first_page = read(f"browse-{generation}-{kind}-page-0")
+            if len(first_page["items"]) != min(total, index["page_size"]):
+                raise SystemExit(f"Invalid first {kind} page")
+        counts[kind] = total
+    url = "https://github.com/xcl-dev/xcl/pull/2322"
+    prior = public_preflight(url=url, limit=5)
+    discovery = prior.get("discovery") or {}
+    if (prior.get("origin_url") != url or prior.get("catalog_status") == "unavailable"
+            or discovery.get("index_source") != "published_snapshot"):
+        raise SystemExit("Reference PR could not be read from the published Discovery snapshot")
+    if not discovery.get("matches"):
+        raise SystemExit("The reference PR returned no previous work")
+    health = read(site["snapshots"]["health"].removesuffix(".json"))
+    print(json.dumps({"site_sha256": checksum, "generated_at": site["generated_at"],
+        "health_status": health["status"], "observations": health["observation_count"],
+        "source_last_success": health["last_success"], "published_sections_verified": sorted(site["snapshots"]),
+        "browse_totals": counts, "partner_counts": feed["counts"], "tasks_in_first_poll": len(first["added_or_changed"]),
+        "changed_on_second_poll": 0, "mcp_partner_first_page_items": len(page["items"]),
+        "reference_pr": url, "origin_in_source_index": prior.get("indexed"),
+        "discovery_matches": len(discovery["matches"])}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

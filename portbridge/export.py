@@ -156,7 +156,7 @@ def _export(catalog, directory, repository):
         "health": catalog.health(generated_at=generated_at),
         "discovery": cached_index(catalog),
         "lab": build_lab(catalog, now=epoch(generated_at)),
-        "radar": {**radar_view(catalog, epoch(generated_at), include_catalog=True), "findings": reviewed_snapshot(catalog)},
+        "radar": radar_view(catalog, epoch(generated_at), include_catalog=True),
         "observations": {"observations": catalog.observations(limit=None)},
         "coordination": {"coordination": catalog.coordination()},
         "graph": knowledge_graph(catalog),
@@ -164,6 +164,7 @@ def _export(catalog, directory, repository):
         "recommendations": {"recommendations": recommendations(catalog, matches=preview)},
         "outreach": {"drafts": catalog.outreach()},
     }
+    data["radar"]["findings"] = reviewed_snapshot(catalog, lab=data["lab"])
     data["activity"] = build_activity(catalog, projects=data["projects"]["projects"], cards=data["problems"]["problems"],
                                       observations=data["observations"]["observations"], health=data["health"],
                                       drafts=data["outreach"]["drafts"])

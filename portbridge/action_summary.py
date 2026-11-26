@@ -5,11 +5,14 @@ import os
 from pathlib import Path
 import re
 import string
-from urllib.parse import quote
+from urllib.error import HTTPError
+from urllib.parse import quote, urlsplit
+from urllib.request import Request, build_opener
 
 from .catalog import PROBLEM_ID, public_url
 from .discovery_search import key as discovery_source_key
-from .github import PR_URL
+from .github import API, NoRedirect, PR_URL
+from .matching import canonical_url, current_repository
 from .preflight import PUBLIC_BASE, english_text, public_preflight
 
 
@@ -25,6 +28,7 @@ def pull_request(event_name, event_path):
     if len(data) > EVENT_LIMIT:
         raise ValueError("GitHub event exceeds size limit")
     event = json.loads(data)
+    head = None
     if event_name == "workflow_dispatch":
         title, source = "", event["inputs"]["pull_request_url"]
         if isinstance(source, str):
@@ -32,16 +36,39 @@ def pull_request(event_name, event_path):
     else:
         request = event["pull_request"]
         title, source = request["title"], request["html_url"]
+        if event["repository"]["private"] is not False or request["base"]["repo"]["private"] is not False:
+            raise ValueError("Public repositories only")
+        head = request["head"]["sha"]
+        if not isinstance(head, str) or not re.fullmatch("[0-9a-f]{40}", head):
+            raise ValueError("Missing PR event head")
     if (not isinstance(title, str) or not isinstance(source, str)
             or len(source) > 500 or not PR_URL.fullmatch(source)):
         raise ValueError("Invalid pull request data")
-    return {"q": " ".join(title.split())[:200], "url": source}
+    return {"q": " ".join(title.split())[:200], "url": source}, head
 
 
 def label(text):
     return " ".join("".join(char for char in text[:320] if char.isprintable() or char.isspace()).split()).translate(
         ESCAPE_MARKDOWN
     )
+
+
+def public_pr_head(url):
+    """Resolve a typed URL anonymously without sending PR prose to the renderer."""
+    owner, repo, _, number = urlsplit(url).path.strip("/").split("/")
+    endpoint = f"{API}/repos/{current_repository(f'{owner}/{repo}')}/pulls/{number}"
+    request = Request(endpoint, headers={"User-Agent": "PortBridge receiver", "Accept": "application/vnd.github+json"})
+    with build_opener(NoRedirect()).open(request, timeout=6) as response:
+        data = response.read(EVENT_LIMIT + 1)
+    if len(data) > EVENT_LIMIT:
+        raise ValueError("PR metadata exceeds the limit")
+    pr = json.loads(data)
+    head = pr["head"]["sha"]
+    if (pr["number"] != int(number) or pr["base"]["repo"]["private"] is not False
+            or not PR_URL.fullmatch(pr["html_url"]) or canonical_url(pr["html_url"]) != canonical_url(url)
+            or not re.fullmatch("[0-9a-f]{40}", head)):
+        raise ValueError("Unexpected public PR identity")
+    return head
 
 
 def source_link(title, url, *, discovery=False):
@@ -60,8 +87,14 @@ def source_group(heading, items, confidence=None):
     return [f"### {heading}", "", *rows, ""] if rows else []
 
 
-def render_report(result):
+def render_report(result, *, source_url=None, head=None, event_origin=False):
     lines = ["Review these leads against the target revision and configuration.", ""]
+    origin = source_url or result.get("origin_url")
+    if origin and PR_URL.fullmatch(origin):
+        lines.extend([source_link("Source pull request", origin), ""])
+        if head:
+            scope = "PR event head" if event_origin else "Public PR head"
+            lines.extend([f"{scope}: `{head}`. Catalog evidence may predate this head.", ""])
     if result.get("catalog_status") in {"partial", "stale", "error", "seed-only"}:
         lines.extend(["The public snapshot may be incomplete.", ""])
     if (result.get("catalog_freshness") or {}).get("age_state") == "stale":
@@ -72,7 +105,11 @@ def render_report(result):
             lines.append(f"- {heading}: {label(stamp)}")
     if result.get("origin_url") and result.get("indexed") is False:
         lines.extend(["This pull request is absent from the public index. Check its current details on GitHub.", ""])
-    for source in result.get("source_coverage", []):
+    coverage = result.get("source_coverage", [])
+    if len(coverage) > 1:
+        # An unknown repository gets catalog-wide health from preflight.
+        lines.extend([f"[Catalog source health]({PUBLIC_BASE}data/health.json)", ""])
+    for source in coverage if len(coverage) == 1 else ():
         repo = label(source.get("repo", source["slug"]))
         for mode, health in source["history"].items():
             if health["status"] != "complete":
@@ -127,6 +164,8 @@ def render_report(result):
         lines.extend(groups)
     else:
         lines.extend(["No related work was found in this snapshot.", ""])
+        if discovery.get("empty_reason"):
+            lines.extend([label(discovery["empty_reason"]), ""])
 
     check = result.get("first_check")
     if check:
@@ -148,37 +187,65 @@ def render_report(result):
     return "\n".join(lines)
 
 
-def summary(environ):
+def summary_result(environ):
     event_name = environ.get("GITHUB_EVENT_NAME")
     explicit = environ.get("PORTBRIDGE_PR_URL", "").strip()
-    if not explicit and event_name not in {"pull_request", "workflow_dispatch"}:
-        return "This summary runs on GitHub pull request events and manual workflow runs.\n"
+    if event_name == "pull_request_target" or (not explicit and event_name not in {"pull_request", "workflow_dispatch"}):
+        return "skipped", "This summary runs on GitHub pull request events and manual workflow runs.\n"
+    event_origin = not explicit and event_name == "pull_request"
     try:
         if explicit:
             if len(explicit) > 500 or not PR_URL.fullmatch(explicit):
                 raise ValueError("Use a public GitHub pull request URL")
             request = {"q": "", "url": explicit}
+            head = None
         else:
-            request = pull_request(event_name, environ["GITHUB_EVENT_PATH"])
-    except (KeyError, OSError, TypeError, ValueError):
-        if event_name == "workflow_dispatch":
-            return "Enter a public GitHub pull request URL in pull_request_url.\n"
-        return "The pull request event could not be read. Continue the usual review.\n"
-    try:
-        return render_report(public_preflight(**request, limit=5))
+            request, head = pull_request(event_name, environ["GITHUB_EVENT_PATH"])
     except (AttributeError, KeyError, OSError, TypeError, ValueError):
-        return UNAVAILABLE
+        if explicit or event_name == "workflow_dispatch":
+            return "invalid_input", "Enter a public GitHub pull request URL in pull_request_url.\n"
+        return "invalid_input", "The pull request event could not be read. Continue the usual review.\n"
+    if not event_origin:
+        try:
+            head = public_pr_head(request["url"])
+        except HTTPError as error:
+            with error:
+                code = error.code
+            if code in (404, 410):
+                return "origin_missing", "GitHub could not find a publicly readable pull request at this URL.\n"
+            return "origin_unverified", "GitHub could not verify the public PR. Retry when metadata is available.\n"
+        except (AttributeError, KeyError, OSError, TypeError, ValueError):
+            return "origin_unverified", "GitHub could not verify the public PR. Retry when metadata is available.\n"
+    try:
+        result = public_preflight(**request, limit=5)
+        status = "unavailable" if result.get("catalog_status") == "unavailable" else "reported"
+        return status, render_report(result, source_url=request["url"], head=head, event_origin=event_origin)
+    except (AttributeError, KeyError, OSError, TypeError, ValueError):
+        return "unavailable", UNAVAILABLE
+
+
+def summary(environ):
+    return summary_result(environ)[1]
 
 
 def main(environ=None):
     environ = os.environ if environ is None else environ
     destination = environ.get("GITHUB_STEP_SUMMARY")
+    status = "summary_unavailable"
     if destination:
         try:
             with Path(destination).open("a", encoding="utf-8") as stream:
-                stream.write(HEADER + summary(environ) + "\n")
+                outcome, markdown = summary_result(environ)
+                stream.write(HEADER + markdown + "\n")
+            status = outcome
         except OSError:
             # The action is advisory even when the runner cannot open its summary file.
+            pass
+    if output := environ.get("GITHUB_OUTPUT"):
+        try:
+            with Path(output).open("a", encoding="utf-8") as stream:
+                stream.write(f"status={status}\n")
+        except OSError:
             pass
     return 0
 

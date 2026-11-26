@@ -226,7 +226,7 @@ def showcased_research(cards, observations, handoffs):
 def build_activity(catalog, *, now=None, projects=None, cards=None, observations=None, health=None, drafts=None):
     from .lab import build_lab
     from .radar import build_radar
-    from .radar_store import radar_view
+    from .radar_store import radar_view, reviewed_snapshot
 
     as_of = (now or datetime.now(timezone.utc)).astimezone(timezone.utc).replace(microsecond=0)
     start = as_of - timedelta(days=WINDOW_DAYS)
@@ -274,6 +274,7 @@ def build_activity(catalog, *, now=None, projects=None, cards=None, observations
     legacy = {**all_tasks, "tasks": [task for task in all_tasks["tasks"] if "candidate_id" not in task]}
     radar = build_radar(projects, observations, changes, legacy, opportunities, as_of)
     radar.update(radar_view(catalog, int(as_of.timestamp())))
+    radar["findings"] = reviewed_snapshot(catalog, lab=all_tasks)
     handoffs = handoff_summary(cards, projects, observations, as_of)
     return {"as_of": as_of.isoformat(), "refreshed_at": health["refresh_at"], "health": health["status"],
             "last_success": health.get("last_success"), "freshness": health.get("freshness"),

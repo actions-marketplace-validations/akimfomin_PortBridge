@@ -67,6 +67,37 @@ class CommunityTest(CatalogFixture):
         self.assertEqual(impact["metrics"]["accepted_changes"]["value"], 0)
         self.assertEqual(filter_impact(impact, target=PS5)["stories"], [])
 
+    def test_recommendation_uses_discovered_roles_and_honors_correction_and_optout(self):
+        from portbridge.community_partners import opportunities
+        from portbridge.radar_store import epoch
+
+        default_policy = read_data("people_policy.json")
+        original = read_data
+        policy = copy.deepcopy(default_policy)
+        with patch("portbridge.community.time.time", return_value=epoch(AFTER)), patch(
+                "portbridge.community.read_data", side_effect=lambda name: policy if name == "people_policy.json"
+                else self.config if name == "impact_evidence.json" else original(name)):
+            initial, _ = people(self.catalog)
+            linked = initial["profiles"][0]
+            self.assertEqual({r["role"] for r in linked["roles"]}, {"developer", "bridge"})
+            self.assertEqual(set(linked["consoles"]), {"ps5", "xbox-series"})
+            matches = opportunities(self.catalog)["opportunities"]
+            self.assertEqual({m["need_source"] for m in matches}, {XBOX, PS5})
+            self.assertTrue(all(m["profile"] == linked["id"] and m["role_source"] in {XBOX, PS5}
+                                and m["specialties"] and m["contact_permission"] == "not_granted" for m in matches))
+            corrected = {"action": "correct", "source": PS5, "actor": actor("CheckedActor", 9922),
+                         "proof": DECISION, "at": AFTER}
+            policy = decide(policy, corrected)
+            self.assertEqual(policy, decide(copy.deepcopy(policy), corrected))
+            corrected_matches = {m["need_source"]: m for m in opportunities(self.catalog)["opportunities"]}
+            self.assertEqual(corrected_matches[PS5]["profile"], "github-user:9922")
+            self.assertFalse(corrected_matches[XBOX]["multi_project"])
+            removed = {"action": "opt-out", "actor": corrected["actor"], "proof": DECISION, "at": AFTER}
+            policy = decide(policy, removed)
+            self.assertEqual(policy, decide(copy.deepcopy(policy), removed))
+            self.assertNotIn("github-user:9922", {m["profile"] for m in opportunities(self.catalog)["opportunities"]})
+            self.assertNotIn("github-user:9922", {p["id"] for p in people(self.catalog)[0]["profiles"]})
+
     def test_correct_retract_idempotency_and_hide_reissued_sources(self):
         policy = read_data("people_policy.json")
         case = {"id":"impact:correction", "title":"TestAlias report", "summary":"A checked source", "scope":"Synthetic",

@@ -6,19 +6,19 @@
 
 PortBridge connects public issues, pull requests, and test results across projects bringing Xbox Series software to PC. Look up an error or shader instruction, see what another team already tested, and share a reproducible result in the repository where it can help. Each team keeps its own tools, priorities, and review process.
 
-## Passive maintenance · 26 November 2026
+## Try PortBridge on one pull request
 
-I have stepped back from initiating research and recruiting testers. The catalog, search and Test Lab stay open. GitHub Actions refreshes public data while individual sources can lag. Issues and pull requests remain welcome. There is no guaranteed response time.
+A repository maintainer can enable the [read-only GitHub check](docs/GITHUB-ACTION.md) to see earlier work or the reason for an empty result directly in a PR. The M5–M6 pilot welcomes one concrete technical decision at a time. [Agent setup](docs/MCP.md) · [Partner feed](API.en.md) · [Measured outcomes and open limits](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md)
 
 [Letter from the founder](https://akimfomin.github.io/PortBridge/letter.html) · [Reply or volunteer to maintain a component](https://github.com/akimfomin/PortBridge/issues/91) · [Engineering history and evidence](docs/FINAL-AUDIT.md) · [Run or maintain PortBridge](docs/PASSIVE-MAINTENANCE.md)
 
-## Discovery in the local M2 candidate
+## Discovery
 
 Search for earlier implementations from other projects using an error, GPU instruction, API symbol or a known issue or PR link. Results include the source revision, compatibility limits, license and a proposed check. [Try it locally](docs/QUICKSTART.md#try-discovery-locally)
 
-## People and Impact in the local M4 candidate
+## People and Impact
 
-The local candidate maps public technical work across Xbox Series and PS5 and records reviewed contributions, independent tests and receiving decisions with source links. [M4 evidence](docs/PORTBRIDGE-M4.md) · [Pilot plan](docs/PORTBRIDGE-M4-PILOT.md)
+The public projections link technical work to its sources and distinguish contributions, independent tests and receiving decisions. [M4 evidence](docs/PORTBRIDGE-M4.md) · [Engineering record](docs/FINAL-AUDIT.md)
 
 ## For project contributors
 

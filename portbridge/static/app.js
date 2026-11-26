@@ -469,18 +469,19 @@ async function reviewedRadarResults(query, signal) {
   }
 }
 
-function drawReviewedRadar(findings) {
+function drawReviewedRadar(findings, parent = content) {
   if (!findings.length) return;
   const panel = element('section','activity-panel');
   panel.append(element('h2','',t('Reviewed Lab findings','Проверенные результаты Lab')));
   for (const row of findings) {
     const card = element('article','card');
-    card.append(githubLink(row.title,row.source_url),element('p','',row.outcome + ' · ' + row.observed),
+    card.append(githubLink(row.title,row.source_url),element('p','',row.review_url ? row.observed : row.outcome + ' · ' + row.observed),
       element('p','activity-note',row.limitations));
-    if (row.contested) card.append(element('p', 'activity-note', t('Review reopened', 'Проверка снова открыта')));
+    if (row.review_url) card.append(githubLink(t('Repository owner review', 'Решение владельца'), row.review_url));
+    if (row.contested) card.append(element('p', 'activity-note', t('Conflicting results need review', 'Противоречивые результаты ждут проверки')));
     panel.append(card);
   }
-  content.append(panel);
+  parent.append(panel);
 }
 
 function discoveryLink(title, url) {
@@ -1201,6 +1202,7 @@ function activityRadar(radar) {
   bar.append(filter('kind', t('Action', 'Действие'), Object.entries(radarKinds)),
     filter('equipment', t('Equipment', 'Оборудование'), Object.entries(labEquipment)));
   panel.append(bar, count, rows);
+  drawReviewedRadar(list(radar.findings).slice(0, 5), panel);
   render();
   if (list(radar.candidates).length) {
     const upcoming = element('div', 'lab-bar');
@@ -2072,6 +2074,7 @@ const communityDictionary = {
   idea: ['Original idea', 'Автор идеи'], fix: ['Implementation', 'Автор исправления'],
   connection: ['Found the link', 'Обнаружил связь'], review: ['Review', 'Ревью'],
   independent_test: ['Independent test', 'Независимая проверка'], negative_result: ['Negative result', 'Отрицательный результат'],
+  test_report: ['Test report', 'Отчёт о проверке'],
   port: ['Prepared the transfer', 'Подготовил перенос'], receiving_team: ['Receiving project', 'Принимающая команда'],
   coordination: ['Coordination', 'Координация'], documentation: ['Documentation', 'Документация'],
   recorded_stories: ['Evidence-backed stories', 'Истории с доказательствами'], accepted_changes: ['Accepted changes', 'Принятые изменения'],
@@ -2238,6 +2241,12 @@ function drawCommunity(view, data, params) {
     }
     const sourceLinks = element('div', 'lab-links');
     for (const source of list(story.sources)) sourceLinks.append(githubLink(source.label, source.url));
+    for (const source of list(story.historical_sources)) {
+      const state = {review_revoked: t('Approval revoked', 'Одобрение отозвано'),
+        conflicting_reports: t('Conflicting reports', 'Противоречивые отчёты'),
+        source_unavailable: t('Source no longer public', 'Источник больше недоступен')}[source.status];
+      sourceLinks.append(githubLink(state + ' · ' + source.label, source.url));
+    }
     card.append(proof, sourceLinks);
     rows.append(card);
   }

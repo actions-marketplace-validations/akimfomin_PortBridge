@@ -165,16 +165,19 @@ def filter_radar(payload, *, confidence="", state="", console="", limit=DIGEST_L
 
 
 
-def reviewed_snapshot(catalog):
+def reviewed_snapshot(catalog, *, lab=None):
+    from .identity import lab_report_id
+    from .lab import TASKS
+    from .lab_reports import conflicting_public_reports, independent_owner_review, read_report_states
+    from .matching import canonical_url
+
     with catalog.connect() as db:
-        if not present(db):
-            return []
         rows = db.execute("""SELECT c.origin,c.peer,c.payload,c.state AS candidate_state,r.id,r.state,r.payload AS report,r.reviewed
             FROM radar_candidates c JOIN radar_tasks t ON t.candidate=c.id
             JOIN radar_reports r ON r.task=t.id AND r.generation=c.generation
             WHERE r.state IN ('reviewed','reproduced') AND c.state NOT IN ('stale','withdrawn')
             AND json_extract(r.payload,'$.share_public')=1
-            ORDER BY r.reviewed DESC,r.id LIMIT 100""").fetchall()
+            ORDER BY r.reviewed DESC,r.id LIMIT 100""").fetchall() if present(db) else []
     finds = []
     for row in rows:
         report = json.loads(row["report"])
@@ -185,7 +188,33 @@ def reviewed_snapshot(catalog):
                       "title": candidate["sources"][0]["title"], "consoles": candidate.get("consoles", []),
                       "target_url": candidate["sources"][0]["url"], "peer_url": candidate["sources"][1]["url"],
                       **{key: report[key] for key in ("source_url", "revisions", "outcome", "observed", "limitations")}})
-    return finds
+    if lab is None:
+        states = read_report_states(catalog, TASKS)
+        tasks = ({**task, "report_sync": states.get(task["id"], {})} for task in TASKS)
+    else:
+        tasks = lab["tasks"]
+    for task in tasks:
+        sync = task.get("report_sync", {})
+        reports = sync.get("reports", [])
+        disputed = conflicting_public_reports(reports)
+        for report in reports:
+            review = independent_owner_review(report)
+            if not review or report.get("outcome") not in {"pass", "fail"}:
+                continue
+            url = report["url"]
+            target, thread = task["source_url"], url.split("#")[0]
+            finds.append({"id": lab_report_id(url), "status": "reviewed", "contested": url in disputed,
+                          "reviewed_at": review["reported_at"], "title": task["title"],
+                          "consoles": task.get("consoles", ["xbox-series"]),
+                          "origin": canonical_url(target), "peer": canonical_url(thread),
+                          "target_url": target, "peer_url": thread, "source_url": url,
+                          "review_url": review["url"], "revisions": report["revisions"],
+                          "outcome": report["outcome"].upper(),
+                          "observed": report["hardware"] + " test reported " + report["outcome"].upper(),
+                          "source_state": sync.get("state"), "checked_at": sync.get("checked_at"),
+                          "limitations": "Owner-reviewed public report for the listed hardware and revisions."
+                              + (" Source refresh pending." if sync.get("state") != "fresh" else "")})
+    return sorted(finds, key=lambda row: (row["reviewed_at"] or "", row["id"]), reverse=True)
 
 
 def filter_findings(rows, *, url="", query="", limit=5):
