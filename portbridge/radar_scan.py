@@ -14,7 +14,7 @@ from .radar_patches import apply_cached, sample
 from .discovery_scan import cached_index, lookup_plan, scan as discovery_scan
 from .discovery_search import discover
 from .identity import contributor_id, source_id, stable_id
-from .matching import GENERAL_SOURCE_TERMS, RelatedIndex, canonical_url, source_revision, subject_kind, terms
+from .matching import GENERAL_SOURCE_TERMS, RelatedIndex, canonical_url, revision_checked_at, source_revision, subject_kind, terms
 from .radar_store import SCHEMA, encode, epoch, event, recent
 
 MAX_EVENTS = 96
@@ -44,16 +44,12 @@ def patch_identity(row):
         row["metadata"].get("patch_revision") == source_revision(row)) else None
 
 
-def last_checked(row):
-    return row["metadata"].get("revision_checked_at") or row.get("fetched_at")
-
-
 def evidence_source(row, role, projects):
     metadata = row["metadata"]
     consoles = projects.get(row["project"], {}).get("consoles") or console_families(row["url"], default=("xbox-series",))
     return {"role": role, "url": row["url"], "source_id": source_id(row["url"]), "consoles": consoles,
             "project": row["project"], "title": row["title"], "status": row["status"], "revision": source_revision(row),
-            "checked_at": last_checked(row), "fresh": not source_sync_failed(projects.get(row["project"], {}), row["url"]),
+            "checked_at": revision_checked_at(row), "fresh": not source_sync_failed(projects.get(row["project"], {}), row["url"]),
             "author": metadata.get("author"), "contributor_id": contributor_id(metadata.get("author"),
                                                                               metadata.get("github_user_id"))}
 
@@ -236,7 +232,7 @@ def refresh(catalog, *, online_discovery=False, limit=MAX_EVENTS, now=None):
     apply_cached(rows, cached)
     upcoming = [(url, row, fingerprint(row)) for url, row in rows.items()
                 if row["kind"] in {"issue", "pr", "commit", "test"}
-                and now - HORIZON <= epoch(last_checked(row)) <= now + 120]
+                and now - HORIZON <= epoch(revision_checked_at(row)) <= now + 120]
     changed = nlargest(limit, (item for item in upcoming if known.get(item[0]) != item[2]
                               and (online_discovery or known.get(item[0]) != item[2] + ":offline")),
                        key=lambda item: (epoch(item[1].get("updated_at") or item[1].get("fetched_at")), item[0]))

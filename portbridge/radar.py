@@ -8,7 +8,7 @@ import re
 from .activity import source_time
 from .catalog import public_url, source_sync_failed
 from .github import WORK_URL
-from .matching import canonical_url, source_revision, subject_kind
+from .matching import canonical_url, revision_checked_at, source_revision, subject_kind
 
 
 FRESH_FOR = timedelta(hours=2)
@@ -36,7 +36,7 @@ def proof(role, url, revision=None):
 def observation_check(row, projects, now):
     if row is None:
         return {"state": "unknown", "checked_at": None}
-    checked = row.get("fetched_at")
+    checked = revision_checked_at(row)
     if source_sync_failed(projects.get(row["project"], {}), row["url"]):
         state = "stale" if checked else "unknown"
     else:

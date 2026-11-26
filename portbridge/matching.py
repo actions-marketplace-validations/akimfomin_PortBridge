@@ -117,6 +117,11 @@ def source_revision(row):
     return value.lower() if isinstance(value, str) and re.fullmatch(r"[0-9a-fA-F]{40,64}", value) else None
 
 
+def revision_checked_at(row):
+    """Freshness of the pinned revision, with a fallback for earlier catalogs."""
+    return row["metadata"].get("revision_checked_at") or row.get("fetched_at")
+
+
 class RelatedIndex:
     def __init__(self, records):
         self.rows = {canonical_url(row["url"]): row for row in records if row["kind"] in {"issue", "pr", "commit"}}

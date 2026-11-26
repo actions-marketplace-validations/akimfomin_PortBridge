@@ -274,7 +274,8 @@ class CatalogTest(CatalogFixture):
         records = self.catalog.observations(kind="test", project="continued", limit=10)
         self.assertEqual(len(records), 1)
         self.assertEqual(records[0]["status"], "failure")
-        self.assertEqual(records[0]["metadata"], {"head_sha": "a" * 40, "last_known_head_sha": "a" * 40})
+        self.assertEqual(records[0]["metadata"], {"head_sha": "a" * 40, "last_known_head_sha": "a" * 40,
+                                                  "revision_checked_at": records[0]["fetched_at"]})
         project = next(item for item in self.catalog.projects() if item["slug"] == "continued")
         self.assertEqual((project["sync_status"], project["last_success"]), ("stale", when))
 

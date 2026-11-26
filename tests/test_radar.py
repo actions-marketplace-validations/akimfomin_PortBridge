@@ -30,6 +30,16 @@ class RadarTest(CatalogFixture):
         return build_radar(projects if projects is not None else self.catalog.projects(), observations,
                            changes, {"tasks": tasks}, [], NOW)["actions"]
 
+    def test_activity_uses_exact_revalidation_without_renewing_old_changes(self):
+        from portbridge.radar import observation_check
+
+        row = self.row("xcl", 2126, revision="c" * 40, fetched_at=(NOW - timedelta(days=8)).isoformat())
+        projects = {project["slug"]: project for project in self.catalog.projects()}
+        self.assertEqual(observation_check(row, projects, NOW)["state"], "stale")
+        row["metadata"]["revision_checked_at"] = NOW.isoformat()
+        self.assertEqual(observation_check(row, projects, NOW)["state"], "fresh")
+        self.assertEqual(self.queue([row]), [])
+
     def test_unknown_cross_project_candidate_needs_both_a_citation_and_a_symbol(self):
         source = self.row("xcl", 2126, signal="ds_read_b64", revision="c" * 40, status="merged")
         target = self.row("continued", 8123, signal="ds_read_b64", reference=source["url"], revision="b" * 40)
