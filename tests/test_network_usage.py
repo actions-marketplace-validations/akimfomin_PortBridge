@@ -40,6 +40,27 @@ class NetworkUsageTest(unittest.TestCase):
         self.assertEqual(self.outcome(*fresh)["relaunch"]["verified_repeat_teams"], ["example/engine"])
         self.assertEqual(self.outcome(history=fresh)["relaunch"]["single_or_repeat_team_count"], 0)
 
+    def test_continued_advisory_two_people_one_task_no_claim_of_tool_or_repeat_use(self):
+        public = json.loads(CHANNELS.read_bytes())
+        offer, = public["relaunch_advisories"]
+        response, other = offer["responses"]
+        # Re-imports, invitation-only links and technical feedback predating the offer do not add receipts.
+        offer["responses"].extend([response, {**other, "proof": offer["offer"]},
+                                   {**other, "at": "2026-11-26T20:00:00Z"}])
+        current = outcomes(public, {}, as_of=NOW)["relaunch"]
+        self.assertEqual(current["single_or_repeat_team_count"], 0)
+        applied = current["advisory_handoffs"]
+        self.assertEqual(applied["single_or_repeat_teams"], ["ubiquitarianism/leonida"])
+        self.assertEqual((applied["receipt_count"], applied["participant_count"], applied["task_count"]), (2, 2, 1))
+        self.assertEqual(applied["verified_repeat_team_count"], 0)
+        self.assertFalse(applied["reached"])
+        self.assertEqual(outcomes(public, {}, as_of=epoch(offer["offered_at"]))["relaunch"]
+                         ["advisory_handoffs"]["receipt_count"], 0)
+        for override in ({"reviewed": False}, {"portbridge_revision": REV}, {"version_link": offer["offer"]},
+                         {"offer": "https://github.com/ubiquitarianism/leonida/pull/2198#issuecomment-12"}):
+            public["relaunch_advisories"] = [{**offer, **override}]
+            self.assertEqual(outcomes(public, {}, as_of=NOW)["relaunch"]["advisory_handoffs"]["receipt_count"], 0)
+
     def test_historical_framelab_and_three_receiving_repositories_remain_visible(self):
         result = self.outcome()
         self.assertIn("5headsmartbtw/leonida-framelab", result["historical"]["verified_repeat_teams"])
