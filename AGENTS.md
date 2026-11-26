@@ -4,9 +4,9 @@
 
 Start with the [owner specification](docs/PORTBRIDGE-SPEC.md), the [Discovery supplement](docs/PORTBRIDGE-DISCOVERY-SPEC.md), the [current status](docs/PORTBRIDGE-STATUS.md) and the [requirements register](docs/PORTBRIDGE-CHECKLIST.md). Follow the [milestone plan](docs/PORTBRIDGE-PLAN.md) and record tests, evidence and blockers by requirement ID. `verified` requires a completed check.
 
-Work on the current local milestone branch. Public messages, pushes, merges, deployments and changes to external settings require separate permission under the specification. The public project remains in passive maintenance.
+Use a dedicated worktree for the current milestone. The scope of the M5–M6 release authorization is recorded below.
 
-The owner has authorized ordinary fast-forward publication of each completed audit iteration to `akimfomin/PortBridge:audit/review`. The auditor starts at [audit/LATEST.md](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md). Update that file, link reproducible evidence, check the entire outgoing Git range for private material and verify the remote commit after publishing. Keep contact lists, drafts, credentials, databases and identifiable local logs out of the branch and its ancestry. A release, deployment, change to main or message to a team still needs separate approval.
+The owner has authorized the M5 pilot and M6 release, including the audit branch, owner-controlled test integrations, targeted opt-in outreach, CI, rollout to main and Pages, and rollback. Maintain [audit/LATEST.md](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md) and the [122-requirement register](docs/PORTBRIDGE-CHECKLIST.md). Check the outgoing range for private drafts, contact lists, credentials, databases and identifiable logs. Use a normal merge and independently verify the published SHA and live service. An external repository owner decides whether to install.
 
 PortBridge coordinates independent Xbox Series compatibility projects. It connects related work, organizes shared checks, and records reviewed results so teams can reuse findings. Each team decides what to adopt. [Project overview](README.md) · [Working office](docs/OFFICE.md) · [Copyable agent prompt](docs/AGENT-PROMPT.md)
 

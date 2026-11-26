@@ -113,6 +113,10 @@ Use `GET /api/v1/radar` and `GET /api/v1/lab` for read-only access. The `console
 
 ## Partner feed
 
+On GitHub Pages read `data/site.json` and fetch `data/` plus its `snapshots.partner` filename. The local HTTP API and the MCP tool accept `after` (a zero-based offset) and `limit` (1–100, default 24). Read `next_after` until it is null. `total` counts matches across the filtered feed. For a consistent multi-page review use the immutable snapshot named by the manifest.
+
 Use `GET /api/v1/partner?console=ps5&kind=result&limit=10`, `data/partner.json`, or `portbridge_partner`. Read the current immutable filename from `data/site.json`. Filters are the project slug, `xbox-series` or `ps5`, and `task` or `result`. IDs are stable and result items carry the primary sources. A curated task marked `check_source` needs a status and revision check before taking it.
 
 Embed `partner.html?project=anyps5&kind=task` in an iframe with a descriptive title. For a pull-based subscription run `python -m portbridge.integrations --console ps5 --cursor partner-ps5.json`. Add `--snapshot /path/to/data/partner.json` to read a saved export. A failed pull, snapshot older than 48 hours or rollback in generation leaves the cursor unchanged. A removed item may have been taken, completed, superseded or withdrawn. Follow its source for the reason. [Pilot quick start](docs/PORTBRIDGE-M5-START.md)
+
+Run that command again with the same filters and cursor to receive changes. If `state` is `incomplete`, fetch the complete snapshot and retry. A truncated page or different filter scope cannot establish that a previously seen item was withdrawn. To disconnect, stop the client schedule. Its cursor is local and can be deleted.

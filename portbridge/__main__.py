@@ -274,13 +274,16 @@ class Handler(ExchangeHandlerMixin, BaseHTTPRequestHandler):
             return 200, build_activity(catalog)
         if name == "partner":
             from .integrations import public_feed, select
-            if params.keys() - {"project", "console", "kind", "limit"} or any(len(values) != 1 for values in params.values()):
+            if params.keys() - {"project", "console", "kind", "limit", "after"} or any(len(values) != 1 for values in params.values()):
                 raise ValueError("Use each partner filter at most once")
             options = {key: values[0] for key, values in params.items()}
             size = options.pop("limit", "24")
             if not size.isascii() or not size.isdecimal() or len(size) > 3:
                 raise ValueError("Invalid partner feed limit")
-            return 200, select(public_feed(catalog), limit=int(size), **options)
+            after = options.pop("after", "0")
+            if not after.isascii() or not after.isdecimal() or len(after) > 9:
+                raise ValueError("Invalid partner feed offset")
+            return 200, select(public_feed(catalog), limit=int(size), after=int(after), **options)
         if name in {"people", "impact"}:
             from .community import filter_impact, filter_people, people
 
@@ -461,6 +464,8 @@ def main(argv=None):
     lab_refresh.add_argument("--authenticated", action="store_true", help="use the configured read token for public reports")
     backup = commands.add_parser("backup", help="write a separate verified SQLite backup of --db")
     backup.add_argument("--out", type=Path, required=True)
+    backup.add_argument("--public-checkpoint", action="store_true",
+                        help="compact the snapshot and verify its public catalog schema and Lab state")
     principal = commands.add_parser("exchange-key", help="create a scoped local exchange key")
     principal.add_argument("--exchange-db", type=Path, required=True)
     principal.add_argument("--name", required=True)
@@ -501,7 +506,7 @@ def main(argv=None):
         from .backup import backup_database
 
         try:
-            print(backup_database(args.db, args.out))
+            print(backup_database(args.db, args.out, public_checkpoint=args.public_checkpoint))
         except (OSError, ValueError) as exc:
             parser.error(str(exc))
         return 0

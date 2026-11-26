@@ -42,7 +42,7 @@ The owner’s PC can be off. The publication uses a GitHub-hosted runner, a job-
 
 ## Catalog checkpoint and publication guard · M1
 
-The local M1 workflow candidate adds the following runbook. Its first public execution requires owner approval.
+Use the following procedure to investigate a delayed publication or to restore a hosted run.
 
 1. Compare the previous public count with the candidate in **Publication safeguard**. If the previous count is unknown or candidate coverage shrank, the job keeps the previous published snapshot. Check the source and schedule summary before retrying. [Public health](https://akimfomin.github.io/PortBridge/data/health.json)
 2. The build checks the SQLite cache. A missing, invalid or smaller cache can trigger recovery from a recent successful main run's `portbridge-public-catalog-v1` artifact. Checkpoint retention is 14 days. Inspect the backup in a separate path. A usable copy is required when a first upgrade loses its cache.
@@ -50,6 +50,12 @@ The local M1 workflow candidate adds the following runbook. Its first public exe
 4. Open `site.json`, `health.json`, the site and one Lab task. Compare snapshot time, last source success, and per-channel coverage. If #146-style verification fails, compare both hashes again after propagation and record what was delayed. Revert the candidate in an approved release if the new code causes the failure. [Engineering report](PORTBRIDGE-M1.md)
 
 По-русски. При потере кэша используется отдельная проверенная копия. Сборка сохраняет прежнюю публикацию, если сравнение покрытия невозможно или новый каталог меньше. Для отката сохраните копию базы и проверьте её предыдущим кодом в отдельном файле.
+
+### Public checkpoint and rollback
+
+The hosted build reads public sources and creates `portbridge-public-catalog-v1` with `python -m portbridge --db SRC backup --public-checkpoint --out NEW`. This command produces a compact, verified copy in a new file. It admits the public Discovery, Radar and People records produced by the scheduled scanner. A populated volunteer claim, report or preference, a participant event, an unknown table or an Exchange database fails validation. Keep private Exchange backups within the consenting deployment. SQLite compaction removes bytes left by deleted rows. [SQLite snapshot semantics](https://sqlite.org/lang_vacuum.html#vacuuminto)
+
+To roll back a deployment, retain the last known-good code SHA, its successful Actions run, the checkpoint and the published manifest before starting. Make a separate checkout at that SHA, use a copy of its checkpoint and run the full tests and export. Verify the candidate against the saved public coverage before reverting the release commit on main. A merge commit uses `git revert -m 1 MERGE_SHA`. For an ordinary release commit use `git revert RELEASE_SHA`. Keep the audit branch and both artifacts. Check the public manifest, live Lab and partner feed after the resulting Pages job. If the prior release predates the partner API, subscriptions retain their cursors during rollback.
 
 ## Коротко по-русски
 

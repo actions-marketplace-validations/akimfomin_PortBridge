@@ -64,13 +64,17 @@ def projection(projects, lab, impact, *, as_of):
             "counts": dict(Counter(row["kind"] for row in rows)), "items": rows}
 
 
-def select(feed, *, project="", console="", kind="", limit=None):
+def select(feed, *, project="", console="", kind="", limit=None, after=0):
     if (project and not SLUG.fullmatch(project) or console and console not in CONSOLES
-            or kind and kind not in EVENTS or limit is not None and (type(limit) is not int or not 1 <= limit <= 100)):
+            or kind and kind not in EVENTS or type(after) is not int or after < 0
+            or limit is not None and (type(limit) is not int or not 1 <= limit <= 100)):
         raise ValueError("Invalid partner feed filters")
     rows = [row for row in feed["items"] if (not project or project in row["projects"])
             and (not console or console in row["consoles"]) and (not kind or kind == row["kind"])]
-    return {**feed, "items": rows[:limit], "total": len(rows)}
+    end = after + limit if limit is not None else len(rows)
+    return {**feed, "items": rows[after:end], "total": len(rows), "after": after,
+            "next_after": end if end < len(rows) else None,
+            "scope": {"project": project, "console": console, "kind": kind}}
 
 
 def public_feed(catalog, *, now=None):
@@ -92,6 +96,17 @@ def digest(feed, previous, *, project="", console="", kind="", now=None):
     scope = {"project": project, "console": console, "kind": kind}
     if previous and previous.get("scope") != scope:
         raise ValueError("Use a separate subscription cursor for each set of filters")
+    # A page, or another subscription's filtered snapshot, cannot establish removals.
+    items = feed.get("items")
+    if not isinstance(items, list):
+        return {"state": "incomplete", "added_or_changed": [], "no_longer_listed": []}, None
+    if "total" in feed:
+        complete = (feed.get("scope") == scope and feed.get("after") == 0
+                    and feed["total"] == len(items) and feed.get("next_after") is None)
+    else:
+        complete = feed.get("counts") == dict(Counter(row["kind"] for row in items))
+    if not complete or len({row["id"] for row in items}) != len(items):
+        return {"state": "incomplete", "added_or_changed": [], "no_longer_listed": []}, None
     rows = select(feed, **scope)["items"]
     signatures = {row["id"]: sha256(json.dumps(row, sort_keys=True).encode()).hexdigest() for row in rows}
     old = previous.get("items", {})
@@ -111,7 +126,7 @@ def main(argv=None):
     parser.add_argument("--kind", default="")
     args = parser.parse_args(argv)
     try:
-        if args.cursor and args.snapshot and args.cursor.resolve() == args.snapshot.resolve():
+        if args.cursor and (args.snapshot or args.db) and args.cursor.resolve() == (args.snapshot or args.db).resolve():
             raise ValueError("Use a different path for the cursor")
         if args.snapshot:
             feed = json.loads(args.snapshot.read_bytes())

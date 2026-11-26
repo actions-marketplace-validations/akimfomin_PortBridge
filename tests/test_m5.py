@@ -43,7 +43,7 @@ class M5Test(CatalogFixture):
         self.assertEqual(stale["state"], "stale_or_invalid")
         with self.assertRaises(ValueError):
             digest(feed, cursor, console="ps5", now=clock)
-        gone, _ = digest({**feed, "items": []}, cursor, project="example", now=clock)
+        gone, _ = digest({**feed, "items": [], "counts": {}}, cursor, project="example", now=clock)
         self.assertEqual(gone["no_longer_listed"], ["task:fresh"])
 
     def test_newer_public_receipt_overrides_a_failed_source_check(self):
@@ -77,5 +77,6 @@ class M5Test(CatalogFixture):
         export(self.catalog, site)
         self.assertEqual(audit(site), [])
         (site / "forbidden.sqlite3").touch()
+        (site / "local-note.txt").touch()
         (site / "data/partner.json").write_text('{"items":[]}', encoding="utf-8")
-        self.assertEqual(set(audit(site)), {"forbidden.sqlite3", "data/partner.json"})
+        self.assertEqual(set(audit(site)), {"forbidden.sqlite3", "local-note.txt", "data/partner.json"})

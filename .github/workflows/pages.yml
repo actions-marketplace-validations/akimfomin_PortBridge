@@ -152,8 +152,23 @@ jobs:
           PORTBRIDGE_MIN_CHECKPOINT_COUNT: ${{ steps.previous.outputs.previous_count }}
         run: |
           test -n "$PORTBRIDGE_MIN_CHECKPOINT_COUNT"
-          python -m portbridge backup --out .portbridge/rehearsal.sqlite3
+          python -m portbridge backup --public-checkpoint --out .portbridge/rehearsal.sqlite3
           PORTBRIDGE_CHECKPOINT=.portbridge/rehearsal.sqlite3 python -m portbridge.pages_health checkpoint
+
+      - name: Check out the preceding main revision for a rollback rehearsal
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .portbridge/previous-release
+          persist-credentials: false
+
+      - name: Rebuild the preceding site with the recovered public catalog
+        if: github.event_name == 'pull_request'
+        working-directory: .portbridge/previous-release
+        run: |
+          python -m portbridge --db ../rehearsal.sqlite3 export --out ../rollback-site --repository "$GITHUB_REPOSITORY"
+          python "$GITHUB_WORKSPACE/audit/m6_rollback.py" "$GITHUB_WORKSPACE/dist" ../rollback-site
 
       - name: Archive the read-only review site
         if: github.ref != 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request')
@@ -177,7 +192,7 @@ jobs:
           PORTBRIDGE_CHECKPOINT: .portbridge/portbridge.sqlite3
         run: |
           python -m portbridge.pages_health checkpoint
-          python -m portbridge backup --out .portbridge/public.sqlite3
+          python -m portbridge backup --public-checkpoint --out .portbridge/public.sqlite3
 
       - name: Retain public catalog checkpoint separately from the cache
         if: github.repository == 'akimfomin/PortBridge' && github.ref == 'refs/heads/main' && steps.guard.outputs.ready != 'false'

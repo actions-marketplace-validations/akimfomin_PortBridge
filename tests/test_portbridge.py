@@ -388,6 +388,18 @@ class LocalAPITest(CatalogFixture):
         self.assertEqual(self.request("GET", "/api/docs")[0], 200)
         self.assertEqual(self.request("GET", "/api/v1/related?url=https://example.com")[0], 400)
 
+    def test_partner_pages_report_full_filtered_total_and_next_offset(self):
+        first = self.request("GET", "/api/v1/partner?limit=1&after=0")
+        self.assertEqual(first[0], 200)
+        self.assertEqual(first[1]["Access-Control-Allow-Origin"], "*")
+        page = json.loads(first[2])
+        self.assertGreater(page["total"], 1)
+        self.assertEqual(page["next_after"], 1)
+        second = json.loads(self.request("GET", "/api/v1/partner?limit=1&after=1")[2])
+        self.assertEqual(second["after"], 1)
+        self.assertNotEqual(page["items"][0]["id"], second["items"][0]["id"])
+        self.assertEqual(self.request("GET", "/api/v1/partner?after=-1")[0], 400)
+
     def test_modifications_and_nonlocal_host_are_rejected(self):
         original = self.catalog.problems()
         for method in ("POST", "PUT", "PATCH", "DELETE", "OPTIONS"):

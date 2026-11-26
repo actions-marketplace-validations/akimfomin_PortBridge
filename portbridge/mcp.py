@@ -70,7 +70,8 @@ TOOLS = [
          {"project": {"type": "string", "maxLength": 61},
           "console": {"type": "string", "enum": ["xbox-series", "ps5"]},
           "kind": {"type": "string", "enum": ["task", "result"]},
-          "limit": {"type": "integer", "minimum": 1, "maximum": 100}}),
+          "limit": {"type": "integer", "minimum": 1, "maximum": 100},
+          "after": {"type": "integer", "minimum": 0, "maximum": 999999999}}),
     tool("portbridge_lab", "Find a specific public volunteer test or filter by equipment and readiness. "
          "Provide the equipment yourself. "
          "The tool returns pinned revisions, expected results, and the discussion for reporting a run.",
