@@ -54,7 +54,11 @@ def lab_action(task, kind, priority, confidence, check, action, criteria, *,
                equipment=(), extra_sources=(), subject=None):
     target = task["result_url"] if subject is None else subject["url"]
     revision = source_revision(subject) if subject is not None else None
-    task_proofs = [proof("procedure", task["procedure_url"]), *extra_sources]
+    related = [{"role": "catalog_evidence", "url": evidence["provenance"]["url"],
+                "revision": evidence["provenance"]["revision"], "evidence_id": evidence["evidence_id"],
+                "state": evidence["state"], "outcome": evidence["outcome"]}
+               for evidence in task.get("related_evidence", ())]
+    task_proofs = [proof("procedure", task["procedure_url"]), *extra_sources, *related]
     return {
         "id": identify(kind, task["id"], canonical_url(target)), "kind": kind,
         "state": kind if check["state"] == "fresh" else "verify_sources",

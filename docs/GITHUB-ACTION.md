@@ -44,6 +44,8 @@ Use the original revisions and sources before repeating a test. If a result help
 
 ## Verify a release candidate
 
+The local M2 candidate adds a historical work section for relevant matches. Test it with the public XCL #2322 URL. The expected lead is LLVM StackColoring with its revision. The smoke test reads a local HTTP snapshot and checks the unrelated PR control. The example above pins an older, published Action. [M2 comparison and test evidence](PORTBRIDGE-M2.md#сквозные-проверки-и-приёмка)
+
 Run the repository tests and check the job summary on a sample public PR with the candidate SHA. The [texture upload case](https://github.com/Marvisak/VIctory/pull/641) should have no rectangle-test recommendation. The [rectangle-list control](https://github.com/ubiquitarianism/leonida/pull/207) should still link the verified VIctory result. Check the public snapshot after deployment because the action reads it at runtime.
 
 The root `action.yml` defines a reusable composite action. For a Marketplace release, the owner chooses the tested commit, accepts the GitHub Marketplace Developer Agreement if prompted, and publishes a tagged release. A pinned commit can be used directly before Marketplace listing. [GitHub Marketplace release steps](https://docs.github.com/en/actions/how-tos/create-and-publish-actions/publish-in-github-marketplace)

@@ -42,8 +42,9 @@ GENERAL_SOURCE_TERMS = {"d3d12", "dxgi", "vulkan", "shader", "spirv", "wave32", 
 REPOSITORY_MOVES = {
     "ivall/xcl": "xcl-dev/xcl",  # GitHub repository 1465852099
     "fxceless/victory-gta6": "fxceless/victory-fork",  # GitHub repository 1470579726
+    "designwithtommy/neonbridge": "DesignWithTommy/i95",  # GitHub repository 1469440034
 }
-REPOSITORY_IDENTITIES = {current: previous for previous, current in REPOSITORY_MOVES.items()}
+REPOSITORY_IDENTITIES = {current.casefold(): previous for previous, current in REPOSITORY_MOVES.items()}
 
 
 def current_repository(repo):
@@ -70,7 +71,7 @@ def source_url_aliases(url):
     current = current_repository(repo)
     if current == repo:
         return (key,)
-    return key, f"https://github.com/{'/'.join([current, *path[2:]])}"
+    return key, f"https://github.com/{'/'.join([current.lower(), *path[2:]])}"
 
 
 def expand_instruction_groups(text):

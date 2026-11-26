@@ -1,6 +1,7 @@
 """Reviewed volunteer checks with public procedures and pinned sources."""
 
 from copy import deepcopy
+import time
 import re
 
 from .github import WORK_URL
@@ -706,7 +707,9 @@ def annotate_task_sources(tasks, catalog):
                 task["status"] = "needs_revision"
 
 
-def filter_lab(payload, *, equipment="", status="", task=""):
+def filter_lab(payload, *, equipment="", status="", task="", os="", specialty="", kind="", difficulty="", age="", console=""):
+    if any(not isinstance(value, str) or len(value)>80 for value in (os, specialty, kind, difficulty, age, console)):
+        raise ValueError("Invalid Lab filter")
     if equipment and equipment not in EQUIPMENT:
         raise ValueError(f"equipment must be one of {', '.join(EQUIPMENT)}")
     if status and status not in STATUSES:
@@ -717,23 +720,51 @@ def filter_lab(payload, *, equipment="", status="", task=""):
         entry for entry in payload["tasks"]
         if (not equipment or equipment in entry["equipment"]) and (not status or status == entry["status"])
         and (not task or task == entry["id"])
+        and (not os or os in entry["os"] or "Any" in entry["os"])
+        and (not specialty or specialty == entry.get("specialty"))
+        and (not kind or kind == entry.get("kind"))
+        and (not difficulty or difficulty == entry.get("difficulty"))
+        and (not age or age == entry.get("age_state"))
+        and (not console or console in entry.get("consoles", ()))
         and (not equipment or status != "needs_run" or not any(
             cell["equipment"] == equipment and cell["state"] == "covered" for cell in entry.get("coverage", ())))
     ]}
 
 
-def build_lab(catalog=None, *, equipment="", status="", task=""):
-    tasks = deepcopy(TASKS)
+def build_lab(catalog=None, *, now=None, **filters):
+    from .identity import attribution_fields, stable_id
+    from .radar_store import public_tasks, TASK_TYPES
+
+    tasks = list(deepcopy(TASKS))
     annotate_task_sources(tasks, catalog)
+    evidence = catalog.reviewed_evidence() if catalog is not None else ()
+    evidence_by_source = {}
+    for record in evidence:
+        key = canonical_url(record["provenance"]["url"])
+        evidence_by_source.setdefault(key, []).append(record)
     states = read_report_states(catalog, tasks)
     for entry in tasks:
+        entry["task_id"] = f"task:{entry['id']}"
+        if entry.get("adoption") not in {None, "pending"}:
+            entry["adoption_id"] = stable_id("adoption", entry["id"], receiving_source(entry))
+        sources = dict.fromkeys(canonical_url(url) for url in (receiving_source(entry), entry["source_url"],
+                                                               entry["result_url"]))
+        if related := [record for url in sources for record in evidence_by_source.get(url, ())]:
+            entry["related_evidence"] = related[:12]
         if entry["id"] not in states:
             continue
         report_sync = states[entry["id"]]
+        report_sync = {**report_sync, "reports": [attribution_fields(report, entry["id"])
+                                                for report in report_sync["reports"]]}
         entry["report_sync"] = report_sync
         entry["coverage"] = coverage_cells(entry, report_sync["reports"])
         if entry["status"] == "needs_run" and has_passing_coverage(entry, report_sync["reports"]):
             entry["status"] = "awaiting_review"
-    payload = {"checked_at": CHECKED_AT, "filters": {"equipment": list(EQUIPMENT), "status": list(STATUSES)},
-               "tasks": tasks}
-    return filter_lab(payload, equipment=equipment, status=status, task=task)
+    for entry in tasks:
+        entry.setdefault("kind", "source-only" if entry["equipment"] == ["cpu"] else "hardware")
+        entry.setdefault("consoles", ["xbox-series"])
+    if catalog is not None:
+        tasks.extend(public_tasks(catalog, int(time.time() if now is None else now)))
+    payload = {"checked_at": CHECKED_AT, "filters": {"equipment": list(EQUIPMENT), "status": list(STATUSES),
+                                                    "kind": list(TASK_TYPES)}, "tasks": tasks}
+    return filter_lab(payload, **filters)

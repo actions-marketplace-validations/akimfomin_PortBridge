@@ -215,4 +215,6 @@ class ActivityTest(CatalogFixture):
         for timing_field in ("as_of", "window_start"):
             snapshot.pop(timing_field)
             local.pop(timing_field)
+        self.assertIsNone(local.pop("publication"))
+        self.assertIsNotNone(snapshot.pop("publication")["generated_at"])
         self.assertEqual(local, snapshot)

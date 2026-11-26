@@ -7,22 +7,25 @@ import json
 import os
 from pathlib import Path
 import re
+import sqlite3
 import sys
 from time import sleep
 from urllib.request import Request, urlopen
 
 from .activity import source_time
+from .backup import checkpoint_count
 from .export import VERSIONED_SNAPSHOTS
 
 
 PUBLIC_DATA = "https://akimfomin.github.io/PortBridge/data/"
 FILES = ("site", "lab")
 STALE_AFTER_MINUTES = 90
-VERIFY_DELAYS = (0, 2, 4, 8, 16, 30)
+VERIFY_DELAYS = (0, 2, 4, 8, 16, 24, 32)
 
 
-def public_snapshot(name):
-    request = Request(f"{PUBLIC_DATA}{name}.json", headers={
+def public_snapshot(name, cache_key=None):
+    suffix = f"?portbridge={cache_key}" if cache_key else ""
+    request = Request(f"{PUBLIC_DATA}{name}.json{suffix}", headers={
         "Accept": "application/json", "Accept-Encoding": "identity", "Cache-Control": "no-cache",
         "User-Agent": "PortBridge-Pages-Verification",
     })
@@ -65,13 +68,87 @@ def probe_publication():
         pass
     stamp = payload.get("generated_at") if isinstance(payload, dict) else None
     status, generation = publication_freshness(stamp, datetime.now(timezone.utc))
+    previous_count = ""
+    try:
+        name = (payload.get("snapshots", {}).get("health") if isinstance(payload, dict)
+                and isinstance(payload.get("snapshots"), dict) else None)
+        name = name.removesuffix(".json") if isinstance(name, str) and re.fullmatch(r"health-[a-f0-9]{24}\.json", name) else "health"
+        with public_snapshot(name) as response:
+            health = json.loads(response.read(1024 * 1024))
+        count = health.get("observation_count") if isinstance(health, dict) else None
+        if type(count) is int and count >= 0:
+            previous_count = str(count)
+    except (OSError, ValueError, HTTPException):
+        pass
     output_value("previous_status", status)
     output_value("previous_generation", generation)
+    output_value("previous_count", previous_count)
     write_summary("## GitHub Pages before this build",
                   f"- Publication freshness: {status} (stale after {STALE_AFTER_MINUTES} minutes)",
                   f"- Previous public snapshot time: {generation or 'unavailable'}")
     if status == "stale":
         print(f"::warning::The previous public snapshot is at least {STALE_AFTER_MINUTES} minutes old.")
+
+
+def publication_guard(previous_count, health):
+    candidate = health.get("observation_count")
+    if type(previous_count) is not int or previous_count < 0:
+        return False, "Previous public observation count is unavailable."
+    if type(candidate) is not int or candidate < previous_count:
+        return False, f"Candidate has {candidate} observations; the public snapshot has {previous_count}."
+    return True, f"Retained {candidate} observations against {previous_count} in the previous snapshot."
+
+
+def guard_export():
+    health = json.loads(Path("dist/data/health.json").read_bytes())
+    previous = os.environ.get("PORTBRIDGE_PREVIOUS_COUNT", "")
+    try:
+        previous = int(previous)
+    except ValueError:
+        previous = None
+    ready, detail = publication_guard(previous, health)
+    output_value("ready", str(ready).lower())
+    write_summary("## Publication safeguard", f"- {detail}",
+                  "- Proceeding with publication." if ready else "- Retaining the previous publication.")
+    if not ready:
+        print(f"::warning::{detail} Previous publication retained.")
+
+
+def validate_checkpoint():
+    minimum = os.environ.get("PORTBRIDGE_MIN_CHECKPOINT_COUNT", "0") or "0"
+    try:
+        count = checkpoint_count(os.environ["PORTBRIDGE_CHECKPOINT"])
+        if count < int(minimum):
+            raise ValueError("checkpoint has fewer observations than the current publication")
+    except (OSError, sqlite3.Error, ValueError) as error:
+        raise SystemExit(f"Catalog checkpoint unavailable: {error}") from error
+    print(f"Validated public catalog checkpoint with {count} observations.")
+
+
+def schedule_gaps(runs):
+    times = sorted(value for row in runs if isinstance(row, dict)
+                   if (value := source_time(row.get("createdAt"))) is not None)
+    return [round((second - first).total_seconds() / 60, 1) for first, second in zip(times, times[1:])]
+
+
+def summarize_operations():
+    health = json.loads(Path("dist/data/health.json").read_bytes())
+    age = health["source_totals"]["age"]
+    lines = ["## GitHub source and schedule health",
+             f"- Source data under two hours old: {age.get('fresh', 0)} of {len(health['sources'])}",
+             f"- Older or unknown: {age.get('stale', 0)} / {age.get('unknown', 0)}",
+             f"- Last successful GitHub data: {health.get('last_success') or 'unknown'}",
+             f"- Snapshot generated: {health['publication']['generated_at']}"]
+    try:
+        runs = json.loads(Path(".portbridge/scheduled-runs.json").read_bytes())
+    except (OSError, ValueError):
+        runs = []
+    gaps = schedule_gaps(runs) if isinstance(runs, list) else []
+    if gaps:
+        lines.append(f"- Recent scheduled intervals in minutes: {', '.join(map(str, gaps))} (configured: 30)")
+    else:
+        lines.append("- Scheduled intervals: unknown")
+    write_summary(*lines)
 
 
 def record_export():
@@ -135,6 +212,21 @@ def verify_linked_snapshots(site_sha256, request=public_snapshot):
             failed.append("browse index")
     except (OSError, ValueError, HTTPException):
         failed.append("browse index")
+    search = site.get("search_index") or {}
+    if "manifest" in search:
+        generation = search.get("generation")
+        name = search.get("manifest")
+        if (not isinstance(generation, str) or not re.fullmatch(r"[0-9a-f]{24}", generation)
+                or name != f"preflight-{generation}-index.json"):
+            failed.append("search manifest")
+        else:
+            try:
+                with request(name.removesuffix(".json")) as response:
+                    index = json.loads(response.read(64 * 1024))
+                if index.get("version") != 1 or index.get("generation") != generation:
+                    failed.append("search manifest")
+            except (OSError, ValueError, AttributeError, HTTPException):
+                failed.append("search manifest")
     return tuple(failed)
 
 
@@ -144,13 +236,16 @@ def verify_export():
                for value in expected.values()):
         raise SystemExit("The build did not record the expected public checksums.")
     previous = os.environ["PREVIOUS_STATUS"]
-    failed = verify_publication(expected)
+    def request(name):
+        return public_snapshot(name, expected["site"][:24])
+
+    failed = verify_publication(expected, request=request)
     if not failed:
         for delay in (0, 2, 4, 8):
             if delay:
                 sleep(delay)
             try:
-                failed = verify_linked_snapshots(expected["site"])
+                failed = verify_linked_snapshots(expected["site"], request=request)
             except (OSError, ValueError, AttributeError, TypeError, HTTPException):
                 failed = ("site manifest",)
             if not failed:
@@ -166,7 +261,8 @@ def verify_export():
 
 
 if __name__ == "__main__":
-    commands = {"probe": probe_publication, "record": record_export, "verify": verify_export}
+    commands = {"probe": probe_publication, "record": record_export, "guard": guard_export, "verify": verify_export,
+                "checkpoint": validate_checkpoint, "ops": summarize_operations}
     if len(sys.argv) != 2 or sys.argv[1] not in commands:
-        raise SystemExit("Usage: python -m portbridge.pages_health {probe,record,verify}")
+        raise SystemExit("Usage: python -m portbridge.pages_health {probe,record,guard,verify,checkpoint,ops}")
     commands[sys.argv[1]]()

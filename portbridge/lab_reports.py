@@ -190,7 +190,7 @@ def comment_metadata(comment, source, repo, issue):
                    for key, value in expected.items())):
         return None
     updated = max(reported, updated) if updated else reported
-    return {"url": url, "author": author,
+    return {"url": url, "author": author, "author_id": actor["id"],
             "reported_at": reported.isoformat(timespec="seconds").replace("+00:00", "Z"),
             "updated_at": updated.isoformat(timespec="seconds").replace("+00:00", "Z")}
 

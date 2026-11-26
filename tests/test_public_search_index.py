@@ -84,7 +84,8 @@ class PublicSearchIndexTests(CatalogFixture):
             result = public_preflight(url=rows[0]["url"])
         self.assertTrue(result["indexed"])
         self.assertEqual(requested.count(MANIFEST), 2)
-        self.assertEqual([call.args[0] for call in snapshots.call_args_list], ["site", "health", "problems", "projects"])
+        self.assertEqual([call.args[0] for call in snapshots.call_args_list],
+                         ["site", "health", "problems", "projects", "health", "problems", "projects"])
 
     def test_reviewed_report_holdout_resolves_exact_evidence_only(self):
         fixture = Path(__file__).with_name("fixtures") / "reviewed-report-links.json"

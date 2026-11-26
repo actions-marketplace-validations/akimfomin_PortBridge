@@ -5,17 +5,23 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
 import sys
+import time
 from threading import Event, Thread
+from time import monotonic
 from urllib.parse import parse_qs, unquote, urlsplit
 
 from .activity import build_activity
 from .case_pages import CASE_FILE, case_languages, case_page, case_path
 from .catalog import Catalog, OBSERVATION_KIND, PROBLEM_ID, PROBLEM_STATUS
 from .coordination import knowledge_graph, recommendations
+from .discovery_scan import cached_index
+from .discovery_search import discover, historical_candidates
 from .ecosystem import build_ecosystem, refresh_ecosystem
 from .exchange_api import ExchangeHandlerMixin
 from .feed import build_feed
+from .identity import SCHEMA_VERSION
 from .lab import build_lab
+from .radar_store import radar_view, reviewed_snapshot, filter_findings
 
 
 PACKAGE = Path(__file__).resolve().parent
@@ -26,6 +32,11 @@ STATIC = {
     "/": (PACKAGE / "static" / "index.html", "text/html; charset=utf-8"),
     "/static/styles.css": (PACKAGE / "static" / "styles.css", "text/css; charset=utf-8"),
     "/static/app.js": (PACKAGE / "static" / "app.js", "text/javascript; charset=utf-8"),
+    "/static/discovery.js": (PACKAGE / "static" / "discovery.js", "text/javascript; charset=utf-8"),
+    "/static/partner.js": (PACKAGE / "static" / "partner.js", "text/javascript; charset=utf-8"),
+    "/start.html": (PACKAGE / "static" / "start.html", "text/html; charset=utf-8"),
+    "/start.ru.html": (PACKAGE / "static" / "start.ru.html", "text/html; charset=utf-8"),
+    "/partner.html": (PACKAGE / "static" / "partner.html", "text/html; charset=utf-8"),
     "/letter.html": (PACKAGE / "static" / "letter.html", "text/html; charset=utf-8"),
     "/letter.ru.html": (PACKAGE / "static" / "letter.ru.html", "text/html; charset=utf-8"),
     "/api/docs": (ROOT / "API.md", "text/plain; charset=utf-8"),
@@ -36,7 +47,7 @@ OFFICE_STATIC = {
     "/static/office.js": (PACKAGE / "static" / "office.js", "text/javascript; charset=utf-8"),
 }
 COLLECTIONS = ("projects", "ecosystem", "problems", "observations", "matches", "related", "preflight", "coordination", "activity", "lab",
-               "graph", "source-history", "recommendations", "outreach", "health")
+               "graph", "source-history", "recommendations", "outreach", "health", "discovery", "radar", "people", "impact", "partner")
 
 
 def sync_catalog(catalog, *, refresh=False, pages=1, sources=()):
@@ -67,15 +78,20 @@ def sync_catalog(catalog, *, refresh=False, pages=1, sources=()):
     result = collect(projects, catalog.path, refresh=refresh, pages=pages)
     references = [ref["url"] for card in catalog.problems() for solution in card["solutions"]
                   for ref in solution["source_refs"] + solution["evidence"]]
-    watched = refresh_references(projects, catalog.path, references, refresh=refresh)
+    watched = refresh_references(result["projects"], catalog.path, references, refresh=refresh, skip_unavailable=True)
     result["items"].extend(watched["items"])
     result["warnings"].extend(watched["warnings"])
+    result["references"] = watched["references"]
     catalog.record_sync(result, update_health=False)
     candidates = revision_references(catalog.observations(limit=None))
     checked = {"items": [], "warnings": []}
     if candidates:
-        checked = refresh_references(projects, catalog.path, candidates, refresh=refresh)
+        checked = refresh_references(result["projects"], catalog.path, candidates, refresh=refresh, skip_unavailable=True)
+        result["references"].extend(checked["references"])
     catalog.record_sync({**result, "items": checked["items"], "warnings": result["warnings"] + checked["warnings"]})
+    if references:
+        from .source_context import refresh_context
+        refresh_context(catalog, result["projects"], references)
     refresh_ecosystem(catalog)
     return catalog.health()
 
@@ -100,6 +116,10 @@ def query_rules(params):
     return query, project, status, kind, partial == "1", int(limit)
 
 
+REJECTED_BODY_LIMIT = 4096
+REJECTED_BODY_TIMEOUT = 0.25
+
+
 class Handler(ExchangeHandlerMixin, BaseHTTPRequestHandler):
     server_version = "PortBridge/0.1"
 
@@ -113,8 +133,12 @@ class Handler(ExchangeHandlerMixin, BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(contents)))
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
+        route = urlsplit(self.path).path
+        frame = "*" if route == "/partner.html" else "'none'"
         self.send_header("Content-Security-Policy", "default-src 'none'; script-src 'self'; style-src 'self'; "
-                         "connect-src 'self'; img-src 'self' data:; base-uri 'none'; frame-ancestors 'none'")
+                         f"connect-src 'self'; img-src 'self' data:; base-uri 'none'; frame-ancestors {frame}")
+        if route == "/api/v1/partner":
+            self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Cache-Control", "no-store")
         if status == 405:
             self.send_header("Allow", "GET, HEAD")
@@ -135,7 +159,34 @@ class Handler(ExchangeHandlerMixin, BaseHTTPRequestHandler):
     def do_POST(self):
         if self.handle_exchange(self.path, self.command):
             return
+        self.discard_small_request_body()
         self.json_response(405, {"error": "read-only API"})
+
+    def discard_small_request_body(self):
+        # Closing with unread request bytes can reset the socket before the client sees the 405.
+        length = self.headers.get("Content-Length", "")
+        if (self.headers.get("Transfer-Encoding") or self.headers.get("Expect") or not length.isascii()
+                or not length.isdecimal() or len(length) > len(str(REJECTED_BODY_LIMIT))):
+            return
+        remaining = int(length)
+        if not 0 < remaining <= REJECTED_BODY_LIMIT:
+            return
+        timeout = self.connection.gettimeout()
+        deadline = monotonic() + REJECTED_BODY_TIMEOUT
+        try:
+            while remaining:
+                available = deadline - monotonic()
+                if available <= 0:
+                    return
+                self.connection.settimeout(available)
+                chunk = self.rfile.read1(remaining)
+                if not chunk:
+                    return
+                remaining -= len(chunk)
+        except OSError:
+            pass
+        finally:
+            self.connection.settimeout(timeout)
 
     do_PUT = do_POST
     do_PATCH = do_POST
@@ -193,9 +244,13 @@ class Handler(ExchangeHandlerMixin, BaseHTTPRequestHandler):
         self.json_response(404, {"error": "case not found"}, head=head)
 
     def api(self, path, params):
-        catalog = self.server.catalog
+        with self.server.catalog.read_view() as catalog:
+            return self.read_api(catalog, path, params)
+
+    def read_api(self, catalog, path, params):
         if path in {"/api/v1", "/api/v1/"}:
-            return 200, {"name": "PortBridge", "version": 1, "read_only": True, "docs": "/api/docs",
+            return 200, {"name": "PortBridge", "version": 1, "data_schema_version": SCHEMA_VERSION,
+                         "read_only": True, "docs": "/api/docs",
                          "exchange_enabled": self.server.exchange is not None,
                          "routes": {key: f"/api/v1/{key}" for key in COLLECTIONS}}
         name = path.removeprefix("/api/v1/")
@@ -205,10 +260,58 @@ class Handler(ExchangeHandlerMixin, BaseHTTPRequestHandler):
             return 200, build_ecosystem(catalog)
         if name == "health":
             return 200, catalog.health()
+        if name == "discovery":
+            fields = {"q", "url", "project", "kind", "status", "platform", "before", "after", "limit"}
+            if params.keys() - fields or any(len(values) != 1 for values in params.values()):
+                raise ValueError("Use each Discovery filter at most once")
+            options = {key: value[0] for key, value in params.items()}
+            limit = options.pop("limit", "5")
+            if not limit.isascii() or not limit.isdecimal() or len(limit) > 2:
+                raise ValueError("Discovery limit must be between 1 and 10")
+            result = discover(origin_url=options.pop("url", ""), index=cached_index(catalog), limit=int(limit), **options)
+            return 200, {**result, "radar_candidates": historical_candidates(result)}
         if name == "activity":
             return 200, build_activity(catalog)
+        if name == "partner":
+            from .integrations import public_feed, select
+            if params.keys() - {"project", "console", "kind", "limit"} or any(len(values) != 1 for values in params.values()):
+                raise ValueError("Use each partner filter at most once")
+            options = {key: values[0] for key, values in params.items()}
+            size = options.pop("limit", "24")
+            if not size.isascii() or not size.isdecimal() or len(size) > 3:
+                raise ValueError("Invalid partner feed limit")
+            return 200, select(public_feed(catalog), limit=int(size), **options)
+        if name in {"people", "impact"}:
+            from .community import filter_impact, filter_people, people
+
+            fields = ({"q", "profile", "project", "specialty", "console", "period", "target", "limit", "after"}
+                      if name == "people" else {"console", "kind", "target"})
+            if params.keys() - fields or any(len(v) != 1 for v in params.values()):
+                raise ValueError("Use each People or Impact filter at most once")
+            options = {key: values[0] for key, values in params.items()}
+            for key in fields & {"limit", "after"} & options.keys():
+                value = options[key]
+                if not value.isascii() or not value.isdecimal() or len(value) > 7:
+                    raise ValueError("Invalid People pagination")
+                options[key] = int(value)
+            profiles, stories = people(catalog)
+            return 200, filter_people(profiles, **options) if name == "people" else filter_impact(stories, **options)
+        if name == "radar":
+            if params.keys() - {"confidence", "state", "limit", "after", "q", "url", "console"} or any(len(v) != 1 for v in params.values()):
+                raise ValueError("Use each Radar filter at most once")
+            options = {key: values[0] for key, values in params.items()}
+            if "q" in options or "url" in options:
+                return 200, {"findings": filter_findings(reviewed_snapshot(catalog), url=options.get("url",""),
+                                                         query=options.get("q",""))}
+            for field in ("limit", "after"):
+                if field in options:
+                    value = options[field]
+                    if not value.isascii() or not value.isdecimal() or len(value)>4:
+                        raise ValueError("Invalid Radar pagination")
+                    options[field] = int(value)
+            return 200, radar_view(catalog, int(time.time()), **options)
         if name == "lab":
-            if params.keys() - {"equipment", "status", "task"} or any(len(values) != 1 for values in params.values()):
+            if params.keys() - {"equipment", "status", "task", "os", "kind", "specialty", "difficulty", "age", "console"} or any(len(values) != 1 for values in params.values()):
                 raise ValueError("use each Test Lab filter at most once")
             return 200, build_lab(catalog, **{key: values[0] for key, values in params.items()})
         if name == "coordination":
@@ -256,6 +359,9 @@ def make_server(catalog, port, *, exchange=None):
 
 
 def serve(catalog, args):
+    from .community_sources import refresh as refresh_people
+    from .radar_scan import refresh as refresh_radar
+
     stop = Event()
 
     def poll():
@@ -264,6 +370,12 @@ def serve(catalog, args):
                 sync_catalog(catalog, pages=args.pages)
             except Exception as exc:
                 print(f"GitHub sync failed: {type(exc).__name__}", file=sys.stderr)
+            if not stop.is_set():
+                try:
+                    refresh_radar(catalog, online_discovery=True)
+                    refresh_people(catalog)
+                except Exception as exc:
+                    print(f"Radar refresh failed: {type(exc).__name__}", file=sys.stderr)
             if args.office and not stop.is_set():
                 from .discovery import refresh_project_leads
                 from .office_engine import refresh_external_sources
@@ -321,7 +433,30 @@ def main(argv=None):
                           help="maximum history pages per project in this run")
     update = commands.add_parser("incremental", help="index issues and pull requests updated since the last sweep")
     update.add_argument("--pages", type=int, choices=range(1, 11), default=3)
+    update.add_argument("--discovery", action="store_true",
+                        help="run a bounded public historical-source search for new observations")
     commands.add_parser("status", help="show cached synchronization status")
+    radar = commands.add_parser("radar", help="read or refresh the local research queue")
+    radar.add_argument("--refresh", action="store_true")
+    radar.add_argument("--discovery", action="store_true", help="allow bounded anonymous historical lookup")
+    radar.add_argument("--confidence", choices=("high","review","research"), default="")
+    radar.add_argument("--limit", type=int, default=24)
+    radar.add_argument("--state", default="")
+    radar.add_argument("--console", choices=("xbox-series","ps5"), default="")
+    radar.add_argument("--after", type=int, default=0)
+    lab_queue = commands.add_parser("lab", help="read public Lab cards")
+    people_view = commands.add_parser("people", help="filter evidence-backed public technical profiles")
+    for field in ("q", "profile", "project", "specialty", "console", "period", "target"):
+        people_view.add_argument("--" + field, default="")
+    people_view.add_argument("--limit", type=int, default=24)
+    people_view.add_argument("--after", type=int, default=0)
+    impact_view = commands.add_parser("impact", help="read credited impact stories and audited counts")
+    for field in ("console", "kind", "target"):
+        impact_view.add_argument("--" + field, default="")
+    people_update = commands.add_parser("refresh-people", help="read bounded public GitHub reviews and technical comments")
+    people_update.add_argument("--limit", type=int, default=8)
+    for field in ("equipment","status","task","os","kind","specialty","difficulty","age","console"):
+        lab_queue.add_argument("--"+field, default="")
     lab_refresh = commands.add_parser("refresh-lab", help="refresh reports for monitored Test Lab checks")
     lab_refresh.add_argument("--authenticated", action="store_true", help="use the configured read token for public reports")
     backup = commands.add_parser("backup", help="write a separate verified SQLite backup of --db")
@@ -371,6 +506,45 @@ def main(argv=None):
             parser.error(str(exc))
         return 0
     catalog = Catalog(args.db, args.seed)
+    if args.command in {"people", "impact", "refresh-people"}:
+        from .community import filter_impact, filter_people, people
+        from .community_sources import refresh as refresh_people
+
+        try:
+            if args.command == "refresh-people":
+                result = refresh_people(catalog, limit=args.limit)
+            else:
+                with catalog.read_view() as view:
+                    profiles, stories = people(view)
+                if args.command == "people":
+                    result = filter_people(profiles, **{key: getattr(args, key) for key in
+                        ("q", "profile", "project", "specialty", "console", "period", "target", "limit", "after")})
+                else:
+                    result = filter_impact(stories, console=args.console, kind=args.kind, target=args.target)
+        except ValueError as error:
+            parser.error(str(error))
+        print(json.dumps(result, ensure_ascii=True, indent=2))
+        return 0
+    if args.command == "radar":
+        from .radar_scan import refresh
+        if args.discovery and not args.refresh:
+            parser.error("--discovery requires --refresh")
+        try:
+            result = (refresh(catalog, online_discovery=args.discovery, limit=args.limit) if args.refresh
+                      else radar_view(catalog, int(time.time()), confidence=args.confidence, limit=args.limit,
+                                     state=args.state, console=args.console, after=args.after))
+        except ValueError as error:
+            parser.error(str(error))
+        print(json.dumps(result, indent=2, ensure_ascii=True))
+        return 0
+    if args.command == "lab":
+        filters = {field: getattr(args,field) for field in (
+            "equipment","status","task","os","kind","specialty","difficulty","age","console")}
+        try:
+            print(json.dumps(build_lab(catalog, **filters), indent=2, ensure_ascii=True))
+        except ValueError as error:
+            parser.error(str(error))
+        return 0
     if args.command == "refresh-lab":
         from .lab import TASKS
         from .lab_reports import refresh_reports
@@ -395,8 +569,14 @@ def main(argv=None):
         batch = operation(catalog.projects(), catalog.path, pages=args.pages)
         catalog.record_sync(batch, update_health=False, history_mode=args.command)
         commit_backfill(catalog.path, batch["checkpoint"])
-        print(json.dumps({"observations_saved": len(batch["items"]), "warnings": batch["warnings"],
-                          "history": backfill_status(catalog.path, mode=args.command)}, indent=2, ensure_ascii=True))
+        result = {"observations_saved": len(batch["items"]), "warnings": batch["warnings"],
+                  "history": backfill_status(catalog.path, mode=args.command)}
+        if args.command == "incremental" and args.discovery:
+            from .discovery_scan import MAX_ORIGINS, scan
+
+            # Include unsearched recent observations when a previous discovery batch hit its budget.
+            result["discovery"] = scan(catalog, catalog.observations(limit=MAX_ORIGINS), online=True)
+        print(json.dumps(result, indent=2, ensure_ascii=True))
         return 0
     if args.command == "sync":
         try:

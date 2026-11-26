@@ -57,7 +57,7 @@ class EcosystemTest(unittest.TestCase):
             refresh_ecosystem(self.catalog)
             retry.assert_any_call("six-on-pc", '"tag"')
         result = build_ecosystem(self.catalog)
-        self.assertEqual([row["state"] for row in result["sources"]], ["ok", "cached", "ok", "cached"])
+        self.assertEqual([row["state"] for row in result["sources"]], ["ok", "cached", "ok", "cached", "failed"])
         self.assertEqual([row["repo"] for row in result["leads"]], ["example/port", "another/one"])
         self.assertEqual(len(result["leads"][0]["sources"]), 4)
 

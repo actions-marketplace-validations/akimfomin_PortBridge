@@ -8,6 +8,7 @@ import string
 from urllib.parse import quote
 
 from .catalog import PROBLEM_ID, public_url
+from .discovery_search import key as discovery_source_key
 from .github import PR_URL
 from .preflight import PUBLIC_BASE, english_text, public_preflight
 
@@ -34,7 +35,7 @@ def pull_request(event_name, event_path):
     if (not isinstance(title, str) or not isinstance(source, str)
             or len(source) > 500 or not PR_URL.fullmatch(source)):
         raise ValueError("Invalid pull request data")
-    return {"q": " ".join(title.split())[:400], "url": source}
+    return {"q": " ".join(title.split())[:200], "url": source}
 
 
 def label(text):
@@ -43,19 +44,19 @@ def label(text):
     )
 
 
-def source_link(title, url):
-    if not public_url(url) or len(url) > 500:
+def source_link(title, url, *, discovery=False):
+    if not (discovery_source_key(url) if discovery else public_url(url)) or len(url) > 500:
         return None
     destination = quote(url, safe=":/?#&=%+@-._~")
     return f"[{label(title)}]({destination})"
 
 
-def source_group(heading, items):
+def source_group(heading, items, confidence=None):
     rows = []
     for item in items[:5]:
         link = source_link(item["title"], item["url"])
         if link:
-            rows.append(f"- {link}")
+            rows.append(f"- {link}" + (f" · {confidence}" if confidence else ""))
     return [f"### {heading}", "", *rows, ""] if rows else []
 
 
@@ -63,6 +64,12 @@ def render_report(result):
     lines = ["Review these leads against the target revision and configuration.", ""]
     if result.get("catalog_status") in {"partial", "stale", "error", "seed-only"}:
         lines.extend(["The public snapshot may be incomplete.", ""])
+    if (result.get("catalog_freshness") or {}).get("age_state") == "stale":
+        lines.extend(["Latest successful GitHub data is at least two hours old.", ""])
+    for heading, stamp in (("GitHub last success", result.get("catalog_last_success")),
+                           ("Snapshot generated", (result.get("publication") or {}).get("generated_at"))):
+        if stamp:
+            lines.append(f"- {heading}: {label(stamp)}")
     if result.get("origin_url") and result.get("indexed") is False:
         lines.extend(["This pull request is absent from the public index. Check its current details on GitHub.", ""])
     for source in result.get("source_coverage", []):
@@ -70,7 +77,7 @@ def render_report(result):
         for mode, health in source["history"].items():
             if health["status"] != "complete":
                 lines.append(f"- {repo} · {label(mode)} history: {label(health['status'])}")
-        if source.get("freshness") in {"partial", "stale", "error"}:
+        if source.get("freshness") in {"partial", "stale", "error", "unavailable"} or source.get("age_state") == "stale":
             lines.append(f"- {repo} · recent sources: {label(source['freshness'])}")
             for kind, state in source.get("kinds", {}).items():
                 if state["sync_status"] != "ok":
@@ -95,10 +102,27 @@ def render_report(result):
         groups.extend(["### Possible catalog matches", "", *candidates, ""])
     groups.extend(source_group("Suggested cross-project leads", [
         match["right"] for match in result["matches"] if match.get("relationship") != "same_revision"
-    ]))
+    ], "candidate · needs review"))
     groups.extend(source_group("Same revision in another project", [
         match["right"] for match in result["matches"] if match.get("relationship") == "same_revision"
-    ]))
+    ], "matching revision · scope still needs review"))
+    discovery = result.get("discovery") or {}
+    if discovery.get("index_source") == "bundled_fallback":
+        lines.extend(["Discovery is using bundled sources because the public snapshot is unavailable.", ""])
+    historical = []
+    for entry in discovery.get("technical_recommendations", [])[:2]:
+        link = source_link(entry["title"], entry["source"], discovery=True)
+        revision = entry.get("revision", "")
+        if link and re.fullmatch(r"[a-fA-F0-9]{40,64}", revision):
+            historical.append(f"- {link} · `{revision[:12]}` · potentially applicable, candidate for verification")
+    if historical:
+        groups.extend(["### Historical work in other projects", "", *historical, ""])
+    research = [entry for entry in discovery.get("matches", []) if entry.get("evidence_status") == "source_found"]
+    research.extend(discovery.get("automatic_matches", []))
+    research_links = [source_link(entry["title"], entry["source"], discovery=True) for entry in research[:3]]
+    research_lines = [f"- {link} · research source" for link in research_links if link]
+    if research_lines:
+        groups.extend(["### Discovery research sources", "", *research_lines, ""])
     if groups:
         lines.extend(groups)
     else:
@@ -126,10 +150,16 @@ def render_report(result):
 
 def summary(environ):
     event_name = environ.get("GITHUB_EVENT_NAME")
-    if event_name not in {"pull_request", "workflow_dispatch"}:
+    explicit = environ.get("PORTBRIDGE_PR_URL", "").strip()
+    if not explicit and event_name not in {"pull_request", "workflow_dispatch"}:
         return "This summary runs on GitHub pull request events and manual workflow runs.\n"
     try:
-        request = pull_request(event_name, environ["GITHUB_EVENT_PATH"])
+        if explicit:
+            if len(explicit) > 500 or not PR_URL.fullmatch(explicit):
+                raise ValueError("Use a public GitHub pull request URL")
+            request = {"q": "", "url": explicit}
+        else:
+            request = pull_request(event_name, environ["GITHUB_EVENT_PATH"])
     except (KeyError, OSError, TypeError, ValueError):
         if event_name == "workflow_dispatch":
             return "Enter a public GitHub pull request URL in pull_request_url.\n"

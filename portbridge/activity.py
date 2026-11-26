@@ -226,6 +226,7 @@ def showcased_research(cards, observations, handoffs):
 def build_activity(catalog, *, now=None, projects=None, cards=None, observations=None, health=None, drafts=None):
     from .lab import build_lab
     from .radar import build_radar
+    from .radar_store import radar_view
 
     as_of = (now or datetime.now(timezone.utc)).astimezone(timezone.utc).replace(microsecond=0)
     start = as_of - timedelta(days=WINDOW_DAYS)
@@ -237,7 +238,8 @@ def build_activity(catalog, *, now=None, projects=None, cards=None, observations
     counts = dict.fromkeys(COUNT_FOR.values(), 0)
     per_project = {
         row["slug"]: {"slug": row["slug"], "name": row["name"], "url": row["url"], "status": row["sync_status"],
-                      "last_success": row["last_success"], "last_activity": None, "counts": counts.copy()}
+                      "last_success": row["last_success"], "last_attempt": row.get("last_attempt"),
+                      "last_activity": None, "counts": counts.copy()}
         for row in projects
     }
     titles = {canonical_url(row["url"]): row["title"] for row in observations}
@@ -268,9 +270,14 @@ def build_activity(catalog, *, now=None, projects=None, cards=None, observations
             events.append(event)
 
     opportunities = current_opportunities(cards, drafts)
-    radar = build_radar(projects, observations, changes, build_lab(catalog), opportunities, as_of)
+    all_tasks = build_lab(catalog, now=as_of.timestamp())
+    legacy = {**all_tasks, "tasks": [task for task in all_tasks["tasks"] if "candidate_id" not in task]}
+    radar = build_radar(projects, observations, changes, legacy, opportunities, as_of)
+    radar.update(radar_view(catalog, int(as_of.timestamp())))
     handoffs = handoff_summary(cards, projects, observations, as_of)
     return {"as_of": as_of.isoformat(), "refreshed_at": health["refresh_at"], "health": health["status"],
+            "last_success": health.get("last_success"), "freshness": health.get("freshness"),
+            "publication": health.get("publication"),
             "window_days": WINDOW_DAYS, "window_start": start.isoformat(),
             "counts": {**counts, "projects": len(per_project)}, "projects": list(per_project.values()),
             "handoffs": handoffs, "research": showcased_research(cards, observations, handoffs),

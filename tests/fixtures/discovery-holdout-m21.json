@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "design": "Frozen public Issue/PR known-item queries and adversarial cross-domain controls. Both engines get the same text, six public repository scopes and top 5. URL exact checks use public source identities, not PB aliases. Gold is a designated public item for each positive query. Non-gold results on positive queries are non-targets, with possible alternate technical value reported separately. On negative controls no results from this scope count as relevant.",
+  "repos": [
+    "xcl-dev/xcl",
+    "ubiquitarianism/leonida",
+    "Marvisak/VIctory",
+    "LooperSalty/AnyXboxX",
+    "5headsmartbtw/leonida-framelab",
+    "fxceless/victory-fork"
+  ],
+  "queries": [
+    {
+      "id": "public-0-2697",
+      "q": "memory line owner DXGI budget",
+      "expected": [
+        "https://github.com/xcl-dev/xcl/pull/2697"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-0-2693",
+      "q": "FLAGS subobject console compute stream",
+      "expected": [
+        "https://github.com/xcl-dev/xcl/pull/2693"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-1-2216",
+      "q": "subgroup_size malformed device size ranges",
+      "expected": [
+        "https://github.com/ubiquitarianism/leonida/pull/2216"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-1-2218",
+      "q": "R9G9B9E5 shared exponent previews",
+      "expected": [
+        "https://github.com/ubiquitarianism/leonida/pull/2218"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-2-3073",
+      "q": "select high-performance hardware adapter multi-GPU",
+      "expected": [
+        "https://github.com/Marvisak/VIctory/pull/3073"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-2-3057",
+      "q": "GetCopyableFootprints 2-plane D16_UNORM_S8_UINT",
+      "expected": [
+        "https://github.com/Marvisak/VIctory/pull/3057"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-2-3056",
+      "q": "global_atomic_fmin global_atomic_fmax NaN operands",
+      "expected": [
+        "https://github.com/Marvisak/VIctory/pull/3056"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-3-334",
+      "q": "ds_bpermute 32-lane half",
+      "expected": [
+        "https://github.com/LooperSalty/AnyXboxX/pull/334"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-3-333",
+      "q": "typed buffer views integer formats",
+      "expected": [
+        "https://github.com/LooperSalty/AnyXboxX/pull/333"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-3-332",
+      "q": "requested rows boxed texture uploads",
+      "expected": [
+        "https://github.com/LooperSalty/AnyXboxX/pull/332"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-4-26",
+      "q": "preserve Vulkan SDK leases submission failure device loss",
+      "expected": [
+        "https://github.com/5headsmartbtw/leonida-framelab/pull/26"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-4-27",
+      "q": "combined Vulkan SR FG across queues",
+      "expected": [
+        "https://github.com/5headsmartbtw/leonida-framelab/pull/27"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-5-1266",
+      "q": "raw buffer view range buffer description driver",
+      "expected": [
+        "https://github.com/fxceless/victory-fork/pull/1266"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "public-5-1259",
+      "q": "amdxc64.dll crash pipeline compile RDNA4",
+      "expected": [
+        "https://github.com/fxceless/victory-fork/issues/1259"
+      ],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-01",
+      "q": "audio FFT dithering subgroup thread pool",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-02",
+      "q": "DNS TCP shared exponent public resolver",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-03",
+      "q": "SQLite archive FLAGS microphone calibration",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-04",
+      "q": "mechanical keyboard GCN scratch buffer tuning",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-05",
+      "q": "Android camera user quota DXGI",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-06",
+      "q": "CSS layout device loss font recycling",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-07",
+      "q": "printer firmware 2-plane BLAKE3 archive",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-08",
+      "q": "Postgres pipeline sampler expression WAV",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-09",
+      "q": "Wayland meter USB VK_ERROR_NOT_A_REAL_RESULT",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-10",
+      "q": "FFmpeg media buffering D3D12_FAKE_EXACT_IDENTIFIER_482",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-11",
+      "q": "Python HTTP retry IDXGIFactory6BogusCounter",
+      "expected": [],
+      "hard_negatives": []
+    },
+    {
+      "id": "control-12",
+      "q": "npm cache raw buffer GEG_NOT_GPU_104",
+      "expected": [],
+      "hard_negatives": []
+    }
+  ],
+  "exact": [
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2697",
+      "expected": "https://github.com/xcl-dev/xcl/pull/2697"
+    },
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2691",
+      "expected": "https://github.com/xcl-dev/xcl/pull/2691"
+    },
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2685",
+      "expected": "https://github.com/xcl-dev/xcl/pull/2685"
+    },
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2679",
+      "expected": "https://github.com/xcl-dev/xcl/pull/2679"
+    },
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2673",
+      "expected": "https://github.com/xcl-dev/xcl/pull/2673"
+    },
+    {
+      "url": "https://github.com/xcl-dev/xcl/issues/2666",
+      "expected": "https://github.com/xcl-dev/xcl/issues/2666"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2220",
+      "expected": "https://github.com/ubiquitarianism/leonida/pull/2220"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2214",
+      "expected": "https://github.com/ubiquitarianism/leonida/pull/2214"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2208",
+      "expected": "https://github.com/ubiquitarianism/leonida/pull/2208"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2202",
+      "expected": "https://github.com/ubiquitarianism/leonida/pull/2202"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2196",
+      "expected": "https://github.com/ubiquitarianism/leonida/pull/2196"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2190",
+      "expected": "https://github.com/ubiquitarianism/leonida/pull/2190"
+    },
+    {
+      "url": "https://github.com/Marvisak/VIctory/pull/3077",
+      "expected": "https://github.com/Marvisak/VIctory/pull/3077"
+    },
+    {
+      "url": "https://github.com/Marvisak/VIctory/pull/3071",
+      "expected": "https://github.com/Marvisak/VIctory/pull/3071"
+    },
+    {
+      "url": "https://github.com/Marvisak/VIctory/pull/3064",
+      "expected": "https://github.com/Marvisak/VIctory/pull/3064"
+    },
+    {
+      "url": "https://github.com/Marvisak/VIctory/pull/3055",
+      "expected": "https://github.com/Marvisak/VIctory/pull/3055"
+    },
+    {
+      "url": "https://github.com/Marvisak/VIctory/pull/3049",
+      "expected": "https://github.com/Marvisak/VIctory/pull/3049"
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/338",
+      "expected": "https://github.com/LooperSalty/AnyXboxX/pull/338"
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/332",
+      "expected": "https://github.com/LooperSalty/AnyXboxX/pull/332"
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/326",
+      "expected": "https://github.com/LooperSalty/AnyXboxX/pull/326"
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/320",
+      "expected": "https://github.com/LooperSalty/AnyXboxX/pull/320"
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/314",
+      "expected": "https://github.com/LooperSalty/AnyXboxX/pull/314"
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/308",
+      "expected": "https://github.com/LooperSalty/AnyXboxX/pull/308"
+    },
+    {
+      "url": "https://github.com/5headsmartbtw/leonida-framelab/issues/30",
+      "expected": "https://github.com/5headsmartbtw/leonida-framelab/issues/30"
+    },
+    {
+      "url": "https://github.com/5headsmartbtw/leonida-framelab/pull/23",
+      "expected": "https://github.com/5headsmartbtw/leonida-framelab/pull/23"
+    },
+    {
+      "url": "https://github.com/fxceless/victory-fork/pull/1265",
+      "expected": "https://github.com/fxceless/victory-fork/pull/1265"
+    },
+    {
+      "url": "https://github.com/fxceless/victory-fork/pull/1258",
+      "expected": "https://github.com/fxceless/victory-fork/pull/1258"
+    },
+    {
+      "url": "https://github.com/fxceless/victory-fork/pull/1250",
+      "expected": "https://github.com/fxceless/victory-fork/pull/1250"
+    }
+  ],
+  "scan_origins": [
+    "https://github.com/xcl-dev/xcl/pull/2697",
+    "https://github.com/ubiquitarianism/leonida/pull/2216",
+    "https://github.com/ubiquitarianism/leonida/pull/2218",
+    "https://github.com/Marvisak/VIctory/pull/3073",
+    "https://github.com/Marvisak/VIctory/pull/3057",
+    "https://github.com/Marvisak/VIctory/pull/3056",
+    "https://github.com/LooperSalty/AnyXboxX/pull/334",
+    "https://github.com/LooperSalty/AnyXboxX/pull/332",
+    "https://github.com/5headsmartbtw/leonida-framelab/pull/26",
+    "https://github.com/fxceless/victory-fork/pull/1266"
+  ]
+}

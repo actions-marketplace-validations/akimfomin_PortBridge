@@ -14,6 +14,10 @@
 
 [Письмо основателя](https://akimfomin.github.io/PortBridge/letter.ru.html) · [Ответить или взять часть проекта](https://github.com/akimfomin/PortBridge/issues/91) · [История и инженерные итоги](docs/FINAL-AUDIT.ru.md) · [Как запустить и поддерживать проект](docs/PASSIVE-MAINTENANCE.md)
 
+## Discovery в локальном кандидате M2
+
+Ищите работы других проектов по ошибке, инструкции GPU, функции API или ссылке на известный Issue или PR. У находки указаны ревизия, ограничения, лицензия и предлагаемый тест. [Как попробовать](docs/PORTBRIDGE-M2.md)
+
 ## Что можно сделать сейчас
 
 | Ваша задача | Куда идти |
@@ -80,3 +84,9 @@ python -m portbridge.preflight --url https://github.com/LooperSalty/AnyXboxX/pul
 [Настройка и обслуживание](docs/MAINTAINERS.md) · [Как внести вклад](CONTRIBUTING.md) · [API](API.md) · [Лицензия MIT](LICENSE)
 
 В режиме `--office` доступен общий план проверок, обсуждения и поиск новых проектов. [Настройка рабочего штаба](docs/OFFICE.md)
+
+## Одна задача с агентом
+
+На сайте нажмите «Начать», вставьте ссылку на задачу или PR и откройте связанную проверку Lab. В локальном кандидате M5 есть подключение MCP, GitHub Action для чтения и виджет для партнёров. [Инструкция пилота](docs/PORTBRIDGE-M5-START.md)
+
+Если PortBridge пригодился, можно поставить звезду на GitHub. [Репозиторий](https://github.com/akimfomin/PortBridge)

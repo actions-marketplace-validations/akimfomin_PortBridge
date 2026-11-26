@@ -206,7 +206,7 @@ class CatalogTest(CatalogFixture):
                                     "klbf-lab", "klbf-lab-beta", "xbvk", "victory-perf", "vx-layer", "xtp", "scarlight",
                                     "metalvi", "ztrx", "victory-amd", "project-flamingo", "vitoriabr", "anybox",
                                     "neonbridge", "mangrove", "r4y", "xseries-wine", "scarlettport",
-                                    "victory-belobug-amd", "xbox-hle-lab"})
+                                    "victory-belobug-amd", "xbox-hle-lab", "anyps5", "kytyps5"})
         cards = self.catalog.problems()
         ids = [card["id"] for card in cards]
         self.assertGreaterEqual(len(ids), 3)
@@ -277,6 +277,27 @@ class CatalogTest(CatalogFixture):
         self.assertEqual(records[0]["metadata"], {"head_sha": "a" * 40, "last_known_head_sha": "a" * 40})
         project = next(item for item in self.catalog.projects() if item["slug"] == "continued")
         self.assertEqual((project["sync_status"], project["last_success"]), ("stale", when))
+
+    def test_health_keeps_the_last_success_of_a_feed_after_a_failed_refresh(self):
+        first = "2026-11-24T05:00:00+00:00"
+        later = "2026-11-24T06:00:00+00:00"
+
+        def refresh(sources):
+            self.catalog.record_sync({"items": [], "projects": [{
+                "slug": "continued", "sync_status": "partial", "sources": sources,
+            }]})
+            kinds = next(row["kinds"] for row in self.catalog.health()["sources"] if row["slug"] == "continued")
+            return {key: {field: value for field, value in feed.items() if not field.startswith("age_")}
+                    for key, feed in kinds.items()}
+
+        refresh({"pr": {"sync_status": "ok", "last_success": first, "item_count": 20}})
+        failed = {"sync_status": "error", "last_success": None, "item_count": 0}
+        updated = {"sync_status": "ok", "last_success": later, "item_count": 12}
+        kinds = refresh({"pr": failed, "issue": updated, "commit": failed})
+        self.assertEqual(kinds["pr"], {**failed, "last_success": first})
+        self.assertEqual(kinds["issue"], updated)
+        self.assertEqual(kinds["commit"], failed)
+        self.assertEqual(refresh({"pr": updated})["pr"], updated)
 
     def test_related_looks_beyond_titles_and_keeps_direct_links_tentative(self):
         first = self.observation("continued", "pr", 301, "Wrong selection in a graphics pass",
@@ -375,6 +396,9 @@ class LocalAPITest(CatalogFixture):
                 self.assertEqual(status, 405)
                 self.assertEqual(headers["Allow"], "GET, HEAD")
                 self.assertEqual(json.loads(body)["error"], "read-only API")
+        status, headers, _ = self.request("POST", "/api/v1/problems/PB-0001",
+                                          headers={"Content-Length": "16384"})
+        self.assertEqual((status, headers["Allow"]), (405, "GET, HEAD"))
         self.assertEqual(self.request("GET", "/api/v1/projects", headers={"Host": "other.invalid"})[0], 403)
         self.assertEqual(self.catalog.problems(), original)
 
@@ -411,13 +435,14 @@ class SnapshotTest(CatalogFixture):
         shards = {name for name in files if name.startswith("data/") and SHARD.fullmatch(Path(name).name)}
         site = json.loads((destination / "data/site.json").read_text(encoding="utf-8"))
         snapshots = {f"data/{name}" for name in site["snapshots"].values()}
+        snapshots.add(f"data/{site['search_index']['manifest']}")
         self.assertEqual(set(site["snapshots"]), set(VERSIONED_SNAPSHOTS))
         assets = {name for name in files if name.startswith("static/") and VERSIONED_ASSET.fullmatch(Path(name).name)}
         browse_patterns = (BROWSE_INDEX, BROWSE_PAGE, BROWSE_POSTING, BROWSE_TERMS)
         browse = {name for name in files if name.startswith("data/")
                   and any(pattern.fullmatch(Path(name).name) for pattern in browse_patterns)}
         self.assertEqual(files, EXPORT_FILES | cases | shards | snapshots | assets | browse)
-        self.assertEqual(len(assets), 2)
+        self.assertEqual(len(assets), 3)
         index_html = (destination / "index.html").read_text(encoding="utf-8")
         self.assertIn('id="api-link" class="nav-item api-link" href="./api.html"', index_html)
         for name in assets:
@@ -428,7 +453,9 @@ class SnapshotTest(CatalogFixture):
         self.assertEqual(site["repository"], "example/PortBridge")
         self.assertEqual(site["mode"], "snapshot")
         index = json.loads((destination / "data/preflight-index.json").read_bytes())
-        self.assertEqual(site["search_index"], {key: index[key] for key in ("version", "generation")})
+        self.assertEqual({key: site["search_index"][key] for key in ("version", "generation")},
+                         {key: index[key] for key in ("version", "generation")})
+        self.assertEqual(json.loads((destination / "data" / site["search_index"]["manifest"]).read_bytes()), index)
         cards = json.loads((destination / "data/problems.json").read_text(encoding="utf-8"))
         self.assertEqual(cards["problems"], self.catalog.problems())
         base = "https://akimfomin.github.io/PortBridge/"

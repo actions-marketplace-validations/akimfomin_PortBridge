@@ -350,7 +350,9 @@ class ThreadReviewTest(CatalogFixture):
                 self.assertEqual(coverage_cells(self.task, reports)[1]["state"], "reported")
         card = build_lab(self.catalog, task=self.task["id"])["tasks"][0]
         self.assertEqual(card["adoption"], "pending")
-        self.assertEqual(card["report_sync"]["reports"], reports)
+        enhanced, = card["report_sync"]["reports"]
+        self.assertEqual({key: enhanced[key] for key in reports[0]}, reports[0])
+        self.assertTrue(enhanced["report_id"].startswith("report:"))
 
     def test_source_binding_identity_and_original_body_are_required(self):
         for approval in (

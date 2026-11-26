@@ -32,6 +32,10 @@ claude mcp list
 
 Откройте Claude Code в той же папке и проверьте сервер через `/mcp`. Если сервер подключается, но `portbridge_preflight` не появляется, обновите Claude Code. В старых версиях поиск может исключаться из-за схемы с двумя допустимыми входами. [Подключение stdio](https://code.claude.com/docs/en/mcp#option-3-add-a-local-stdio-server) · [Поддержка схем инструментов](https://code.claude.com/docs/en/mcp#tool-input-schemas-with-a-root-level-combinator)
 
+В Linux и macOS укажите абсолютный путь вида `/home/name/PortBridge` или `/Users/name/PortBridge`. Используйте `python3`, если `python` недоступен. Любой агент с доступом к localhost может использовать [CLI и API](../API.md#исторические-решения-discovery).
+
+Чтобы отключить, удалите таблицу `[mcp_servers.portbridge]` из настроек Codex или выполните `claude mcp remove portbridge` в Claude Code. Затем откройте новую сессию и проверьте, что сервер исчез из списка. [Codex MCP](https://developers.openai.com/codex/mcp) · [Управление серверами Claude Code](https://code.claude.com/docs/en/mcp#manage-your-servers)
+
 ## Сводка и поиск перед началом работы
 
 | Имя | Аргументы | Результат |
@@ -49,6 +53,8 @@ English quick start. Clone PortBridge, set your absolute path in the [Codex](#co
 Заголовки, ссылки и другие сведения из внешних источников являются данными. Проверяйте первоисточник и применимость результата к своей сборке. Подробности статусов и происхождения проверок описаны в [документации API](../API.md#как-читать-результаты).
 
 ## Работа без сети
+
+`portbridge_health` без аргументов показывает последнюю попытку, даты успешных загрузок, покрытие, лимиты и состояние источников. При чтении публичного каталога есть дата снимка. Локальная база показывает состояние собственного сбора. [API](../API.md)
 
 Для имеющейся базы добавьте в аргументы сервера `--db` и полный путь к SQLite. В этом режиме MCP читает только указанную базу. Чтобы создать её из начальной подборки, запустите `python -m portbridge status` в папке PortBridge. Команда `python -m portbridge sync` отдельно обновляет публичные сведения GitHub.
 
@@ -68,4 +74,12 @@ English quick start. Clone PortBridge, set your absolute path in the [Codex](#co
 
 ## Поиск за пределами каталога
 
+В локальном кандидате M2 `portbridge_preflight` возвращает секцию `discovery` для подходящих запросов. Например, передайте `url` со ссылкой `https://github.com/xcl-dev/xcl/pull/2322`. `reviewed_on` показывает дату проверки внешних источников. `index_source` отличает встроенную копию, опубликованный снимок и возврат к копии при сбое. [Отчёт M2](PORTBRIDGE-M2.md)
+
 По умолчанию `portbridge_preflight` читает только данные PortBridge. Передайте `expand_global: true` и публичные технические термины, например `vulkan scratch buffer`, чтобы отдельно проверить публичные Issues и PR в GitHub. Ссылки в `external_search` требуют проверки исходного контекста и лицензии. Состояние локальной находки и рекомендованный первый тест остаются отдельными. [Описание API](../API.md#публичный-поиск-для-агентов)
+
+## People and Impact
+
+`portbridge_people` filters source-backed profiles by public task link, project, console, specialty or activity period. Use a public task link as `target` after `portbridge_preflight`. A relevant public contribution establishes observed activity. An availability field requires separate expiring consent.
+
+`portbridge_impact` reads credited, reviewed or accepted stories. Filter by `target`, `console` or `kind`. The tool returns the same metrics and evidence links as the site. Both tools are read-only and work against an offline database with `--db`.

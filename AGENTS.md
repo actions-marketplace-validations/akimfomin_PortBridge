@@ -1,5 +1,11 @@
 # Working on PortBridge
 
+## PortBridge 3.0
+
+Start with the [owner specification](docs/PORTBRIDGE-SPEC.md), the [Discovery supplement](docs/PORTBRIDGE-DISCOVERY-SPEC.md), the [current status](docs/PORTBRIDGE-STATUS.md) and the [requirements register](docs/PORTBRIDGE-CHECKLIST.md). Follow the [milestone plan](docs/PORTBRIDGE-PLAN.md) and record tests, evidence and blockers by requirement ID. `verified` requires a completed check.
+
+Work on the current local milestone branch. Public messages, pushes, merges, deployments and changes to external settings require separate permission under the specification. The public project remains in passive maintenance.
+
 PortBridge coordinates independent Xbox Series compatibility projects. It connects related work, organizes shared checks, and records reviewed results so teams can reuse findings. Each team decides what to adopt. [Project overview](README.md) · [Working office](docs/OFFICE.md) · [Copyable agent prompt](docs/AGENT-PROMPT.md)
 
 ## Maintenance status

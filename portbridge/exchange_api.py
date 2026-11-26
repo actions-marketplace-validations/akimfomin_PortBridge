@@ -36,6 +36,8 @@ ROUTES = {
     "subscribe": ("read", "POST"),
     "message": ("contribute", "POST"),
     "plans": ("read", "GET, HEAD"),
+    "lab-dashboard": ("read", "GET, HEAD"),
+    "lab-action": ("read", "POST"),
     "plan-propose": ("contribute", "POST"),
     "plan-review": ("review", "POST"),
     "plan-claim": ("contribute", "POST"),
@@ -52,7 +54,7 @@ QUERY_KEYS = {
     "subscriptions": set(), "thread": {"problem_id", "after", "limit"},
     "updates": {"after", "limit", "wait_seconds"},
     "coordination": {"problem_id"},
-    "plans": {"problem_id"}, "office-projects": set(),
+    "plans": {"problem_id"}, "office-projects": set(), "lab-dashboard": {"task"},
 }
 
 
@@ -178,6 +180,9 @@ class ExchangeHandlerMixin:
         ident = args.get("problem_id")
         if ident is not None and (len(ident) > 70 or not PROBLEM_ID.fullmatch(ident)):
             raise ValueError("invalid problem ID")
+        if route == "lab-dashboard":
+            from .lab_workflow import dashboard
+            return dashboard(self.server.catalog, exchange, token, task_id=args.get("task", ""))
         if route == "work":
             return {"work": exchange.active_work(token, problem_id=ident)}
         if route == "subscriptions":
@@ -252,6 +257,9 @@ class ExchangeHandlerMixin:
         if query:
             raise ValueError("write routes do not accept query parameters")
         body = self.exchange_read_json()
+        if route == "lab-action":
+            from .lab_workflow import apply
+            return apply(self.server.catalog, exchange, token, body.pop("action", None), body)
         if route.startswith(("plan-", "project-")):
             return self.office_write(exchange, token, route, body)
         if route == "register":

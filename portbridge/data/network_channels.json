@@ -1,0 +1,83 @@
+{
+  "hold_repositories": [
+    "vuyp/gta6-pc-race",
+    "4lwayz/portwatch-vi",
+    "ahmet-dedeler/awesome-gta6-reverse-engineering",
+    "github-samuel/sixonpc",
+    "pagiii/gta6-tracker"
+  ],
+  "channels": [
+    {
+      "name": "Awesome GTA6 reverse engineering",
+      "status": "listed",
+      "source": "https://github.com/Ahmet-Dedeler/awesome-gta6-reverse-engineering/issues/25#issuecomment-7164547746",
+      "next_step": "Use the existing Lab link; retain editor control."
+    },
+    {
+      "name": "Six on PC",
+      "status": "listed",
+      "source": "https://github.com/Github-Samuel/sixonpc/blob/e721e0f98d4baf3dd0a95e70c4555410f33a98c2/board.mjs#L187",
+      "next_step": "Keep the current listing. A task-only JSON feed is available if requested."
+    },
+    {
+      "name": "PC Race",
+      "status": "refused",
+      "source": "https://github.com/vuyp/gta6-pc-race/issues/6#issuecomment-7160857502",
+      "next_step": "Honor the scope decision."
+    },
+    {
+      "name": "PortWatch VI",
+      "status": "awaiting_reply",
+      "source": "https://github.com/4lwayz/portwatch-vi/issues/55",
+      "next_step": "Hold outreach while the previous proposal is pending."
+    },
+    {
+      "name": "FrameLab",
+      "status": "used_in_task",
+      "source": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7160148587",
+      "next_step": "Existing volunteer board remains the route for hardware checks."
+    }
+  ],
+  "usage": [
+    {
+      "actor": "KainanP",
+      "kind": "technical_reuse",
+      "at": "2026-11-24T15:51:11Z",
+      "proof": "https://github.com/LooperSalty/AnyXboxX/pull/133#issuecomment-7136721736",
+      "task": "https://github.com/LooperSalty/AnyXboxX/pull/133",
+      "reviewed": true
+    },
+    {
+      "actor": "5headsmartbtw",
+      "kind": "technical_reuse",
+      "at": "2026-11-24T19:52:10Z",
+      "proof": "https://github.com/5headsmartbtw/leonida-framelab/commit/d1da938ecf7b4e3d3faf40e5046907ba48986125",
+      "task": "https://github.com/5headsmartbtw/leonida-framelab/pull/12",
+      "reviewed": true
+    },
+    {
+      "actor": "5headsmartbtw",
+      "kind": "technical_reuse",
+      "at": "2026-11-25T10:46:13Z",
+      "proof": "https://github.com/5headsmartbtw/leonida-framelab/issues/15#issuecomment-7160148587",
+      "task": "https://github.com/5headsmartbtw/leonida-framelab/issues/15",
+      "reviewed": true
+    },
+    {
+      "actor": "madhyn",
+      "kind": "technical_reuse",
+      "at": "2026-11-24T18:30:17Z",
+      "proof": "https://github.com/ubiquitarianism/leonida/pull/1042#issuecomment-7140737395",
+      "task": "https://github.com/ubiquitarianism/leonida/pull/1042",
+      "reviewed": true
+    },
+    {
+      "actor": "DadaCap",
+      "kind": "technical_reuse",
+      "at": "2026-11-24T21:53:06Z",
+      "proof": "https://github.com/ubiquitarianism/leonida/pull/1284#issuecomment-7145516624",
+      "task": "https://github.com/ubiquitarianism/leonida/pull/1284",
+      "reviewed": true
+    }
+  ]
+}

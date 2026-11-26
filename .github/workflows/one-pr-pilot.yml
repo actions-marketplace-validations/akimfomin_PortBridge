@@ -26,3 +26,5 @@ jobs:
 
       - name: Summarize prior work
         uses: ./
+        with:
+          pull-request-url: ${{ inputs.pull_request_url }}

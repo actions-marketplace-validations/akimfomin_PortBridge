@@ -29,12 +29,12 @@ class GitHubSyncTest(unittest.TestCase):
 
     def fake_request(self, url, resource, etag):
         headers = {"ETag": '"metadata"'}
-        if "/search/issues?" in url:
-            data = {"items": [
+        if "/issues?" in url:
+            data = [
                 {"number": 1, "state": "open", "title": "Texture stalls", "body": "ignored body",
                  "user": {"login": "author"}},
                 {"number": 2, "pull_request": {}, "title": "An overlapping pull request"},
-            ]}
+            ]
         elif "/pulls?" in url:
             data = [{"number": 2, "state": "closed", "merged_at": "2026-01-01T00:00:00Z",
                      "title": "Handle texture stub", "head": {"sha": self.sha}, "body": "ignored body"}]
@@ -162,7 +162,8 @@ class GitHubSyncTest(unittest.TestCase):
                 attempted.append(slug)
                 if slug == attempted[0]:
                     return [], False, "live", now, None
-                return [], False, "error", None, github.Unavailable("GitHub request time budget exhausted")
+                return [], False, "error", None, github.Unavailable(
+                    "GitHub request time budget exhausted", reason="budget", attempted=False)
 
             with patch.object(github._Sync, "page", side_effect=page), \
                     patch("portbridge.__main__.refresh_ecosystem"):
@@ -281,7 +282,7 @@ class GitHubSyncTest(unittest.TestCase):
             original = github.collect([self.project], self.db_path)
 
         def missing(url, resource, etag):
-            if "/search/issues?" in url:
+            if "/issues?" in url:
                 return github.NOT_MODIFIED, {}
             raise github.Unavailable("GitHub HTTP 404", http_status=404)
 
@@ -328,7 +329,7 @@ class GitHubSyncTest(unittest.TestCase):
             with patch.object(sync.opener, "open", side_effect=error) as network:
                 with self.assertRaisesRegex(github.Unavailable, "429"):
                     sync._request("https://api.github.com/repos/example/port/pulls", "core", None)
-                with self.assertRaisesRegex(github.Unavailable, "retry after"):
+                with self.assertRaisesRegex(github.Unavailable, "paused until"):
                     sync._request("https://api.github.com/repos/example/port/commits", "core", None)
                 self.assertEqual(network.call_count, 1)
                 self.assertEqual(network.call_args.args[0].get_method(), "GET")
@@ -341,13 +342,13 @@ class GitHubSyncTest(unittest.TestCase):
 
         def get_page(url, resource, etag):
             seen.append(url)
-            if "/search/issues?" not in url:
+            if "/issues?" not in url:
                 return self.fake_request(url, resource, etag)
             if "&page=1&" in url:
-                return {"items": [{"number": 1, "title": "First"}]}, {
+                return [{"number": 1, "title": "First"}], {
                     "Link": '<https://example.com/unsafe>; rel="next"',
                 }
-            return {"items": [{"number": 2, "title": "Second"}]}, {}
+            return [{"number": 2, "title": "Second"}], {}
 
         with patch.object(github._Sync, "_request", side_effect=get_page):
             result = github.collect([self.project], self.db_path, pages=2)
@@ -362,9 +363,9 @@ class GitHubSyncTest(unittest.TestCase):
         attachment = "https://github.com/Example/Second/releases/download/v1/game.zip"
 
         def request(url, resource, etag):
-            if "/search/issues?" not in url:
+            if "/issues?" not in url:
                 return self.fake_request(url, resource, etag)
-            return {"items": [{"number": 9, "title": "D3D12 shader issue", "body": (
+            return [{"number": 9, "title": "D3D12 shader issue", "body": (
                 f"{private} vkCreateGraphicsPipelines DXGI_ERROR_DEVICE_REMOVED 0x887A0005. "
                 "Compare https://github.com/example/second/pull/72#discussion. "
                 "See [same](https://github.com/Example/Second/pull/72?x=1). "
@@ -372,7 +373,7 @@ class GitHubSyncTest(unittest.TestCase):
                 f"Ignore {attachment} https://untrusted.example/VK_ERROR_FAKE. "
                 "Ignore https://github.com/other/repo/issues/3 and "
                 "https://github.com/Example/Second/issues/1/attachments"
-            )}]}, {}
+            )}], {}
 
         with patch.object(github._Sync, "_request", side_effect=request):
             result = github.collect([self.project, second], self.db_path)

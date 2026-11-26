@@ -5,27 +5,36 @@ from html import escape
 import json
 from pathlib import Path
 import re
+from tempfile import TemporaryDirectory
 
 from .activity import build_activity
 from .case_pages import CASE_FILE, case_languages, case_page, case_path, sitemap
-from .catalog import REPO_NAME, timestamp
+from .backup import backup_database
+from .catalog import REPO_NAME, ReadOnlyCatalog, timestamp
 from .coordination import knowledge_graph, recommendations
+from .discovery_scan import cached_index
 from .ecosystem import build_ecosystem
 from .feed import build_feed
+from .identity import SCHEMA_VERSION
+from .integrations import projection as partner_projection
 from .lab import build_lab
-from .preflight_index import MANIFEST, SHARD, SHARD_FORMAT, build_search_files
+from .radar_store import epoch, radar_view, reviewed_snapshot
+from .community import people
+from .preflight_index import MANIFEST, SHARD, SHARD_FORMAT, VERSIONED_MANIFEST, build_search_files
 from .public_browse import BROWSE_INDEX, BROWSE_MANIFEST, BROWSE_PAGE, BROWSE_POSTING, BROWSE_TERMS, build_browse_files
 
 
 PACKAGE = Path(__file__).resolve().parent
 ROOT = PACKAGE.parent
 ASSETS = {"index.html": "index.html", "letter.html": "letter.html", "letter.ru.html": "letter.ru.html",
-          "static/styles.css": "styles.css", "static/app.js": "app.js"}
-SNAPSHOTS = {"site", "projects", "ecosystem", "problems", "matches", "health", "observations", "coordination", "outreach", "activity", "lab",
+          "start.html": "start.html", "start.ru.html": "start.ru.html", "partner.html": "partner.html",
+          "static/partner.js": "partner.js",
+          "static/styles.css": "styles.css", "static/app.js": "app.js", "static/discovery.js": "discovery.js"}
+SNAPSHOTS = {"site", "projects", "ecosystem", "problems", "matches", "health", "observations", "coordination", "outreach", "activity", "lab", "discovery", "radar", "people", "people-directory", "impact", "partner",
              "graph", "source-history", "recommendations"}
-VERSIONED_SNAPSHOTS = ("projects", "ecosystem", "problems", "health", "lab", "activity", "outreach", "coordination")
+VERSIONED_SNAPSHOTS = ("projects", "ecosystem", "problems", "health", "lab", "activity", "outreach", "coordination", "discovery", "radar", "people", "people-directory", "impact", "partner")
 VERSIONED_SNAPSHOT = re.compile(rf"(?:{'|'.join(VERSIONED_SNAPSHOTS)})-([0-9a-f]{{24}})\.json")
-VERSIONED_ASSET = re.compile(r"(?:styles-([0-9a-f]{24})\.css|app-([0-9a-f]{24})\.js)")
+VERSIONED_ASSET = re.compile(r"(?:styles-([0-9a-f]{24})\.css|(?:app|discovery)-([0-9a-f]{24})\.js)")
 MATCH_PREVIEW_LIMIT = 200
 EXPORT_FILES = {*ASSETS, MANIFEST, BROWSE_MANIFEST, "api.html", "api.ru.html", "feed.xml", "feed.ru.xml", "sitemap.xml", ".nojekyll",
                 *(f"data/{name}.json" for name in SNAPSHOTS)}
@@ -57,6 +66,8 @@ def generated_file(folder, name):
         if BROWSE_PAGE.fullmatch(name) or BROWSE_POSTING.fullmatch(name):
             return b'{"items":['
         if BROWSE_INDEX.fullmatch(name):
+            return b'{"version":1,"generation":'
+        if VERSIONED_MANIFEST.fullmatch(name):
             return b'{"version":1,"generation":'
         match = VERSIONED_SNAPSHOT.fullmatch(name)
     elif folder == "static":
@@ -107,7 +118,7 @@ def browser_assets():
     assets = {path: (PACKAGE / "static" / source).read_bytes() for path, source in ASSETS.items()}
     index = assets["index.html"].decode("utf-8")
     index = index.replace('href="/api/docs?lang=en"', 'href="./api.html"')
-    for path in ("static/styles.css", "static/app.js"):
+    for path in ("static/styles.css", "static/discovery.js", "static/app.js"):
         source = Path(path)
         alias = f"static/{source.stem}-{content_id(assets[path])}{source.suffix}"
         assets[alias] = assets[path]
@@ -120,16 +131,26 @@ def export(catalog, directory, repository=""):
     if repository and not REPO_NAME.fullmatch(repository):
         raise ValueError("--repository expects a GitHub owner/repo")
     directory = output_path(directory)
+    with TemporaryDirectory(prefix="portbridge-export-") as temp:
+        checkpoint = backup_database(catalog.path, Path(temp) / "snapshot.sqlite3")
+        return _export(ReadOnlyCatalog(checkpoint), directory, repository)
+
+
+def _export(catalog, directory, repository):
     matches = catalog.matches(limit=None)
     preview = matches[:MATCH_PREVIEW_LIMIT]
+    generated_at = timestamp()
     data = {
-        "site": {"name": "PortBridge", "api_version": 1, "mode": "snapshot", "generated_at": timestamp(),
+        "site": {"name": "PortBridge", "api_version": 1, "data_schema_version": SCHEMA_VERSION,
+                 "mode": "snapshot", "generated_at": generated_at,
                  "repository": repository or None, "issue_template": "evidence.yml"},
         "projects": {"projects": catalog.projects()},
         "problems": {"problems": catalog.problems()},
         "matches": {"matches": preview, "total": len(matches)},
-        "health": catalog.health(),
-        "lab": build_lab(catalog),
+        "health": catalog.health(generated_at=generated_at),
+        "discovery": cached_index(catalog),
+        "lab": build_lab(catalog, now=epoch(generated_at)),
+        "radar": {**radar_view(catalog, epoch(generated_at), include_catalog=True), "findings": reviewed_snapshot(catalog)},
         "observations": {"observations": catalog.observations(limit=None)},
         "coordination": {"coordination": catalog.coordination()},
         "graph": knowledge_graph(catalog),
@@ -142,6 +163,19 @@ def export(catalog, directory, repository=""):
                                       drafts=data["outreach"]["drafts"])
     data["ecosystem"] = build_ecosystem(catalog, projects=data["projects"]["projects"],
                                        observations=data["observations"]["observations"])
+    data["people"], data["impact"] = people(catalog, now=epoch(generated_at), lab=data["lab"],
+                                            radar=data["radar"], observations=data["observations"]["observations"],
+                                            projects=data["projects"]["projects"])
+    data["partner"] = partner_projection(data["projects"]["projects"], data["lab"], data["impact"], as_of=generated_at)
+    directory_view = data["people"]
+    data["people-directory"] = {**directory_view, "profiles": [
+        {**{key: row[key] for key in ("id", "login", "url", "latest", "activity", "consoles", "availability")},
+         "roles": [{key: role[key] for key in ("role", "repo", "source", "confidence", "age")} for role in row["roles"][:3]],
+         "projects": [{"repo": entry["repo"]} for entry in row["projects"]],
+         "specialties": [{"name": tag["name"]} for tag in row["specialties"]],
+         "evidence": [{key: evidence[key] for key in ("subject", "source", "discovery_for") if key in evidence}
+                      for evidence in row["evidence"]]}
+        for row in directory_view["profiles"]]}
     search = build_search_files(data["projects"]["projects"], data["observations"]["observations"])
     manifest = search.pop(MANIFEST)
     index = json.loads(manifest)
@@ -161,6 +195,8 @@ def export(catalog, directory, repository=""):
         contents[f"data/{alias}"] = body
     contents.update(search)
     contents.update(browse)
+    contents[f"data/preflight-{site['search_index']['generation']}-index.json"] = manifest
+    site["search_index"]["manifest"] = f"preflight-{site['search_index']['generation']}-index.json"
     contents.update(browser_assets())
     contents["api.html"] = docs_page("en").encode("utf-8")
     contents["api.ru.html"] = docs_page("ru").encode("utf-8")

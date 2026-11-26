@@ -40,6 +40,17 @@ The owner’s PC can be off. The publication uses a GitHub-hosted runner, a job-
 - To resume research, start from the [published experiments](../research), find the pinned source, license, workload and expected measurements, and use a separate checkout. Keep original inputs and revisions intact. Report the hardware, output checks, limits and the upstream decision separately. Any team can resume an open experiment under the licenses of the components it uses.
 - Before merging, run `python -m unittest discover -s tests -v` and `python -m portbridge export --out dist --repository akimfomin/PortBridge`. To preview the static output, run `python -m http.server --directory dist --bind 127.0.0.1 8766` and open [the preview](http://127.0.0.1:8766). After deployment open the public route you changed.
 
+## Catalog checkpoint and publication guard · M1
+
+The local M1 workflow candidate adds the following runbook. Its first public execution requires owner approval.
+
+1. Compare the previous public count with the candidate in **Publication safeguard**. If the previous count is unknown or candidate coverage shrank, the job keeps the previous published snapshot. Check the source and schedule summary before retrying. [Public health](https://akimfomin.github.io/PortBridge/data/health.json)
+2. The build checks the SQLite cache. A missing, invalid or smaller cache can trigger recovery from a recent successful main run's `portbridge-public-catalog-v1` artifact. Checkpoint retention is 14 days. Inspect the backup in a separate path. A usable copy is required when a first upgrade loses its cache.
+3. To verify a downloaded checkpoint, set `PORTBRIDGE_CHECKPOINT` to the file and run `python -m portbridge.pages_health checkpoint`. Copy it to a new database with `python -m portbridge --db checkpoint.sqlite3 backup --out restored.sqlite3`. Read `python -m portbridge --db restored.sqlite3 status`, then export to a separate directory. Keep the original database and avoid changing an open file.
+4. Open `site.json`, `health.json`, the site and one Lab task. Compare snapshot time, last source success, and per-channel coverage. If #146-style verification fails, compare both hashes again after propagation and record what was delayed. Revert the candidate in an approved release if the new code causes the failure. [Engineering report](PORTBRIDGE-M1.md)
+
+По-русски. При потере кэша используется отдельная проверенная копия. Сборка сохраняет прежнюю публикацию, если сравнение покрытия невозможно или новый каталог меньше. Для отката сохраните копию базы и проверьте её предыдущим кодом в отдельном файле.
+
 ## Коротко по-русски
 
 Сайт, каталог, поиск, Test Lab и JSON обслуживаются на GitHub. Компьютер основателя для них не нужен. Чтобы предложить исправление или взять направление, напишите в [общее обсуждение](https://github.com/akimfomin/PortBridge/issues/91). Для запуска своей копии достаточно Python и трёх команд в начале этой страницы. По поводу оборудования или результатов теста обращайтесь в ветку конкретной задачи. Решения о публикации, проверке результата и приглашении добровольца принимает человек, когда у него есть время.

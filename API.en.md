@@ -55,6 +55,10 @@ Project `sync_status: unavailable` records an observed public access failure. Pr
 
 ## Read the evidence
 
+`GET /api/v1/health` and `data/health.json` use the same collection facts. `refresh_at` records the end of a collection cycle. Each source and channel separates `last_attempt`, `last_success`, `age_state`, confirmed page counts and structured `errors`. A deferred attempt leaves the previous successful time intact. The static response adds `publication.generated_at` and publication age. Local responses have no publication timestamp.
+
+The API root and static manifest include `data_schema_version`. Public readers can select the immutable files from `site.json.snapshots` and the search manifest from `site.json.search_index.manifest`. Former paths still work. The optional MCP health tool and the prior-work summary use the same freshness fields. [Engineering notes](docs/PORTBRIDGE-M1.md)
+
 - A card lists relevant projects, implementations, dependencies and reviewed sources. Built-in editorial records include English text at `translations.en` where available. Identifiers, URLs, outcome codes and original text remain stable. Automatically collected sources retain the contributor's wording.
 - An `independent` result comes from a separate tester. `automated_test` is the outcome of a specific automated check. `maintainer_claim` refers to an author report and `source_observation` to inspected code or history. Read `observed` for the result and its limits.
 - A link marked `reviewed_same` has a reviewed technical relationship. `reviewed_symptom` has a shared symptom with cause still open. A `suggested` match needs review. Its `basis` describes the signal and its `score` orders candidates.
@@ -86,3 +90,29 @@ The hosted CLI, MCP tool and one-PR action use the partitioned search index anno
 An exact reviewed evidence comment can match its card. This establishes the association with that report. Its recorded outcome and test scope still determine how it can be used.
 
 Use `python -m portbridge.preflight --global --q "vulkan scratch buffer"`, or pass `expand_global: true` to `portbridge_preflight`, to send selected technical terms to public GitHub Search. Use public terms with this option. A source-only query can use the exact indexed source title. `external_search` returns candidate URLs and tells you whether the request was available, partial, or unavailable. This option is disabled for the authorized local exchange. [GitHub Search](https://docs.github.com/en/rest/search/search#search-issues-and-pull-requests)
+
+## Historical work with Discovery
+
+Discovery returns `technical_recommendations` separately from broad `matches` and `automatic_matches`. Automatically retrieved links carry `source_found`. Exact URL queries can include a saved result and its `scan_status`. [Evidence states](docs/PORTBRIDGE-M2.1.md#пять-уровней-доказательств)
+
+```http
+GET /api/v1/discovery?q=DXGI+adapter+LUID&project=dxvk
+```
+
+The local API accepts `q` or `url`, `project`, `kind`, `status`, `platform`, `before`, `after` and a `limit` between 1 and 10. The inclusive YYYY-MM-DD bounds filter the date the source was reviewed. Matches include the source revision, license, evidence behind the ranking and a proposed test. The static export includes the same corpus in `data/discovery.json`. Preflight and MCP return a `discovery` object for matching queries. [Examples](docs/PORTBRIDGE-M2.md)
+
+## Radar and volunteer Lab
+
+Use `GET /api/v1/radar` and `GET /api/v1/lab` for read-only access. The `console` filter represents the console family separately from the host OS. Volunteers and reviewers act in the authorized local exchange. [Lab contract](docs/PORTBRIDGE-M3-LAB.md)
+
+## People and Impact
+
+`GET /api/v1/people` accepts `q`, `profile`, `project`, `specialty`, `console`, `period`, `target`, `after`, and `limit`. Use the returned profile ID or lowercase GitHub handle. `target` is a public GitHub permalink. The response includes profiles, evidence, scoped connections, and a pagination cursor. Observed technical work and voluntary availability are separate fields.
+
+`GET /api/v1/impact` accepts `console`, `kind`, and `target`. Filters narrow the stories. Measures describe the whole snapshot, including their scope and evidence. `null` means unknown. Static files are `data/people.json` and `data/impact.json`. Both views are read-only. [Evidence rules](docs/decisions/016-community-evidence.md)
+
+## Partner feed
+
+Use `GET /api/v1/partner?console=ps5&kind=result&limit=10`, `data/partner.json`, or `portbridge_partner`. Read the current immutable filename from `data/site.json`. Filters are the project slug, `xbox-series` or `ps5`, and `task` or `result`. IDs are stable and result items carry the primary sources. A curated task marked `check_source` needs a status and revision check before taking it.
+
+Embed `partner.html?project=anyps5&kind=task` in an iframe with a descriptive title. For a pull-based subscription run `python -m portbridge.integrations --console ps5 --cursor partner-ps5.json`. Add `--snapshot /path/to/data/partner.json` to read a saved export. A failed pull, snapshot older than 48 hours or rollback in generation leaves the cursor unchanged. A removed item may have been taken, completed, superseded or withdrawn. Follow its source for the reason. [Pilot quick start](docs/PORTBRIDGE-M5-START.md)

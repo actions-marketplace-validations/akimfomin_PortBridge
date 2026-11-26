@@ -12,6 +12,14 @@ I have stepped back from initiating research and recruiting testers. The catalog
 
 [Letter from the founder](https://akimfomin.github.io/PortBridge/letter.html) · [Reply or volunteer to maintain a component](https://github.com/akimfomin/PortBridge/issues/91) · [Engineering history and evidence](docs/FINAL-AUDIT.md) · [Run or maintain PortBridge](docs/PASSIVE-MAINTENANCE.md)
 
+## Discovery in the local M2 candidate
+
+Search for earlier implementations from other projects using an error, GPU instruction, API symbol or a known issue or PR link. Results include the source revision, compatibility limits, license and a proposed check. [Try it locally](docs/QUICKSTART.md#try-discovery-locally)
+
+## People and Impact in the local M4 candidate
+
+The local candidate maps public technical work across Xbox Series and PS5 and records reviewed contributions, independent tests and receiving decisions with source links. [M4 evidence](docs/PORTBRIDGE-M4.md) · [Pilot plan](docs/PORTBRIDGE-M4-PILOT.md)
+
 ## For project contributors
 
 | What you want to do | Where to go |
@@ -75,3 +83,9 @@ The [public catalog](https://akimfomin.github.io/PortBridge/) works without an a
 [Contribute](CONTRIBUTING.md) · [Tracked projects](https://akimfomin.github.io/PortBridge/#/projects) · [API reference](API.en.md) · [MIT license](LICENSE)
 
 Try PortBridge's GitHub Action on one existing public PR. [Setup guide](docs/GITHUB-ACTION.md) · [Successful XCL pilot](https://github.com/akimfomin/PortBridge/actions/runs/45420038315) · [GitHub Marketplace](https://github.com/marketplace/actions/portbridge-prior-work-summary)
+
+## Try one task with an agent
+
+Open the dashboard, choose **Start here**, and follow one public issue or PR through Search and Lab. The local M5 candidate includes an optional MCP connection, a read-only PR Action and a partner widget. [Pilot quick start](docs/PORTBRIDGE-M5-START.md)
+
+If you find PortBridge useful, a GitHub star would be greatly appreciated. It helps other teams discover the project. [PortBridge on GitHub](https://github.com/akimfomin/PortBridge)
