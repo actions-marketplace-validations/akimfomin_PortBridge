@@ -1,0 +1,47 @@
+{
+  "checked_utc": "2026-11-26T19:34:00Z",
+  "source": "GitHub official connector get_pr_info on each selected public URL; compared independently to the captured open-PR input",
+  "comparison": "Exact UTF-8 bytes including original CR/LF. Matched manifest title, head SHA, body hash, open state and non-draft status for all five cases. No profile, body or discussion stored here.",
+  "origins": [
+    {
+      "url": "https://github.com/xcl-dev/xcl/pull/2860",
+      "head": "6efa82fab8dce5df52e7f69fff5539b8258e2d2c",
+      "body_sha256_matches_manifest": true,
+      "created_at": "2026-11-26T19:25:02Z"
+    },
+    {
+      "url": "https://github.com/ubiquitarianism/leonida/pull/2399",
+      "head": "3b5b36edd129dedabb9efadf3b6e1c7ef7118234",
+      "body_sha256_matches_manifest": true,
+      "created_at": "2026-11-26T19:30:09Z"
+    },
+    {
+      "url": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+      "head": "9e27d264d9c8d6e0a62f53f5fd9aacaa1d48358a",
+      "body_sha256_matches_manifest": true,
+      "created_at": "2026-11-25T19:02:13Z"
+    },
+    {
+      "url": "https://github.com/boykopovar/AnyPS5/pull/27618",
+      "head": "e05d132a8dbc56e3e436f3d6f152bf23164dc68c",
+      "body_sha256_matches_manifest": true,
+      "created_at": "2026-11-26T19:28:55Z"
+    },
+    {
+      "url": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+      "head": "727118c1d2cb4467d137a826be422040c7d78930",
+      "body_sha256_matches_manifest": true,
+      "created_at": "2026-11-26T19:08:36Z"
+    }
+  ],
+  "final_run_check": "Official GitHub get_pr_info re-read 2026-11-26 19:42 UTC before candidate execution: all 5 matched title, head, complete body hash, creation time, open and non-draft state.",
+  "anonymous_core_replay": {
+    "checked_utc_minute": "2026-11-26T19:49Z",
+    "origin_gets": {
+      "baseline": 5,
+      "candidate": 5
+    },
+    "search_http_requests": 0,
+    "outcome": "Both public-input URL replays rehydrated all five complete bodies from the anonymous GitHub pulls endpoint, matched title/head/body SHA-256, and reproduced their frozen reports: baseline 5 ranks, candidate 11."
+  }
+}

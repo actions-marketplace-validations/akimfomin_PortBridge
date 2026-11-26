@@ -1,0 +1,74 @@
+[
+  {
+    "query": "repo:xcl-dev/xcl is:pr is:merged merged:<2026-11-26T19:25:02Z \"used-only\" in:title,body",
+    "origin": "https://github.com/xcl-dev/xcl/pull/2860",
+    "total": 10,
+    "incomplete": false,
+    "rows": [
+      {
+        "url": "https://github.com/xcl-dev/xcl/pull/1982",
+        "title": "Shaders: --precompile --used-only builds only the pipelines a title used",
+        "merged": "2026-11-25T01:53:35Z"
+      },
+      {
+        "url": "https://github.com/xcl-dev/xcl/pull/2223",
+        "title": "Shaders: list offline precompile options in CLI help",
+        "merged": "2026-11-25T18:14:05Z"
+      },
+      {
+        "url": "https://github.com/xcl-dev/xcl/pull/67",
+        "title": "Wave64 console programs on GPUs with 32-lane waves only (NVIDIA)",
+        "merged": "2026-11-23T09:59:31Z"
+      },
+      {
+        "url": "https://github.com/xcl-dev/xcl/pull/2624",
+        "title": "xcl run: shader preparation in worker processes, only what earlier runs used; upstream main; sampler fix",
+        "merged": "2026-11-26T06:10:44Z"
+      },
+      {
+        "url": "https://github.com/xcl-dev/xcl/pull/2296",
+        "title": "D3D12.X: clamp PcCalls across frame boundaries and drop orphaned PSO jobs immediately",
+        "merged": "2026-11-25T18:16:07Z"
+      }
+    ]
+  },
+  {
+    "query": "repo:ubiquitarianism/leonida is:pr is:merged merged:<2026-11-26T19:30:09Z \"CreateDerivedPipelineState\" in:title,body",
+    "origin": "https://github.com/ubiquitarianism/leonida/pull/2399",
+    "total": 0,
+    "incomplete": false,
+    "rows": []
+  },
+  {
+    "query": "repo:KytyPS5/KytyPS5 is:pr is:merged merged:<2026-11-25T19:02:13Z \"WaitPriorityOperations\" in:title,body",
+    "origin": "https://github.com/KytyPS5/KytyPS5/pull/2551",
+    "total": 0,
+    "incomplete": false,
+    "rows": []
+  },
+  {
+    "query": "repo:boykopovar/AnyPS5 is:pr is:merged merged:<2026-11-26T19:28:55Z \"MAP_NO_OVERWRITE\" in:title,body",
+    "origin": "https://github.com/boykopovar/AnyPS5/pull/27618",
+    "total": 2,
+    "incomplete": false,
+    "rows": [
+      {
+        "url": "https://github.com/boykopovar/AnyPS5/pull/994",
+        "title": "fix(libkernel): refuse fixed no-overwrite mappings over live memory with ENOMEM",
+        "merged": "2026-10-07T02:31:13Z"
+      },
+      {
+        "url": "https://github.com/boykopovar/AnyPS5/pull/11190",
+        "title": "feat(libkernel): implement sceKernelMapNamedSystemFlexibleMemory",
+        "merged": "2026-10-26T22:02:22Z"
+      }
+    ]
+  },
+  {
+    "query": "repo:LooperSalty/AnyXboxX is:pr is:merged merged:<2026-11-26T19:08:36Z \"fcmp\" in:title,body",
+    "origin": "https://github.com/LooperSalty/AnyXboxX/pull/448",
+    "total": 0,
+    "incomplete": false,
+    "rows": []
+  }
+]

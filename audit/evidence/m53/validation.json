@@ -1,0 +1,76 @@
+{
+  "base": "df8cfd879c17df04644127c35330ef07407e9392",
+  "publication": {
+    "method": "Ordinary parent-linked Git commits. Public revision IDs have publishing metadata; the locally committed preregistration and frozen source have identical full Git trees to their public equivalents.",
+    "snapshots": [
+      {
+        "phase": "selection_rule",
+        "time_utc": "2026-11-26T19:29:02Z",
+        "local_git_commit": "4980b8ba6d88bf666374cf7f5557227470107db8",
+        "public_git_commit": "789bc3f8e923690084f91637dda09698949c6e7e",
+        "git_tree": "3fd4ed015af3b27beeb48cc2e63b35d43fa510b0"
+      },
+      {
+        "phase": "inputs_and_decisions",
+        "time_utc": "2026-11-26T19:31:17Z",
+        "local_git_commit": "85cd26b7026b7902af51f255b72760e51151d733",
+        "public_git_commit": "d602323b17cb051cf6e8318a5c8bc320b6cd77fc",
+        "git_tree": "7825a46be6e99c76785c326e44910e0da890f9e9"
+      },
+      {
+        "phase": "tested_candidate",
+        "time_utc": "2026-11-26T19:41:46Z",
+        "local_git_commit": "64773afc66dd2ad261f877c4df34ca8b58e8ca52",
+        "public_git_commit": "10182c8c3bb66c25f67e16a6e49fc3d3e38e485a",
+        "git_tree": "dc1e56aae6875a0ff5226e2c377ae81960ff7285"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "version": "default M5.2 at M5.3 handoff",
+      "product_tree": "ae8a4d5c8b1f1316226af0ad03cbd8d02690501c",
+      "tests_tree": "fdd7eb60975db881f08bdbc378aef53d5e9be0ee",
+      "passed": 262,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 39.884,
+      "seed_export": true,
+      "manifest_files": 281,
+      "release_gate": "pass"
+    },
+    {
+      "version": "sealed M5.3 experiment",
+      "product_tree": "77af3ff8ba93c3e13724ebc0469f22c91fbd8903",
+      "tests_tree": "71909d94d953d57f250c68ca4dd0262a4e7de400",
+      "passed": 266,
+      "failed": 0,
+      "skipped": 0,
+      "seconds": 40.623,
+      "seed_export": true,
+      "manifest_files": 281,
+      "release_gate": "pass"
+    }
+  ],
+  "holdout": {
+    "decisions": 5,
+    "useful_new_decisions": {
+      "baseline": 0,
+      "candidate": 0
+    },
+    "decision_grade_author_hints": {
+      "baseline": 0,
+      "candidate": 0
+    },
+    "displayed_ranks": {
+      "baseline": 5,
+      "candidate": 11
+    },
+    "logical_search_requests": {
+      "baseline": 3,
+      "candidate": 5
+    },
+    "source": "assessment.md",
+    "capture": "origin-verification.json"
+  }
+}
