@@ -40,7 +40,8 @@
   ],
   "relaunch_versions": {
     "a9fcf3ecda9dd5e7db769080c9b83aa626931414": {"name": "PortBridge M5", "committed_at": "2026-11-26T18:48:32Z"},
-    "0738093add1ed01dad89c4bdcb6df74eb8891701": {"name": "PortBridge M5.1", "committed_at": "2026-11-26T18:48:33Z"}
+    "0738093add1ed01dad89c4bdcb6df74eb8891701": {"name": "PortBridge M5.1", "committed_at": "2026-11-26T18:48:33Z"},
+    "e1c3f840df2ab4456b7348f4ce8b5b576ed474db": {"name": "PortBridge M5.2", "committed_at": "2026-11-26T19:11:59Z"}
   },
   "relaunch_teams": {},
   "relaunch_usage": [],

@@ -33,6 +33,13 @@ class NetworkUsageTest(unittest.TestCase):
     def outcome(self, *events, history=()):
         return outcomes(self.public, {"usage": history, "relaunch_usage": events}, as_of=NOW)
 
+    def test_relaunch_accepts_published_m52_reference_on_new_receipts_only(self):
+        revision = "e1c3f840df2ab4456b7348f4ce8b5b576ed474db"
+        fresh = [{**event(i, i), "version_evidence": "We used PortBridge M5.2.", "portbridge_revision": revision}
+                 for i in (1, 2)]
+        self.assertEqual(self.outcome(*fresh)["relaunch"]["verified_repeat_teams"], ["example/engine"])
+        self.assertEqual(self.outcome(history=fresh)["relaunch"]["single_or_repeat_team_count"], 0)
+
     def test_historical_framelab_and_three_receiving_repositories_remain_visible(self):
         result = self.outcome()
         self.assertIn("5headsmartbtw/leonida-framelab", result["historical"]["verified_repeat_teams"])
