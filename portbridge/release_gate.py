@@ -36,6 +36,8 @@ def verify_files(path):
             except OSError:
                 failed.append(name)
             missing.discard(name)
+        elif not item.is_dir() and name != RELEASE_FILES:
+            failed.append(name)
     return sorted(set(failed) | missing)
 
 

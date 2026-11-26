@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   issue_comment:
     types: [created, edited, deleted]
   schedule:
@@ -31,9 +33,11 @@ jobs:
         && !github.event.issue.pull_request && contains(fromJSON('[4,5,9,54,58,63,84,87]'), github.event.issue.number)
         && (contains(github.event.comment.body, 'PortBridge test review v1')
           || contains(github.event.changes.body.from, 'PortBridge test review v1'))))) ||
-      (github.event_name == 'workflow_dispatch' && github.ref_type == 'branch')
+      (github.event_name == 'workflow_dispatch' && github.ref_type == 'branch') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        && github.head_ref == 'audit/review')
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 20
     permissions:
       contents: read
       issues: read
@@ -58,7 +62,7 @@ jobs:
 
       - name: Check the currently published GitHub Pages snapshot
         id: previous
-        if: github.repository == 'akimfomin/PortBridge' && github.ref == 'refs/heads/main' && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true'
+        if: github.repository == 'akimfomin/PortBridge' && (github.ref == 'refs/heads/main' || github.event_name == 'pull_request') && vars.PORTBRIDGE_ENABLE_GITHUB_PAGES == 'true'
         run: python -m portbridge.pages_health probe
 
       - name: Run tests
@@ -70,6 +74,14 @@ jobs:
         with:
           path: .portbridge/portbridge.sqlite3
           key: ${{ runner.os }}-portbridge-db-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ${{ runner.os }}-portbridge-db-v1-
+
+      - name: Read a production-size cache for the release review
+        if: github.event_name == 'pull_request'
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: .portbridge/portbridge.sqlite3
+          key: ${{ runner.os }}-portbridge-review-${{ github.run_id }}
           restore-keys: ${{ runner.os }}-portbridge-db-v1-
 
       - name: Recover the latest verified catalog checkpoint if the cache is missing
@@ -119,7 +131,7 @@ jobs:
           fi
 
       - name: Continue historical and incremental index
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         env:
           PORTBRIDGE_GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -134,8 +146,17 @@ jobs:
       - name: Verify publication candidate
         run: python -m portbridge.release_gate dist
 
+      - name: Verify retained coverage and database recovery on the review runner
+        if: github.event_name == 'pull_request'
+        env:
+          PORTBRIDGE_MIN_CHECKPOINT_COUNT: ${{ steps.previous.outputs.previous_count }}
+        run: |
+          test -n "$PORTBRIDGE_MIN_CHECKPOINT_COUNT"
+          python -m portbridge backup --out .portbridge/rehearsal.sqlite3
+          PORTBRIDGE_CHECKPOINT=.portbridge/rehearsal.sqlite3 python -m portbridge.pages_health checkpoint
+
       - name: Archive the read-only review site
-        if: github.ref != 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+        if: github.ref != 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || github.event_name == 'pull_request')
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: portbridge-review-site

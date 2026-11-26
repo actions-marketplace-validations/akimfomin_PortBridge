@@ -26,6 +26,12 @@ class ReleaseFilesTest(CatalogFixture):
         app.write_bytes(app.read_bytes() + b" ")
         self.assertEqual(set(audit(site)), {f.relative_to(site).as_posix() for f in (first, second, terms, app)})
 
+    def test_unlisted_payload_in_the_release_directory_blocks_packaging(self):
+        site = export(self.catalog, self.workspace / "site")
+        for name in ("debug-notes.txt", "data/old-snapshot.json"):
+            (site / name).write_text("fixture", encoding="utf-8")
+        self.assertEqual(audit(site), ["data/old-snapshot.json", "debug-notes.txt"])
+
     def test_a_partial_or_missing_checksum_inventory_cannot_pass(self):
         site = export(self.catalog, self.workspace / "site")
         receipt = site / RELEASE_FILES
