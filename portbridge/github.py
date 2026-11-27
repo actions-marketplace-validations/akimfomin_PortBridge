@@ -14,7 +14,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-from .code_search import public_symbols
+from .code_search import public_diagnostics, public_symbols
 from .discovery_terms import API_SYMBOL, cues
 from .matching import (RelatedIndex, canonical_url, current_repository, instruction_names, repository_identity,
                        source_revision)
@@ -28,7 +28,7 @@ WORK_URL = re.compile(rf"https://github\.com/{REPO.pattern}/(?:pull|issues)/[1-9
 SHA = re.compile(r"[0-9a-fA-F]{40,64}")
 PAGE_SIZE = 20
 CACHE_TTL = 900
-SIGNATURE_VERSION = 7
+SIGNATURE_VERSION = 8
 PAIR_CHECK_LIMIT = 8
 MAX_RESPONSE = 4 * 1024 * 1024
 NOT_MODIFIED = object()
@@ -191,6 +191,7 @@ def _technical(entry, label_names, repositories):
         "terms": _limited(TERM_ALIASES.get(term, term) for term in terms),
         "discovery_cues": cues(searchable),
         "code_symbols": public_symbols(searchable),
+        "code_diagnostics": public_diagnostics(searchable),
         "mechanisms": sorted(mechanisms(searchable)),
         "signals": (instruction_names(searchable)[:INSTRUCTION_LIMIT]
                     + _limited(match[0].casefold() for match in API_SYMBOL.finditer(searchable))),

@@ -18,7 +18,11 @@
     "files": [
       "tests/unit/image.cpp",
       "tests/unit/descriptor_buffer.cpp"
-    ]
+    ],
+    "directories": [
+      "tests/unit"
+    ],
+    "limit": 10
   },
   {
     "repo": "KhronosGroup/Vulkan-Docs",
@@ -28,7 +32,11 @@
     "files": [
       "chapters/resources.adoc",
       "chapters/pipelines.adoc"
-    ]
+    ],
+    "directories": [
+      "chapters"
+    ],
+    "limit": 8
   },
   {
     "repo": "microsoft/DirectX-Headers",
@@ -49,7 +57,12 @@
       "libs/vkd3d/cache.c",
       "libs/vkd3d/state.c",
       "libs/vkd3d/command.c"
-    ]
+    ],
+    "directories": [
+      "libs/vkd3d",
+      "tests"
+    ],
+    "limit": 4
   },
   {
     "repo": "llvm/llvm-project",
@@ -70,5 +83,16 @@
       "renderdoc/driver/d3d12/d3d12_command_list_wrap.cpp",
       "renderdoc/driver/d3d12/d3d12_command_list.h"
     ]
+  },
+  {
+    "repo": "xcl-dev/xcl",
+    "revision": "06f90c1986f43698d0405eff3c2ab0af230e1ed9",
+    "license": "GPL-3.0-or-later",
+    "license_path": "LICENSE",
+    "files": [],
+    "directories": [
+      "crates/xcl/src/gpu/dxil"
+    ],
+    "limit": 4
   }
 ]
