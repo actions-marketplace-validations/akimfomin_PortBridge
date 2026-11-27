@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import patch
 from urllib.parse import urlencode
 
+from portbridge import code_search
 from portbridge.__main__ import Handler, make_server
 from portbridge.discovery_search import discover, discovery_index, key
 from portbridge.export import export
@@ -147,3 +148,34 @@ class DiscoveryPresentationTest(CatalogFixture):
             finally:
                 server.shutdown()
                 thread.join()
+
+    @unittest.skipUnless(browser_binary(), "Chromium is needed to render source-code candidates")
+    def test_browser_shows_source_code_without_a_problem_card(self):
+        repo, revision, source_path = "Example/Graphics", "a" * 40, "tests/queue.c"
+        rule = "VUID-vkQueueSubmit-pSubmits-00001"
+        reference = {"repo": repo, "revision": revision, "path": source_path, "license": "MIT",
+                     "license_url": f"https://github.com/{repo}/blob/{revision}/LICENSE"}
+        row = self.observation("xcl", "pr", "99999", "Synthetic source diagnostic", PR,
+                               {"technical": {"code_diagnostics": [rule.lower()]}})
+        self.catalog.record_sync({"items": [row]}, update_health=False)
+        with patch.object(code_search, "references", return_value=[reference]):
+            code_search.refresh(self.catalog, fetch=lambda _: f'assert_diagnostic("{rule}");'.encode())
+            site = export(self.catalog, self.workspace / "snapshot")
+            with make_server(self.catalog, 0) as api_server, ThreadingHTTPServer(
+                ("127.0.0.1", 0), partial(SimpleHTTPRequestHandler, directory=site)
+            ) as snapshot_server:
+                for server in (api_server, snapshot_server):
+                    thread = Thread(target=server.serve_forever, daemon=True)
+                    thread.start()
+                    try:
+                        route = f"http://127.0.0.1:{server.server_port}/?lang=en#/problems?" + urlencode({"q": PR})
+                        page = subprocess.run([
+                            browser_binary(), "--headless", "--disable-gpu", "--disable-background-networking",
+                            "--no-first-run", "--no-sandbox", f"--user-data-dir={self.workspace / 'code-browser'}",
+                            "--virtual-time-budget=3000", "--dump-dom", route,
+                        ], capture_output=True, timeout=25, check=True).stdout.decode("utf-8")
+                        self.assertIn("Candidate source-code lines", page)
+                        self.assertIn(f"https://github.com/{repo}/blob/{revision}/{source_path}#L1", page)
+                    finally:
+                        server.shutdown()
+                        thread.join()

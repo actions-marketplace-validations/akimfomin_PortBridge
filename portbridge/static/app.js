@@ -405,7 +405,7 @@ function problemCard(problem, view) {
 function drawProblems(problems, view, discovery, findings) {
   const count = numberFormat.format(problems.length);
   viewStatus.textContent = t(`Issues: ${count}`, `Проблем в списке: ${count}`);
-  if (!problems.length && !discovery.matches.length && !findings.length) {
+  if (!problems.length && !discovery.matches.length && !list(discovery.code).length && !findings.length) {
     stateScreen(t('No issues found', 'Проблемы не найдены'),
       discovery.emptyMessage || t('Try another search or reset the filters.', 'Измените поисковый запрос или сбросьте фильтры.'));
     return;
