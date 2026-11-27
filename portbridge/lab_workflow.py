@@ -10,7 +10,7 @@ from .catalog import public_url
 from .exchange import Conflict, PermissionDenied
 from .github import TOKEN_PATTERN
 from .identity import stable_id
-from .matching import canonical_url, source_revision
+from .matching import canonical_url, source_revision, source_url_aliases
 from .radar_scan import HASH, candidate, draft_task, expire_claims, record_candidate, save_draft
 from .radar_store import (KEY, SCHEMA, TASK_TYPES, active_claim, encode, event, phase,
                           public_task_rows, recent, timestamp)
@@ -157,8 +157,10 @@ def propose(db, args, now):
 
 
 def current_receiver(db, target):
-    observed = db.execute("""SELECT status,metadata FROM observations WHERE lower(url)=?
-                          ORDER BY fetched_at DESC LIMIT 1""", (target["url"].lower(),)).fetchone()
+    aliases = source_url_aliases(target["url"])
+    observed = db.execute(f"""SELECT status,metadata FROM observations
+                          WHERE lower(url) IN ({','.join('?' for _ in aliases)})
+                          ORDER BY fetched_at DESC LIMIT 1""", aliases).fetchone()
     metadata = json.loads(observed["metadata"]) if observed else {}
     if (not observed or observed["status"] != "open" or metadata.get("draft")
             or source_revision({"metadata": metadata}) != target.get("revision")):
