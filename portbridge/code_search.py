@@ -3,19 +3,20 @@
 import argparse
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
-from hashlib import sha256
+from hashlib import sha1, sha256
 import json
 from pathlib import Path
 import re
 from urllib.parse import urlsplit
 from urllib.request import Request, build_opener
 
+from . import source_corpus
 from .discovery_terms import STORED_SYMBOL
-from .matching import STOP_WORDS
+from .matching import STOP_WORDS, current_repository
 
 MANIFEST = Path(__file__).with_name("data") / "code_sources.json"
 SCHEMA_VERSION = 2
-MAX_FILES = 32
+MAX_FILES = 72
 MAX_BYTES = 1_200_000
 MAX_INDEX_BYTES = 4_000_000
 MAX_TERMS = 2800
@@ -39,31 +40,116 @@ STOP = set("""the and for with return case this const void struct bool true fals
 PRIVATE_TEXT = re.compile(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|[A-Za-z]:\\[^\s`]+|\\\\[^\s`]+|/(?:home|Users)/[^\s`]+)")
 API_NAME = re.compile(r"(?:D3D12_|DXGI_|VK_|VUID-|vk[A-Z]|ID3D12|GetDiskFreeSpace|GetVolumeInformation|GetFileInformation|SetFileInformation|Wave[A-Z]|EarlyCSE|SelectionDAG|[ds]s?_(?:read|write|add|cmp|load|store))")
 SENSITIVE = re.compile(r"(?i)(?:password|secret|credential|api_?key|private_?key|access_?token|ghp_|github_pat_|AKIA|[A-F0-9]{24,})")
-CACHE_PREFIX = f"deep-code-v{SCHEMA_VERSION}:"
+CACHE_PREFIX = "deep-code-v5:"
+ANCHOR_PREFIX = "pb_decl_"
+PERFORMANCE_TITLE = re.compile(r"\b(?:latency|stutters?|performance|frametime|throughput|fps|slow(?:down|er)?|"
+                               r"hangs?|freezes?|regression)\b", re.I)
+VUID_PREFIX = "pb_vuid_"
+GENERIC_STATUS = re.compile(r"(?:vk_error_|dxgi_error_|e_(?:fail|invalidarg|outofmemory)$)")
+VUID = re.compile(r"\bVUID-(?:[A-Za-z0-9_]{1,54}-){2,3}[0-9]{5}\b", re.I)
+DOC_DEFINITION = re.compile(r"^\s*[*+-]\s+(?:ename|flink|sname):([A-Za-z_][A-Za-z_0-9]+)\b")
+CODE_SIGNATURE = re.compile(
+    r"^\s*(?!(?:return|if|else|while|for|case|match|throw|await|new)\b)"
+    r"(?:[A-Za-z_][\w:<>&*]*\s+)+([A-Za-z_][A-Za-z_0-9]+)\s*\("
+)
+
+
+def definition_token(word):
+    return ANCHOR_PREFIX + word.casefold()
 
 
 def _path(value):
     return isinstance(value, str) and PATH.fullmatch(value) and not {"..", "."}.intersection(value.split("/"))
 
 
-def references():
-    manifest = json.loads(MANIFEST.read_bytes())
-    seen = set()
-    out = []
-    for group in manifest:
+def _manifest():
+    groups = json.loads(MANIFEST.read_bytes())
+    size = 0
+    for group in groups:
         repo, revision, license_path = group["repo"], group["revision"], group["license_path"]
         if (not REPO.fullmatch(repo) or not _path(repo) or not PIN.fullmatch(revision)
                 or not _path(license_path) or not group["license"]):
             raise ValueError("Invalid public code corpus entry")
-        for path in group["files"]:
+        size += len(group["files"])
+        if "directories" in group:
+            if (not group["directories"] or not all(_path(path) for path in group["directories"])
+                    or type(group["limit"]) is not int or not 1 <= group["limit"] <= source_corpus.MAX_SELECTED):
+                raise ValueError("Invalid public source scope")
+            size += group["limit"]
+    if size > MAX_FILES:
+        raise ValueError("Public code corpus exceeds file budget")
+    return groups
+
+
+
+def _scope_rows(group, rows):
+    if not isinstance(rows, list) or not 0 < len(rows) <= group["limit"]:
+        return []
+    paths = set()
+    for row in rows:
+        if (not isinstance(row, dict) or not source_corpus.valid_file(group, row.get("path"))
+                or not isinstance(row.get("blob"), str) or not PIN.fullmatch(row["blob"])
+                or row["path"] in paths):
+            return []
+        paths.add(row["path"])
+    return rows
+
+
+def references(catalog=None):
+    groups = _manifest()
+    selections = {}
+    if catalog:
+        with catalog.connect() as db:
+            for key, payload in db.execute("SELECT key,value FROM settings WHERE key GLOB ?",
+                                           (source_corpus.CACHE + "*",)):
+                try:
+                    selections[key] = json.loads(payload)
+                except ValueError:
+                    continue
+    seen = set()
+    out = []
+    for group in groups:
+        repo, revision = group["repo"], group["revision"]
+        rows = [{"path": path} for path in group["files"]]
+        if "directories" in group:
+            rows.extend(_scope_rows(group, selections.get(source_corpus.cache_key(group))))
+        for entry in rows:
+            path = entry["path"]
             if not _path(path) or (repo, path) in seen:
                 raise ValueError("Invalid or duplicate code path")
             seen.add((repo, path))
-            out.append({"repo": repo, "revision": revision, "path": path, "license": group["license"],
-                        "license_url": f"https://github.com/{repo}/blob/{revision}/{license_path}"})
-    if len(out) > MAX_FILES:
-        raise ValueError("Public code corpus exceeds file budget")
+            out.append({**entry, "repo": repo, "revision": revision, "license": group["license"],
+                        "license_url": f"https://github.com/{repo}/blob/{revision}/{group['license_path']}"})
     return out
+
+
+def _discover_scopes(catalog, tree_fetch):
+    groups = _manifest()
+    scopes = [group for group in groups if "directories" in group]
+    fixed = {(group["repo"], path) for group in groups for path in group["files"]}
+    errors, downloads = [], 0
+    for group in scopes:
+        key = source_corpus.cache_key(group)
+        with catalog.connect() as db:
+            known = db.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()
+        if known:
+            try:
+                if _scope_rows(group, json.loads(known[0])):
+                    continue
+            except ValueError:
+                pass
+        try:
+            downloads += 1
+            selection = source_corpus.select({**group, "already_indexed": [
+                path for repo, path in fixed if repo == group["repo"]]}, tree_fetch(group))
+            if not _scope_rows(group, selection):
+                raise ValueError("Approved source scope yielded no indexable files")
+        except (OSError, ValueError) as error:
+            errors.append({"scope": group["repo"], "reason": type(error).__name__})
+            continue
+        with catalog.connect() as db:
+            db.execute("INSERT OR REPLACE INTO settings VALUES (?,?)", (key, json.dumps(selection)))
+    return downloads, errors
 
 
 def _key(reference):
@@ -89,13 +175,23 @@ def public_symbols(text):
     return identifiers(text, public_only=True)
 
 
+def public_diagnostics(text):
+    sanitized = URL.sub(" ", PRIVATE_TEXT.sub(" ", text[:33_500]))
+    return list(dict.fromkeys(match[0].casefold() for match in VUID.finditer(sanitized)))[:16]
+
+
+def diagnostic_token(identifier):
+    return VUID_PREFIX + identifier.casefold().replace("-", "_")
+
+
 def query_terms(text):
-    tokens = _tokens(URL.sub(" ", text[:2000]))
+    tokens = _tokens(VUID.sub(" ", URL.sub(" ", text[:2000])))
     exact = set(word.casefold() for word in tokens)
     words = {part.casefold() for word in tokens for part in SPLIT.split(word)
              if len(part) >= 3 and part.casefold() not in STOP}
-    technical = {word.casefold() for word in identifiers(text)}
+    technical = {word.casefold() for word in identifiers(VUID.sub(" ", text))}
     technical.update(word for word in exact if "_" in word or STORED_SYMBOL.fullmatch(word))
+    technical.update(diagnostic_token(vuid) for vuid in public_diagnostics(text))
     if not technical and len(exact) == 1 and len(text.strip()) >= 4:
         technical = exact
     return technical, (exact | words) - technical
@@ -105,7 +201,7 @@ def observation_query(row):
     technical = row.get("metadata", {}).get("technical") or {}
     return row.get("title", "") + "\n" + " ".join([
         *technical.get("code_symbols", ()), *technical.get("discovery_cues", ()),
-        *technical.get("signals", ()), *technical.get("terms", ())])
+        *technical.get("code_diagnostics", ()), *technical.get("signals", ()), *technical.get("terms", ())])
 
 
 def _fetch(reference):
@@ -117,17 +213,21 @@ def _fetch(reference):
 
 
 def index_file(reference, content):
+    if blob := reference.get("blob"):
+        if sha1(b"blob " + str(len(content)).encode("ascii") + b"\0" + content).hexdigest() != blob:
+            raise ValueError("Source bytes do not match their Git blob")
     if len(content) > MAX_BYTES or b"\0" in content:
         raise ValueError("Source is binary or exceeds the byte budget")
     # Publish searchable names and first line positions, with links to the source.
     # Retain neither source lines nor the original text or strings in implementation files.
     postings = defaultdict(list)
     qualified = set()
+    docs = reference["path"].endswith((".adoc", ".rst", ".md", ".texi"))
     for number, line in enumerate(content.decode("utf-8").splitlines(), start=1):
         if SENSITIVE.search(line):
             continue
         line = PRIVATE_TEXT.sub(" ", line)
-        if not reference["path"].endswith((".adoc", ".rst", ".md", ".texi")):
+        if not docs:
             literals_removed = QUOTED.sub(" ", line)
         else:
             literals_removed = line
@@ -135,18 +235,29 @@ def index_file(reference, content):
         qualified.update(word.casefold() for word in words if SYMBOL.search(word) and len(word) >= 5)
         features = {value.casefold() for word in words for value in (word, *SPLIT.split(word))
                     if len(value) >= 3 and value.casefold() not in STOP}
+        if declaration := (DOC_DEFINITION if docs else CODE_SIGNATURE).match(literals_removed[:512]):
+            name = declaration[1]
+            if name in words and len(name) <= 84:
+                marker = definition_token(name)
+                features.add(marker)
+                qualified.add(marker)
+        diagnostics = {diagnostic_token(vuid) for vuid in public_diagnostics(line) if len(vuid) <= 87}
+        features.update(diagnostics)
+        qualified.update(diagnostics)
         for feature in features:
             if len(postings[feature]) < POSITIONS:
                 postings[feature].append(number)
     # Favor technical names. Plain terms with a bounded number of occurrences
     # support co-occurrence when two implementations use different names.
-    order = sorted(postings, key=lambda token: (token not in qualified, len(postings[token]), token))
+    order = sorted(postings, key=lambda token: (not token.startswith(VUID_PREFIX),
+                                                not token.startswith(ANCHOR_PREFIX), token not in qualified,
+                                                len(postings[token]), token))
     return {**reference, "sha256": sha256(content).hexdigest(),
             "terms": {token: postings[token] for token in order[:MAX_TERMS]}}
 
 
 def projection(catalog):
-    expected = {CACHE_PREFIX + _key(row): row for row in references()}
+    expected = {CACHE_PREFIX + _key(row): row for row in references(catalog)}
     with catalog.connect() as db:
         rows = db.execute("SELECT key,value FROM settings WHERE key GLOB ? ORDER BY key", (CACHE_PREFIX + "*",))
         files = []
@@ -157,43 +268,86 @@ def projection(catalog):
                 indexed = json.loads(payload)
             except ValueError:
                 continue
-            if _sensible(indexed) and _key(indexed) == _key(expected[key]):
+            if (_sensible(indexed) and _key(indexed) == _key(expected[key])
+                    and indexed.get("blob") == expected[key].get("blob")):
                 features = {word: positions for word, positions in indexed["terms"].items()
                             if WORD.fullmatch(word) and not SENSITIVE.search(word) and isinstance(positions, list)
                             and len(positions) <= POSITIONS
                             and all(type(line) is int and 0 < line < MAX_BYTES for line in positions)}
                 files.append({**expected[key], "terms": features, "sha256": indexed["sha256"]})
-    result = {"version": SCHEMA_VERSION, "expected_files": len(expected), "files": files}
-    if len(json.dumps(result, ensure_ascii=False).encode("utf-8")) > MAX_INDEX_BYTES:
-        raise ValueError("Public code index exceeds the client size limit")
+    # Existing clients read only a prefix of the v2 format.
+    files.sort(key=lambda row: ("blob" in row, row["repo"].casefold(), row["path"]))
+    result = {"version": SCHEMA_VERSION, "diagnostics": True, "expected_files": len(expected), "files": files}
+    if len(snapshot_bytes(result)) > MAX_INDEX_BYTES:
+        # Each reference keeps a bounded share. The postings are ordered with
+        # diagnostic IDs first, then definitions, then other symbols.
+        budget = (MAX_INDEX_BYTES - 4096) // len(files)
+        for row in files:
+            trim_postings(row, budget)
+        if len(snapshot_bytes(result)) > MAX_INDEX_BYTES:
+            raise ValueError("Public code index exceeds the client size limit")
     return result
 
 
-def refresh(catalog, *, fetch=_fetch):
-    sources = references()
+
+def snapshot_bytes(index):
+    return json.dumps(index, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+
+
+def trim_postings(row, budget):
+    terms = row["terms"]
+    row["terms"] = {}
+    remaining = budget - len(snapshot_bytes(row))
+    for token, positions in terms.items():
+        remaining -= len(snapshot_bytes({token: positions})) - 1
+        if remaining < 0:
+            break
+        row["terms"][token] = positions
+
+
+def refresh(catalog, *, fetch=_fetch, tree_fetch=source_corpus.fetch_tree):
+    # Custom file fetchers can replay pinned sources without network tree discovery.
+    with_tree = fetch is _fetch or tree_fetch is not source_corpus.fetch_tree
+    tree_reads, errors = _discover_scopes(catalog, tree_fetch) if with_tree else (0, [])
+    sources = references(catalog)
     existing = {_key(row) for row in projection(catalog)["files"]}
     missing = [row for row in sources if _key(row) not in existing]
 
-    def build(ref):
-        try:
-            return index_file(ref, fetch(ref)), None
-        except (OSError, ValueError) as error:
-            return ref, type(error).__name__
+    previous = {}
+    with catalog.connect() as db:
+        for (payload,) in db.execute("SELECT value FROM settings WHERE key GLOB ?", (CACHE_PREFIX + "*",)):
+            try:
+                cached = json.loads(payload)
+            except ValueError:
+                continue
+            if _sensible(cached) and cached.get("blob"):
+                previous[(cached["repo"], cached["path"], cached["blob"])] = cached
 
-    errors, done = [], 0
+    def build(ref):
+        key = (ref["repo"], ref["path"], ref.get("blob"))
+        if key in previous:
+            return {**previous[key], **ref}, None, True
+        try:
+            return index_file(ref, fetch(ref)), None, False
+        except (OSError, ValueError) as error:
+            return ref, type(error).__name__, False
+
+    done = reused = 0
     with ThreadPoolExecutor(max_workers=4) as pool:
         with catalog.connect() as db:
-            for row, error in pool.map(build, missing):
+            for row, error, from_blob in pool.map(build, missing):
                 if error:
                     errors.append({"path": _key(row), "reason": error})
                     continue
                 db.execute("INSERT OR REPLACE INTO settings VALUES (?,?)",
                            (CACHE_PREFIX + _key(row), json.dumps(row, separators=(",", ":"))))
-                done += 1
+                reused += int(from_blob)
+                done += int(not from_blob)
             keys = [CACHE_PREFIX + _key(source) for source in sources]
             db.execute(f"DELETE FROM settings WHERE key GLOB ? AND key NOT IN ({','.join('?' for _ in keys)})",
                        ("deep-code-v*:*", *keys))
-    return {"indexed": done, "cached": len(sources) - len(missing), "expected": len(sources), "errors": errors}
+    return {"indexed": done, "cached": len(sources) - len(missing), "reused_blobs": reused,
+            "expected": len(sources), "tree_reads": tree_reads, "errors": errors}
 
 
 def _sensible(row):
@@ -202,6 +356,7 @@ def _sensible(row):
             and PIN.fullmatch(row["revision"]) and isinstance(row.get("license"), str)
             and isinstance(row.get("license_url"), str) and row["license_url"].startswith(
                 f"https://github.com/{row['repo']}/blob/{row['revision']}/")
+            and (row.get("blob") is None or isinstance(row["blob"], str) and PIN.fullmatch(row["blob"]))
             and isinstance(row.get("terms"), dict) and len(row["terms"]) <= MAX_TERMS
             and isinstance(row.get("sha256"), str) and SHA256.fullmatch(row["sha256"]))
 
@@ -213,18 +368,26 @@ def lookup(index, query, *, origin_url="", limit=5):
     files = [row for row in files[:MAX_FILES] if _sensible(row)]
     if not exact and len(words) < 3:
         return []
-    owner = "/".join(urlsplit(origin_url).path.split("/")[1:3]).casefold()
+    owner = current_repository("/".join(urlsplit(origin_url).path.split("/")[1:3])).casefold()
+    files = [row for row in files if current_repository(row["repo"]).casefold() != owner]
+    diagnostics = {word for word in exact if word.startswith(VUID_PREFIX)}
+    diagnostic_files = [row for row in files if diagnostics & row["terms"].keys()]
+    if diagnostic_files:
+        files = diagnostic_files
+    diagnostic_fallback = bool(diagnostics and not diagnostic_files)
+    performance = PERFORMANCE_TITLE.search(query.split("\n", 1)[0])
+    corroboration = {word for word in exact - diagnostics if not GENERIC_STATUS.match(word)}
+    definitions = {definition_token(word) for word in corroboration}
     frequencies = Counter(token for row in files for token in (exact | words) & row["terms"].keys())
     results = []
     for row in files:
-        if row["repo"].casefold() == owner:
-            continue
         tokens = (exact | words) & row["terms"].keys()
         strong = exact & tokens
-        if not strong and len(tokens) < 3:
+        if not strong and (diagnostic_fallback or len(tokens) < 3):
             continue
         hit_lines = defaultdict(set)
-        for token in tokens:
+        row_definitions = definitions & row["terms"].keys()
+        for token in tokens | row_definitions:
             positions = row["terms"][token]
             if isinstance(positions, list):
                 for line in positions[:POSITIONS]:
@@ -234,22 +397,39 @@ def lookup(index, query, *, origin_url="", limit=5):
             continue
         ranked = []
         for line in sorted(hit_lines):
+            diagnostic = len(hit_lines[line] & diagnostics)
+            if diagnostic_files and not diagnostic:
+                continue
             nearby = set().union(*(hit_lines.get(n, ()) for n in range(max(1, line - 12), line + 13)))
+            nearby.difference_update(definitions)
+            declaration = len(hit_lines[line] & row_definitions)
+            # A search linked to an issue needs evidence beyond shared words.
+            # A single API definition cannot explain a timing or stability regression.
+            if origin_url and not diagnostic:
+                supported = len(nearby & corroboration) >= 2
+                if performance:
+                    supported = supported and bool(declaration)
+                if not (supported or declaration and not performance):
+                    continue
             if not nearby & strong and len(nearby) < 3:
                 continue
             score = sum((20 if token in focus else 7 if token in strong else 1)
                         + 1 / frequencies[token] for token in nearby)
-            ranked.append((round(score, 4), len(hit_lines[line] & focus), len(hit_lines[line] & strong),
+            ranked.append((diagnostic, round(score + 25 * declaration + 80 * diagnostic, 4), declaration,
+                           len(hit_lines[line] & focus), len(hit_lines[line] & strong),
                            -line, sorted(nearby)))
         if not ranked:
             continue
-        score, _, _, anchored, evidence = max(ranked)
+        _, score, _, _, _, anchored, evidence = max(ranked)
         project, path, revision = row["repo"], row["path"], row["revision"]
         results.append({"url": f"https://github.com/{project}/blob/{revision}/{path}#L{-anchored}",
                         "path": path, "repo": project, "revision": revision, "line": -anchored,
                         "license": row["license"], "license_url": row["license_url"], "score": score,
-                        "signals": evidence[:10], "evidence_status": "source_found",
-                        "next_step": "Compare the cited lines and one opposite control in the target before adapting."})
+                        "signals": [token[len(VUID_PREFIX):].replace("_", "-")
+                                    if token.startswith(VUID_PREFIX) else token for token in evidence[:10]], "evidence_status": "source_found",
+                        "next_step": ("The diagnostic ID was not found. Check the rule separately before using this API lead."
+                                      if diagnostic_fallback else
+                                      "Compare the cited lines and one opposite control in the target before adapting.")})
     return sorted(results, key=lambda row: (-row["score"], row["url"]))[: max(1, min(limit, 10))]
 
 
@@ -261,6 +441,30 @@ def report(index, query, *, origin_url="", limit=5):
             "scope": "pinned_public_files", "confidence": "candidate"}
 
 
+
+def browser_matches(index, observations):
+    """Project compact source candidates for recently updated public links."""
+    from .discovery_search import query_key
+
+    if not index.get("files"):
+        return {}, 0
+    candidates = {}
+    recent = sorted(observations, key=lambda row: row.get("updated_at") or "", reverse=True)
+    for row in recent:
+        if row.get("kind") not in {"pr", "issue"}:
+            continue
+        url = row.get("url") or ""
+        key = query_key(url)
+        if not key or key in candidates:
+            continue
+        hits = lookup(index, observation_query(row), origin_url=url, limit=2)
+        candidates[key] = [{name: hit[name] for name in ("url", "path", "line", "license", "license_url", "next_step")}
+                           for hit in hits]
+        if len(candidates) >= 96:
+            break
+    return {key: hits for key, hits in candidates.items() if hits}, len(candidates)
+
+
 def main():
     from .__main__ import DEFAULT_DB, DEFAULT_SEED
     from .catalog import Catalog, ReadOnlyCatalog
@@ -270,7 +474,10 @@ def main():
     parser.add_argument("--db", type=Path)
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--q", default="")
+    parser.add_argument("--require-complete", action="store_true", help="fail on any source refresh error")
     args = parser.parse_args()
+    if args.require_complete and not args.refresh:
+        parser.error("--require-complete requires --refresh")
     if args.refresh:
         result = refresh(Catalog(args.db or DEFAULT_DB, DEFAULT_SEED))
     elif args.q:
@@ -282,7 +489,8 @@ def main():
     else:
         parser.error("Provide --refresh or --q")
     print(json.dumps(result, ensure_ascii=True, indent=2))
+    return int(args.require_complete and bool(result["errors"]))
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

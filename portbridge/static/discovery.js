@@ -59,6 +59,7 @@ const PortBridgeDiscovery = (() => {
     }
     const ranked = hits.sort((a, b) => Number(b.match.exact) - Number(a.match.exact) || b.score - a.score || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)).slice(0, limit);
     return {matches: ranked.concat((scan?.matches || []).slice(0, limit)),
+      code_candidates: index.code_candidates?.[requestedUrl] || [],
       scan_status: scan?.status || 'not_scanned', scan_reason: scan?.reason || null};
   }
 

@@ -24,7 +24,8 @@
       "repo": "xcl-dev/xcl",
       "url": "https://github.com/xcl-dev/xcl",
       "stack": "Rust, Windows D3D12 и DXIL",
-      "license": "GPL-2.0-only",
+      "license": "GPL-3.0-or-later",
+      "license_url": "https://github.com/xcl-dev/xcl/blob/06f90c1986f43698d0405eff3c2ab0af230e1ed9/LICENSE",
       "translations": {"en": {"stack": "Rust, Windows D3D12 and DXIL"}}
     },
     {

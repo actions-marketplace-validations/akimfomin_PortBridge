@@ -99,7 +99,7 @@ Discovery returns `technical_recommendations` separately from broad `matches` an
 GET /api/v1/discovery?q=DXGI+adapter+LUID&project=dxvk
 ```
 
-The local API accepts `q` or `url`, `project`, `kind`, `status`, `platform`, `before`, `after` and a `limit` between 1 and 10. The inclusive YYYY-MM-DD bounds filter the date the source was reviewed. Matches include the source revision, license, evidence behind the ranking and a proposed test. The static export includes the same corpus in `data/discovery.json`. Preflight and MCP return a `discovery` object for matching queries. [Examples](docs/PORTBRIDGE-M2.md)
+The local API accepts `q` or `url`, `project`, `kind`, `status`, `platform`, `before`, `after` and a `limit` between 1 and 10. The inclusive YYYY-MM-DD bounds filter the date the source was reviewed. Matches include the source revision, license, evidence behind the ranking and a proposed test. The static export includes the same corpus in `data/discovery.json`. Preflight and MCP return a `discovery` object for matching queries. For an unfiltered query the local endpoint can also return `code_candidates` with pinned source lines. The static browser snapshot includes these candidates for up to 96 recently updated indexed issues or pull requests. Preflight, CLI and MCP additionally support source-code lookup by a technical term. Each source-code result is a lead to check in the receiving project. [Examples](docs/PORTBRIDGE-M2.md)
 
 ## Radar and volunteer Lab
 

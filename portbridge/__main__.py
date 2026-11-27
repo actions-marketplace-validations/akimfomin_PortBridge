@@ -15,7 +15,7 @@ from .case_pages import CASE_FILE, case_languages, case_page, case_path
 from .catalog import Catalog, OBSERVATION_KIND, PROBLEM_ID, PROBLEM_STATUS
 from .coordination import knowledge_graph, recommendations
 from .discovery_scan import cached_index
-from .discovery_search import discover, historical_candidates
+from .discovery_search import discover, historical_candidates, query_key
 from .ecosystem import build_ecosystem, refresh_ecosystem
 from .exchange_api import ExchangeHandlerMixin
 from .feed import build_feed
@@ -268,8 +268,20 @@ class Handler(ExchangeHandlerMixin, BaseHTTPRequestHandler):
             limit = options.pop("limit", "5")
             if not limit.isascii() or not limit.isdecimal() or len(limit) > 2:
                 raise ValueError("Discovery limit must be between 1 and 10")
-            result = discover(origin_url=options.pop("url", ""), index=cached_index(catalog), limit=int(limit), **options)
-            return 200, {**result, "radar_candidates": historical_candidates(result)}
+            origin = options.pop("url", "")
+            result = discover(origin_url=origin, index=cached_index(catalog), limit=int(limit), **options)
+            result["radar_candidates"] = historical_candidates(result)
+            if not options.keys() - {"q"}:
+                from . import code_search
+                query = options.get("q", "")
+                source = origin or (query if query_key(query) else "")
+                if source:
+                    record = catalog.source_observation(source) if query_key(source) else None
+                    query = code_search.observation_query(record) if record else ""
+                if query:
+                    result["code_candidates"] = code_search.lookup(code_search.projection(catalog), query,
+                                                                  origin_url=source, limit=int(limit))
+            return 200, result
         if name == "activity":
             return 200, build_activity(catalog)
         if name == "partner":
