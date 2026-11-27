@@ -16,7 +16,7 @@ from .matching import STOP_WORDS, current_repository
 
 MANIFEST = Path(__file__).with_name("data") / "code_sources.json"
 SCHEMA_VERSION = 2
-MAX_FILES = 48
+MAX_FILES = 72
 MAX_BYTES = 1_200_000
 MAX_INDEX_BYTES = 4_000_000
 MAX_TERMS = 2800
@@ -40,9 +40,12 @@ STOP = set("""the and for with return case this const void struct bool true fals
 PRIVATE_TEXT = re.compile(r"(?:[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|[A-Za-z]:\\[^\s`]+|\\\\[^\s`]+|/(?:home|Users)/[^\s`]+)")
 API_NAME = re.compile(r"(?:D3D12_|DXGI_|VK_|VUID-|vk[A-Z]|ID3D12|GetDiskFreeSpace|GetVolumeInformation|GetFileInformation|SetFileInformation|Wave[A-Z]|EarlyCSE|SelectionDAG|[ds]s?_(?:read|write|add|cmp|load|store))")
 SENSITIVE = re.compile(r"(?i)(?:password|secret|credential|api_?key|private_?key|access_?token|ghp_|github_pat_|AKIA|[A-F0-9]{24,})")
-CACHE_PREFIX = "deep-code-v4:"
+CACHE_PREFIX = "deep-code-v5:"
 ANCHOR_PREFIX = "pb_decl_"
+PERFORMANCE_TITLE = re.compile(r"\b(?:latency|stutters?|performance|frametime|throughput|fps|slow(?:down|er)?|"
+                               r"hangs?|freezes?|regression)\b", re.I)
 VUID_PREFIX = "pb_vuid_"
+GENERIC_STATUS = re.compile(r"(?:vk_error_|dxgi_error_|e_(?:fail|invalidarg|outofmemory)$)")
 VUID = re.compile(r"\bVUID-(?:[A-Za-z0-9_]{1,54}-){2,3}[0-9]{5}\b", re.I)
 DOC_DEFINITION = re.compile(r"^\s*[*+-]\s+(?:ename|flink|sname):([A-Za-z_][A-Za-z_0-9]+)\b")
 CODE_SIGNATURE = re.compile(
@@ -78,6 +81,20 @@ def _manifest():
     return groups
 
 
+
+def _scope_rows(group, rows):
+    if not isinstance(rows, list) or not 0 < len(rows) <= group["limit"]:
+        return []
+    paths = set()
+    for row in rows:
+        if (not isinstance(row, dict) or not source_corpus.valid_file(group, row.get("path"))
+                or not isinstance(row.get("blob"), str) or not PIN.fullmatch(row["blob"])
+                or row["path"] in paths):
+            return []
+        paths.add(row["path"])
+    return rows
+
+
 def references(catalog=None):
     groups = _manifest()
     selections = {}
@@ -95,11 +112,7 @@ def references(catalog=None):
         repo, revision = group["repo"], group["revision"]
         rows = [{"path": path} for path in group["files"]]
         if "directories" in group:
-            cached = selections.get(source_corpus.cache_key(group), [])
-            if isinstance(cached, list):
-                rows.extend(row for row in cached[:group["limit"]] if isinstance(row, dict)
-                            and source_corpus.valid_file(group, row.get("path"))
-                            and isinstance(row.get("blob"), str) and PIN.fullmatch(row["blob"]))
+            rows.extend(_scope_rows(group, selections.get(source_corpus.cache_key(group))))
         for entry in rows:
             path = entry["path"]
             if not _path(path) or (repo, path) in seen:
@@ -118,13 +131,19 @@ def _discover_scopes(catalog, tree_fetch):
     for group in scopes:
         key = source_corpus.cache_key(group)
         with catalog.connect() as db:
-            known = db.execute("SELECT 1 FROM settings WHERE key=?", (key,)).fetchone()
+            known = db.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()
         if known:
-            continue
+            try:
+                if _scope_rows(group, json.loads(known[0])):
+                    continue
+            except ValueError:
+                pass
         try:
             downloads += 1
             selection = source_corpus.select({**group, "already_indexed": [
                 path for repo, path in fixed if repo == group["repo"]]}, tree_fetch(group))
+            if not _scope_rows(group, selection):
+                raise ValueError("Approved source scope yielded no indexable files")
         except (OSError, ValueError) as error:
             errors.append({"scope": group["repo"], "reason": type(error).__name__})
             continue
@@ -230,7 +249,8 @@ def index_file(reference, content):
                 postings[feature].append(number)
     # Favor technical names. Plain terms with a bounded number of occurrences
     # support co-occurrence when two implementations use different names.
-    order = sorted(postings, key=lambda token: (not token.startswith(VUID_PREFIX), token not in qualified,
+    order = sorted(postings, key=lambda token: (not token.startswith(VUID_PREFIX),
+                                                not token.startswith(ANCHOR_PREFIX), token not in qualified,
                                                 len(postings[token]), token))
     return {**reference, "sha256": sha256(content).hexdigest(),
             "terms": {token: postings[token] for token in order[:MAX_TERMS]}}
@@ -255,10 +275,34 @@ def projection(catalog):
                             and len(positions) <= POSITIONS
                             and all(type(line) is int and 0 < line < MAX_BYTES for line in positions)}
                 files.append({**expected[key], "terms": features, "sha256": indexed["sha256"]})
+    # Existing clients read only a prefix of the v2 format.
+    files.sort(key=lambda row: ("blob" in row, row["repo"].casefold(), row["path"]))
     result = {"version": SCHEMA_VERSION, "diagnostics": True, "expected_files": len(expected), "files": files}
-    if len(json.dumps(result, ensure_ascii=False).encode("utf-8")) > MAX_INDEX_BYTES:
-        raise ValueError("Public code index exceeds the client size limit")
+    if len(snapshot_bytes(result)) > MAX_INDEX_BYTES:
+        # Each reference keeps a bounded share. The postings are ordered with
+        # diagnostic IDs first, then definitions, then other symbols.
+        budget = (MAX_INDEX_BYTES - 4096) // len(files)
+        for row in files:
+            trim_postings(row, budget)
+        if len(snapshot_bytes(result)) > MAX_INDEX_BYTES:
+            raise ValueError("Public code index exceeds the client size limit")
     return result
+
+
+
+def snapshot_bytes(index):
+    return json.dumps(index, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+
+
+def trim_postings(row, budget):
+    terms = row["terms"]
+    row["terms"] = {}
+    remaining = budget - len(snapshot_bytes(row))
+    for token, positions in terms.items():
+        remaining -= len(snapshot_bytes({token: positions})) - 1
+        if remaining < 0:
+            break
+        row["terms"][token] = positions
 
 
 def refresh(catalog, *, fetch=_fetch, tree_fetch=source_corpus.fetch_tree):
@@ -331,7 +375,9 @@ def lookup(index, query, *, origin_url="", limit=5):
     if diagnostic_files:
         files = diagnostic_files
     diagnostic_fallback = bool(diagnostics and not diagnostic_files)
-    definitions = {definition_token(word) for word in exact - diagnostics}
+    performance = PERFORMANCE_TITLE.search(query.split("\n", 1)[0])
+    corroboration = {word for word in exact - diagnostics if not GENERIC_STATUS.match(word)}
+    definitions = {definition_token(word) for word in corroboration}
     frequencies = Counter(token for row in files for token in (exact | words) & row["terms"].keys())
     results = []
     for row in files:
@@ -340,7 +386,8 @@ def lookup(index, query, *, origin_url="", limit=5):
         if not strong and (diagnostic_fallback or len(tokens) < 3):
             continue
         hit_lines = defaultdict(set)
-        for token in tokens | (definitions & row["terms"].keys()):
+        row_definitions = definitions & row["terms"].keys()
+        for token in tokens | row_definitions:
             positions = row["terms"][token]
             if isinstance(positions, list):
                 for line in positions[:POSITIONS]:
@@ -350,14 +397,24 @@ def lookup(index, query, *, origin_url="", limit=5):
             continue
         ranked = []
         for line in sorted(hit_lines):
+            diagnostic = len(hit_lines[line] & diagnostics)
+            if diagnostic_files and not diagnostic:
+                continue
             nearby = set().union(*(hit_lines.get(n, ()) for n in range(max(1, line - 12), line + 13)))
             nearby.difference_update(definitions)
+            declaration = len(hit_lines[line] & row_definitions)
+            # A search linked to an issue needs evidence beyond shared words.
+            # A single API definition cannot explain a timing or stability regression.
+            if origin_url and not diagnostic:
+                supported = len(nearby & corroboration) >= 2
+                if performance:
+                    supported = supported and bool(declaration)
+                if not (supported or declaration and not performance):
+                    continue
             if not nearby & strong and len(nearby) < 3:
                 continue
             score = sum((20 if token in focus else 7 if token in strong else 1)
                         + 1 / frequencies[token] for token in nearby)
-            declaration = len(hit_lines[line] & definitions)
-            diagnostic = len(hit_lines[line] & diagnostics)
             ranked.append((diagnostic, round(score + 25 * declaration + 80 * diagnostic, 4), declaration,
                            len(hit_lines[line] & focus), len(hit_lines[line] & strong),
                            -line, sorted(nearby)))
@@ -417,7 +474,10 @@ def main():
     parser.add_argument("--db", type=Path)
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--q", default="")
+    parser.add_argument("--require-complete", action="store_true", help="fail on any source refresh error")
     args = parser.parse_args()
+    if args.require_complete and not args.refresh:
+        parser.error("--require-complete requires --refresh")
     if args.refresh:
         result = refresh(Catalog(args.db or DEFAULT_DB, DEFAULT_SEED))
     elif args.q:
@@ -429,7 +489,8 @@ def main():
     else:
         parser.error("Provide --refresh or --q")
     print(json.dumps(result, ensure_ascii=True, indent=2))
+    return int(args.require_complete and bool(result["errors"]))
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

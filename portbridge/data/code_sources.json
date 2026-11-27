@@ -72,7 +72,12 @@
     "files": [
       "llvm/docs/LangRef.rst",
       "llvm/include/llvm/IR/Instructions.h"
-    ]
+    ],
+    "directories": [
+      "llvm/lib/Transforms/Scalar"
+    ],
+    "limit": 5,
+    "scoped": true
   },
   {
     "repo": "baldurk/renderdoc",
@@ -94,5 +99,76 @@
       "crates/xcl/src/gpu/dxil"
     ],
     "limit": 4
+  },
+  {
+    "repo": "TaynanGT/Vice-Tay",
+    "revision": "d96aa67da5d5de08ffb79ad05fcd6c911f8875fe",
+    "license": "GPL-3.0-or-later",
+    "license_path": "LICENSE",
+    "files": [],
+    "directories": [
+      "crates/victory-gpu/src",
+      "crates/victory-shader/src"
+    ],
+    "limit": 4
+  },
+  {
+    "repo": "LooperSalty/AnyXboxX",
+    "revision": "a4453083ad6563ca50efcefead1eaa7a2aaaa12b",
+    "license": "GPL-3.0-or-later",
+    "license_path": "LICENSE",
+    "files": [],
+    "directories": [
+      "crates/anyxboxx-gpu-run/src",
+      "tests"
+    ],
+    "limit": 4
+  },
+  {
+    "repo": "ubiquitarianism/leonida",
+    "revision": "c0201a806b061120e6cdee9916395275a632367e",
+    "license": "GPL-3.0-or-later",
+    "license_path": "LICENSE",
+    "files": [],
+    "directories": [
+      "runtime/test",
+      "scripts"
+    ],
+    "limit": 5
+  },
+  {
+    "repo": "doitsujin/dxvk",
+    "revision": "1011dd97474a1c8c2608f3466429e4df45b36b7c",
+    "license": "Zlib",
+    "license_path": "LICENSE",
+    "files": [],
+    "directories": [
+      "src/dxvk"
+    ],
+    "limit": 4
+  },
+  {
+    "repo": "KhronosGroup/SPIRV-Tools",
+    "revision": "b1d2dc272aee6e6c9454d202fe88cbcbbeaab72c",
+    "license": "Apache-2.0",
+    "license_path": "LICENSE",
+    "files": [],
+    "directories": [
+      "source/opt",
+      "test/opt"
+    ],
+    "limit": 4
+  },
+  {
+    "repo": "KhronosGroup/VK-GL-CTS",
+    "revision": "05ca62dcffe1353d8e058a6a9d759e3fa1007449",
+    "license": "Apache-2.0",
+    "license_path": "external/vulkancts/LICENSE",
+    "files": [],
+    "directories": [
+      "external/vulkancts/modules/vulkan/synchronization"
+    ],
+    "limit": 4,
+    "scoped": true
   }
 ]

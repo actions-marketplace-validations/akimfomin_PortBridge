@@ -14,7 +14,7 @@ from .backup import backup_database
 from .catalog import REPO_NAME, ReadOnlyCatalog, timestamp
 from .coordination import knowledge_graph, recommendations
 from .discovery_scan import cached_index
-from .code_search import browser_matches, projection as code_projection
+from .code_search import browser_matches, projection as code_projection, snapshot_bytes
 from .ecosystem import build_ecosystem
 from .feed import build_feed
 from .identity import SCHEMA_VERSION
@@ -210,6 +210,7 @@ def _export(catalog, directory, repository):
     site["browse_index"] = {key: index[key] for key in ("version", "generation")}
     contents = {f"data/{name}.json": json.dumps(value, ensure_ascii=False).encode("utf-8")
                 for name, value in data.items()}
+    contents["data/source-code.json"] = snapshot_bytes(data["source-code"])
     site["snapshots"] = {}
     for name in VERSIONED_SNAPSHOTS:
         body = contents[f"data/{name}.json"]

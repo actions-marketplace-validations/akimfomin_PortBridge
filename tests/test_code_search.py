@@ -156,3 +156,39 @@ class CodeDiscoveryTests(CatalogFixture):
                          {"gpu/fence.cpp", "gpu/queue.cpp"})
         with self.assertRaisesRegex(ValueError, "Incomplete"):
             source_corpus.select(group, {**raw, "truncated": True})
+
+    def test_issue_timing_ignores_shared_status_code(self):
+        row = code_search.index_file(self.ref, b"int vkQueueSubmit2(void) {\n return VK_ERROR_DEVICE_LOST;\n}\n")
+        index = {"version": code_search.SCHEMA_VERSION, "files": [row]}
+        query = "Frame timing regression on vendor driver\nvkQueueSubmit2 VK_ERROR_DEVICE_LOST"
+        self.assertFalse(code_search.lookup(index, query, origin_url=self.url))
+        present_modes = "VK_PRESENT_MODE_FIFO_KHR VK_PRESENT_MODE_MAILBOX_KHR"
+        row = code_search.index_file(self.ref, present_modes.encode())
+        unrelated = {"version": code_search.SCHEMA_VERSION, "files": [row]}
+        self.assertFalse(code_search.lookup(unrelated, "FPS regression\n" + present_modes, origin_url=self.url))
+        self.assertEqual(code_search.lookup(index, "vkQueueSubmit2")[0]["line"], 1)
+        self.assertEqual(code_search.lookup(index, "Implement vkQueueSubmit2", origin_url=self.url)[0]["line"], 1)
+
+    def test_scoped_tree_walk_uses_only_the_approved_path(self):
+        repo = "Example/Graphics"
+        group = {"repo": repo, "revision": "a" * 40, "scoped": True, "directories": ["external/core"], "limit": 2}
+        trees = [
+            {"tree": [{"type": "tree", "path": "external", "sha": "b" * 40}]},
+            {"tree": [{"type": "tree", "path": "core", "sha": "c" * 40}]},
+            {"tree": [{"type": "blob", "path": "memory.cpp", "sha": "d" * 40,
+                       "size": 20, "mode": "100644"}]},
+        ]
+        with patch.object(source_corpus, "_fetch_tree", side_effect=trees) as fetch:
+            selected = source_corpus.select(group, source_corpus.fetch_tree(group))
+        self.assertEqual([call.kwargs["recursive"] for call in fetch.call_args_list], [False, False, True])
+        self.assertEqual(selected, [{"path": "external/core/memory.cpp", "blob": "d" * 40}])
+
+    def test_empty_scope_is_retryable_and_not_counted_as_complete(self):
+        group = {"repo": "Example/Graphics", "revision": "a" * 40, "license": "MIT", "license_path": "LICENSE",
+                 "files": [], "directories": ["approved"], "limit": 2}
+        fetch = Mock(return_value={"tree": [], "truncated": False})
+        with patch.object(code_search, "_manifest", return_value=[group]):
+            _, errors = code_search._discover_scopes(self.catalog, fetch)
+            self.assertEqual(errors, [{"scope": group["repo"], "reason": "ValueError"}])
+            code_search._discover_scopes(self.catalog, fetch)
+        self.assertEqual(fetch.call_count, 2)
