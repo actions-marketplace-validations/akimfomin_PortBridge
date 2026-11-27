@@ -453,6 +453,16 @@ class Catalog:
                 ref.update(evidence_fields(ref, ref.get("github")))
         return problems
 
+    def source_observation(self, url):
+        aliases = sorted(source_url_aliases(url))
+        if not aliases:
+            return None
+        placeholders = ",".join("?" for _ in aliases)
+        with self.connect() as db:
+            row = db.execute(f"""SELECT title, url, metadata FROM observations
+                WHERE lower(url) IN ({placeholders}) ORDER BY updated_at DESC LIMIT 1""", aliases).fetchone()
+        return {**dict(row), "metadata": json.loads(row["metadata"])} if row else None
+
     def observations(self, *, q="", kind="", project="", limit=100):
         clauses, arguments = [], []
         for column, value in (("kind", kind), ("project", project)):

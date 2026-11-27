@@ -405,7 +405,7 @@ function problemCard(problem, view) {
 function drawProblems(problems, view, discovery, findings) {
   const count = numberFormat.format(problems.length);
   viewStatus.textContent = t(`Issues: ${count}`, `Проблем в списке: ${count}`);
-  if (!problems.length && !discovery.matches.length && !findings.length) {
+  if (!problems.length && !discovery.matches.length && !list(discovery.code).length && !findings.length) {
     stateScreen(t('No issues found', 'Проблемы не найдены'),
       discovery.emptyMessage || t('Try another search or reset the filters.', 'Измените поисковый запрос или сбросьте фильтры.'));
     return;
@@ -440,11 +440,13 @@ function emptyDiscoveryMessage(status, reason) {
 }
 
 async function discoveryResults(query, signal) {
-  if (!query || query.length > 200) return {matches: []};
+  if (!query || query.length > 200) return {matches: [], code: []};
   let result;
   try {
     if (!snapshotSite) {
-      result = await fetchJSON(`/discovery?${new URLSearchParams({q: query})}`, signal);
+      const source = githubURL(query);
+      const params = new URLSearchParams(source ? {url: source} : {q: query});
+      result = await fetchJSON('/discovery?' + params, signal);
     } else {
       const index = snapshotSite.snapshots?.discovery && await readSnapshot('discovery', signal);
       result = PortBridgeDiscovery.search(index, query);
@@ -454,7 +456,8 @@ async function discoveryResults(query, signal) {
   }
   const matches = [...list(result.matches), ...list(result.automatic_matches)];
   const pr = /^https:\/\/github\.com\/[\w-]+\/[\w.-]+\/pull\/[1-9]\d*\/?$/i.test(query.trim());
-  return {matches, emptyMessage: pr && !matches.length ? emptyDiscoveryMessage(result.scan_status, result.scan_reason) : ''};
+  const code = list(result.code_candidates);
+  return {matches, code, emptyMessage: pr && !matches.length && !code.length ? emptyDiscoveryMessage(result.scan_status, result.scan_reason) : ''};
 }
 
 async function reviewedRadarResults(query, signal) {
@@ -500,7 +503,25 @@ function discoveryLink(title, url) {
   return link;
 }
 
-function drawDiscovery({matches, emptyMessage}) {
+function drawDiscovery({matches, emptyMessage, code = []}) {
+  if (code.length) {
+    const panel = element('section', 'activity-panel discovery-results');
+    panel.append(element('h2', '', t('Candidate source-code lines', 'Кандидаты в исходном коде')),
+      element('p', 'activity-note', t('Check these lines and an opposite case on your revision.',
+        'Проверьте эти строки на своей версии.')));
+    for (const row of code) {
+      const card = element('article', 'card');
+      card.append(githubLink(`${row.path}:${row.line}`, row.url));
+      if (row.license && row.license_url) {
+        const license = element('p', 'revision');
+        license.append(githubLink(row.license, row.license_url));
+        card.append(license);
+      }
+      if (row.next_step) card.append(element('p', 'activity-note', row.next_step));
+      panel.append(card);
+    }
+    content.append(panel);
+  }
   if (!matches.length) {
     if (emptyMessage) content.append(element('p', 'activity-note', emptyMessage));
     return;
@@ -2390,7 +2411,7 @@ async function loadView(current, focus = false, recovering = false, previousSnap
           const facts = await discoveryResults(current.params.get('q'), active.signal);
           if (active.signal.aborted) return;
           drawSources(result, current, facts.emptyMessage);
-          if (result.items.length || facts.matches.length) drawDiscovery(facts);
+          if (result.items.length || facts.matches.length || facts.code.length) drawDiscovery(facts);
         }
         sectionDates(snapshotSite?.generated_at, latestChecked(Array.from(projects.values(), (project) => project.last_success)));
       }

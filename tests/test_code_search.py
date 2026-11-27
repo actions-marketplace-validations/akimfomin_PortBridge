@@ -1,8 +1,10 @@
 from datetime import datetime, timezone
+from hashlib import sha1
+from unittest.mock import Mock
 import json
 from unittest.mock import patch
 
-from portbridge import code_search
+from portbridge import code_search, source_corpus
 from portbridge.action_summary import render_report
 from portbridge.backup import backup_database, checkpoint_count
 from portbridge.export import export
@@ -57,6 +59,8 @@ class CodeDiscoveryTests(CatalogFixture):
         self.assertEqual(public["source_code"]["matches"][0]["url"],
                          "https://github.com/Example/Graphics/blob/" + "a" * 40 + "/tests/volume.c#L2")
         self.assertIn("Candidate source-code lines", render_report(public))
+        snapshot = json.loads((exported / "data/discovery.json").read_bytes())
+        self.assertEqual(snapshot["code_candidates"]["github.com/loopersalty/anyxboxx/pull/9991"][0]["line"], 2)
         self.pins.return_value = [{**self.ref, "revision": "c" * 40}]
         self.assertEqual(code_search.refresh(self.catalog, fetch=lambda _: (_ for _ in ()).throw(OSError()))["indexed"], 0)
         self.assertEqual(code_search.projection(self.catalog)["files"], [])
@@ -94,3 +98,97 @@ class CodeDiscoveryTests(CatalogFixture):
         refresh(self.catalog, now=now)
         self.assertFalse(any(row["kind"] == "source_code" and row["state"] != "stale"
                              for row in radar_view(self.catalog, now)["candidates"]))
+
+    def test_reuse_verified_blob_at_new_revision(self):
+        blob = sha1(b"blob " + str(len(self.source)).encode("ascii") + b"\0" + self.source).hexdigest()
+        self.pins.return_value = [{**self.ref, "blob": blob}]
+        self.assertEqual(code_search.refresh(self.catalog, fetch=lambda _: self.source)["indexed"], 1)
+        next_ref = {**self.pins.return_value[0], "revision": "b" * 40,
+                    "license_url": self.ref["license_url"].replace("a" * 40, "b" * 40)}
+        self.pins.return_value = [next_ref]
+        fetch = Mock(side_effect=OSError())
+        status = code_search.refresh(self.catalog, fetch=fetch)
+        fetch.assert_not_called()
+        self.assertEqual((status["indexed"], status["reused_blobs"]), (0, 1))
+        rows = code_search.projection(self.catalog)["files"]
+        self.assertEqual((rows[0]["revision"], rows[0]["blob"]), ("b" * 40, blob))
+        self.pins.return_value = [{**next_ref, "blob": "c" * 40}]
+        self.assertEqual(code_search.projection(self.catalog)["files"], [])
+        self.assertEqual(code_search.refresh(self.catalog, fetch=lambda _: self.source)["errors"][0]["reason"], "ValueError")
+
+    def test_validation_rule_from_body_picks_exact_assertion(self):
+        origin = "Fix graphics validation in an edge case"
+        rule = "VUID-vkQueueSubmit-pSubmits-00001"
+        other = "VUID-vkQueueSubmit-pSubmits-00002"
+        fixture = f'void vkQueueSubmit();\nassert_diagnostic("{other}");\nassert_diagnostic("{rule}");\n'.encode()
+        technical = _technical({"title": origin, "body": f"Observed {rule}"}, [], {})
+        self.assertEqual(technical["code_diagnostics"], [rule.lower()])
+        code_search.refresh(self.catalog, fetch=lambda _: fixture)
+        row = self.observation("anyxboxx", "pr", "9991", origin, self.url, {"technical": technical})
+        self.catalog.record_sync({"items": [row]}, update_health=False)
+        result = preflight(self.catalog, url=self.url)
+        self.assertEqual(result["source_code"]["matches"][0]["line"], 3)
+        index = code_search.projection(self.catalog)
+        self.assertFalse(code_search.lookup(index, "Fix VUID-vkQueueSubmit-pSubmits-00003"))
+        old = code_search.index_file(self.ref, b"void vkQueueSubmit();")
+        generic = code_search.lookup({"version": 2, "files": [old]}, f"vkQueueSubmit {rule}")
+        self.assertIn("diagnostic ID was not found", generic[0]["next_step"])
+        peer = {**old, "repo": "Elsewhere/Graphics", "license_url":
+                self.ref["license_url"].replace("Example/Graphics", "Elsewhere/Graphics")}
+        fallback = code_search.lookup({**index, "files": [*index["files"], peer]}, f"vkQueueSubmit {rule}",
+                                      origin_url="https://github.com/Example/Graphics/issues/1")
+        self.assertEqual(fallback[0]["repo"], "Elsewhere/Graphics")
+        self.assertIn("diagnostic ID was not found", fallback[0]["next_step"])
+
+    def test_scope_selects_only_regular_bounded_source_files(self):
+        group = {"directories": ["gpu"], "limit": 2}
+        entry = {"type": "blob", "mode": "100644", "size": 200, "sha": "a" * 40}
+        raw = {"truncated": False, "tree": [
+            {**entry, "path": "gpu/fence.cpp"},
+            {**entry, "path": "gpu/queue.cpp"},
+            {**entry, "path": "gpu/memory.cpp", "size": 1_200_000},
+            {**entry, "path": "gpu/vendor/heap.cpp"},
+            {**entry, "path": "gpu/shader.cpp", "mode": "120000"},
+            {**entry, "path": "core/source_buffer.cpp"},
+            {**entry, "path": "gpu/../memory.cpp"},
+        ]}
+        self.assertEqual({row["path"] for row in source_corpus.select(group, raw)},
+                         {"gpu/fence.cpp", "gpu/queue.cpp"})
+        with self.assertRaisesRegex(ValueError, "Incomplete"):
+            source_corpus.select(group, {**raw, "truncated": True})
+
+    def test_issue_timing_ignores_shared_status_code(self):
+        row = code_search.index_file(self.ref, b"int vkQueueSubmit2(void) {\n return VK_ERROR_DEVICE_LOST;\n}\n")
+        index = {"version": code_search.SCHEMA_VERSION, "files": [row]}
+        query = "Frame timing regression on vendor driver\nvkQueueSubmit2 VK_ERROR_DEVICE_LOST"
+        self.assertFalse(code_search.lookup(index, query, origin_url=self.url))
+        present_modes = "VK_PRESENT_MODE_FIFO_KHR VK_PRESENT_MODE_MAILBOX_KHR"
+        row = code_search.index_file(self.ref, present_modes.encode())
+        unrelated = {"version": code_search.SCHEMA_VERSION, "files": [row]}
+        self.assertFalse(code_search.lookup(unrelated, "FPS regression\n" + present_modes, origin_url=self.url))
+        self.assertEqual(code_search.lookup(index, "vkQueueSubmit2")[0]["line"], 1)
+        self.assertEqual(code_search.lookup(index, "Implement vkQueueSubmit2", origin_url=self.url)[0]["line"], 1)
+
+    def test_scoped_tree_walk_uses_only_the_approved_path(self):
+        repo = "Example/Graphics"
+        group = {"repo": repo, "revision": "a" * 40, "scoped": True, "directories": ["external/core"], "limit": 2}
+        trees = [
+            {"tree": [{"type": "tree", "path": "external", "sha": "b" * 40}]},
+            {"tree": [{"type": "tree", "path": "core", "sha": "c" * 40}]},
+            {"tree": [{"type": "blob", "path": "memory.cpp", "sha": "d" * 40,
+                       "size": 20, "mode": "100644"}]},
+        ]
+        with patch.object(source_corpus, "_fetch_tree", side_effect=trees) as fetch:
+            selected = source_corpus.select(group, source_corpus.fetch_tree(group))
+        self.assertEqual([call.kwargs["recursive"] for call in fetch.call_args_list], [False, False, True])
+        self.assertEqual(selected, [{"path": "external/core/memory.cpp", "blob": "d" * 40}])
+
+    def test_empty_scope_is_retryable_and_not_counted_as_complete(self):
+        group = {"repo": "Example/Graphics", "revision": "a" * 40, "license": "MIT", "license_path": "LICENSE",
+                 "files": [], "directories": ["approved"], "limit": 2}
+        fetch = Mock(return_value={"tree": [], "truncated": False})
+        with patch.object(code_search, "_manifest", return_value=[group]):
+            _, errors = code_search._discover_scopes(self.catalog, fetch)
+            self.assertEqual(errors, [{"scope": group["repo"], "reason": "ValueError"}])
+            code_search._discover_scopes(self.catalog, fetch)
+        self.assertEqual(fetch.call_count, 2)
