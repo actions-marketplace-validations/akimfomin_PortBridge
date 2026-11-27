@@ -908,6 +908,8 @@ const matchReasonText = {
   reference: ['В одном из источников есть прямая ссылка на другой проект.', 'One source links directly to the other project.'],
   shared_revision: ['Совпадает полный идентификатор коммита.', 'The full commit SHA matches.'],
   technical_signal: ['Совпадают технические идентификаторы.', 'Technical identifiers match.'],
+  shared_mechanism: ['Источники описывают сходную операцию и объект. Проверьте общий сценарий.',
+    'Both sources describe a similar operation on the same kind of object. Check whether a common test applies.'],
   instruction_variants: ['Совпадают семейства инструкций. Сверьте точные варианты и границы теста.',
     'Instruction families match. Check the exact variants and test scope.'],
   technical_terms: ['Совпадают редкие технические термины в описании или заголовке.', 'Distinctive technical terms match in the title or description.'],
@@ -1351,7 +1353,18 @@ function showActivity(data, quiet = false) {
   start.append(internalLink(t('Choose a test to run', 'Выбрать тест для своего стенда'), '#/lab', 'lab-primary'),
     internalLink(t('Browse reviewed cases', 'Посмотреть проверенные карточки'), '#/problems', 'retry'));
   if (snapshotSite?.browse_index) start.append(internalLink(t('Browse public GitHub sources', 'Открыть индекс GitHub'), '#/sources', 'retry'));
-  board.append(start, stats);
+  const collaboration = activityPanel(t('A test shared between teams', 'Как команды проверяют работу друг друга'));
+  collaboration.append(element('p', '', t(
+    'PortBridge linked a VIctory test to Dathinel’s setup. Dathinel ran six synthetic checks on an RTX 3050 Laptop and returned the results to the original PR.',
+    'PortBridge подобрал тест VIctory под стенд Dathinel. Он выполнил шесть синтетических проверок на RTX 3050 Laptop и вернул результаты в исходный PR.')));
+  const proof = element('div', 'activity-handoff-proof');
+  proof.append(githubLink(t('PortBridge’s suggestion', 'Что предложил PortBridge'),
+    'https://github.com/Dathinel/victory-4gb/issues/10#issuecomment-7207943312'),
+    githubLink(t('Dathinel’s report in VIctory', 'Отчёт Dathinel в VIctory'),
+      'https://github.com/fxceless/victory-fork/pull/1419#issuecomment-7208842607'),
+    internalLink(t('Try the same workflow', 'Подключиться к совместной проверке'), t('./start.html', './start.ru.html')));
+  collaboration.append(proof);
+  board.append(start, collaboration, stats);
   const research = [...list(data.original_research), ...list(data.research)]
     .sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
   if (research.length) board.append(researchHighlights(research));
@@ -1621,9 +1634,7 @@ function labRequestEntry() {
   const actions = element('div', 'lab-agent-actions');
   const newRequest = githubLink(t('Request a test', 'Запросить тест'), labRequestURL());
   newRequest.classList.add('lab-primary');
-  const queue = new URL(`${portbridgeRepository}/issues`);
-  queue.searchParams.set('q', 'is:issue "Test request:" in:title');
-  actions.append(newRequest, githubLink(t('View test requests', 'Смотреть запросы'), queue.href));
+  actions.append(newRequest);
   section.append(element('h2', '', t('Find a tester', 'Найти тестировщика')),
     element('p', '', t('Share a reproducible check and the hardware it needs. Volunteers can reply in your request. A maintainer can review and send an invitation manually.',
       'Опишите проверку и нужное оборудование. Добровольцы могут ответить в запросе. Адресное приглашение проверяет и отправляет сопровождающий вручную.')),
@@ -1989,7 +2000,11 @@ function drawLab(data, params) {
   }
   equipment.addEventListener('change', updateFilters);
   showAll.addEventListener('change', updateFilters);
-  lab.append(bar, count, tasks, entrypoints);
+  const queue = new URL(`${portbridgeRepository}/issues`);
+  queue.searchParams.set('q', 'is:issue is:open in:title "Test request:"');
+  const openRequests = element('p');
+  openRequests.append(githubLink(t('Open volunteer requests on GitHub', 'Открытые запросы для добровольцев на GitHub'), queue.href));
+  lab.append(bar, openRequests, count, tasks, entrypoints);
   renderTasks();
   content.replaceChildren(lab);
 }

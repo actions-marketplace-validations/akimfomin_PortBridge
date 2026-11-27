@@ -535,9 +535,14 @@ def main(argv=None):
         if args.discovery and not args.refresh:
             parser.error("--discovery requires --refresh")
         try:
+            if args.discovery:
+                from .code_search import refresh as refresh_code
+                code_status = refresh_code(catalog)
             result = (refresh(catalog, online_discovery=args.discovery, limit=args.limit) if args.refresh
                       else radar_view(catalog, int(time.time()), confidence=args.confidence, limit=args.limit,
                                      state=args.state, console=args.console, after=args.after))
+            if args.discovery:
+                result["source_code_index"] = code_status
         except ValueError as error:
             parser.error(str(error))
         print(json.dumps(result, indent=2, ensure_ascii=True))
@@ -577,10 +582,9 @@ def main(argv=None):
         result = {"observations_saved": len(batch["items"]), "warnings": batch["warnings"],
                   "history": backfill_status(catalog.path, mode=args.command)}
         if args.command == "incremental" and args.discovery:
-            from .discovery_scan import MAX_ORIGINS, scan
+            from .discovery_scan import scan
 
-            # Include unsearched recent observations when a previous discovery batch hit its budget.
-            result["discovery"] = scan(catalog, catalog.observations(limit=MAX_ORIGINS), online=True)
+            result["discovery"] = scan(catalog, catalog.observations(limit=None), online=True, scheduled=True)
         print(json.dumps(result, indent=2, ensure_ascii=True))
         return 0
     if args.command == "sync":

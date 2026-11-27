@@ -2,13 +2,15 @@
 
 **Общий рабочий штаб для команд совместимости Xbox Series с ПК.**
 
-[Прогресс команд](https://akimfomin.github.io/PortBridge/?lang=ru) · [Найти тест под свой компьютер](https://akimfomin.github.io/PortBridge/?lang=ru#/lab) · [Запросить тест](https://github.com/akimfomin/PortBridge/issues/new?template=test-request.yml) · [Дать задачу агенту](docs/AGENT-PROMPT.md) · [English](README.md)
+[Прогресс команд](https://akimfomin.github.io/PortBridge/?lang=ru) · [Найти тест под свой компьютер](https://akimfomin.github.io/PortBridge/?lang=ru#/lab) · [Запросить тест](https://github.com/akimfomin/PortBridge/issues/new?template=test-request.yml) · [Дать задачу агенту](docs/AGENT-PROMPT.md) · [Как помочь проекту](https://github.com/akimfomin/PortBridge/issues/112) · [English](README.md)
 
 После разделения Leonida работа продолжилась в разных репозиториях. Поэтому одна команда может уже исправить ошибку, другая — проверить тот же случай, а третья — начать разбор заново. PortBridge находит эту связь, помогает перенести полезную проверку или правку и сохраняет исходные ссылки, версии и авторство.
 
 > PortBridge is an open coordination tool for independent Xbox Series compatibility projects. Find related work, reuse verified tests, and share results in the repositories where development happens.
 
 ## Проверить один pull request
+
+[Передайте ссылку на публичный PR и целевой коммит](https://github.com/akimfomin/PortBridge/issues/98). Эту же ссылку можно дать своему агенту, чтобы запустить проверку самостоятельно. Добровольцы могут [взять одну готовую задачу](https://github.com/akimfomin/PortBridge/issues/98#issuecomment-7206391931) и оставить краткий результат.
 
 Сопровождающий может включить [проверку GitHub](docs/GITHUB-ACTION.md). Результат появится прямо в PR с источниками или причиной пустой выдачи. В пилоте M5–M6 можно предложить один конкретный технический вопрос. [Подключение агента](docs/MCP.md) · [Партнёрская лента](API.md) · [Проверенные результаты и ограничения](https://github.com/akimfomin/PortBridge/blob/audit/review/audit/LATEST.md)
 
